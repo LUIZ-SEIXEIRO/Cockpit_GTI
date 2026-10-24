@@ -1,0 +1,35 @@
+version: '3.8'
+
+services:
+  db:
+    image: mariadb:10.11
+    container_name: spaguas-mariadb
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: ${DB_ROOT_PASSWORD}
+      MYSQL_DATABASE: ${DB_NAME}
+      MYSQL_USER: ${DB_USER}
+      MYSQL_PASSWORD: ${DB_PASSWORD}
+    ports:
+      - "3306:3306"
+    volumes:
+      - ./volumes_docker/mariadb_3306:/var/lib/mysql
+
+  backend:
+    build: 
+      context: ./backend
+    container_name: spaguas-fastapi
+    restart: unless-stopped
+    ports:
+      - "8000:8000"
+    env_file:
+      - .env
+    volumes:
+      - ./backend:/app
+      - ./frontend:/frontend
+    depends_on:
+      - db
+
+volumes:
+  mariadb_3306:
+    driver: local

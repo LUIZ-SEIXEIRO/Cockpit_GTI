@@ -1,0 +1,140 @@
+instalação do GLPI:
+
+
+Endereço do servidor SQL: db
+
+Usuário SQL: glpi
+
+Senha SQL: glpi
+
+http://localhost:8080/
+
+_________________________________________________________________________________________________________________________________________________________________________________________________
+
+Arquitetura proposta: 
+
+H:\glpi-spaguas\                                      <-- Raiz Única no Disco H (Docker Desktop)
+├── docker-compose.yml                                <-- Sobe: Python(:8000), GLPI(:8088), OP(:8090), NewAPI(:3001), MariaDB(:3306)
+├── .env                                              <-- Guarda Tokens de Produção, Senhas e Chaves das 3 IAs
+│
+├── 📁 frontend\                                      <-- 1. DASHBOARD VISUAL (Desacoplado e Leve)
+│   ├── painel.html                                   <-- Casca principal enxuta (Menu lateral + Topbar + View Router)
+│   ├── estilo_spaguas.css                            <-- Folha de estilo institucional única (Paleta SP-Águas)
+│   ├── dados_estaticos.js                            <-- Snapshots de segurança
+│   │
+│   └── 📁 abas\                                      <-- AS 15 ABAS INDIVIDUALIZADAS (Mapeadas do HTML)
+│       ├── 00_roteador_abas.js                       <-- Troca de abas instantânea (SPA View Router)
+│       ├── aba_01_dashboards.js                      <-- 📊 Central de Dashboards: Visão Consolidada 360°
+│       ├── aba_02_portfolio_openproject.js           <-- 🏗️ Portfólio Corporativo OpenProject
+│       ├── aba_03_tracks_sagti.js                    <-- ⚡ Gestão Interna SA-GTI: Tracks Contratuais 
+│       ├── aba_04_pdtic_eixos.js                     <-- 🧭 Governança do PDTIC 2027-2030 (5 Eixos, 35 Iniciativas & 8 KPIs)
+│       ├── aba_05_gestao_glpi.js                     <-- 🎫 Gestão GLPI 10 & Helpdesk ITSM
+│       ├── aba_06_visao_estrategica.js               <-- 🎯 Visão Estratégica & Faróis de Criticidade (Aging Líquido & Poréns)
+│       ├── aba_07_mesa_trabalho.js                   <-- 🖥️ Mesa de Trabalho Operacional (Cockpit do Usuário)
+│       ├── aba_08_gestao_agil.js                     <-- 📋 Gestão Ágil & Sprint Planning (Quadro Kanban & Post-its)
+│       ├── aba_09_daily_warroom.js                   <-- ⏱️ War Room: Daily Scrum & Gestão de Pauta (15 min)
+│       ├── aba_10_consulta_sei.js                    <-- 📂 Acervo Probatório SEI 
+│       ├── aba_11_fixados.js                         <-- ⭐ Processos Fixados (Watchlist Prioritária)
+│       ├── aba_12_auditoria_tce.js                   <-- 🛡️ Hub de Auditoria Contínua & Maturidade (TCE-SP & Súmula 269 TCU)
+│       ├── aba_13_esteira_ia.js                      <-- 🤖 Chat IA & RACI (Assistente Pessoal com Motor de 4 Camadas)
+│       ├── aba_14_cadernos.js                        <-- 📚 Cadernos Temáticos, Toolkits & Modelos A4 Oficiais
+│       └── aba_15_configuracoes.js                   <-- 🔧 Configurações: [Sistemas Internos] e [Busca Ativa Externa]
+│
+├── 📁 backend\                                       <-- 2. SERVIDOR CENTRAL PYTHON FASTAPI (Porta :8000)
+│   ├── Dockerfile                                    <-- Receita do container Python
+│   ├── main.py                                       <-- Entrega o painel.html e unifica as rotas da API
+│   ├── database_mariadb.py                           <-- Conexão direta com o Banco MariaDB (:3306 - glpidb)
+│   │
+│   ├── 📁 agentes_ia\                                <-- 🤖 NEW API (:3001) - OS 3 NÍVEIS DE IA INDIVIDUALIZADOS
+│   │   ├── __init__.py                               <-- Orquestrador de Failover (Nível 1 -> 2 -> 3)
+│   │   ├── ia_01_principal_processamento.py          <-- Alto Desempenho: Análise profunda, ETP, TR e Pareceres
+│   │   ├── ia_02_orquestracao_intermediario.py       <-- Intermediário: Organizador de tarefas processadas e RAG
+│   │   └── ia_03_micro_tarefas_log.py                <-- Tarefas Atômicas: Classificação rápida e Log (~0.4GB RAM)
+│   │
+│   ├── 📁 sistemas_internos\                         <-- 🏢 GRUPO A: SISTEMAS DE GESTÃO (LOCAIS & PRODUÇÃO)
+│   │   ├── __init__.py                               <-- Monitora e sincroniza os Sistemas Internos
+│   │   ├── sis_01_glpi_8088_prod.py                  <-- Sistema GLPI (Container :8088 + Produção atendimento.spaguas...)
+│   │   ├── sis_02_openproject_8090_prod.py           <-- Sistema OpenProject (Container :8090 + Produção)
+│   │   └── sis_03_newapi_ia_3001.py                  <-- Sistema Gateway New API / Ollama (:3001/v1/models)
+│   │
+│   └── 📁 busca_ativa_externa\                       <-- 🌐 GRUPO B: ROBÔS DE BUSCA ATIVA (PORTAIS EXTERNOS)
+│       ├── __init__.py                               <-- Dispara buscas externas via Server-Side (Zero erro de CORS)
+│       ├── ext_01_doesp_gov_br.py                    <-- Busca Ativa: Diário Oficial (https://doe.sp.gov.br/)
+│       ├── ext_02_pncp_gov_br.py                     <-- Busca Ativa: Portal Nacional PNCP (https://pncp.gov.br/api/...)
+│       ├── ext_03_sigrh_soi_gov_br.py                <-- Busca Ativa: Portal Hídrico SIGRH/SOI (sigrh.sp.gov.br / :8099)
+│       └── ext_04_zabbix_noc_bacias.py               <-- Busca Ativa: Telemetria Externa Bacias (zabbix.spaguas... / :8098)
+│
+└── 📁 volumes_docker\                                <-- 3. PERSISTÊNCIA DE BANCO E VOLUMES NO DISCO H
+    ├── mariadb_3306\                                 <-- Dados do Banco MariaDB
+    ├── glpi_8088\                                    <-- Arquivos internos do GLPI
+    ├── openproject_8090\                             <-- Dados do OpenProject
+    └── newapi_3001\                                  <-- Dados da New API
+
+
+
+
+
+
+
+-----
+
+
+
+1. Verifique a Existência do Arquivo main.py
+ok
+
+
+3. Verifique a Estrutura das Pastas
+
+Estrutura atual que temos pronto:
+
+H:\Cockpit_GTI\
+├── html
+├── app\
+│   ├── __init__.py
+│   ├── routes.py
+│   ├── static\
+│   │   ├── painel.html
+│   │   ├── estilo_spaguas.css
+│   │   ├── abas\
+│   │   │   ├── 00_roteador_abas.js
+│   │   │   ├── aba_01_home.js
+│   └── templates\
+├── config.py
+├── css_style
+├── Dados de Criação do Projeto Cockpit_GTI
+├── docker-compose
+├── js_script
+├── main
+├── requirements
+└── README
+
+4. Arquivo app/__init__.py
+ok
+
+5. Arquivo app/routes.py
+ok
+
+6. Arquivo config.py
+ok
+
+7. Arquivo requirements.txt
+ok
+
+8. Instalar Dependências
+PS H:\Cockpit_GTI> pip install -r requirements.txt
+Requirement already satisfied: Flask==3.1.3 in C:\Users\LUIZ SEIXEIRO\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages (from -r requirements.txt (line 1)) (3.1.3)
+Requirement already satisfied: blinker==1.9.0 in C:\Users\LUIZ SEIXEIRO\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages (from -r requirements.txt (line 2)) (1.9.0)
+Requirement already satisfied: click==8.4.2 in C:\Users\LUIZ SEIXEIRO\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages (from -r requirements.txt (line 3)) (8.4.2)
+Requirement already satisfied: itsdangerous==2.2.0 in C:\Users\LUIZ SEIXEIRO\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages (from -r requirements.txt (line 4)) (2.2.0)
+Requirement already satisfied: jinja2==3.1.6 in C:\Users\LUIZ SEIXEIRO\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages (from -r requirements.txt (line 5)) (3.1.6)
+Requirement already satisfied: markupsafe==3.0.3 in C:\Users\LUIZ SEIXEIRO\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages (from -r requirements.txt (line 6)) (3.0.3)
+Requirement already satisfied: werkzeug==3.1.9 in C:\Users\LUIZ SEIXEIRO\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages (from -r requirements.txt (line 7)) (3.1.9)
+Requirement already satisfied: colorama in C:\Users\LUIZ SEIXEIRO\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages (from click==8.4.2->-r requirements.txt (line 3)) (0.4.6)
+PS H:\Cockpit_GTI>
+
+
+9. Iniciar o Servidor Flask
+PS H:\Cockpit_GTI> python main.py
+C:\Users\LUIZ SEIXEIRO\AppData\Local\Python\pythoncore-3.14-64\python.exe: can't open file 'H:\\Cockpit_GTI\\main.py': [Errno 2] No such file or directory
+PS H:\Cockpit_GTI>

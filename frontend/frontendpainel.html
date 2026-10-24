@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cockpit SP-Águas</title>
+    <link rel="stylesheet" href="/static/estilo_spaguas.css">
+</head>
+<body>
+    <nav class="sidebar">
+        <div class="logo">Cockpit GTI</div>
+        <ul>
+            <li><a href="#" onclick="carregarAba('dashboards')">📊 Dashboards</a></li>
+            <li><a href="#" onclick="carregarAba('openproject')">🏗️ OpenProject</a></li>
+            <li><a href="#" onclick="carregarAba('glpi')">🎫 Gestão GLPI</a></li>
+        </ul>
+    </nav>
+    <main id="conteudo-principal">
+        <h2>Bem-vindo ao Cockpit SP-Águas</h2>
+        <p>Selecione uma aba no menu lateral para iniciar.</p>
+    </main>
+
+    <script src="/static/abas/00_roteador_abas.js"></script>
+</body>
+</html>
