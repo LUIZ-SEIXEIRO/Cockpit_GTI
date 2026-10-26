@@ -1,26 +1,42 @@
 import os
-from sqlalchemy import create_engine
-from sqlalchemy.orm import sessionmaker, declarative_base
+from pathlib import Path
+
 from dotenv import load_dotenv
+from sqlalchemy import create_engine, text
+from sqlalchemy.engine import URL
+from sqlalchemy.orm import declarative_base, sessionmaker
 
-load_dotenv(dotenv_path="../.env")
+# Uso local: carrega o .env da raiz sem sobrescrever variaveis ja injetadas
+# (no Docker, o docker-compose.yml injeta as variaveis).
+load_dotenv(Path(__file__).resolve().parent.parent / ".env", override=False)
 
-MYSQL_USER = os.getenv("MYSQL_USER", "spaguas_user")
-MYSQL_PASSWORD = os.getenv("MYSQL_PASSWORD", "spaguas_pass_2026")
-# O host deve corresponder ao nome do serviço/contêiner no docker-compose
-MYSQL_HOST = os.getenv("MYSQL_HOST", "spaguas-mariadb") 
-MYSQL_PORT = os.getenv("MYSQL_PORT", "3306")
-MYSQL_DATABASE = os.getenv("MYSQL_DATABASE", "cockpit_spaguas")
 
-SQLALCHEMY_DATABASE_URL = f"mysql+mysqldb://{MYSQL_USER}:{MYSQL_PASSWORD}@{MYSQL_HOST}:{MYSQL_PORT}/{MYSQL_DATABASE}"
+def _required(name: str) -> str:
+    value = os.getenv(name)
+    if not value:
+        raise RuntimeError(f"A variavel de ambiente {name} e obrigatoria.")
+    return value
 
-try:
-    engine = create_engine(SQLALCHEMY_DATABASE_URL, pool_pre_ping=True)
-    SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
-    Base = declarative_base()
-    print("✅ Conexão com MariaDB orquestrada com sucesso.")
-except Exception as e:
-    print(f"❌ Erro ao conectar no MariaDB: {e}")
+
+DATABASE_URL = URL.create(
+    drivername="mysql+pymysql",
+    username=_required("DB_USER"),
+    password=_required("DB_PASSWORD"),
+    host=os.getenv("DB_HOST", "db"),
+    port=int(os.getenv("DB_PORT", "3306")),
+    database=_required("DB_NAME"),
+)
+
+engine = create_engine(DATABASE_URL, pool_pre_ping=True, pool_recycle=3600)
+SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
+Base = declarative_base()
+
+
+def check_database_connection() -> None:
+    """Executa um SELECT 1; levanta excecao se o banco estiver inacessivel."""
+    with engine.connect() as connection:
+        connection.execute(text("SELECT 1"))
+
 
 def get_db():
     db = SessionLocal()
