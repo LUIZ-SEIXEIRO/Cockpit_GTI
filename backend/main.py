@@ -1,7 +1,13 @@
-﻿from fastapi import FastAPI
+import logging
+
+from fastapi import FastAPI, HTTPException
 from fastapi.staticfiles import StaticFiles
 from fastapi.responses import FileResponse
 import os
+
+from backenddatabase_mariadb import check_database_connection
+
+logger = logging.getLogger(__name__)
 
 app = FastAPI(title="SP Águas - Cockpit de Gestão")
 
@@ -20,3 +26,14 @@ async def serve_painel():
 async def health_check():
     """Rota simples para verificar se o backend está online"""
     return {"status": "online", "service": "FastAPI SP-Águas"}
+
+
+@app.get("/api/health/db")
+def database_health_check():
+    """Verifica se o backend consegue executar SELECT 1 no MariaDB"""
+    try:
+        check_database_connection()
+    except Exception:
+        logger.exception("Falha na verificação de saúde do banco de dados")
+        raise HTTPException(status_code=503, detail="Banco de dados indisponível")
+    return {"status": "online", "database": "connected"}
