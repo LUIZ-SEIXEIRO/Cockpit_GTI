@@ -18,6 +18,8 @@ Este é um exemplo básico de um dashboard visualizado usando HTML, CSS e JavaSc
 3. Suba: `docker compose up --build -d` (o backend aguarda o MariaDB ficar saudável).
 4. Verifique: `GET http://localhost:8000/api/health` (backend) e `GET http://localhost:8000/api/health/db` (executa `SELECT 1`; retorna 503 genérico em caso de falha).
 
+A rota `GET /api/glpi/chamados` consulta chamados não excluídos do GLPI e retorna os dados resumidos usados no dashboard. Aceita `limit` entre 1 e 200 (padrão: 50); não retorna o conteúdo nem dados do solicitante.
+
 Atenção: um volume MariaDB já inicializado (`volumes_docker/mariadb_3306`) mantém as credenciais originais; alterar o `.env` não as modifica. Não apague o volume sem backup.
 
 Testes: `cd backend && pip install -r requirements.txt pytest && python -m pytest tests`
