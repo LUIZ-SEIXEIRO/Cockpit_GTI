@@ -21,3 +21,11 @@ Este é um exemplo básico de um dashboard visualizado usando HTML, CSS e JavaSc
 Atenção: um volume MariaDB já inicializado (`volumes_docker/mariadb_3306`) mantém as credenciais originais; alterar o `.env` não as modifica. Não apague o volume sem backup.
 
 Testes: `cd backend && pip install -r requirements.txt pytest && python -m pytest tests`
+
+
+## GLPI oficial x GLPI local
+
+- **GLPI oficial (produção) = somente leitura**: usado apenas para sincronizar/consultar chamados. Configure `GLPI_PROD_*` com tokens de um usuário de perfil somente leitura; o cliente (`backend/glpi_clients.py`, `GlpiProdReadOnlyClient`) só expõe `GET`.
+- **GLPI local = gravações do Cockpit** (tarefas, cadernos, auditorias): configure `GLPI_LOCAL_*` com credenciais distintas. `get_write_client()` retorna somente o cliente local e nunca faz fallback para produção.
+- Copie `.env.example` para `.env` (ignorado pelo git) e preencha os valores; nunca versione segredos. O `.env.example` não é barreira de segurança: a proteção real são credenciais separadas e permissão de leitura no GLPI oficial.
+- Ainda não existe instância GLPI local no Compose nem endpoints de escrita; ficam para as Sprints 2/3.
