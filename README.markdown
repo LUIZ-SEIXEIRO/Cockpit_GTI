@@ -137,6 +137,47 @@ temporário e isolado (`glpi-local` e `glpi-db` `healthy`; `http://localhost:808
 respondeu HTTP 200); os volumes temporários foram descartados. A stack completa
 com o `.env` e os volumes do ambiente de destino não foi validada.
 
+## Provisionar projeto da Mesa no GLPI local (opcional)
+
+`scripts/Provision-GlpiLocalMesa.ps1` (PowerShell 7+) cria no **GLPI local**
+(`http://localhost:8088`, fixo e não configurável; nunca produção) o projeto
+`Cockpit GTI — Mesa de Trabalho` e, se você fornecer um JSON, tarefas de projeto.
+Ele provisiona apenas objetos do GLPI local: **não habilita o CRUD da Mesa nem a
+integra** — isso depende de autenticação de usuário do Cockpit e autorização por
+projeto, ainda não implementadas.
+
+**Fluxo OAuth.** `html/resources/api_doc.MD` ("Authentication") documenta os grants
+*Password* (recomendado para scripts) e *Authorization Code*; `client_credentials`
+só vale para o escopo `inventory`. O script usa *Password* com escopo `api` em
+`POST /api.php/token`, e `ProjectController.php` define `POST /Project` e
+`POST /Project/Task` em `/api.php/v2`. Não foi feita nenhuma chamada de rede real
+ao escrever o script; valide-o no seu ambiente.
+
+**Pré-requisitos**
+1. `glpi-local` e `glpi-db` `healthy`, e backup feito (seção GLPI local).
+2. Em *Configurar > Clientes OAuth* do GLPI local, um cliente com grant *Password* e escopo `api`.
+3. Uma conta técnica dedicada (não administradora) com perfil de permissões mínimas:
+   criar/ler projetos e tarefas na entidade alvo.
+4. Uma entidade existente; informe seu ID numérico.
+
+**Uso.** Segredos são pedidos por prompt seguro (`Read-Host -AsSecureString`);
+nunca os passe na linha de comando nem os cole em chat. `.env` não é lido.
+
+```powershell
+# Preview (padrão): só leituras; nada é criado
+pwsh ./scripts/Provision-GlpiLocalMesa.ps1 -EntityId 0
+
+# Apply: exige digitar o ID da entidade e CONFIRMAR
+pwsh ./scripts/Provision-GlpiLocalMesa.ps1 -EntityId 0 -Apply
+```
+
+`-TasksFile tarefas.json` (opcional) recebe um array `[{"name": "...", "comment": "..."}]`
+(nenhum dado de demonstração é embarcado). Idempotência: projeto de mesmo nome na
+entidade não é duplicado, tarefas de mesmo nome no projeto são ignoradas e mais de
+um projeto igual interrompe a execução. A saída mostra apenas IDs, status HTTP e contagens.
+
+**Testes (Pester 5)**: `pwsh -c "Invoke-Pester scripts/tests"`, com HTTP simulado.
+
 ## Sprint 3 — complemento do PR #7 (WIP mesclado)
 
 O PR #7 foi mesclado com título e escopo WIP; sua mesclagem não implementou CRUD
