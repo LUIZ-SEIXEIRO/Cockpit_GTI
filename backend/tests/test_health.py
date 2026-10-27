@@ -19,6 +19,19 @@ def test_health():
     assert r.json()["status"] == "online"
 
 
+def test_fastapi_is_the_compose_runtime():
+    from fastapi import FastAPI
+
+    repository_root = Path(__file__).resolve().parents[2]
+    compose = (repository_root / "docker-compose.yml").read_text(encoding="utf-8")
+    dockerfile = (repository_root / "backend" / "Dockerfile").read_text(encoding="utf-8")
+
+    assert isinstance(main.app, FastAPI)
+    assert 'context: ./backend' in compose
+    assert 'CMD ["uvicorn", "main:app",' in dockerfile
+    assert not (repository_root / "main.py").exists()
+
+
 def test_db_health_ok():
     with patch.object(main, "check_database_connection"):
         r = client.get("/api/health/db")
