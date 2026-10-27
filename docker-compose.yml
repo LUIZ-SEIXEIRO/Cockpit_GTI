@@ -32,13 +32,84 @@ services:
       DB_NAME: ${DB_NAME:?Defina DB_NAME no .env}
       DB_USER: ${DB_USER:?Defina DB_USER no .env}
       DB_PASSWORD: ${DB_PASSWORD:?Defina DB_PASSWORD no .env}
+      GLPI_PROD_BASE_URL: ${GLPI_PROD_BASE_URL:-}
+      GLPI_PROD_APP_TOKEN: ${GLPI_PROD_APP_TOKEN:-}
+      GLPI_PROD_USER_TOKEN: ${GLPI_PROD_USER_TOKEN:-}
+      GLPI_LOCAL_BASE_URL: ${GLPI_LOCAL_BASE_URL:-http://glpi-local/apirest.php}
+      GLPI_LOCAL_APP_TOKEN: ${GLPI_LOCAL_APP_TOKEN:-}
+      GLPI_LOCAL_USER_TOKEN: ${GLPI_LOCAL_USER_TOKEN:-}
     volumes:
       - ./backend:/app
       - ./frontend:/frontend
+    networks:
+      - default
+      - glpi-local-api
     depends_on:
       db:
         condition: service_healthy
 
+  glpi-local-db:
+    image: mariadb:10.11
+    restart: unless-stopped
+    profiles:
+      - glpi-local
+    environment:
+      MARIADB_ROOT_PASSWORD: ${GLPI_LOCAL_DB_ROOT_PASSWORD:-}
+      MARIADB_DATABASE: ${GLPI_LOCAL_DB_NAME:-glpi_local}
+      MARIADB_USER: ${GLPI_LOCAL_DB_USER:-glpi_local}
+      MARIADB_PASSWORD: ${GLPI_LOCAL_DB_PASSWORD:-}
+    volumes:
+      - glpi_local_db_data:/var/lib/mysql
+    networks:
+      - glpi-local-db
+    healthcheck:
+      test: ["CMD", "healthcheck.sh", "--connect", "--innodb_initialized"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 30s
+
+  glpi-local-app:
+    image: glpi/glpi:11.0.7
+    restart: unless-stopped
+    profiles:
+      - glpi-local
+    environment:
+      GLPI_DB_HOST: glpi-local-db
+      GLPI_DB_PORT: "3306"
+      GLPI_DB_NAME: ${GLPI_LOCAL_DB_NAME:-glpi_local}
+      GLPI_DB_USER: ${GLPI_LOCAL_DB_USER:-glpi_local}
+      GLPI_DB_PASSWORD: ${GLPI_LOCAL_DB_PASSWORD:-}
+      GLPI_CRONTAB_ENABLED: "0"
+    volumes:
+      - glpi_local_data:/var/glpi
+    ports:
+      - "127.0.0.1:${GLPI_LOCAL_PORT:-8081}:80"
+    networks:
+      glpi-local-api:
+        aliases:
+          - glpi-local
+      glpi-local-db:
+    depends_on:
+      glpi-local-db:
+        condition: service_healthy
+    healthcheck:
+      test:
+        - CMD
+        - php
+        - -r
+        - "$$client = curl_init('http://127.0.0.1/apirest.php/initSession'); curl_setopt_array($$client, [CURLOPT_RETURNTRANSFER => true, CURLOPT_TIMEOUT => 4]); curl_exec($$client); $$status = curl_getinfo($$client, CURLINFO_HTTP_CODE); exit($$status >= 200 && $$status < 500 ? 0 : 1);"
+      interval: 10s
+      timeout: 5s
+      retries: 12
+      start_period: 60s
+
 volumes:
   mariadb_3306:
     driver: local
+  glpi_local_db_data:
+  glpi_local_data:
+
+networks:
+  glpi-local-api:
+  glpi-local-db:
