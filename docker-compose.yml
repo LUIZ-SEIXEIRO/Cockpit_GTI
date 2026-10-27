@@ -39,6 +39,52 @@ services:
       db:
         condition: service_healthy
 
+  glpi-db:
+    image: mariadb:10.11
+    container_name: cockpit-glpi-mariadb
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: ${GLPI_LOCAL_DB_ROOT_PASSWORD:?Defina GLPI_LOCAL_DB_ROOT_PASSWORD no .env}
+      MYSQL_DATABASE: ${GLPI_LOCAL_DB_NAME:?Defina GLPI_LOCAL_DB_NAME no .env}
+      MYSQL_USER: ${GLPI_LOCAL_DB_USER:?Defina GLPI_LOCAL_DB_USER no .env}
+      MYSQL_PASSWORD: ${GLPI_LOCAL_DB_PASSWORD:?Defina GLPI_LOCAL_DB_PASSWORD no .env}
+    volumes:
+      - glpi_local_db:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "healthcheck.sh", "--connect", "--innodb_initialized"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 30s
+
+  glpi-local:
+    image: ghcr.io/glpi-project/glpi:12.0.0
+    container_name: cockpit-glpi-local
+    restart: unless-stopped
+    ports:
+      - "8088:80"
+    environment:
+      GLPI_DB_HOST: glpi-db
+      GLPI_DB_PORT: "3306"
+      GLPI_DB_NAME: ${GLPI_LOCAL_DB_NAME:?Defina GLPI_LOCAL_DB_NAME no .env}
+      GLPI_DB_USER: ${GLPI_LOCAL_DB_USER:?Defina GLPI_LOCAL_DB_USER no .env}
+      GLPI_DB_PASSWORD: ${GLPI_LOCAL_DB_PASSWORD:?Defina GLPI_LOCAL_DB_PASSWORD no .env}
+    volumes:
+      - glpi_local_data:/var/glpi
+    depends_on:
+      glpi-db:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD-SHELL", "curl -fsS -o /dev/null http://localhost/ || exit 1"]
+      interval: 15s
+      timeout: 10s
+      retries: 20
+      start_period: 180s
+
 volumes:
   mariadb_3306:
+    driver: local
+  glpi_local_db:
+    driver: local
+  glpi_local_data:
     driver: local
