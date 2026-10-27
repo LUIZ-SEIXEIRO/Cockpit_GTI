@@ -32,6 +32,9 @@ services:
       DB_NAME: ${DB_NAME:?Defina DB_NAME no .env}
       DB_USER: ${DB_USER:?Defina DB_USER no .env}
       DB_PASSWORD: ${DB_PASSWORD:?Defina DB_PASSWORD no .env}
+      GLPI_PROD_BASE_URL: ${GLPI_PROD_BASE_URL:-}
+      GLPI_PROD_APP_TOKEN: ${GLPI_PROD_APP_TOKEN:-}
+      GLPI_PROD_USER_TOKEN: ${GLPI_PROD_USER_TOKEN:-}
     volumes:
       - ./backend:/app
       - ./frontend:/frontend

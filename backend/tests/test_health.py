@@ -28,6 +28,8 @@ def test_fastapi_is_the_compose_runtime():
 
     assert isinstance(main.app, FastAPI)
     assert 'context: ./backend' in compose
+    for variable in ("GLPI_PROD_BASE_URL", "GLPI_PROD_APP_TOKEN", "GLPI_PROD_USER_TOKEN"):
+        assert f"{variable}: ${{{variable}:-}}" in compose
     assert 'CMD ["uvicorn", "main:app",' in dockerfile
     assert not (repository_root / "main.py").exists()
 

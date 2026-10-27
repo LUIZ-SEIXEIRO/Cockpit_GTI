@@ -5,7 +5,12 @@ from pathlib import Path
 import httpx
 from dotenv import load_dotenv
 
-from backend.glpi_clients import GlpiConfigError, GlpiProdReadOnlyClient, load_prod_config
+try:
+    from backend.glpi_clients import GlpiConfigError, GlpiProdReadOnlyClient, load_prod_config
+except ModuleNotFoundError as error:
+    if error.name != "backend":
+        raise
+    from glpi_clients import GlpiConfigError, GlpiProdReadOnlyClient, load_prod_config
 
 
 def run_smoke_check(client: GlpiProdReadOnlyClient) -> tuple[bool, str]:

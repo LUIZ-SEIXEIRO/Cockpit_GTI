@@ -134,6 +134,38 @@ de chamados ou dados pessoais. A confirmação `--confirm-prod-read` autoriza
 essas requisições ao GLPI oficial; execute apenas com autorização institucional.
 Sem a opção, o programa informa que não fez requisições.
 
+O Compose passa somente essas três variáveis GLPI para o serviço `backend`;
+valores ausentes permanecem vazios e não impedem a inicialização normal. Depois
+de iniciar a stack, o check pode ser executado dentro do contêiner:
+
+```sh
+docker compose exec backend python glpi_smoke_check.py --confirm-prod-read
+```
+
+Para separar problemas de DNS/TLS/rota antes da autenticação, compare o host e
+o contêiner real na rede/VPN necessária. Estes comandos não enviam credenciais,
+não seguem redirecionamentos e não exibem o destino:
+
+```sh
+python -c "import socket; print('DNS=ok' if socket.getaddrinfo('atendimento.spaguas.sp.gov.br', 443) else 'DNS=falhou')"
+python -c "import httpx; r=httpx.get('https://atendimento.spaguas.sp.gov.br/apirest.php/initSession', timeout=10, follow_redirects=False); print('HTTP=' + str(r.status_code))"
+docker compose exec backend python -c "import socket; print('DNS=ok' if socket.getaddrinfo('atendimento.spaguas.sp.gov.br', 443) else 'DNS=falhou')"
+docker compose exec backend python -c "import httpx; r=httpx.get('https://atendimento.spaguas.sp.gov.br/apirest.php/initSession', timeout=10, follow_redirects=False); print('HTTP=' + str(r.status_code))"
+```
+
+O `httpx` mantém a validação TLS padrão. `HTTP=000` não é status do servidor:
+indica que a conexão não produziu resposta HTTP; o comando pode encerrar com
+erro de DNS, conexão ou certificado. Em um `302`, classifique o destino somente
+localmente sem publicá-lo e peça ao administrador para identificar se o
+redirecionamento é do GLPI, proxy ou SSO.
+
+As variáveis do Compose ficam visíveis a usuários que podem inspecionar o
+contêiner. Restrinja o acesso ao host Docker e ao `.env`. Se a política
+operacional exigir segredo montado em arquivo em vez de variáveis de ambiente,
+adote Docker secrets em uma alteração própria; não passe o `.env` inteiro ao
+contêiner. Os nomes legados `GLPI_URL`, `GLPI_APP_TOKEN` e `GLPI_USER_TOKEN`
+não são consumidos pelo cliente.
+
 Os testes automatizados usam transporte HTTP mockado para comprovar método,
 host, cabeçalhos, limite e saída sanitizada; nenhuma requisição real foi feita
 nesta validação. A revisão do perfil e o smoke check ao vivo no GLPI
