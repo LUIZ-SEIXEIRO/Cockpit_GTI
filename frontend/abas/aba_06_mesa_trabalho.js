@@ -1,38 +1,63 @@
-﻿// H:\glpi-spaguas\frontend\abas\aba_06_mesa_trabalho.js
-
 window.initAba_mesa = async function() {
     console.log("🚀 Inicializando módulo Mesa de Trabalho Operacional (Cockpit)...");
 
     let MESA_DADOS = null;
+    let modo = "demonstracao";
+    let estadoApi = "API não conectada";
 
-    // 1. Busca ativa dos dados via FastAPI (Backend)
     try {
         const response = await fetch('/api/mesa/minhas-tarefas');
         if (response.ok) {
             const json = await response.json();
+            if (!json.dados
+                || !Array.isArray(json.dados.aprovacoes)
+                || !Array.isArray(json.dados.tarefas)
+                || !Array.isArray(json.dados.alertas)) {
+                throw new Error("Formato de resposta inválido");
+            }
             MESA_DADOS = json.dados;
+            modo = "persistido";
+            estadoApi = "API disponível";
         } else {
-            console.warn("⚠️ API da Mesa de Trabalho indisponível. Carregando dados de fallback para UI.");
-            MESA_DADOS = gerarDadosFallbackMesa(); 
+            estadoApi = `API indisponível (HTTP ${response.status})`;
         }
     } catch (error) {
-        console.error("❌ Erro na comunicação com o backend FastAPI:", error);
+        estadoApi = "API indisponível (erro de comunicação)";
+    }
+
+    if (!MESA_DADOS) {
         MESA_DADOS = gerarDadosFallbackMesa();
     }
 
-    renderizarMesaTrabalho(MESA_DADOS);
+    renderizarMesaTrabalho(MESA_DADOS, modo, estadoApi);
 };
 
-// 2. Motor de Renderização do Cockpit do Usuário
-function renderizarMesaTrabalho(dados) {
+function escapeHtml(valor) {
+    return String(valor ?? '').replace(/[&<>"']/g, caractere => ({
+        '&': '&amp;',
+        '<': '&lt;',
+        '>': '&gt;',
+        '"': '&quot;',
+        "'": '&#39;'
+    })[caractere]);
+}
+
+function renderizarMesaTrabalho(dados, modo, estadoApi) {
     const container = document.getElementById('conteudo-mesa');
     if (!container) {
         console.error("❌ Container 'conteudo-mesa' não encontrado no painel.html");
         return;
     }
 
-    // Grid principal: 2 colunas (Tarefas/Aprovações à esquerda, Alertas à direita)
-    let html = `<div style="display: grid; grid-template-columns: 2fr 1fr; gap: 20px;">`;
+    const estadoPersistencia = modo === "persistido"
+        ? "Tarefas persistidas no GLPI local."
+        : "Modo demonstração: estes dados de exemplo não são salvos.";
+    let html = `
+        <div role="status" style="padding: 12px; margin-bottom: 16px; border-radius: 6px; background: ${modo === "persistido" ? "#dcfce7" : "#fef3c7"}; color: #334155;">
+            <strong>${estadoPersistencia}</strong> ${escapeHtml(estadoApi)}
+        </div>
+        <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 20px;">
+    `;
 
     // COLUNA ESQUERDA: Tarefas e Aprovações
     html += `<div style="display: flex; flex-direction: column; gap: 20px;">`;
@@ -52,8 +77,8 @@ function renderizarMesaTrabalho(dados) {
             html += `
                 <div style="border: 1px solid #f87171; background: #fef2f2; border-radius: 6px; padding: 12px; display: flex; justify-content: space-between; align-items: center;">
                     <div>
-                        <div style="font-weight: bold; color: #991b1b; font-size: 0.95rem;">${aprov.titulo}</div>
-                        <div style="font-size: 0.8rem; color: #b91c1c; margin-top: 4px;">Origem: ${aprov.origem} | Prazo: ${aprov.prazo}</div>
+                        <div style="font-weight: bold; color: #991b1b; font-size: 0.95rem;">${escapeHtml(aprov.titulo)}</div>
+                        <div style="font-size: 0.8rem; color: #b91c1c; margin-top: 4px;">Origem: ${escapeHtml(aprov.origem)} | Prazo: ${escapeHtml(aprov.prazo)}</div>
                     </div>
                     <div style="display: flex; gap: 8px;">
                         <button style="background: #ef4444; color: white; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer; font-size: 0.8rem; font-weight: bold;">Analisar</button>
@@ -73,13 +98,16 @@ function renderizarMesaTrabalho(dados) {
             <div style="display: flex; flex-direction: column; gap: 10px;">
     `;
     dados.tarefas.forEach(tarefa => {
-        let corPrioridade = tarefa.prioridade === 'Alta' ? '#ea580c' : (tarefa.prioridade === 'Média' ? '#ca8a04' : '#16a34a');
+        const coresPrioridade = { Alta: '#ea580c', 'Média': '#ca8a04', Baixa: '#16a34a' };
+        const corPrioridade = Object.prototype.hasOwnProperty.call(coresPrioridade, tarefa.prioridade)
+            ? coresPrioridade[tarefa.prioridade]
+            : '#64748b';
         html += `
             <div style="border: 1px solid #e2e8f0; border-left: 4px solid ${corPrioridade}; background: #f8fafc; border-radius: 6px; padding: 12px; display: flex; justify-content: space-between; align-items: center;">
                 <div style="flex: 1;">
-                    <div style="font-weight: bold; color: #1e293b; font-size: 0.95rem;">${tarefa.titulo}</div>
+                    <div style="font-weight: bold; color: #1e293b; font-size: 0.95rem;">${escapeHtml(tarefa.titulo)}</div>
                     <div style="font-size: 0.8rem; color: #64748b; margin-top: 4px;">
-                        Status: <span style="font-weight: bold; color: #334155;">${tarefa.status}</span> | Sistema: ${tarefa.sistema}
+                        Status: <span style="font-weight: bold; color: #334155;">${escapeHtml(tarefa.status)}</span> | Sistema: ${escapeHtml(tarefa.sistema)}
                     </div>
                 </div>
                 <button style="background: white; border: 1px solid #cbd5e1; color: #334155; padding: 6px 12px; border-radius: 4px; cursor: pointer; font-size: 0.8rem;">
@@ -104,7 +132,7 @@ function renderizarMesaTrabalho(dados) {
     dados.alertas.forEach(alerta => {
         html += `
             <div style="padding: 10px; border-radius: 6px; background: #fffbeb; border: 1px solid #fef3c7; color: #92400e; font-size: 0.85rem;">
-                <strong>${alerta.data}:</strong> ${alerta.mensagem}
+                <strong>${escapeHtml(alerta.data)}:</strong> ${escapeHtml(alerta.mensagem)}
             </div>
         `;
     });

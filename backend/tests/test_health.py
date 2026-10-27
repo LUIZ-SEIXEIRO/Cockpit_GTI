@@ -19,6 +19,26 @@ def test_health():
     assert r.json()["status"] == "online"
 
 
+def test_mesa_persistence_fails_closed_without_auth_and_project_setup():
+    r = client.get("/api/mesa/minhas-tarefas")
+    assert r.status_code == 503
+    assert r.json() == {
+        "detail": "Persistência da Mesa indisponível: autenticação e projeto GLPI local não configurados."
+    }
+
+
+def test_mesa_script_matches_panel_and_router():
+    repository_root = Path(__file__).resolve().parents[2]
+    panel = (repository_root / "frontend" / "painel.html").read_text(encoding="utf-8")
+    mesa_script = repository_root / "frontend" / "abas" / "aba_06_mesa_trabalho.js"
+    router = (repository_root / "frontend" / "abas" / "00_roteador_abas.js").read_text(encoding="utf-8")
+
+    assert '<script src="/static/abas/aba_06_mesa_trabalho.js"></script>' in panel
+    assert mesa_script.is_file()
+    assert "window.initAba_mesa" in mesa_script.read_text(encoding="utf-8")
+    assert "const initFunctionName = 'initAba_' + tabId;" in router
+
+
 def test_fastapi_is_the_compose_runtime():
     from fastapi import FastAPI
 

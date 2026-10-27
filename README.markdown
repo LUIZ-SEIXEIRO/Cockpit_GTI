@@ -127,13 +127,100 @@ docker compose port glpi-local 80                     # 0.0.0.0:8088
 O serviço `glpi-local` só recebe variáveis `GLPI_DB_*` apontando para
 `glpi-db`; `GLPI_LOCAL_BASE_URL` deve apontar para ele (por exemplo
 `http://localhost:8088/apirest.php` fora do Docker) e `get_write_client()`
-rejeita a URL de produção. A escrita integrada continuará em sprint posterior.
+aceita somente `http://glpi-local/apirest.php` ou
+`http://localhost:8088/apirest.php`. A escrita integrada continuará em sprint
+posterior.
 
 **Validação:** testes Python (`11 passed`) e `docker compose config` com
 valores temporários passaram. O GLPI local foi iniciado em projeto Compose
 temporário e isolado (`glpi-local` e `glpi-db` `healthy`; `http://localhost:8088/`
 respondeu HTTP 200); os volumes temporários foram descartados. A stack completa
 com o `.env` e os volumes do ambiente de destino não foi validada.
+
+## Sprint 3 — complemento do PR #7 (WIP mesclado)
+
+O PR #7 foi mesclado com título e escopo WIP; sua mesclagem não implementou CRUD
+persistente para a Mesa. Esta entrega é complementar e registra a decisão
+técnica abaixo. **Não há CRUD nem persistência simulada**: até que os pré-requisitos
+sejam configurados, `GET /api/mesa/minhas-tarefas` responde HTTP 503 e a aba
+identifica seus exemplos como demonstração não persistida.
+
+### Decisão técnica e bloqueio
+
+O código versionado é GLPI 12.0.0. Ele possui uma API REST adequada a tarefas:
+`html/apirest.md` documenta criação por `POST /apirest.php/:itemtype/` e
+atualização por `PUT`/`PATCH /apirest.php/:itemtype/:id`; a API de alto nível
+`/api.php/v2` também documenta `ProjectTask` e OAuth2, recomendando Authorization
+Code para aplicações interativas (`html/resources/api_doc.MD` e
+`html/src/Glpi/Api/HL/Controller/ProjectController.php`).
+
+Isso não torna seguro habilitar a persistência nesta configuração:
+
+- `ProjectTask::prepareInputForAdd()` exige um `projects_id` real
+  (`html/src/ProjectTask.php`). Não há projeto local configurado para a Mesa;
+  não será criado um projeto fictício nem usada uma tarefa de Ticket/Change/
+  Problem como substituto.
+- A API documenta `ProjectTask` com projeto, estado, usuário e equipe, e aplica
+  condições de leitura ligadas ao usuário/projeto. Porém, `ProjectTask` não tem
+  um campo `is_private`; visibilidade depende das relações e permissões GLPI.
+  Projeto, entidade, responsáveis/equipe e direitos precisariam ser definidos
+  e verificados na instância local.
+- O FastAPI não possui autenticação de usuário. O `get_write_client()` atual usa
+  credenciais estáticas de API e não identifica o usuário do Cockpit; a API
+  OAuth2 interativa do GLPI ainda não está integrada. Expor escrita usando essa
+  identidade compartilhada permitiria que qualquer cliente autorizado a chamar
+  o FastAPI atuasse como a mesma conta. O Compose também não injeta tokens
+  `GLPI_LOCAL_*` no backend, e esta entrega deliberadamente não os injeta.
+- Não há configuração pós-bootstrap de cliente OAuth, projeto/IDs ou permissões
+  para essa funcionalidade. A Sprint 1 continua pendente e separada; nada aqui
+  depende de acesso ao GLPI institucional.
+
+**Próximo escopo recomendado:** provisionar no GLPI local um projeto real para
+essa finalidade e seus estados/equipe; configurar OAuth2 Authorization Code e
+uma sessão segura por usuário no Cockpit; validar no servidor a identidade e os
+direitos mínimos de leitura/criação/atualização para esse projeto; só então
+implementar e testar o fluxo usando exclusivamente o cliente local. Não usar
+credenciais de produção, não criar dados de exemplo no GLPI e não tratar o
+fallback visual como persistência.
+
+### Verificações reproduzíveis
+
+```sh
+python -m pytest -q backend/tests
+python -m compileall -q backend
+node --check frontend/abas/aba_06_mesa_trabalho.js
+```
+
+Para validar somente o Compose, use um arquivo temporário com valores fictícios
+para as variáveis obrigatórias de banco, sem iniciar serviços nem tocar volumes:
+
+```sh
+cat >/tmp/cockpit-compose-test.env <<'EOF'
+DB_ROOT_PASSWORD=test-only
+DB_NAME=cockpit_test
+DB_USER=cockpit_test
+DB_PASSWORD=test-only
+GLPI_LOCAL_DB_ROOT_PASSWORD=test-only
+GLPI_LOCAL_DB_NAME=glpi_test
+GLPI_LOCAL_DB_USER=glpi_test
+GLPI_LOCAL_DB_PASSWORD=test-only
+EOF
+docker compose --env-file /tmp/cockpit-compose-test.env config --quiet
+rm /tmp/cockpit-compose-test.env
+```
+
+Esse teste de configuração não inicia o GLPI nem usa o `.env`, tokens ou volumes
+do ambiente real. Nenhuma requisição ao GLPI oficial é necessária ou realizada.
+
+**Resultados desta entrega (2026-10-27):** `python -m pytest -q backend/tests`
+retornou **17 passed** (um aviso preexistente de depreciação Starlette/AnyIO);
+`python -m compileall -q backend`, `node --check` da aba Mesa e
+`docker compose config --quiet` com os valores temporários acima passaram. Um
+teste isolado da UI confirmou escape de conteúdo HTML hostil e os estados
+demonstração/HTTP 503. Os testes HTTP mockados confirmam POST/PUT somente para
+`glpi-local`, nunca para o host de produção. Nenhum contêiner foi iniciado e
+nenhuma configuração, credencial ou volume real foi acessado. Não há lint
+JavaScript configurado no repositório.
 
 ## Follow-up adiado da Sprint 1
 
