@@ -28,6 +28,15 @@ async def health_check():
     return {"status": "online", "service": "FastAPI SP-Águas"}
 
 
+@app.get("/api/mesa/minhas-tarefas")
+async def mesa_tasks_unavailable():
+    """Falha fechada enquanto não houver identidade e projeto GLPI configurados."""
+    raise HTTPException(
+        status_code=503,
+        detail="Persistência da Mesa indisponível: autenticação e projeto GLPI local não configurados.",
+    )
+
+
 @app.get("/api/health/db")
 def database_health_check():
     """Verifica se o backend consegue executar SELECT 1 no MariaDB"""

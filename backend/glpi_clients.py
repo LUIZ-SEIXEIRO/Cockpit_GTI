@@ -7,12 +7,17 @@ Nao ha fallback entre os dois ambientes.
 """
 import os
 from dataclasses import dataclass
+from urllib.parse import urlsplit
 
 import httpx
 
 PROD_PREFIX = "GLPI_PROD"
 LOCAL_PREFIX = "GLPI_LOCAL"
 _FIELDS = ("BASE_URL", "APP_TOKEN", "USER_TOKEN")
+_LOCAL_WRITE_URLS = {
+    "http://glpi-local/apirest.php",
+    "http://localhost:8088/apirest.php",
+}
 
 
 class GlpiConfigError(RuntimeError):
@@ -35,7 +40,23 @@ def _load(prefix: str, name: str) -> GlpiConfig:
     missing = [f"{prefix}_{f}" for f, v in values.items() if not v]
     if missing:
         raise GlpiConfigError(f"Configuracao GLPI {name} incompleta. Defina: {', '.join(missing)}")
-    return GlpiConfig(name, values["BASE_URL"].rstrip("/"), values["APP_TOKEN"], values["USER_TOKEN"])
+    base_url = values["BASE_URL"].rstrip("/")
+    try:
+        parsed_url = urlsplit(base_url)
+        valid_url = (
+            parsed_url.scheme in {"http", "https"}
+            and parsed_url.hostname is not None
+            and parsed_url.username is None
+            and parsed_url.password is None
+            and not parsed_url.query
+            and not parsed_url.fragment
+        )
+        parsed_url.port
+    except ValueError:
+        valid_url = False
+    if not valid_url:
+        raise GlpiConfigError(f"Configuracao GLPI {name} invalida: {prefix}_BASE_URL deve ser uma URL HTTP(S) absoluta.")
+    return GlpiConfig(name, base_url, values["APP_TOKEN"], values["USER_TOKEN"])
 
 
 def load_prod_config() -> GlpiConfig:
@@ -101,7 +122,6 @@ def get_read_client() -> GlpiProdReadOnlyClient:
 def get_write_client() -> GlpiLocalClient:
     """Retorna somente o cliente local; sem fallback para producao."""
     local = load_local_config()
-    prod_url = (os.getenv(f"{PROD_PREFIX}_BASE_URL") or "").strip().rstrip("/")
-    if prod_url and prod_url == local.base_url:
-        raise GlpiConfigError("GLPI_LOCAL_BASE_URL nao pode apontar para o GLPI de producao")
+    if local.base_url not in _LOCAL_WRITE_URLS:
+        raise GlpiConfigError("GLPI_LOCAL_BASE_URL deve apontar para uma URL local aprovada")
     return GlpiLocalClient(local)
