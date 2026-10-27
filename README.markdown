@@ -77,15 +77,93 @@ teste. Portanto, **não alterou nem validou o volume versionado**
 usuário. O Compose foi realmente iniciado neste ambiente; a validação com o
 `.env` e os dados persistentes do ambiente de destino continua pendente.
 
-## Pendências fora da Sprint 0
+## Isolamento GLPI e smoke check opcional
+
+O cliente oficial (`GLPI_PROD_*`) aceita somente `GET`; o cliente local
+(`GLPI_LOCAL_*`) é o único que expõe escrita. A escrita exige a configuração
+local completa e nunca recorre à oficial. Se nenhuma variável oficial estiver
+definida, a configuração local continua independente; se houver configuração
+oficial parcial, URL equivalente à local ou token repetido entre ambientes, a
+criação do cliente de escrita falha. URLs oficiais devem usar HTTPS, exceto
+hosts loopback usados em testes locais.
+
+### Perfil de leitura no GLPI oficial
+
+Um administrador do GLPI institucional deve criar um usuário de integração
+dedicado, sem usar uma conta pessoal ou de administração, e atribuir somente um
+perfil de menor privilégio que permita a leitura necessária de chamados. No
+perfil, confirme que criar, atualizar e excluir chamados e administrar usuários,
+perfis, configurações ou a API não estão autorizados. Restrinja também as
+entidades e o acesso recursivo ao mínimo necessário; remova perfis e direitos
+adicionais herdados ou atribuídos ao usuário.
+
+Configure um cliente de API próprio para essa integração, habilite a API e
+restrinja o cliente por origem/IP quando a instalação oferecer essa opção.
+Guarde o App-Token e o User-Token apenas no `.env` local, sem copiá-los para
+issues, logs, screenshots ou arquivos versionados. O administrador deve
+confirmar no servidor:
+
+- o usuário de integração e os perfis efetivamente atribuídos/ativos;
+- os direitos de leitura e a ausência de direitos de criar, atualizar e excluir,
+  inclusive para os tipos de objeto abrangidos pela integração;
+- os limites de entidade e acesso recursivo;
+- o estado e as restrições do cliente de API, além dos registros de autenticação
+  que identifiquem a conta usada no smoke check.
+
+Essas evidências administrativas são necessárias para confirmar a autorização
+de leitura mínima. Uma chamada `GET` bem-sucedida comprova apenas conectividade,
+autenticação e acesso de leitura ao recurso consultado; **não prova que o
+usuário não possui permissões de escrita**. Não faça chamadas de escrita para
+testar permissões no GLPI oficial.
+
+### Executar o smoke check
+
+Na raiz do repositório, configure `GLPI_PROD_BASE_URL`,
+`GLPI_PROD_APP_TOKEN` e `GLPI_PROD_USER_TOKEN` no `.env` local. O smoke check
+carrega esse arquivo automaticamente; não exige o MariaDB nem o GLPI local.
+Ele não faz nenhuma requisição sem a confirmação explícita abaixo:
+
+```sh
+python -m backend.glpi_smoke_check --confirm-prod-read
+```
+
+O comando usa timeout de 5 segundos, autentica com `GET /initSession`, consulta
+no máximo um item (`GET /Ticket/?range=0-0`) e encerra a sessão com `GET
+/killSession`. Só informa o status/conectividade e nunca exibe tokens, conteúdo
+de chamados ou dados pessoais. A confirmação `--confirm-prod-read` autoriza
+essas requisições ao GLPI oficial; execute apenas com autorização institucional.
+Sem a opção, o programa informa que não fez requisições.
+
+Os testes automatizados usam transporte HTTP mockado para comprovar método,
+host, cabeçalhos, limite e saída sanitizada; nenhuma requisição real foi feita
+nesta validação. A revisão do perfil e o smoke check ao vivo no GLPI
+institucional permanecem **pendentes do operador**, pois este ambiente não tem
+credenciais nem autorização para acessar o sistema.
+
+### Validação desta etapa
+
+| Comando | Resultado |
+|---|---|
+| `python -m pytest -q backend/tests/test_glpi_clients.py` | **19 passed** |
+| `python -m pytest -q backend/tests` | **23 passed**, 1 aviso de depreciação Starlette/AnyIO |
+| `python -m compileall -q backend` | Concluído |
+| `python -m backend.glpi_smoke_check` | Nenhuma requisição; saída de opt-in e código 2 |
+
+As requisições cobertas pelos testes foram capturadas por transporte HTTP
+mockado. Nenhum chamado foi consultado e nenhuma chamada foi feita ao GLPI
+institucional. A configuração de perfil no servidor e a execução opt-in ao vivo
+não foram validadas neste ambiente.
+
+## Pendências de implementação após esta etapa
 
 - Não há endpoint FastAPI `/api/glpi/chamados`. O código Flask removido apontava
   para `backend.sistemas_internos.sis_01_glpi_8088_prod`, que não existe no
   repositório; o conector de produção e sua integração continuam pendentes e
   não foram simulados.
-- `backend/glpi_clients.py` contém clientes separados para GLPI de produção
-  (somente leitura) e local, mas não há GLPI local no Compose nem endpoints de
-  gravação do Cockpit.
+- `backend/glpi_clients.py` valida a separação e limita produção a GET, mas não
+  há GLPI local no Compose nem endpoints de gravação do Cockpit. A validação
+  administrativa do perfil oficial e o smoke check ao vivo continuam pendentes
+  do operador.
 - OpenProject, New API, sincronização real e integração das telas permanecem
   fora do escopo desta validação.
 
