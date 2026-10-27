@@ -44,6 +44,49 @@ MariaDB já inicializado mantém as credenciais originais; alterar `.env` não
 altera usuários existentes. Faça backup antes de qualquer operação nos dados e
 não apague esse diretório para “corrigir” credenciais.
 
+## GLPI local (Sprint 2 — infraestrutura)
+
+A primeira integração de persistência planejada para uma sprint posterior é
+tarefa da Mesa de Trabalho. Cadernos, auditorias, endpoints e gravações do
+Cockpit continuam fora desta etapa. O cliente oficial permanece somente leitura.
+
+O GLPI local é opcional e usa a imagem oficial `glpi/glpi:11.0.7` com banco
+MariaDB 10.11 dedicado. Os serviços só iniciam com o profile `glpi-local`; o
+banco do Cockpit e o diretório `volumes_docker/mariadb_3306` não são reutilizados.
+O banco GLPI não publica porta no host, e sua rede não é compartilhada com o
+backend. O backend só compartilha a rede da API com o serviço GLPI. A interface
+web é publicada somente em `127.0.0.1:8081` por padrão.
+
+Antes de iniciar o profile, preencha no `.env` as variáveis
+`GLPI_LOCAL_DB_ROOT_PASSWORD` e `GLPI_LOCAL_DB_PASSWORD` com segredos locais
+fortes e exclusivos. Os nomes de banco e usuário locais têm valores padrão no
+`.env.example`. Valores de senha vazios não permitem a inicialização segura do
+banco. Não reutilize credenciais do GLPI institucional.
+
+```sh
+docker compose config --quiet
+docker compose --profile glpi-local up --build -d
+docker compose --profile glpi-local ps
+curl -sS -o /dev/null -w 'HTTP=%{http_code}\n' http://127.0.0.1:8081/
+```
+
+O MariaDB local precisa ficar saudável antes de o GLPI iniciar. Abra
+`http://127.0.0.1:8081` para concluir a configuração da instância, troque
+credenciais de contas iniciais, habilite a API REST local e crie um cliente e
+usuário de API dedicados. Depois de obter tokens **da instância local**, defina
+`GLPI_LOCAL_APP_TOKEN` e `GLPI_LOCAL_USER_TOKEN` no `.env`; o Compose passa essas
+variáveis e `GLPI_LOCAL_BASE_URL` somente ao backend. O endereço padrão visto
+pelo backend é `http://glpi-local/apirest.php`. As gravações do Cockpit ainda
+não estão implementadas.
+
+O volume `glpi_local_db_data` mantém o banco e `glpi_local_data` mantém arquivos
+e configuração do GLPI. Backupe ambos de forma consistente, teste a restauração
+em volumes isolados e nunca remova volumes para resolver falhas de inicialização.
+Para atualizar a versão, revise as notas da versão oficial, faça e verifique
+backup do banco e dos arquivos, altere o tag fixado em `docker-compose.yml`,
+baixe a imagem e aplique a migração de banco conforme o procedimento oficial do
+GLPI. Não use `latest` nem atualize automaticamente sem backup.
+
 ## Testes automatizados
 
 Na raiz do repositório, instale as dependências do backend e o pytest:
@@ -192,10 +235,10 @@ não foram validadas neste ambiente.
   para `backend.sistemas_internos.sis_01_glpi_8088_prod`, que não existe no
   repositório; o conector de produção e sua integração continuam pendentes e
   não foram simulados.
-- `backend/glpi_clients.py` valida a separação e limita produção a GET, mas não
-  há GLPI local no Compose nem endpoints de gravação do Cockpit. A validação
-  administrativa do perfil oficial e o smoke check ao vivo continuam pendentes
-  do operador.
+- `backend/glpi_clients.py` valida a separação e limita produção a GET. O GLPI
+  local agora pode ser iniciado pelo profile opcional `glpi-local`, mas ainda
+  não há endpoints de gravação do Cockpit. A validação administrativa do perfil
+  oficial e o smoke check ao vivo continuam pendentes do operador.
 - OpenProject, New API, sincronização real e integração das telas permanecem
   fora do escopo desta validação.
 

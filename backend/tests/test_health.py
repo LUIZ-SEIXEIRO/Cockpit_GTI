@@ -34,6 +34,30 @@ def test_fastapi_is_the_compose_runtime():
     assert not (repository_root / "main.py").exists()
 
 
+def test_optional_glpi_local_compose_is_isolated():
+    repository_root = Path(__file__).resolve().parents[2]
+    compose = (repository_root / "docker-compose.yml").read_text(encoding="utf-8")
+
+    assert "image: glpi/glpi:11.0.7" in compose
+    assert "image: mariadb:10.11" in compose
+    assert "glpi-local-db:" in compose
+    assert "profiles:\n      - glpi-local" in compose
+    assert '"127.0.0.1:${GLPI_LOCAL_PORT:-8081}:80"' in compose
+    assert "glpi_local_db_data:/var/lib/mysql" in compose
+    assert "glpi_local_data:/var/glpi" in compose
+    assert "GLPI_LOCAL_BASE_URL: ${GLPI_LOCAL_BASE_URL:-http://glpi-local/apirest.php}" in compose
+    assert "GLPI_LOCAL_APP_TOKEN: ${GLPI_LOCAL_APP_TOKEN:-}" in compose
+    assert "GLPI_LOCAL_USER_TOKEN: ${GLPI_LOCAL_USER_TOKEN:-}" in compose
+    backend_service = compose.split("  backend:\n", 1)[1].split("  glpi-local-db:\n", 1)[0]
+    database_service = compose.split("  glpi-local-db:\n", 1)[1].split("  glpi-local:\n", 1)[0]
+    glpi_service = compose.split("  glpi-local:\n", 1)[1].split("\nvolumes:\n", 1)[0]
+    assert "- glpi-local-api" in backend_service
+    assert "- glpi-local-db" not in backend_service
+    assert "- glpi-local-db" in database_service
+    assert "glpi-local-api:" in glpi_service
+    assert "glpi-local-db:" in glpi_service
+
+
 def test_db_health_ok():
     with patch.object(main, "check_database_connection"):
         r = client.get("/api/health/db")
