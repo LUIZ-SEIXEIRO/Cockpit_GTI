@@ -72,12 +72,32 @@ curl -sS -o /dev/null -w 'HTTP=%{http_code}\n' http://127.0.0.1:8081/
 
 O MariaDB local precisa ficar saudável antes de o GLPI iniciar. Abra
 `http://127.0.0.1:8081` para concluir a configuração da instância, troque
-credenciais de contas iniciais, habilite a API REST local e crie um cliente e
+imediatamente as credenciais iniciais conhecidas da imagem (`glpi`/`glpi`),
+habilite a API REST local e crie um cliente e
 usuário de API dedicados. Depois de obter tokens **da instância local**, defina
 `GLPI_LOCAL_APP_TOKEN` e `GLPI_LOCAL_USER_TOKEN` no `.env`; o Compose passa essas
 variáveis e `GLPI_LOCAL_BASE_URL` somente ao backend. O endereço padrão visto
 pelo backend é `http://glpi-local/apirest.php`. As gravações do Cockpit ainda
 não estão implementadas.
+
+O cron interno do GLPI está desabilitado nesta instância inicial. Ative e
+configure tarefas agendadas somente quando houver necessidade operacional
+definida; nenhuma sincronização de produção é configurada aqui.
+
+O healthcheck do GLPI faz um `GET` local sem credenciais e considera saudável
+uma resposta HTTP abaixo de 500. Isso indica que o endpoint HTTP responde, não
+que a API esteja habilitada, que a autenticação funcione ou que o perfil tenha
+permissões específicas. Para verificar a rota a partir da rede do backend sem
+credenciais:
+
+```sh
+docker compose exec backend python -c "import httpx; r=httpx.get('http://glpi-local/apirest.php/initSession', timeout=10, follow_redirects=False); print('HTTP=' + str(r.status_code))"
+```
+
+Uma resposta 4xx sem autenticação pode ser esperada; não compartilhe corpo,
+headers ou tokens. A publicação em `127.0.0.1` deve ser confirmada no host de
+implantação, pois o ambiente Docker de validação pode não permitir acesso do
+host aos ports publicados.
 
 O volume `glpi_local_db_data` mantém o banco e `glpi_local_data` mantém arquivos
 e configuração do GLPI. Backupe ambos de forma consistente, teste a restauração
@@ -86,6 +106,23 @@ Para atualizar a versão, revise as notas da versão oficial, faça e verifique
 backup do banco e dos arquivos, altere o tag fixado em `docker-compose.yml`,
 baixe a imagem e aplique a migração de banco conforme o procedimento oficial do
 GLPI. Não use `latest` nem atualize automaticamente sem backup.
+
+### Validação da infraestrutura local
+
+| Comando/verificação | Resultado |
+|---|---|
+| `python -m pytest -q backend/tests` | **24 passed**, 1 aviso de depreciação Starlette/AnyIO |
+| `python -m compileall -q backend` e `git diff --check` | Concluídos |
+| `docker compose --profile glpi-local config --quiet` | Passou com valores descartáveis |
+| Inicialização isolada de `glpi-local-db` e `glpi-local-app` | MariaDB saudável; instalação GLPI local concluiu |
+| Diagnóstico na rede API usando a imagem do backend | Alias `glpi-local` resolveu; página respondeu HTTP 200; `initSession` sem credenciais respondeu HTTP 400 |
+| Reinício ordenado de GLPI e MariaDB | Saúde recuperada; marcador de arquivo e tabela de teste persistiram nos volumes |
+| Porta publicada acessada do host do agente | Não validada: o sandbox não conectou ao port publicado; confirme no host Docker de destino |
+
+O teste de inicialização usou somente credenciais descartáveis e volumes com
+prefixo de projeto temporário; a stack e os volumes de teste foram removidos.
+Nenhuma chamada foi feita ao GLPI institucional e nenhuma credencial real foi
+usada.
 
 ## Testes automatizados
 

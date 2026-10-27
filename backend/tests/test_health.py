@@ -40,6 +40,8 @@ def test_optional_glpi_local_compose_is_isolated():
 
     assert "image: glpi/glpi:11.0.7" in compose
     assert "image: mariadb:10.11" in compose
+    assert 'GLPI_CRONTAB_ENABLED: "0"' in compose
+    assert "apirest.php/initSession" in compose
     assert "glpi-local-db:" in compose
     assert "profiles:\n      - glpi-local" in compose
     assert '"127.0.0.1:${GLPI_LOCAL_PORT:-8081}:80"' in compose
@@ -49,8 +51,8 @@ def test_optional_glpi_local_compose_is_isolated():
     assert "GLPI_LOCAL_APP_TOKEN: ${GLPI_LOCAL_APP_TOKEN:-}" in compose
     assert "GLPI_LOCAL_USER_TOKEN: ${GLPI_LOCAL_USER_TOKEN:-}" in compose
     backend_service = compose.split("  backend:\n", 1)[1].split("  glpi-local-db:\n", 1)[0]
-    database_service = compose.split("  glpi-local-db:\n", 1)[1].split("  glpi-local:\n", 1)[0]
-    glpi_service = compose.split("  glpi-local:\n", 1)[1].split("\nvolumes:\n", 1)[0]
+    database_service = compose.split("  glpi-local-db:\n", 1)[1].split("  glpi-local-app:\n", 1)[0]
+    glpi_service = compose.split("  glpi-local-app:\n", 1)[1].split("\nvolumes:\n", 1)[0]
     assert "- glpi-local-api" in backend_service
     assert "- glpi-local-db" not in backend_service
     assert "- glpi-local-db" in database_service

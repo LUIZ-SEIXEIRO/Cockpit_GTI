@@ -69,7 +69,7 @@ services:
       retries: 10
       start_period: 30s
 
-  glpi-local:
+  glpi-local-app:
     image: glpi/glpi:11.0.7
     restart: unless-stopped
     profiles:
@@ -80,6 +80,7 @@ services:
       GLPI_DB_NAME: ${GLPI_LOCAL_DB_NAME:-glpi_local}
       GLPI_DB_USER: ${GLPI_LOCAL_DB_USER:-glpi_local}
       GLPI_DB_PASSWORD: ${GLPI_LOCAL_DB_PASSWORD:-}
+      GLPI_CRONTAB_ENABLED: "0"
     volumes:
       - glpi_local_data:/var/glpi
     ports:
@@ -92,6 +93,16 @@ services:
     depends_on:
       glpi-local-db:
         condition: service_healthy
+    healthcheck:
+      test:
+        - CMD
+        - php
+        - -r
+        - "$$client = curl_init('http://127.0.0.1/apirest.php/initSession'); curl_setopt_array($$client, [CURLOPT_RETURNTRANSFER => true, CURLOPT_TIMEOUT => 4]); curl_exec($$client); $$status = curl_getinfo($$client, CURLINFO_HTTP_CODE); exit($$status >= 200 && $$status < 500 ? 0 : 1);"
+      interval: 10s
+      timeout: 5s
+      retries: 12
+      start_period: 60s
 
 volumes:
   mariadb_3306:
