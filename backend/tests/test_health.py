@@ -44,3 +44,25 @@ def test_db_health_failure_is_generic():
         r = client.get("/api/health/db")
     assert r.status_code == 503
     assert "secret-detail" not in r.text
+
+
+def test_compose_glpi_local_is_isolated():
+    repository_root = Path(__file__).resolve().parents[2]
+    compose = (repository_root / "docker-compose.yml").read_text(encoding="utf-8")
+    start = compose.index("  glpi-local:")
+    end = compose.index("\nvolumes:", start)
+    glpi = compose[start:end]
+    glpi_db = compose[compose.index("  glpi-db:"):start]
+
+    assert '"8088:80"' in glpi
+    assert "glpi_local_data:/var/glpi" in glpi
+    assert "glpi_local_db:/var/lib/mysql" in glpi_db
+    assert ":latest" not in compose
+    assert "image: ghcr.io/glpi-project/glpi:12.0.0" in glpi
+    assert "GLPI_DB_HOST: glpi-db" in glpi
+    for service in (glpi, glpi_db):
+        assert "${DB_" not in service
+        assert "GLPI_PROD" not in service
+    assert "${GLPI_LOCAL_DB_PASSWORD:?" in glpi
+    assert "${GLPI_LOCAL_DB_ROOT_PASSWORD:?" in glpi_db
+    assert "condition: service_healthy" in glpi
