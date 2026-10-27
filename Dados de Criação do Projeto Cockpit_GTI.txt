@@ -1,3 +1,7 @@
+AVISO: documento histórico de criação, não é instrução de instalação ou execução atual.
+Os exemplos de Flask e a arquitetura proposta abaixo não representam o runtime suportado.
+Use README.markdown: o Compose inicia exclusivamente o FastAPI em backend/main.py.
+
 instalação do GLPI:
 
 
