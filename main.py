@@ -17,6 +17,11 @@ from busca_externa import (
     buscar_publicacoes_doesp,
     consultar_editais_pncp
 )
+from governanca import (
+    listar_processos_sei,
+    listar_processos_fixados,
+    obter_painel_auditoria_tce
+)
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 FRONTEND_DIR = os.path.join(BASE_DIR, 'frontend')
@@ -27,10 +32,22 @@ app = Flask(__name__, static_folder=FRONTEND_DIR, static_url_path='')
 def index():
     return send_file(os.path.join(FRONTEND_DIR, 'painel.html'))
 
-@app.route('/<path:path>')
-def static_files(path):
+@app.route('/static/<path:path>')
+def static_proxy(path):
+    arquivo = os.path.join(FRONTEND_DIR, path)
+    if not os.path.exists(arquivo) and 'abas/' in path:
+        nome_base = os.path.basename(path).split('_', 2)[-1] if '_' in path else os.path.basename(path)
+        pasta_abas = os.path.join(FRONTEND_DIR, 'abas')
+        for f in os.listdir(pasta_abas):
+            if nome_base in f:
+                return send_from_directory(pasta_abas, f)
     return send_from_directory(FRONTEND_DIR, path)
 
+@app.route('/<path:path>')
+def root_static(path):
+    return send_from_directory(FRONTEND_DIR, path)
+
+# === SPRINT 1: HEALTHCHECK ===
 @app.route('/api/v1/healthcheck', methods=['GET'])
 def healthcheck():
     db_conectado = testar_conexao_mariadb()
@@ -41,20 +58,18 @@ def healthcheck():
         "versao": "1.0.0"
     })
 
+# === SPRINT 2: HUB DE IA MULTI-AGENTE ===
 @app.route('/api/v1/ia/processar', methods=['POST'])
 def rota_processar_ia():
     dados = request.get_json() or {}
     prompt = dados.get('prompt', '')
     contexto = dados.get('contexto', '')
     nivel = int(dados.get('nivel_preferencial', 1))
-    
     if not prompt:
         return jsonify({"erro": "O campo 'prompt' é obrigatório"}), 400
-        
-    resultado = processar_com_failover(prompt, contexto, nivel_preferencial=nivel)
-    return jsonify(resultado)
+    return jsonify(processar_com_failover(prompt, contexto, nivel_preferencial=nivel))
 
-# === ROTAS SPRINT 3: SISTEMAS INTERNOS (GRUPO A) ===
+# === SPRINT 3: SISTEMAS INTERNOS (GRUPO A) ===
 @app.route('/api/v1/sistemas/status', methods=['GET'])
 def rota_status_sistemas():
     return jsonify(obter_status_sistemas_internos())
@@ -69,7 +84,7 @@ def rota_openproject_pacotes():
     limite = int(request.args.get('limite', 10))
     return jsonify(listar_pacotes_openproject(limite=limite))
 
-# === ROTAS SPRINT 4: BUSCA ATIVA EXTERNA (GRUPO B - ZERO CORS) ===
+# === SPRINT 4: BUSCA ATIVA EXTERNA (GRUPO B) ===
 @app.route('/api/v1/busca-externa/status', methods=['GET'])
 def rota_busca_externa_status():
     return jsonify(obter_resumo_busca_externa())
@@ -82,6 +97,19 @@ def rota_doesp_publicacoes():
 @app.route('/api/v1/pncp/editais', methods=['GET'])
 def rota_pncp_editais():
     return jsonify(consultar_editais_pncp())
+
+# === SPRINT 6: GOVERNANÇA, ACERVO SEI E AUDITORIA TCE ===
+@app.route('/api/v1/sei/processos', methods=['GET'])
+def rota_sei_processos():
+    return jsonify(listar_processos_sei())
+
+@app.route('/api/v1/sei/fixados', methods=['GET'])
+def rota_sei_fixados():
+    return jsonify(listar_processos_fixados())
+
+@app.route('/api/v1/auditoria/tce-tcu', methods=['GET'])
+def rota_auditoria_tce():
+    return jsonify(obter_painel_auditoria_tce())
 
 if __name__ == '__main__':
     print("Iniciando Cockpit GTI em http://localhost:5000")
