@@ -4,9 +4,14 @@ from datetime import datetime
 from flask import Flask, jsonify, request, send_file, send_from_directory
 from database_mariadb import testar_conexao_mariadb
 
-# Adiciona pasta backend ao path
+# Adiciona pastas backend ao path
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), 'backend')))
 from ia import processar_com_failover
+from sistemas_internos import (
+    obter_status_sistemas_internos,
+    listar_chamados_glpi,
+    listar_pacotes_openproject
+)
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 FRONTEND_DIR = os.path.join(BASE_DIR, 'frontend')
@@ -43,6 +48,21 @@ def rota_processar_ia():
         
     resultado = processar_com_failover(prompt, contexto, nivel_preferencial=nivel)
     return jsonify(resultado)
+
+# === ROTAS SPRINT 3: SISTEMAS INTERNOS (GRUPO A) ===
+@app.route('/api/v1/sistemas/status', methods=['GET'])
+def rota_status_sistemas():
+    return jsonify(obter_status_sistemas_internos())
+
+@app.route('/api/v1/glpi/chamados', methods=['GET'])
+def rota_glpi_chamados():
+    limite = int(request.args.get('limite', 10))
+    return jsonify(listar_chamados_glpi(limite=limite))
+
+@app.route('/api/v1/openproject/pacotes', methods=['GET'])
+def rota_openproject_pacotes():
+    limite = int(request.args.get('limite', 10))
+    return jsonify(listar_pacotes_openproject(limite=limite))
 
 if __name__ == '__main__':
     print("Iniciando Cockpit GTI em http://localhost:5000")
