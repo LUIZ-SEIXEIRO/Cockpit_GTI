@@ -1,31 +1,20 @@
-# main.py
 import os
+from datetime import datetime
 from flask import Flask, jsonify
-from database_mariadb import connect_to_mariadb
-
-# Configurações do .env
-API_KEY = os.getenv('API_KEY')
-GLPI_TOKEN = os.getenv('GLPI_TOKEN')
-OPENPROJECT_API_KEY = os.getenv('OPENPROJECT_API_KEY')
-
-DB_HOST = os.getenv('DB_HOST')
-DB_USER = os.getenv('DB_USER')
-DB_PASSWORD = os.getenv('DB_PASSWORD')
-DB_NAME = os.getenv('DB_NAME')
+from database_mariadb import testar_conexao_mariadb
 
 app = Flask(__name__)
 
-@app.route('/healthcheck')
+@app.route('/api/v1/healthcheck', methods=['GET'])
 def healthcheck():
-    try:
-        conn = connect_to_mariadb()
-        if conn:
-            conn.close()
-            return jsonify({"status": "healthy", "database": "connected"}), 200
-        else:
-            return jsonify({"status": "unhealthy", "database": "disconnected"}), 500
-    except Exception as e:
-        return jsonify({"status": "unhealthy", "error": str(e)}), 500
+    db_conectado = testar_conexao_mariadb()
+    return jsonify({
+        "status": "online",
+        "mariadb": "connected" if db_conectado else "disconnected",
+        "timestamp": datetime.now().isoformat(),
+        "versao": "1.0.0"
+    })
 
 if __name__ == '__main__':
-    app.run(debug=True, host='0.0.0.0', port=5000)
+    print("Iniciando Cockpit GTI em http://localhost:5000")
+    app.run(host="0.0.0.0", port=5000, debug=True)

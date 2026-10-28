@@ -1,28 +1,25 @@
 import os
-import mariadb
+from dotenv import load_dotenv
+import mysql.connector
 
-def connect_to_mariadb():
-    """
-    Tenta conectar ao banco de dados MariaDB usando variáveis de ambiente.
-    Retorna o objeto de conexão se bem-sucedido, None caso contrário.
-    """
-    db_host = os.getenv('DB_HOST')
-    db_user = os.getenv('DB_USER')
-    db_password = os.getenv('DB_PASSWORD')
-    db_name = os.getenv('DB_NAME')
+load_dotenv()
 
-    if not all([db_host, db_user, db_password, db_name]):
-        print("Erro: Variáveis de ambiente do banco de dados não configuradas.")
-        return None
+DB_USER = os.getenv('DB_USER', 'glpi')
+DB_PASSWORD = os.getenv('DB_PASSWORD', 'glpi')
+DB_NAME = os.getenv('DB_NAME', 'glpidb')
+DB_HOST = os.getenv('DB_HOST', 'localhost')
+DB_PORT = int(os.getenv('DB_PORT', 3306))
 
+def testar_conexao_mariadb() -> bool:
     try:
-        conn = mariadb.connect(
-            host=db_host,
-            user=db_user,
-            password=db_password,
-            database=db_name
+        cnx = mysql.connector.connect(
+            user=DB_USER, password=DB_PASSWORD, host=DB_HOST,
+            port=DB_PORT, database=DB_NAME, connection_timeout=3
         )
-        return conn
-    except mariadb.Error as e:
-        print(f"Erro ao conectar ao MariaDB: {e}")
-        return None
+        if cnx.is_connected():
+            cnx.close()
+            return True
+        return False
+    except Exception as err:
+        print(f"Erro no MariaDB: {err}")
+        return False

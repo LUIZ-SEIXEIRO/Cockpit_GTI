@@ -1,10 +1,10 @@
 architect: true
-model: gemini/gemini-2.5-pro
-editor-model: ollama_chat/qwen2.5-coder:3b
-weak-model: ollama_chat/qwen2.5-coder:3b
+model: gemini/gemini-2.5-flash
+editor-model: gemini/gemini-2.5-flash
+weak-model: gemini/gemini-2.5-flash
 
 set-env:
-  - GEMINI_API_KEY=sk-8QfgiQ39Ob3TrWypXs5MFneX80DEqUYkrgcXiiG2GRXDSasv
+  - GEMINI_API_KEY=AIzaSyDF6Az9IpAZ5V2cmJfZENyjDFIeGvjEqYY
   - OLLAMA_API_BASE=http://127.0.0.1:11434
 
 map-tokens: 0

@@ -168,3 +168,134 @@
 
 # 2026-10-28 15:09:32.624193
 +a
+
+# 2026-10-28 15:21:59.338485
++/add main.py
+
+# 2026-10-28 15:22:10.033340
++Implemente a US-1.1 e US-1.2 da Sprint 1:
++1. Crie o modulo database_mariadb.py que le as credenciais do .env (DB_USER, DB_PASSWORD, DB_NAME, DB_HOST=localhost, DB_PORT=3306) e implementa uma funcao testar_conexao_mariadb() retornando True ou False.
++2. Atualize o endpoint /api/v1/healthcheck no main.py para chamar testar_conexao_mariadb() e retornar um JSON com: status="online", mariadb="connected" (ou "disconnected"), timestamp atual e versao="1.0.0".
+
+# 2026-10-28 15:24:28.233440
++curl.exe http://127.0.0.1:3001/v1/models -H "Authorization: Bearer sk-8QfgiQ39Ob3TrWypXs5MFneX80DEqUYkrgcXiiG2GRXDSasv"
+
+# 2026-10-28 15:24:36.535240
++y
+
+# 2026-10-28 15:26:42.671275
++d
+
+# 2026-10-28 15:26:54.268474
++Implemente a US-1.1 e US-1.2 da Sprint 1:
++1. Crie o modulo database_mariadb.py que le as credenciais do .env (DB_USER, DB_PASSWORD, DB_NAME, DB_HOST=localhost, DB_PORT=3306) e implementa uma funcao testar_conexao_mariadb() retornando True ou False.
++2. Atualize o endpoint /api/v1/healthcheck no main.py para chamar testar_conexao_mariadb() e retornar um JSON com: status="online", mariadb="connected" (ou "disconnected"), timestamp atual e versao="1.0.0".
+
+# 2026-10-28 15:27:02.116453
++y
+
+# 2026-10-28 15:28:22.764635
++/run curl.exe -s http://127.0.0.1:3001/v1/models -H "Authorization: Bearer sk-8QfgiQ39Ob3TrWypXs5MFneX80DEqUYkrgcXiiG2GRXDSasv"
+
+# 2026-10-28 15:28:37.531185
++What's wrong? Fix
+
+# 2026-10-28 15:32:08.879049
++/add main.py
+
+# 2026-10-28 15:32:14.094160
++Implemente a US-1.1 e US-1.2 da Sprint 1:
++1. Crie o modulo database_mariadb.py que le as credenciais do .env (DB_USER, DB_PASSWORD, DB_NAME, DB_HOST=localhost, DB_PORT=3306) e implementa uma funcao testar_conexao_mariadb() retornando True ou False.
++2. Atualize o endpoint /api/v1/healthcheck no main.py para chamar testar_conexao_mariadb() e retornar um JSON com: status="online", mariadb="connected" (ou "disconnected"), timestamp atual e versao="1.0.0".
+
+# 2026-10-28 15:35:23.793421
++/add main.py
+
+# 2026-10-28 15:35:28.519508
++Implemente a US-1.1 e US-1.2 da Sprint 1:
++1. Crie o modulo database_mariadb.py que le as credenciais do .env (DB_USER, DB_PASSWORD, DB_NAME, DB_HOST=localhost, DB_PORT=3306) e implementa uma funcao testar_conexao_mariadb() retornando True ou False.
++2. Atualize o endpoint /api/v1/healthcheck no main.py para chamar testar_conexao_mariadb() e retornar um JSON com: status="online", mariadb="connected" (ou "disconnected"), timestamp atual e versao="1.0.0".
+
+# 2026-10-28 15:37:43.880490
++/add main.py
+
+# 2026-10-28 15:37:49.133752
++Implemente a US-1.1 e US-1.2 da Sprint 1:
++1. Crie o modulo database_mariadb.py que le as credenciais do .env (DB_USER, DB_PASSWORD, DB_NAME, DB_HOST=localhost, DB_PORT=3306) e implementa uma funcao testar_conexao_mariadb() retornando True ou False.
++2. Atualize o endpoint /api/v1/healthcheck no main.py para chamar testar_conexao_mariadb() e retornar um JSON com: status="online", mariadb="connected" (ou "disconnected"), timestamp atual e versao="1.0.0".
+
+# 2026-10-28 15:38:24.973023
++y
+
+# 2026-10-28 15:39:40.603909
++/drop ISO
+
+# 2026-10-28 15:39:47.760733
++/add database_mariadb.py
+
+# 2026-10-28 15:39:50.348731
++y
+
+# 2026-10-28 15:39:57.346099
++Aplique o codigo: crie a funcao testar_conexao_mariadb() no database_mariadb.py usando as credenciais do .env, e atualize o endpoint /api/v1/healthcheck no main.py retornando status online, status do mariadb e versao 1.0.0
+
+# 2026-10-28 15:40:09.794104
++y
+
+# 2026-10-28 15:42:06.302476
++Aplique o codigo: crie a funcao testar_conexao_mariadb() no database_mariadb.py usando as credenciais do .env, e atualize o endpoint /api/v1/healthcheck no main.py retornando status online, status do mariadb e versao 1.0.0import os
++from dotenv import load_dotenv
++import mysql.connector
++
++# Carrega variáveis do arquivo .env
++load_dotenv()
++
++DB_USER = os.getenv('DB_USER', 'glpi')
++DB_PASSWORD = os.getenv('DB_PASSWORD', 'glpi')
++DB_NAME = os.getenv('DB_NAME', 'glpidb')
++DB_HOST = os.getenv('DB_HOST', 'localhost')
++DB_PORT = int(os.getenv('DB_PORT', 3306))
++
++def testar_conexao_mariadb() -> bool:
++    """Testa a conexão com o MariaDB e retorna True se bem-sucedido."""
++    try:
++        cnx = mysql.connector.connect(
++            user=DB_USER,
++            password=DB_PASSWORD,
++            host=DB_HOST,
++            port=DB_PORT,
++            database=DB_NAME,
++            connection_timeout=3
++        )
++        if cnx.is_connected():
++            cnx.close()
++            return True
++        return False
++    except Exception as err:
++        print(f"Erro na conexão com MariaDB: {err}")
++        return False
+
+# 2026-10-28 15:42:24.516592
++import os
++from datetime import datetime
++from flask import Flask, jsonify
++from database_mariadb import testar_conexao_mariadb
++
++app = Flask(__name__)
++
++@app.route('/api/v1/healthcheck', methods=['GET'])
++def healthcheck():
++    db_conectado = testar_conexao_mariadb()
++    return jsonify({
++        "status": "online",
++        "mariadb": "connected" if db_conectado else "disconnected",
++        "timestamp": datetime.now().isoformat(),
++        "versao": "1.0.0"
++    })
++
++if __name__ == '__main__':
++    print("Iniciando Cockpit GTI em http://localhost:5000")
++    app.run(host="0.0.0.0", port=5000, debug=True)
+
+# 2026-10-28 15:42:28.277500
++y
