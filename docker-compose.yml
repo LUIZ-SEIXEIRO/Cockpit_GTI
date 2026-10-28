@@ -1,35 +1,40 @@
+# docker-compose.yml
 version: '3.8'
 
 services:
-  db:
-    image: mariadb:10.11
-    container_name: spaguas-mariadb
-    restart: unless-stopped
-    environment:
-      MYSQL_ROOT_PASSWORD: ${DB_ROOT_PASSWORD}
-      MYSQL_DATABASE: ${DB_NAME}
-      MYSQL_USER: ${DB_USER}
-      MYSQL_PASSWORD: ${DB_PASSWORD}
-    ports:
-      - "3306:3306"
-    volumes:
-      - ./volumes_docker/mariadb_3306:/var/lib/mysql
-
-  backend:
-    build: 
-      context: ./backend
-    container_name: spaguas-fastapi
-    restart: unless-stopped
+  fastapi:
+    build: .
     ports:
       - "8000:8000"
-    env_file:
-      - .env
-    volumes:
-      - ./backend:/app
-      - ./frontend:/frontend
-    depends_on:
-      - db
+    environment:
+      - API_KEY
+      - GLPI_TOKEN
+      - OPENPROJECT_API_KEY
 
-volumes:
-  mariadb_3306:
-    driver: local
+  glpi:
+    image: glpi/glpi:latest
+    ports:
+      - "8088:80"
+    environment:
+      - GLPI_DB_HOST=mariadb
+      - GLPI_DB_NAME=glpi
+      - GLPI_DB_USER=glpi
+      - GLPI_DB_PASSWORD=glpi
+
+  openproject:
+    image: openproject/openproject:latest
+    ports:
+      - "8090:80"
+    environment:
+      - OPENPROJECT_DB_HOST=mariadb
+      - OPENPROJECT_DB_NAME=openproject
+      - OPENPROJECT_DB_USER=openproject
+      - OPENPROJECT_DB_PASSWORD=openproject
+
+  mariadb:
+    image: mariadb:latest
+    environment:
+      - MYSQL_ROOT_PASSWORD=root
+      - MYSQL_DATABASE=glpi
+      - MYSQL_USER=glpi
+      - MYSQL_PASSWORD=glpi

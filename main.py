@@ -1,7 +1,7 @@
-﻿# H:\Cockpit_GTI\main.py
+# main.py
+import os
 
-from app import app
-
-if __name__ == "__main__":
-    print("Iniciando Cockpit GTI em http://localhost:5000")
-    app.run(host="0.0.0.0", port=5000, debug=True)
+# Configurações do .env
+API_KEY = os.getenv('API_KEY')
+GLPI_TOKEN = os.getenv('GLPI_TOKEN')
+OPENPROJECT_API_KEY = os.getenv('OPENPROJECT_API_KEY')

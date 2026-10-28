@@ -1,5 +1,7 @@
-node_modules/
-__pycache__/
+﻿volumes_docker/
+html/vendor/
+Aider_Cockpit_GTI/
+*.tar
+*.tar.gz
+*.zip
 .env
-*.log
-.aider*

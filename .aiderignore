@@ -1,0 +1,6 @@
+﻿volumes_docker/
+html/vendor/
+Aider_Cockpit_GTI/
+*.tar
+*.tar.gz
+*.zip

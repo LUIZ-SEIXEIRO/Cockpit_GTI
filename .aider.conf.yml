@@ -1,0 +1,13 @@
+architect: true
+model: gemini/gemini-2.5-pro
+editor-model: ollama_chat/qwen2.5-coder:3b
+weak-model: ollama_chat/qwen2.5-coder:3b
+
+set-env:
+  - GEMINI_API_KEY=SUA_CHAVE_GEMINI_AQUI
+  - OLLAMA_API_BASE=http://127.0.0.1:11434
+
+map-tokens: 1024
+auto-commits: true
+dirty-commits: true
+cache-prompts: true
