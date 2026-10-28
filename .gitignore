@@ -5,3 +5,4 @@ Aider_Cockpit_GTI/
 *.tar.gz
 *.zip
 .env
+.aider*

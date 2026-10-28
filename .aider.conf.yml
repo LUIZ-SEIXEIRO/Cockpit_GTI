@@ -4,10 +4,10 @@ editor-model: ollama_chat/qwen2.5-coder:3b
 weak-model: ollama_chat/qwen2.5-coder:3b
 
 set-env:
-  - GEMINI_API_KEY=SUA_CHAVE_GEMINI_AQUI
+  - GEMINI_API_KEY=sk-8QfgiQ39Ob3TrWypXs5MFneX80DEqUYkrgcXiiG2GRXDSasv
   - OLLAMA_API_BASE=http://127.0.0.1:11434
 
-map-tokens: 1024
+map-tokens: 0
 auto-commits: true
 dirty-commits: true
 cache-prompts: true

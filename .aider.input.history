@@ -134,3 +134,37 @@
 
 # 2026-10-28 15:04:36.946140
 +y
+
+# 2026-10-28 15:09:15.653542
++/add main.py docker-compose.yml README.markdown
+
+# 2026-10-28 15:09:23.892996
++Atue como o Arquiteto de Software e Tech Lead Orquestrador do projeto "SP Águas - Cockpit de Gestão Centralizada e Automatizada".
++
++Com base nos arquivos de contexto adicionados e na especificação oficial do sistema abaixo:
++
++1. INFRAESTRUTURA DOCKER:
++   - docker-compose.yml subindo FastAPI (:8000), GLPI (:8088), OpenProject (:8090), New API (:3001) e MariaDB (:3306).
++   - .env com senhas de banco e chaves das 3 IAs.
++
++2. FRONTEND SPA (painel.html):
++   - Casca principal com estilo_spaguas.css e 00_roteador_abas.js.
++   - 14 Abas Modulares: Dashboards (01), OpenProject (02), PDTIC 2027-2030 (03), GLPI 10 (04), Visão Estratégica (05), Mesa de Trabalho (06), Gestão Ágil (07), War Room Daily (08), Acervo SEI (09), Fixados/Watchlist (10), Auditoria TCE/TCU (11), Chat IA (13), Cadernos A4 (14) e Configurações (15).
++
++3. BACKEND FASTAPI (:8000):
++   - main.py e database_mariadb.py.
++   - Módulos de IA (:3001): ia_01 (Alto Desempenho ETP/TR), ia_02 (Orquestração/RAG) e ia_03 (Micro-tarefas/Log).
++   - Conectores Internos (Grupo A): sis_01_glpi, sis_02_openproject e sis_03_newapi.
++   - Busca Ativa Server-Side (Grupo B - Zero CORS): ext_01_doesp, ext_02_pncp, ext_03_sigrh_soi e ext_04_zabbix_noc.
++
++SUA TAREFA COMO ARQUITETO:
++1. Crie um arquivo completo na raiz chamado 'ROADMAP_SPRINTS_COCKPIT_GTI.md'.
++2. Estruture o desenvolvimento em 6 Sprints lógicas e incrementais, com Backlog Priorizado, Histórias de Usuário atômicas e Critérios de Aceite para cada entrega.
++3. Garanta que o projeto saia do estado atual e chegue até a homologação completa sem dependências circulares.
++4. Ao final da sua resposta, aponte exatamente qual deve ser a nossa PRIMEIRA TAREFA PRÁTICA DE CÓDIGO da Sprint 1 para implementarmos agora.
+
+# 2026-10-28 15:09:27.196686
++y
+
+# 2026-10-28 15:09:32.624193
++a
