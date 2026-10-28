@@ -12,6 +12,11 @@ from sistemas_internos import (
     listar_chamados_glpi,
     listar_pacotes_openproject
 )
+from busca_externa import (
+    obter_resumo_busca_externa,
+    buscar_publicacoes_doesp,
+    consultar_editais_pncp
+)
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 FRONTEND_DIR = os.path.join(BASE_DIR, 'frontend')
@@ -63,6 +68,20 @@ def rota_glpi_chamados():
 def rota_openproject_pacotes():
     limite = int(request.args.get('limite', 10))
     return jsonify(listar_pacotes_openproject(limite=limite))
+
+# === ROTAS SPRINT 4: BUSCA ATIVA EXTERNA (GRUPO B - ZERO CORS) ===
+@app.route('/api/v1/busca-externa/status', methods=['GET'])
+def rota_busca_externa_status():
+    return jsonify(obter_resumo_busca_externa())
+
+@app.route('/api/v1/doesp/publicacoes', methods=['GET'])
+def rota_doesp_publicacoes():
+    termo = request.args.get('q', 'SP-AGUAS')
+    return jsonify(buscar_publicacoes_doesp(termo=termo))
+
+@app.route('/api/v1/pncp/editais', methods=['GET'])
+def rota_pncp_editais():
+    return jsonify(consultar_editais_pncp())
 
 if __name__ == '__main__':
     print("Iniciando Cockpit GTI em http://localhost:5000")
