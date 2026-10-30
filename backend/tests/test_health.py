@@ -19,6 +19,22 @@ def test_health():
     assert r.json()["status"] == "online"
 
 
+def test_glass_theme_assets_are_served_by_the_cockpit():
+    panel = client.get("/")
+    theme_script = client.get("/static/tema.js")
+    stylesheet = client.get("/static/estilo_spaguas.css")
+
+    assert panel.status_code == 200
+    assert '<script src="/static/tema.js"></script>' in panel.text
+    assert 'id="theme-toggle"' in panel.text
+    assert theme_script.status_code == 200
+    assert 'window.localStorage.setItem(THEME_STORAGE_KEY, nextTheme)' in theme_script.text
+    assert stylesheet.status_code == 200
+    assert "--bg-canvas: #090d16" in stylesheet.text
+    assert ':root[data-theme="light"]' in stylesheet.text
+    assert "backdrop-filter: var(--glass-blur)" in stylesheet.text
+
+
 def test_mesa_persistence_fails_closed_without_auth_and_project_setup():
     r = client.get("/api/mesa/minhas-tarefas")
     assert r.status_code == 503

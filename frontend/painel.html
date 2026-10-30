@@ -8,114 +8,11 @@
     <!-- ApexCharts CDN para os gráficos da Aba 01 (Consolidado 360°) -->
     <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
     
+    <!-- Aplica o tema salvo antes da primeira renderização da página -->
+    <script src="/static/tema.js"></script>
+
     <!-- Folha de Estilo Institucional Única -->
     <link rel="stylesheet" href="/static/estilo_spaguas.css">
-
-    <style>
-        /* Reset e Layout Base SPA Corporativo */
-        * { box-sizing: border-box; }
-        body {
-            margin: 0;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: #f4f6f9;
-            display: flex;
-            height: 100vh;
-            overflow: hidden;
-        }
-        #sidebar {
-            width: 260px;
-            background-color: #1e293b;
-            color: white;
-            display: flex;
-            flex-direction: column;
-            transition: width 0.3s ease;
-            z-index: 100;
-            height: 100vh;
-            box-shadow: 2px 0 5px rgba(0,0,0,0.05);
-        }
-        #sidebar.collapsed {
-            width: 70px;
-        }
-        .sidebar-header {
-            padding: 20px;
-            background-color: #0f172a;
-            font-size: 1.1rem;
-            font-weight: bold;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            border-bottom: 1px solid #334155;
-        }
-        #sidebar.collapsed .logo-text {
-            display: none;
-        }
-        .sidebar-menu {
-            list-style: none;
-            padding: 0;
-            margin: 0;
-            overflow-y: auto;
-            flex-grow: 1;
-        }
-        .sidebar-menu::-webkit-scrollbar {
-            width: 5px;
-        }
-        .sidebar-menu::-webkit-scrollbar-thumb {
-            background: #334155;
-            border-radius: 4px;
-        }
-        .sidebar-menu .nav-item {
-            padding: 12px 20px;
-            color: #cbd5e1;
-            cursor: pointer;
-            border-bottom: 1px solid #334155;
-            font-size: 0.9rem;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            transition: background-color 0.2s, color 0.2s;
-        }
-        .sidebar-menu .nav-item:hover {
-            background-color: #334155;
-            color: white;
-        }
-        .sidebar-menu .nav-item.active {
-            background-color: #0544cf;
-            color: white;
-            font-weight: bold;
-            border-left: 4px solid #ffffff;
-        }
-        #conteudo-principal {
-            flex-grow: 1;
-            padding: 30px;
-            overflow-y: auto;
-            height: 100vh;
-            box-sizing: border-box;
-        }
-        .tab-view {
-            display: none;
-        }
-        .tab-view.active {
-            display: block;
-        }
-        .btn-primary { 
-            background-color: #0544cf; 
-            color: white; 
-            border: none; 
-            padding: 8px 16px; 
-            border-radius: 4px; 
-            cursor: pointer; 
-            font-weight: 500;
-        }
-        .btn-secondary { 
-            background-color: #e2e8f0; 
-            color: #334155; 
-            border: none; 
-            padding: 8px 16px; 
-            border-radius: 4px; 
-            cursor: pointer; 
-            font-weight: 500;
-        }
-    </style>
 </head>
 <body>
 
@@ -125,7 +22,7 @@
     <nav id="sidebar">
         <div class="sidebar-header">
             <span class="logo-text">Cockpit GTI</span>
-            <button onclick="toggleSidebar()" style="background: none; border: none; color: white; cursor: pointer; font-size: 1.1rem;" title="Recolher Menu">☰</button>
+            <button class="sidebar-toggle" onclick="toggleSidebar()" title="Recolher Menu" aria-label="Recolher menu">☰</button>
         </div>
         <ul class="sidebar-menu">
             <li class="nav-item active" data-tab="dashboards" onclick="switchTab('dashboards')">📊 Dashboards</li>
@@ -150,94 +47,103 @@
     <!-- ÁREA DE CONTEÚDO PRINCIPAL (VIEW ROUTER)   -->
     <!-- ========================================== -->
     <main id="conteudo-principal">
+        <header class="app-header">
+            <div>
+                <h1 class="app-header-title">Cockpit GTI</h1>
+                <p class="app-header-subtitle">Superintendência de Administração · SA-GTI</p>
+            </div>
+            <button id="theme-toggle" class="theme-toggle" type="button" onclick="toggleTheme()">
+                ☀️ Ativar modo claro
+            </button>
+        </header>
 
         <!-- 01. DASHBOARDS (Consolidado 360°) -->
         <div id="view-dashboards" class="tab-view active">
-            <div class="header-dash" style="margin-bottom: 20px; display: flex; gap: 10px;">
+            <div class="header-dash">
                 <button id="btn-dash-consolidado" class="pill-filtro-dash btn-primary" onclick="alternarModoDashboard('consolidado')">Consolidado 360°</button>
             </div>
             <div id="subview-dash-consolidado" class="subview-dash" style="display: block;">
-                <div class="kpi-cards" style="display: flex; gap: 15px; margin-bottom: 20px; flex-wrap: wrap;">
-                    <div class="card" style="background:white; padding:15px; border-radius:6px; flex:1; min-width:140px; box-shadow:0 2px 4px rgba(0,0,0,0.02);">Total Acervo: <strong id="kpi-val-acervo-total">0</strong></div>
-                    <div class="card" style="background:white; padding:15px; border-radius:6px; flex:1; min-width:140px; box-shadow:0 2px 4px rgba(0,0,0,0.02);">Intervenção: <strong id="kpi-val-intervencao">0</strong></div>
-                    <div class="card" style="background:white; padding:15px; border-radius:6px; flex:1; min-width:140px; box-shadow:0 2px 4px rgba(0,0,0,0.02);">Saneamento: <strong id="kpi-val-saneamento">0</strong></div>
-                    <div class="card" style="background:white; padding:15px; border-radius:6px; flex:1; min-width:140px; box-shadow:0 2px 4px rgba(0,0,0,0.02);">Monitoramento: <strong id="kpi-val-monitoramento">0</strong></div>
-                    <div class="card" style="background:white; padding:15px; border-radius:6px; flex:1; min-width:140px; box-shadow:0 2px 4px rgba(0,0,0,0.02);">Normal: <strong id="kpi-val-fluxo-normal">0</strong></div>
+                <div class="kpi-cards">
+                    <div class="kpi-card">Total Acervo<strong id="kpi-val-acervo-total">0</strong></div>
+                    <div class="kpi-card">Intervenção<strong id="kpi-val-intervencao">0</strong></div>
+                    <div class="kpi-card">Saneamento<strong id="kpi-val-saneamento">0</strong></div>
+                    <div class="kpi-card">Monitoramento<strong id="kpi-val-monitoramento">0</strong></div>
+                    <div class="kpi-card">Normal<strong id="kpi-val-fluxo-normal">0</strong></div>
                 </div>
-                <div class="charts-grid" style="display: flex; gap: 20px; flex-wrap: wrap;">
-                    <div id="chart-cons-eixo" style="flex: 1; min-width: 300px; background: white; padding: 15px; border-radius: 6px; box-shadow:0 2px 4px rgba(0,0,0,0.02);"></div>
-                    <div id="chart-cons-criticidade" style="flex: 1; min-width: 300px; background: white; padding: 15px; border-radius: 6px; box-shadow:0 2px 4px rgba(0,0,0,0.02);"></div>
-                    <div id="chart-cons-risco" style="flex: 1; min-width: 300px; background: white; padding: 15px; border-radius: 6px; box-shadow:0 2px 4px rgba(0,0,0,0.02);"></div>
+                <div class="charts-grid">
+                    <div id="chart-cons-eixo" class="chart-card"></div>
+                    <div id="chart-cons-criticidade" class="chart-card"></div>
+                    <div id="chart-cons-risco" class="chart-card"></div>
                 </div>
             </div>
         </div>
 
         <!-- 02. OPENPROJECT (Portfólio Corporativo) -->
         <div id="view-openproject" class="tab-view">
-            <h2 style="color: #002d5a; margin-bottom: 20px;">Portfólio Corporativo OpenProject</h2>
+            <h2 class="view-heading">Portfólio Corporativo OpenProject</h2>
             <div id="conteudo-openproject">Carregando portfólio de projetos...</div>
         </div>
 
         <!-- 03. PDTIC (Governança e Eixos) -->
         <div id="view-pdtic" class="tab-view">
-            <h2 style="color: #002d5a; margin-bottom: 20px;">Governança do PDTIC 2027-2030</h2>
+            <h2 class="view-heading">Governança do PDTIC 2027-2030</h2>
             <div id="conteudo-pdtic">Carregando eixos e iniciativas...</div>
         </div>
 
         <!-- 04. GLPI (Helpdesk e ITSM) -->
         <div id="view-glpi" class="tab-view">
-            <h2 style="color: #002d5a; margin-bottom: 20px; display: flex; justify-content: space-between; align-items: center;">
+            <h2 class="view-heading">
                 Gestão GLPI 10 & Helpdesk
-                <button class="btn-primary" style="font-size: 0.85rem;">+ Novo Chamado</button>
+                <button class="btn-primary">+ Novo Chamado</button>
             </h2>
             <div id="conteudo-glpi">Carregando fila de chamados...</div>
         </div>
 
         <!-- 05. VISÃO ESTRATÉGICA (Faróis de Criticidade) -->
         <div id="view-visao" class="tab-view">
-            <h2 style="color: #002d5a; margin-bottom: 20px;">Visão Estratégica & Faróis de Criticidade</h2>
+            <h2 class="view-heading">Visão Estratégica & Faróis de Criticidade</h2>
             <div id="conteudo-visao">Carregando painel executivo...</div>
         </div>
 
         <!-- 06. MESA DE TRABALHO (Cockpit do Usuário) -->
         <div id="view-mesa" class="tab-view">
-            <h2 style="color: #002d5a; margin-bottom: 20px;">Mesa de Trabalho Operacional (Cockpit)</h2>
+            <h2 class="view-heading">Mesa de Trabalho Operacional (Cockpit)</h2>
             <div id="conteudo-mesa">Carregando painel de trabalho...</div>
         </div>
 
         <!-- 07. GESTÃO ÁGIL (Sprint Planning & Kanban) -->
         <div id="view-agil" class="tab-view">
-            <h2 style="color: #002d5a; margin-bottom: 20px;">Gestão Ágil & Sprint Planning</h2>
+            <h2 class="view-heading">Gestão Ágil & Sprint Planning</h2>
             <div id="conteudo-agil">Carregando quadro Kanban...</div>
         </div>
 
         <!-- 08. WAR ROOM (Daily Scrum 15 min) -->
         <div id="view-warroom" class="tab-view">
-            <h2 style="color: #002d5a; margin-bottom: 20px;">War Room: Daily Scrum & Gestão de Pauta</h2>
+            <h2 class="view-heading">War Room: Daily Scrum & Gestão de Pauta</h2>
             <div id="conteudo-warroom">Preparando a sala de guerra...</div>
         </div>
 
         <!-- 09. CONSULTA SEI (Acervo Probatório) -->
         <div id="view-sei" class="tab-view">
-            <h2 style="color: #002d5a; margin-bottom: 20px;">Acervo Probatório SEI</h2>
+            <h2 class="view-heading">Acervo Probatório SEI</h2>
             <div id="conteudo-sei">Conectando ao barramento do SEI...</div>
         </div>
 
         <!-- 10. FIXADOS (Watchlist Prioritária) -->
         <div id="view-fixados" class="tab-view">
-            <h2 style="color: #002d5a; margin-bottom: 20px;">Processos Fixados (Watchlist Prioritária)</h2>
+            <h2 class="view-heading">Processos Fixados (Watchlist Prioritária)</h2>
             <div id="conteudo-fixados">Carregando itens fixados...</div>
         </div>
 
         <!-- 11. AUDITORIA TCE (Hub de Conformidade & Súmula 269) -->
         <div id="view-auditoria" class="tab-view">
-            <h2 style="color: #002d5a; margin-bottom: 20px;">Hub de Auditoria Contínua & Maturidade (TCE-SP & TCU)</h2>
+            <h2 class="view-heading">Hub de Auditoria Contínua & Maturidade (TCE-SP & TCU)</h2>
             <div id="conteudo-auditoria">Carregando indicadores de conformidade...</div>
         </div>
 
         <!-- 12. ESTEIRA DE IA (Chat Multiagente) -->
         <div id="view-ia" class="tab-view">
-            <h2 style="color: #002d5a; margin-bottom: 20px;">Chat Inteligente & Agentes Especializados</h2>
+            <h2 class="view-heading">Chat Inteligente & Agentes Especializados</h2>
             <div id="conteudo-ia">Carregando gateway de IA...</div>
         </div>
 
