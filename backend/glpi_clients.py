@@ -8,7 +8,7 @@ Nao ha fallback entre os dois ambientes.
 import os
 from dataclasses import dataclass
 from ipaddress import ip_address
-from urllib.parse import urlsplit, urlunsplit
+from urllib.parse import unquote, urlsplit, urlunsplit
 
 import httpx
 
@@ -67,6 +67,10 @@ def _normalize_base_url(value: str, field: str, production: bool = False) -> str
         raise GlpiConfigError(f"{field} deve ser uma URL absoluta valida") from None
     if not normalized_host:
         raise GlpiConfigError(f"{field} deve ser uma URL absoluta valida")
+    try:
+        normalized_host = ip_address(normalized_host).compressed
+    except ValueError:
+        pass
     if ":" in normalized_host:
         normalized_host = f"[{normalized_host}]"
     if port is not None and not 1 <= port <= 65535:
@@ -82,6 +86,8 @@ def _normalize_base_url(value: str, field: str, production: bool = False) -> str
             is_loopback = False
         if not is_loopback:
             raise GlpiConfigError(f"{field} deve usar HTTPS")
+    if any(segment in {".", ".."} for segment in unquote(parsed.path).split("/")):
+        raise GlpiConfigError(f"{field} nao deve conter segmentos de caminho relativos")
     path = parsed.path.rstrip("/")
     return urlunsplit((scheme, netloc, path, "", ""))
 

@@ -61,6 +61,26 @@ def test_write_rejects_prod_url(monkeypatch):
         g.get_write_client()
 
 
+def test_write_rejects_equivalent_ipv6_urls(monkeypatch):
+    _set(
+        monkeypatch,
+        {**PROD, "GLPI_PROD_BASE_URL": "https://[2001:db8::1]/apirest.php"},
+        {**LOCAL, "GLPI_LOCAL_BASE_URL": "https://[2001:0db8:0:0:0:0:0:1]/apirest.php"},
+    )
+    with pytest.raises(g.GlpiConfigError):
+        g.get_write_client()
+
+
+def test_write_rejects_dot_segments_in_url(monkeypatch):
+    _set(
+        monkeypatch,
+        {**PROD, "GLPI_PROD_BASE_URL": "https://prod/apirest.php"},
+        {**LOCAL, "GLPI_LOCAL_BASE_URL": "https://prod/unused/../apirest.php"},
+    )
+    with pytest.raises(g.GlpiConfigError):
+        g.get_write_client()
+
+
 @pytest.mark.parametrize(
     "local",
     [
