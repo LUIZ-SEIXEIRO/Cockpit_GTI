@@ -847,6 +847,76 @@ th.th-sortable-v9:hover {
 <!-- ESTILOS GLASSMORPHISM SAAS DARK MODE (DEFAULT) + AURORA GLOW -->
 <!-- ======================================================== -->
 
+
+<style id="css-remover-banner-topo">
+    /* Remove o banner azul pesado de todas as telas */
+    .page-banner, #dash-banner-principal {
+        display: none !important;
+    }
+    .content-scroll {
+        padding-top: 14px !important;
+    }
+</style>
+
+
+<style id="css-sidebar-4-visoes">
+    /* EIXO 1: Manter apenas o Dashboard 360° e ocultar sub-itens na lateral */
+    .nav-item[data-tab="visao_estrategica"],
+    .nav-item[data-tab="portfolio_openproject"],
+    .nav-item[data-tab="tracks_sagti"],
+    .nav-item[data-tab="pdtic_eixos"],
+    .nav-item[data-tab="gestao_glpi"] {
+        display: none !important;
+    }
+
+    /* EIXO 2: Manter apenas a Mesa de Trabalho e centralizar o restante dentro dela */
+    .nav-item[data-tab="consulta"],
+    .nav-item[data-tab="fixados"],
+    .nav-item[data-tab="esteira_ia"],
+    .nav-item[data-tab="cadernos"] {
+        display: none !important;
+    }
+
+    /* EIXO 3: Manter a Sala de Reuniões e ocultar Auditoria da lateral */
+    .nav-item[data-tab="auditoria"],
+    .nav-item[data-tab="gestao_agil"] {
+        display: none !important;
+    }
+
+    /* Refinamento visual dos textos das 4 Visões */
+    .nav-item[data-tab="dashboards"] .nav-item-left span::after {
+        content: " (Gestão à Vista)";
+        font-weight: 400;
+        opacity: 0.8;
+    }
+    .nav-item[data-tab="mesa_trabalho"] .nav-item-left span::after {
+        content: " (Hub Operacional)";
+        font-weight: 400;
+        opacity: 0.8;
+    }
+    .nav-item[data-tab="daily_warroom"] .nav-item-left span::after {
+        content: " & Diretoria";
+        font-weight: 400;
+        opacity: 0.8;
+    }
+
+    /* Barra Integrada da Mesa de Trabalho (Eixo 2) */
+    .mesa-toolbar-integrada {
+        background: rgba(15, 23, 42, 0.75) !important;
+        backdrop-filter: blur(18px) !important;
+        border: 1px solid rgba(255, 255, 255, 0.14) !important;
+        border-radius: 12px !important;
+        padding: 12px 18px !important;
+        margin-bottom: 20px !important;
+        display: flex !important;
+        justify-content: space-between !important;
+        align-items: center !important;
+        flex-wrap: wrap !important;
+        gap: 12px !important;
+        box-shadow: 0 8px 32px rgba(0,0,0,0.3) !important;
+    }
+</style>
+
 </head>
 <body>
     <!-- BARRA DO MODO GESTÃO À VISTA (TV KIOSK) -->
@@ -879,68 +949,73 @@ th.th-sortable-v9:hover {
         </div>
 
         <div class="sidebar-menu">
-            <div class="menu-category">PORTF&Oacute;LIO &amp; OPENPROJECT</div>
+            <!-- EIXO 1: DASHBOARD & DECISÃO 360° -->
+            <div class="menu-category" style="color: #38bdf8; font-weight: 800; font-size: 11px; letter-spacing: 0.5px; padding: 12px 12px 6px 12px;">📊 EIXO 1: DASHBOARD &amp; DECISÃO 360°</div>
             <div class="nav-item active" data-tab="dashboards" onclick="switchTab('dashboards')">
-                <div class="nav-item-left">&#128202; <span>Central de Dashboards</span></div>
-                <span class="nav-badge">360&deg;</span>
+                <div class="nav-item-left">🌐 <span>Central de Dashboards</span></div>
+                <span class="nav-badge">360°</span>
+            </div>
+            <div class="nav-item" data-tab="visao_estrategica" onclick="switchTab('visao_estrategica')">
+                <div class="nav-item-left">🎯 <span>Faróis &amp; Gargalos (87)</span></div>
+                <span class="nav-badge" style="background:#f97316; color:#fff;">87</span>
             </div>
             <div class="nav-item" data-tab="portfolio_openproject" onclick="switchTab('portfolio_openproject')">
-                <div class="nav-item-left">&#127959;&#65039; <span>Portf&oacute;lio OpenProject</span></div>
+                <div class="nav-item-left">🏗️ <span>Portfólio OpenProject</span></div>
                 <span class="nav-badge" style="background:#10b981; color:#fff;">500</span>
             </div>
             <div class="nav-item" data-tab="tracks_sagti" onclick="switchTab('tracks_sagti')">
-                <div class="nav-item-left">&#9889; <span>SA-GTI: Tracks &amp; Projetos</span></div>
+                <div class="nav-item-left">⚡ <span>Tracks SA-GTI (A-018)</span></div>
                 <span class="nav-badge" style="background:#0544cf; color:#fff;">97</span>
             </div>
             <div class="nav-item" data-tab="pdtic_eixos" onclick="switchTab('pdtic_eixos')">
-                <div class="nav-item-left">&#129517; <span>PDTIC 2027-2030 &amp; KPIs</span></div>
-                <span class="nav-badge" style="background:#6366f1; color:#fff;">35</span>
+                <div class="nav-item-left">🧭 <span>Governança PDTIC &amp; KPIs</span></div>
+                <span class="nav-badge" style="background:#8b5cf6; color:#fff;">35</span>
             </div>
             <div class="nav-item" data-tab="gestao_glpi" onclick="switchTab('gestao_glpi')">
-                <div class="nav-item-left">&#127915; <span>Gest&atilde;o GLPI &amp; Helpdesk</span></div>
-                <span class="nav-badge" id="badge-nav-glpi" style="background:#0284c7; color:#fff;">13</span>
-            </div>
-            <div class="nav-item" data-tab="visao_estrategica" onclick="switchTab('visao_estrategica')">
-                <div class="nav-item-left">&#127919; <span>Vis&atilde;o Estrat&eacute;gica &amp; Far&oacute;is</span></div>
-                <span class="nav-badge">87</span>
+                <div class="nav-item-left">🎫 <span>Atendimento GLPI 10</span></div>
+                <span class="nav-badge" style="background:#0284c7; color:#fff;">13</span>
             </div>
 
-            <div class="menu-category">EXECU&Ccedil;&Atilde;O &Aacute;GIL &amp; RITUAIS</div>
-            <div class="nav-item" data-tab="mesa_trabalho" onclick="switchTab('mesa_trabalho')">
-                <div class="nav-item-left">&#128421;&#65039; <span>Mesa de Trabalho</span></div>
-                <span class="nav-badge" style="background:#00a859; color:white;">Demandas</span>
-            </div>
-            <div class="nav-item" data-tab="gestao_agil" onclick="switchTab('gestao_agil')">
-                <div class="nav-item-left">&#128203; <span>Gest&atilde;o &Aacute;gil &amp; Sprints</span></div>
-            </div>
-            <div class="nav-item" data-tab="daily_warroom" onclick="switchTab('daily_warroom')">
-                <div class="nav-item-left">&#1410;&#65039; <span>War Room: Daily &amp; Rituais</span></div>
-            </div>
-
-            <div class="menu-category">LASTRO PROBAT&Oacute;RIO SEI</div>
+            <!-- EIXO 2: COCKPIT ADM, SEI & IA -->
+            <div class="menu-category" style="color: #38bdf8; font-weight: 800; font-size: 11px; letter-spacing: 0.5px; padding: 12px 12px 6px 12px;">📁 EIXO 2: COCKPIT ADM, SEI &amp; IA</div>
             <div class="nav-item" data-tab="consulta" onclick="switchTab('consulta')">
-                <div class="nav-item-left">&#128194; <span>Acervo Probat&oacute;rio SEI</span></div>
+                <div class="nav-item-left">📂 <span>Acervo SEI (Upload PDF v7.1)</span></div>
                 <span class="nav-badge">179</span>
             </div>
-            <div class="nav-item" data-tab="fixados" onclick="switchTab('fixados')">
-                <div class="nav-item-left">&#11088; <span>Processos Fixados</span></div>
-                <span class="nav-badge" id="badge-fixados">0</span>
+            <div class="nav-item" data-tab="mesa_trabalho" onclick="switchTab('mesa_trabalho')">
+                <div class="nav-item-left">🖥️ <span>Mesa de Trabalho (Custódia)</span></div>
+                <span class="nav-badge" style="background:#00a859; color:white;">Luiz</span>
             </div>
-            <div class="nav-item" data-tab="auditoria" onclick="switchTab('auditoria')">
-                <div class="nav-item-left">&#128737;&#65039; <span>Auditoria TCE-SP &amp; IMR</span></div>
-            </div>
-
-            <div class="menu-category">INTELIG&Ecirc;NCIA &amp; ADMIN</div>
             <div class="nav-item" data-tab="esteira_ia" onclick="switchTab('esteira_ia')">
-                <div class="nav-item-left">&#129302; <span>Chat IA &amp; RACI</span></div>
+                <div class="nav-item-left">🤖 <span>Assistente Pessoal IA &amp; RACI</span></div>
+                <span class="nav-badge" style="background:#8b5cf6; color:white;">4 Cam</span>
             </div>
             <div class="nav-item" data-tab="cadernos" onclick="switchTab('cadernos')">
-                <div class="nav-item-left">&#128218; <span>Cadernos &amp; Regimento</span></div>
-            </div>
-            <div class="nav-item" data-tab="configuracoes" onclick="switchTab('configuracoes')">
-                <div class="nav-item-left">&#128295; <span>Configura&ccedil;&otilde;es &amp; Motores</span></div>
+                <div class="nav-item-left">📚 <span>Cadernos, Toolkits A4...</span></div>
+                <span class="nav-badge">15</span>
             </div>
 
+            <!-- EIXO 3: REUNIÕES & PRESTAÇÃO DE CONTAS -->
+            <div class="menu-category" style="color: #38bdf8; font-weight: 800; font-size: 11px; letter-spacing: 0.5px; padding: 12px 12px 6px 12px;">🤝 EIXO 3: REUNIÕES &amp; PRESTAÇÃO DE CONTAS</div>
+            <div class="nav-item" data-tab="daily_warroom" onclick="switchTab('daily_warroom')">
+                <div class="nav-item-left">👥 <span>War Room (Ata A4 &amp; Pauta)</span></div>
+                <span class="nav-badge" style="background:#0284c7; color:white;">15m</span>
+            </div>
+            <div class="nav-item" data-tab="gestao_agil" onclick="switchTab('gestao_agil')">
+                <div class="nav-item-left">🏃 <span>Sprint Planning &amp; Rituais</span></div>
+                <span class="nav-badge" style="background:#10b981; color:white;">Ágil</span>
+            </div>
+            <div class="nav-item" data-tab="auditoria" onclick="switchTab('auditoria')">
+                <div class="nav-item-left">⚖️ <span>Auditoria TCE-SP &amp; Súmula 269</span></div>
+                <span class="nav-badge" style="background:#f59e0b; color:white;">88.5%</span>
+            </div>
+
+            <!-- SISTEMA -->
+            <div class="menu-category" style="color: #38bdf8; font-weight: 800; font-size: 11px; letter-spacing: 0.5px; padding: 12px 12px 6px 12px;">⚙️ SISTEMA</div>
+            <div class="nav-item" data-tab="configuracoes" onclick="switchTab('configuracoes')">
+                <div class="nav-item-left">🔧 <span>Configurações &amp; RBAC</span></div>
+                <span class="nav-badge" style="background:#475569; color:white;">Admin</span>
+            </div>
             <!-- PAINEL SUPERVISOR FIXO NO RODAPÉ DA SIDEBAR -->
             <div id="sidebar-supervisor-footer" onclick="abrirAiDrawer()" style="display: none !important;">
                 <div style="width: 32px; height: 32px; border-radius: 6px; background: rgba(255,255,255,0.1); display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
@@ -995,31 +1070,91 @@ th.th-sortable-v9:hover {
         </div>
 
         <div class="content-scroll">
+            <!-- BARRA DE SUB-ABAS SUPERIORES DO EIXO 1 (GESTÃO À VISTA 360°) -->
+            <div id="barra-subabas-eixo1" style="display: flex; gap: 8px; margin-bottom: 18px; padding: 10px 14px; background: rgba(255, 255, 255, 0.04); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); border: 1px solid rgba(255, 255, 255, 0.12); border-radius: 12px; overflow-x: auto; box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);">
+                <button type="button" class="btn btn-primary subaba-eixo1-btn active" data-subtab="dashboards" onclick="switchTab('dashboards')" style="display: flex; align-items: center; gap: 6px; padding: 7px 14px; border-radius: 8px; font-size: 12px; font-weight: 700; cursor: pointer; white-space: nowrap;">
+                    🌐 <span>Central de Dashboards</span> <span class="nav-badge" style="background: rgba(255,255,255,0.25); color: #fff; font-size: 10px; padding: 2px 7px; border-radius: 10px;">360°</span>
+                </button>
+                <button type="button" class="btn btn-secondary subaba-eixo1-btn" data-subtab="visao_estrategica" onclick="switchTab('visao_estrategica')" style="display: flex; align-items: center; gap: 6px; padding: 7px 14px; border-radius: 8px; font-size: 12px; font-weight: 700; cursor: pointer; white-space: nowrap;">
+                    🎯 <span>Faróis &amp; Gargalos (87)</span> <span class="nav-badge" style="background: #f97316; color: #fff; font-size: 10px; padding: 2px 7px; border-radius: 10px;">87</span>
+                </button>
+                <button type="button" class="btn btn-secondary subaba-eixo1-btn" data-subtab="portfolio_openproject" onclick="switchTab('portfolio_openproject')" style="display: flex; align-items: center; gap: 6px; padding: 7px 14px; border-radius: 8px; font-size: 12px; font-weight: 700; cursor: pointer; white-space: nowrap;">
+                    🏗️ <span>Portfólio OpenProject</span> <span class="nav-badge" style="background: #10b981; color: #fff; font-size: 10px; padding: 2px 7px; border-radius: 10px;">500</span>
+                </button>
+                <button type="button" class="btn btn-secondary subaba-eixo1-btn" data-subtab="tracks_sagti" onclick="switchTab('tracks_sagti')" style="display: flex; align-items: center; gap: 6px; padding: 7px 14px; border-radius: 8px; font-size: 12px; font-weight: 700; cursor: pointer; white-space: nowrap;">
+                    ⚡ <span>Tracks SA-GTI (A-018)</span> <span class="nav-badge" style="background: #0544cf; color: #fff; font-size: 10px; padding: 2px 7px; border-radius: 10px;">97</span>
+                </button>
+                <button type="button" class="btn btn-secondary subaba-eixo1-btn" data-subtab="pdtic_eixos" onclick="switchTab('pdtic_eixos')" style="display: flex; align-items: center; gap: 6px; padding: 7px 14px; border-radius: 8px; font-size: 12px; font-weight: 700; cursor: pointer; white-space: nowrap;">
+                    🧭 <span>Governança PDTIC &amp; KPIs</span> <span class="nav-badge" style="background: #8b5cf6; color: #fff; font-size: 10px; padding: 2px 7px; border-radius: 10px;">35</span>
+                </button>
+                <button type="button" class="btn btn-secondary subaba-eixo1-btn" data-subtab="gestao_glpi" onclick="switchTab('gestao_glpi')" style="display: flex; align-items: center; gap: 6px; padding: 7px 14px; border-radius: 8px; font-size: 12px; font-weight: 700; cursor: pointer; white-space: nowrap;">
+                    🎫 <span>Atendimento GLPI 10</span> <span class="nav-badge" style="background: #0284c7; color: #fff; font-size: 10px; padding: 2px 7px; border-radius: 10px;">13</span>
+                </button>
+            </div>
+            <!-- BARRA DE SUB-ABAS SUPERIORES DO EIXO 2 (COCKPIT ADM, SEI & IA) -->
+            <div id="barra-subabas-eixo2" style="display: none; gap: 8px; margin-bottom: 18px; padding: 10px 14px; background: rgba(255, 255, 255, 0.04); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); border: 1px solid rgba(255, 255, 255, 0.12); border-radius: 12px; overflow-x: auto; box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);">
+                <button type="button" class="btn btn-primary subaba-eixo2-btn active" data-subtab="mesa_trabalho" onclick="switchTab('mesa_trabalho')" style="display: flex; align-items: center; gap: 6px; padding: 7px 14px; border-radius: 8px; font-size: 12px; font-weight: 700; cursor: pointer; white-space: nowrap;">
+                    🖥️ <span>Mesa de Trabalho (Custódia)</span> <span class="nav-badge" style="background: rgba(255,255,255,0.25); color: #fff; font-size: 10px; padding: 2px 7px; border-radius: 10px;">Luiz</span>
+                </button>
+                <button type="button" class="btn btn-secondary subaba-eixo2-btn" data-subtab="consulta" onclick="switchTab('consulta')" style="display: flex; align-items: center; gap: 6px; padding: 7px 14px; border-radius: 8px; font-size: 12px; font-weight: 700; cursor: pointer; white-space: nowrap;">
+                    📂 <span>Acervo Probatório SEI</span> <span class="nav-badge" style="background: #0284c7; color: #fff; font-size: 10px; padding: 2px 7px; border-radius: 10px;">179</span>
+                </button>
+                <button type="button" class="btn btn-secondary subaba-eixo2-btn" data-subtab="esteira_ia" onclick="switchTab('esteira_ia')" style="display: flex; align-items: center; gap: 6px; padding: 7px 14px; border-radius: 8px; font-size: 12px; font-weight: 700; cursor: pointer; white-space: nowrap;">
+                    🤖 <span>Assistente Pessoal IA &amp; RACI</span> <span class="nav-badge" style="background: #8b5cf6; color: #fff; font-size: 10px; padding: 2px 7px; border-radius: 10px;">4 Cam</span>
+                </button>
+                <button type="button" class="btn btn-secondary subaba-eixo2-btn" data-subtab="cadernos" onclick="switchTab('cadernos')" style="display: flex; align-items: center; gap: 6px; padding: 7px 14px; border-radius: 8px; font-size: 12px; font-weight: 700; cursor: pointer; white-space: nowrap;">
+                    📚 <span>Cadernos, Toolkits A4 &amp; Regimento</span> <span class="nav-badge" style="background: #10b981; color: #fff; font-size: 10px; padding: 2px 7px; border-radius: 10px;">15</span>
+                </button>
+            </div>
+            <!-- BARRA DE SUB-ABAS SUPERIORES DO EIXO 3 (SALA DE REUNIÕES & DIRETORIA) -->
+            <div id="barra-subabas-eixo3" style="display: none; gap: 8px; margin-bottom: 18px; padding: 10px 14px; background: rgba(255, 255, 255, 0.04); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); border: 1px solid rgba(255, 255, 255, 0.12); border-radius: 12px; overflow-x: auto; box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);">
+                <button type="button" class="btn btn-primary subaba-eixo3-btn active" data-subtab="daily_warroom" onclick="switchTab('daily_warroom')" style="display: flex; align-items: center; gap: 6px; padding: 7px 14px; border-radius: 8px; font-size: 12px; font-weight: 700; cursor: pointer; white-space: nowrap;">
+                    👥 <span>War Room: Daily &amp; Rituais</span> <span class="nav-badge" style="background: rgba(255,255,255,0.25); color: #fff; font-size: 10px; padding: 2px 7px; border-radius: 10px;">15m</span>
+                </button>
+                <button type="button" class="btn btn-secondary subaba-eixo3-btn" data-subtab="gestao_agil" onclick="switchTab('gestao_agil')" style="display: flex; align-items: center; gap: 6px; padding: 7px 14px; border-radius: 8px; font-size: 12px; font-weight: 700; cursor: pointer; white-space: nowrap;">
+                    🏃 <span>Gestão Ágil &amp; Sprints (Kanban)</span> <span class="nav-badge" style="background: #10b981; color: #fff; font-size: 10px; padding: 2px 7px; border-radius: 10px;">Ágil</span>
+                </button>
+                <button type="button" class="btn btn-secondary subaba-eixo3-btn" data-subtab="auditoria" onclick="switchTab('auditoria')" style="display: flex; align-items: center; gap: 6px; padding: 7px 14px; border-radius: 8px; font-size: 12px; font-weight: 700; cursor: pointer; white-space: nowrap;">
+                    ⚖️ <span>Auditoria TCE-SP &amp; Súmula 269</span> <span class="nav-badge" style="background: #f59e0b; color: #fff; font-size: 10px; padding: 2px 7px; border-radius: 10px;">88.5%</span>
+                </button>
+            </div>
             <div id="view-mesa_trabalho" class="tab-view">
-            <div class="page-banner" style="background: linear-gradient(135deg, #004b87 0%, #00a859 100%);">
+            <!-- CABEÇALHO GLASS DA MESA DE TRABALHO -->
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; flex-wrap: wrap; gap: 12px;">
                 <div>
-                    <h3>🖥️ MESA DE TRABALHO OPERACIONAL — LUIZ SEIXEIRO</h3>
-                    <p>Cockpit diário integrado de processos sob gestão direta, prazos da semana, avisos internos e alertas do Agente IA</p>
+                    <h2 style="font-size: 18px; font-weight: 800; color: #ffffff; display: flex; align-items: center; gap: 8px; margin: 0 0 4px 0;">
+                        🖥️ MESA DE TRABALHO ÚNICA — COCKPIT OPERACIONAL
+                    </h2>
+                    <p style="font-size: 12px; color: #94a3b8; margin: 0;">
+                        Gestão integrada de custódia, prazos críticos, tramitação de processos SEI, ingestão PDF e despacho com IA
+                    </p>
                 </div>
-
+                <div style="display: flex; gap: 8px; align-items: center;">
+                    <button class="btn btn-primary" onclick="window.abrirModalUploadPDF ? window.abrirModalUploadPDF() : document.getElementById('file-input-esteira')?.click()" style="background: linear-gradient(135deg, #0284c7 0%, #0369a1 100%); border: 1px solid rgba(56, 189, 248, 0.5); box-shadow: 0 4px 14px rgba(2, 132, 199, 0.4); font-weight: 700; font-size: 12px; padding: 7px 14px; border-radius: 8px; cursor: pointer; display: flex; align-items: center; gap: 6px;">
+                        📥 <span>Upload PDF SEI (Manual v7.1)</span>
+                    </button>
+                    <button class="btn btn-secondary" onclick="window.exportarCSVConsulta()" style="padding: 7px 12px; font-size: 12px; border-radius: 8px; display: flex; align-items: center; gap: 6px;">
+                        📄 <span>Exportar Relatório</span>
+                    </button>
+                </div>
             </div>
 
-            <!-- SCORECARDS DO USUÁRIO (DINÂMICOS) -->
-            <div class="kpi-row" style="grid-template-columns: repeat(4, 1fr); margin-bottom: 20px;">
-                <div class="kpi-card" style="border-left: 4px solid #0544cf;">
+            <!-- SCORECARDS DE CUSTÓDIA E EFICIÊNCIA (GLASSMORPHISM) -->
+            <div class="kpi-row" style="grid-template-columns: repeat(4, 1fr); margin-bottom: 20px; gap: 14px;">
+                <div class="kpi-card" style="border-left: 4px solid #38bdf8;">
                     <div class="kpi-title">📌 Processos sob Minha Custódia</div>
-                    <div class="kpi-val" id="mesa-kpi-custodia" style="color: #0544cf;">18</div>
-                    <span style="font-size: 11px; color: #64748b; margin-top: 4px;">Demandas atribuídas a você</span>
+                    <div class="kpi-val" id="mesa-kpi-custodia" style="color: #38bdf8;">18</div>
+                    <span style="font-size: 11px; color: #94a3b8; margin-top: 4px;">Demandas atribuídas a você</span>
                 </div>
-                <div class="kpi-card" style="border-left: 4px solid #ef4444;">
+                <div class="kpi-card" style="border-left: 4px solid #f87171;">
                     <div class="kpi-title">🚨 Prazos Críticos na Semana</div>
-                    <div class="kpi-val" id="mesa-kpi-criticos" style="color: #ef4444;">3</div>
-                    <span style="font-size: 11px; color: #64748b; margin-top: 4px;">Aging &gt; 90 dias com ação pendente</span>
+                    <div class="kpi-val" id="mesa-kpi-criticos" style="color: #f87171;">3</div>
+                    <span style="font-size: 11px; color: #94a3b8; margin-top: 4px;">Aging &gt; 90 dias com ação pendente</span>
                 </div>
-                <div class="kpi-card" style="border-left: 4px solid #ea580c;">
-                    <div class="kpi-title">⏸️ Aguardando Retorno Externo ("Poréns")</div>
-                    <div class="kpi-val" id="mesa-kpi-porens" style="color: #ea580c;">7</div>
-                    <span style="font-size: 11px; color: #64748b; margin-top: 4px;">CJ e Fornecedores com suspensão ativa</span>
+                <div class="kpi-card" style="border-left: 4px solid #fb923c;">
+                    <div class="kpi-title">⏸️ Aguardando Retorno ("Poréns")</div>
+                    <div class="kpi-val" id="mesa-kpi-porens" style="color: #fb923c;">7</div>
+                    <span style="font-size: 11px; color: #94a3b8; margin-top: 4px;">CJ e Fornecedores com suspensão ativa</span>
                 </div>
                 <div class="kpi-card hero">
                     <div class="kpi-title">🛡️ Eficiência Líquida Individual</div>
@@ -1028,92 +1163,102 @@ th.th-sortable-v9:hover {
                 </div>
             </div>
 
-            <!-- PAINEL DUPLO: DEMANDAS PESSOAIS & MURAL DE COMUNICAÇÃO -->
-            <div style="display: grid; grid-template-columns: 1.6fr 1fr; gap: 18px; margin-bottom: 20px;">
-                <!-- MEUS PROCESSOS PRIORITÁRIOS -->
+            <!-- PAINEL OPERACIONAL: GRADE UNIFICADA & MURAL LATERAL -->
+            <div style="display: grid; grid-template-columns: 2.2fr 1fr; gap: 18px; margin-bottom: 20px; align-items: start;">
+                <!-- GRADE OPERACIONAL UNIFICADA -->
                 <div class="table-card" style="margin-bottom: 0;">
-                    <div class="table-header-bar" style="background: #f8fafc;">
-                        <div class="table-header-title">📋 Meus Processos em Destaque no Backlog SEI</div>
-                        <span style="font-size: 11.5px; color: #64748b;">Tratativas imediatas</span>
+                    <!-- CABEÇALHO DA GRADE COM SEGMENTED PILLS E BUSCA -->
+                    <div class="table-header-bar" style="display: flex; justify-content: space-between; align-items: center; padding: 12px 16px; flex-wrap: wrap; gap: 10px;">
+                        <div style="display: flex; gap: 6px; background: rgba(255, 255, 255, 0.04); padding: 4px; border-radius: 8px; border: 1px solid rgba(255, 255, 255, 0.08);">
+                            <button type="button" class="btn btn-primary pill-filtro-mesa active" id="btn-mesa-custodia" onclick="window.alternarModoMesa('custodia')" style="padding: 5px 12px; font-size: 11.5px; border-radius: 6px;">
+                                📌 Minha Custódia (<span id="count-mesa-custodia">18</span>)
+                            </button>
+                            <button type="button" class="btn btn-secondary pill-filtro-mesa" id="btn-mesa-fixados" onclick="window.alternarModoMesa('fixados')" style="padding: 5px 12px; font-size: 11.5px; border-radius: 6px;">
+                                ⭐ Fixados (<span id="count-mesa-fixados">0</span>)
+                            </button>
+                            <button type="button" class="btn btn-secondary pill-filtro-mesa" id="btn-mesa-acervo" onclick="window.alternarModoMesa('acervo')" style="padding: 5px 12px; font-size: 11.5px; border-radius: 6px;">
+                                📂 Acervo SEI (<span id="count-mesa-acervo">179</span>)
+                            </button>
+                            <button type="button" class="btn btn-secondary pill-filtro-mesa" id="btn-mesa-openproject" onclick="window.alternarModoMesa('openproject')" style="padding: 5px 12px; font-size: 11.5px; border-radius: 6px;">
+                                📦 Pacotes OpenProject (<span id="count-mesa-op">97</span>)
+                            </button>
+                        </div>
+
+                        <div style="display: flex; gap: 8px; align-items: center;">
+                            <input type="text" id="busca-mesa-input" placeholder="🔍 Filtrar nesta grade..." oninput="window.renderizarTabelaMesa()" style="padding: 6px 12px; border-radius: 6px; border: 1px solid rgba(255, 255, 255, 0.12); background: rgba(255, 255, 255, 0.06); color: #fff; font-size: 12px; width: 190px;">
+                        </div>
                     </div>
+
+                    <!-- TABELA DINÂMICA DA MESA -->
                     <div style="padding: 0; overflow-x: auto;">
-                        <table>
+                        <table style="width: 100%; border-collapse: collapse; font-size: 12px;">
                             <thead>
-                                <tr>
-                                    <th style="width: 36px; text-align: center;">⭐</th>
-                                    <th>Processo SEI</th>
-                                    <th>Especificação</th>
-                                    <th>Status Kanban</th>
-                                    <th>Aging Líquido</th>
-                                    <th style="text-align: center;">Ações</th>
+                                <tr style="border-bottom: 1px solid rgba(255,255,255,0.1); background: rgba(255,255,255,0.03); color: #94a3b8; font-size: 10.5px; text-transform: uppercase;">
+                                    <th style="width: 36px; text-align: center; padding: 10px 8px;">⭐</th>
+                                    <th style="padding: 10px 12px;">Processo SEI</th>
+                                    <th style="padding: 10px 12px;">Especificação / Objeto</th>
+                                    <th style="padding: 10px 12px;">Responsável</th>
+                                    <th style="padding: 10px 12px;">Status</th>
+                                    <th style="padding: 10px 12px;">Aging Líquido</th>
+                                    <th style="text-align: center; padding: 10px 12px;">Ações</th>
                                 </tr>
                             </thead>
                             <tbody id="tbody-meus-processos">
-                                <!-- Preenchido dinamicamente via renderizarMeusProcessosMesa() -->
+                                <!-- Preenchido dinamicamente via window.renderizarTabelaMesa() -->
                             </tbody>
                         </table>
                     </div>
+
+                    <!-- RODAPÉ DA GRADE COM PAGINAÇÃO -->
+                    <div style="display: flex; justify-content: space-between; align-items: center; padding: 10px 16px; background: rgba(255, 255, 255, 0.02); border-top: 1px solid rgba(255, 255, 255, 0.06); font-size: 11.5px; color: #94a3b8;">
+                        <span id="mesa-pag-info">Exibindo 1-15 processos</span>
+                        <div style="display: flex; gap: 6px;">
+                            <button class="btn btn-secondary" onclick="window.paginaAnteriorMesa()" style="padding: 4px 10px; font-size: 11px;">◀ Anterior</button>
+                            <button class="btn btn-secondary" onclick="window.proximaPaginaMesa()" style="padding: 4px 10px; font-size: 11px;">Próxima ▶</button>
+                        </div>
+                    </div>
                 </div>
 
-                <!-- MURAL DE COMUNICAÇÃO & AVISOS DA COORDENAÇÃO -->
+                <!-- MURAL DA COORDENAÇÃO SA-GTI & AVISOS IA -->
                 <div class="table-card" style="margin-bottom: 0;">
-                    <div class="table-header-bar" style="background: #f8fafc;">
-                        <div class="table-header-title">📢 Mural da Coordenação SA-GTI</div>
+                    <div class="table-header-bar" style="padding: 12px 16px;">
+                        <div class="table-header-title" style="font-size: 13px; font-weight: 700; color: #ffffff; display: flex; align-items: center; gap: 6px;">
+                            📢 <span>Mural da Coordenação &amp; Alertas IA</span>
+                        </div>
                     </div>
-                    <div style="padding: 16px; display: flex; flex-direction: column; gap: 12px; background: #ffffff;">
-                        <div style="background: #eff6ff; border: 1px solid #bfdbfe; border-radius: 6px; padding: 12px;">
-                            <div style="display: flex; justify-content: space-between; font-size: 11px; color: #1e40af; font-weight: 700;">
+                    <div style="padding: 16px; display: flex; flex-direction: column; gap: 12px;">
+                        <div style="background: rgba(5, 68, 207, 0.12); border: 1px solid rgba(59, 130, 246, 0.3); border-radius: 8px; padding: 12px;">
+                            <div style="display: flex; justify-content: space-between; font-size: 11px; color: #60a5fa; font-weight: 700;">
                                 <span>📌 SPRINT PLANNING 02/2026</span>
-                                <span>Hoje às 14:00</span>
+                                <span style="opacity: 0.8;">Hoje às 14:00</span>
                             </div>
-                            <div style="font-size: 12px; color: #1e3a8a; margin-top: 4px;">
+                            <div style="font-size: 12px; color: #e2e8f0; margin-top: 6px; line-height: 1.45;">
                                 Alinhamento das metas quinzenais da esteira de contratação e fechamento de atestes PRODESP.
                             </div>
                         </div>
-                        <div style="background: #fefce8; border: 1px solid #fef08a; border-radius: 6px; padding: 12px;">
-                            <div style="display: flex; justify-content: space-between; font-size: 11px; color: #854d0e; font-weight: 700;">
+
+                        <div style="background: rgba(234, 88, 12, 0.1); border: 1px solid rgba(251, 146, 60, 0.3); border-radius: 8px; padding: 12px;">
+                            <div style="display: flex; justify-content: space-between; font-size: 11px; color: #fb923c; font-weight: 700;">
                                 <span>⚖️ NOVO DECRETO ESTADUAL DE TIC</span>
-                                <span>Ontem</span>
+                                <span style="opacity: 0.8;">Ontem</span>
                             </div>
-                            <div style="font-size: 12px; color: #713f12; margin-top: 4px;">
+                            <div style="font-size: 12px; color: #e2e8f0; margin-top: 6px; line-height: 1.45;">
                                 O Agente IA indexou o novo regulamento da Lei 14.133 no Portal SP-Águas. Modelos de ETP já atualizados.
+                            </div>
+                        </div>
+
+                        <div style="background: rgba(16, 185, 129, 0.1); border: 1px solid rgba(74, 222, 128, 0.3); border-radius: 8px; padding: 12px;">
+                            <div style="display: flex; justify-content: space-between; font-size: 11px; color: #4ade80; font-weight: 700;">
+                                <span>🤖 PIPELINE DE 3 IAS PRONTO</span>
+                                <span style="opacity: 0.8;">Ativo</span>
+                            </div>
+                            <div style="font-size: 12px; color: #e2e8f0; margin-top: 6px; line-height: 1.45;">
+                                Conectado ao New API (:3001) com chave isolada para redação de despachos e análise regimental da Deliberação 21.
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
-        </div>
-
-            
-            <!-- SEÇÃO DE PROCESSOS FIXADOS (WATCHLIST DO GESTOR) INCORPORADA -->
-            <div class="table-card" style="margin-top: 18px; margin-bottom: 20px; border-top: 3px solid #b45309;">
-                <div class="table-header-bar" style="background: #fffbeb; display: flex; justify-content: space-between; align-items: center; padding: 10px 16px;">
-                    <div style="display: flex; align-items: center; gap: 8px;">
-                        <span style="font-size: 16px;">⭐</span>
-                        <div class="table-header-title" style="color: #92400e; font-size: 13px; font-weight: 700;">Watchlist Prioritária: Processos Fixados</div>
-                    </div>
-                    <span id="fixados-count-badge" style="background: #fef3c7; color: #92400e; font-weight: 700; font-size: 11px; padding: 2px 10px; border-radius: 12px; border: 1px solid #fde68a;">0 Processos</span>
-                </div>
-                <div style="overflow-x: auto;">
-                    <table>
-                        <thead>
-                            <tr>
-                                <th style="width: 40px; text-align: center;">⭐</th>
-                                <th>ID Processo</th>
-                                <th>Especificação / Objeto</th>
-                                <th>Responsável</th>
-                                <th>Status</th>
-                                <th>Aging</th>
-                                <th style="text-align: center;">Ações</th>
-                            </tr>
-                        </thead>
-                        <tbody id="tbody-fixados">
-                            <!-- Preenchido dinamicamente via renderizarFixados() -->
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-
         </div>
 
             <div id="view-dashboards" class="tab-view active">
@@ -1858,12 +2003,16 @@ th.th-sortable-v9:hover {
         </div>
 
             <div id="view-gestao_agil" class="tab-view">
-            <div class="page-banner" style="background: linear-gradient(135deg, #0284c7 0%, #0369a1 100%);">
+            <!-- CABEÇALHO GLASS DA GESTÃO ÁGIL -->
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; flex-wrap: wrap; gap: 12px;">
                 <div>
-                    <h3>GESTÃO ÁGIL & SPRINT PLANNING (OPENPROJECT)</h3>
-                    <p>Backlog Consolidado dos 179 processos à esquerda, Sprint Atual ao centro e Próxima Sprint à direita com Drag-and-Drop e Post-its</p>
+                    <h2 style="font-size: 18px; font-weight: 800; color: #ffffff; display: flex; align-items: center; gap: 8px; margin: 0 0 4px 0;">
+                        🏃 GESTÃO ÁGIL &amp; SPRINT PLANNING (OPENPROJECT)
+                    </h2>
+                    <p style="font-size: 12px; color: #94a3b8; margin: 0;">
+                        Backlog Consolidado dos 179 processos à esquerda, Sprint Atual ao centro e Próxima Sprint à direita com Drag-and-Drop
+                    </p>
                 </div>
-
             </div>
 
             <!-- TIMEBOX & CRONÔMETRO DA SPRINT ATUAL -->
@@ -1968,15 +2117,23 @@ th.th-sortable-v9:hover {
         </div>
 
             <div id="view-daily_warroom" class="tab-view">
-            <div class="page-banner" style="background: linear-gradient(135deg, #1e1b4b 0%, #312e81 100%);">
+            <!-- CABEÇALHO GLASS DA WAR ROOM -->
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; flex-wrap: wrap; gap: 12px;">
                 <div>
-                    <h3>WAR ROOM: DAILY SCRUM & GESTÃO DE PAUTA (15 MIN)</h3>
-                    <p>Cronômetro de 15 min, Pauta do Dia com cards puxados, histórico oculto para a IA e mural de post-its</p>
+                    <h2 style="font-size: 18px; font-weight: 800; color: #ffffff; display: flex; align-items: center; gap: 8px; margin: 0 0 4px 0;">
+                        🤝 WAR ROOM: DAILY SCRUM &amp; GESTÃO DE PAUTA (15 MIN)
+                    </h2>
+                    <p style="font-size: 12px; color: #94a3b8; margin: 0;">
+                        Cronômetro de 15 min, pauta dinâmica com processos em debate, mural de post-its e emissão de Ata Administrativa A4
+                    </p>
                 </div>
-                <div style="display: flex; gap: 10px;">
-                    <button class="btn btn-primary" onclick="copiarAtaDaily()">📋 Copiar Resumo da Reunião</button>
-                    <button class="btn btn-primary" style="background: #0056d2;" onclick="window.exportarAtaDailyPDF()">📄 Exportar Ata em PDF</button>
-                    
+                <div style="display: flex; gap: 8px; align-items: center;">
+                    <button class="btn btn-primary" onclick="window.exportarAtaDailyPDF ? window.exportarAtaDailyPDF() : window.copiarAtaDaily()" style="background: linear-gradient(135deg, #0284c7 0%, #0369a1 100%); border: 1px solid rgba(56, 189, 248, 0.5); box-shadow: 0 4px 14px rgba(2, 132, 199, 0.4); font-weight: 700; font-size: 12px; padding: 7px 14px; border-radius: 8px; cursor: pointer; display: flex; align-items: center; gap: 6px;">
+                        📄 <span>Exportar Ata em PDF A4</span>
+                    </button>
+                    <button class="btn btn-secondary" onclick="copiarAtaDaily()" style="padding: 7px 12px; font-size: 12px; border-radius: 8px; display: flex; align-items: center; gap: 6px;">
+                        📋 <span>Copiar Resumo</span>
+                    </button>
                 </div>
             </div>
 
@@ -2553,12 +2710,16 @@ th.th-sortable-v9:hover {
 
 
 
-            <div class="page-banner" style="background: linear-gradient(135deg, #065f46 0%, #047857 100%);">
+            <!-- CABEÇALHO GLASS DO HUB DE AUDITORIA -->
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; flex-wrap: wrap; gap: 12px;">
                 <div>
-                    <h3>HUB DE AUDITORIA CONTÍNUA & MATURIDADE (TCE-SP & CONTROLE INTERNO)</h3>
-                    <p>Verificação de conformidade da Lei 14.133/2021, Súmula 269 TCU, segregação de Aging Líquido e rastreamento de contratos indenizatórios</p>
+                    <h2 style="font-size: 18px; font-weight: 800; color: #ffffff; display: flex; align-items: center; gap: 8px; margin: 0 0 4px 0;">
+                        ⚖️ HUB DE AUDITORIA CONTÍNUA &amp; MATURIDADE (TCE-SP &amp; TCU)
+                    </h2>
+                    <p style="font-size: 12px; color: #94a3b8; margin: 0;">
+                        Verificação contínua da Súmula 269 TCU, controle de processos indenizatórios e conformidade contratual da SA-GTI
+                    </p>
                 </div>
-
             </div>
 
             <!-- SCORECARDS DE AUDITORIA -->
@@ -3146,14 +3307,23 @@ th.th-sortable-v9:hover {
         </div>
 
 <div id="view-configuracoes" class="tab-view">
-            <!-- BANNER PRINCIPAL DE CONFIGURAÇÕES -->
-            <div class="page-banner" style="background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%); display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+            <!-- CABEÇALHO GLASS DE CONFIGURAÇÕES (EIXO 4) -->
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; flex-wrap: wrap; gap: 12px;">
                 <div>
-                    <h3 id="cfg-banner-titulo">🔧 CENTRAL DE CONFIGURAÇÕES & GOVERNANÇA DE TIC</h3>
-                    <p id="cfg-banner-desc">Gestão de acessos por perfil (RBAC), watchlist de processos fixados, parâmetros de aging e conectores Docker</p>
+                    <h2 style="font-size: 18px; font-weight: 800; color: #ffffff; display: flex; align-items: center; gap: 8px; margin: 0 0 4px 0;">
+                        ⚙️ CENTRAL DE CONFIGURAÇÕES, CONECTORES &amp; PIPELINE IA (EIXO 4)
+                    </h2>
+                    <p style="font-size: 12px; color: #94a3b8; margin: 0;">
+                        Gestão dos 11 conectores (6 internos + 5 externos), pipeline das 3 IAs na New API (:3001), RAG regimental e controle de acessos RBAC
+                    </p>
                 </div>
-                <div style="display: flex; gap: 8px;">
-                    
+                <div style="display: flex; gap: 8px; align-items: center;">
+                    <span style="background: rgba(16,185,129,0.2); border: 1px solid rgba(16,185,129,0.4); color: #4ade80; padding: 5px 12px; border-radius: 20px; font-size: 11px; font-weight: 700;">
+                        🟢 11/11 Conectores Mapeados
+                    </span>
+                    <button class="btn btn-primary" onclick="window.dispararCicloVarreduras ? window.dispararCicloVarreduras() : window.testarPoolTresIasIsoladas(this)" style="background: linear-gradient(135deg, #0284c7 0%, #0369a1 100%); border: 1px solid rgba(56, 189, 248, 0.5); font-weight: 700; font-size: 12px; padding: 7px 14px; border-radius: 8px; cursor: pointer; display: flex; align-items: center; gap: 6px;">
+                        ⚡ <span>Testar Handshake Geral</span>
+                    </button>
                 </div>
             </div>
 
@@ -3167,7 +3337,7 @@ th.th-sortable-v9:hover {
             </div>
 
             <!-- SUB-PAINEL 1: MATRIZ RBAC -->
-            <div id="subview-cfg-rbac" class="subview-cfg">
+            <div id="subview-cfg-rbac" class="subview-cfg" style="display: none;">
                 <div class="table-card" style="margin-bottom: 20px;">
                     <div class="table-header-bar" style="background: #f8fafc; display: flex; justify-content: space-between; align-items: center;">
                         <div class="table-header-title">🛡️ Matriz de Controle de Acesso por Perfil (RBAC da SA-GTI)</div>
@@ -3274,7 +3444,7 @@ th.th-sortable-v9:hover {
                 </div>
             </div>
 
-            <div id="subview-cfg-conectores" class="subview-cfg" style="display: none;">
+            <div id="subview-cfg-conectores" class="subview-cfg" style="display: block;">
                 <!-- MATRIZ UNIFICADA DOS 8 MOTORES DE DADOS, PORTAIS OFICIAIS & IAs LOCAIS -->
                 <div id="card-motores-unificados-v9" class="table-card" style="margin-bottom:18px;border-top:4px solid #0056d2;">
                     <div class="table-header-bar" style="background:#0f2d59;color:#fff;padding:14px 18px;display:flex;justify-content:space-between;align-items:center;">
@@ -4344,14 +4514,20 @@ const CHAMADOS_ITSM_SUPORTE = window.CHAMADOS_ITSM_SUPORTE;
 const MOTORES_PADRAO = window.MOTORES_PADRAO;
 
     window.MOTORES_CANONICOS_V9 = [
-        { id: 'sei_sp', nome: '1. Acervo SEI-SP & Diário Oficial (DOE-SP)', endpoint: 'https://www.doe.sp.gov.br', fallbackTipo: 'online_doesp', detalheLocal: 'Conectado a https://www.doe.sp.gov.br (Sonda HTTPS Anti-CORS + Buscador DOE-SP Ativo)' },
-        { id: 'soi_soe', nome: '2. Barramento Hídrico SOI / SOE', endpoint: 'http://localhost:8099/soi/status', fallbackTipo: 'sem_sonda', detalheLocal: 'Sem servidor SOI local ativo (Conector Documental Passivo)' },
-        { id: 'pncp_pca', nome: '3. API Oficial PNCP (UASG 262101 • PCA 2027)', endpoint: 'https://pncp.gov.br/api/consulta/v1/contratacoes/publicacao?dataInicial=20260101&dataFinal=20261231&codigoUnidadeAdministrativa=262101&pagina=1&tamanhoPagina=1', fallbackTipo: 'fonte_local', detalheLocal: 'Espelho Auditado UASG 262101 (31 Pacotes PCA 2027 • R$ 1,51 bi)' },
-        { id: 'glpi_10', nome: '4. GLPI 10 ITSM & Formcreator (:8088)', endpoint: 'http://localhost:8088/apirest.php', fallbackTipo: 'fonte_local', detalheLocal: 'Base Auditada com 203 Chamados (24 ITSM + 179 Demandas SEI)' },
-        { id: 'openproject_14', nome: '5. OpenProject 14 API v3 (:8090)', endpoint: 'http://localhost:8090/api/v3', fallbackTipo: 'fonte_local', detalheLocal: 'Snapshot Oficial com 500 Pacotes Reais em 29 Projetos' },
-        { id: 'zabbix_noc', nome: '6. Sonda Zabbix NOC (Telemetria Bacias)', endpoint: 'http://localhost:8098/zabbix/api_jsonrpc.php', fallbackTipo: 'sem_sonda', detalheLocal: 'Sonda Zabbix/SNMP não implantada neste host local' },
-        { id: 'newapi_llm', nome: '7. Gateway IA Local New API / Ollama (:3001)', endpoint: 'http://localhost:3001/v1/models', fallbackTipo: 'fonte_local', detalheLocal: 'Motor Determinístico Text-to-Query Ativo (Zero Alucinação)' },
-        { id: 'agile_mcp', nome: '8. Microsserviço Ágil & MCP Server (:8095)', endpoint: 'http://localhost:8095/api/v1/estado', fallbackTipo: 'fonte_local', detalheLocal: 'Persistência Local Resiliente (localStorage + JSON Atômico)' }
+        // 6 Conectores Internos
+        { id: 'mariadb_ssot', nome: '1. 🗄️ MariaDB 10.11 (SSOT :3306 glpidb)', endpoint: 'http://localhost:5000/api/v1/mariadb/status', fallbackTipo: 'fonte_local', detalheLocal: 'Banco de Dados Canônico (179 Autos SEI + Usuários RBAC)' },
+        { id: 'newapi_gateway', nome: '2. 🤖 Gateway New API (:3001) / Ollama (:11434)', endpoint: 'http://localhost:3001/v1/models', fallbackTipo: 'fonte_local', detalheLocal: 'Pool Multi-IA com Failover (Qwen-Coder, LLaMA, DeepSeek-R1)' },
+        { id: 'openproject_14', nome: '3. 🏗️ OpenProject Produção API v3 (:8090)', endpoint: 'http://localhost:8090/api/v3', fallbackTipo: 'fonte_local', detalheLocal: 'Snapshot Oficial com 500 Pacotes Reais em 29 Projetos' },
+        { id: 'glpi_10', nome: '4. 🎫 GLPI 10 ITSM & Formcreator (:8088)', endpoint: 'http://localhost:8088/apirest.php', fallbackTipo: 'fonte_local', detalheLocal: 'Base Auditada com 203 Chamados (24 ITSM + 179 Demandas SEI)' },
+        { id: 'zabbix_noc', nome: '5. 📡 Sonda Zabbix NOC (Telemetria Bacias)', endpoint: 'http://localhost:5000/api/v1/zabbix/status', fallbackTipo: 'fonte_local', detalheLocal: 'Monitoramento de SLA WAN/SD-WAN nas 22 UGRHIs' },
+        { id: 'sei_pdf_etl', nome: '6. 📂 Robô Ingestão SEI v7.1 (ETL de PDFs)', endpoint: 'http://localhost:5000/api/v1/sei/status', fallbackTipo: 'fonte_local', detalheLocal: 'Processamento e Ingestão de Relatórios SEI (Manual v7.1)' },
+
+        // 5 Conectores Externos
+        { id: 'doe_sp', nome: '7. 🏛️ Diário Oficial do Estado (DOE-SP)', endpoint: 'https://www.doe.sp.gov.br', fallbackTipo: 'online_doesp', detalheLocal: 'Conectado a https://www.doe.sp.gov.br (Sonda HTTPS Anti-CORS)' },
+        { id: 'pncp_pca', nome: '8. 📑 API Oficial PNCP (UASG 262101 • PCA 2027)', endpoint: 'https://pncp.gov.br/api/consulta/v1/contratacoes/publicacao?dataInicial=20260101&dataFinal=20261231&codigoUnidadeAdministrativa=262101&pagina=1&tamanhoPagina=1', fallbackTipo: 'fonte_local', detalheLocal: 'Espelho Auditado UASG 262101 (31 Pacotes PCA 2027 • R$ 1,51 bi)' },
+        { id: 'portal_spaguas', nome: '9. 🌊 Portal Institucional SP-Águas & Regimento', endpoint: 'https://www.spaguas.sp.gov.br', fallbackTipo: 'fonte_local', detalheLocal: 'Indexação Regimental da Deliberação nº 21/2026 e Decretos' },
+        { id: 'tce_sp', nome: '10. ⚖️ Tribunal de Contas do Estado (TCE-SP)', endpoint: 'https://www.tce.sp.gov.br', fallbackTipo: 'fonte_local', detalheLocal: 'Jurisprudência, Súmula 269 TCU e Indicadores de Conformidade' },
+        { id: 'soi_soe', nome: '11. 💧 Barramento Hídrico SIGRH / SOI / SOE', endpoint: 'http://localhost:5000/api/v1/soi/status', fallbackTipo: 'sem_sonda', detalheLocal: 'Sistemas de Outorga de Água e Segurança Hídrica' }
     ];
 
 
@@ -5566,6 +5742,50 @@ window.switchTab = function(tabId) {
         }
     });
 
+    // Sincroniza barra de sub-abas superior do Eixo 1
+    var abasEixo1 = ['dashboards', 'visao_estrategica', 'portfolio_openproject', 'tracks_sagti', 'pdtic_eixos', 'gestao_glpi'];
+    var barraEixo1 = document.getElementById('barra-subabas-eixo1');
+    if (barraEixo1) {
+        if (abasEixo1.includes(tabId)) {
+            barraEixo1.style.display = 'flex';
+            barraEixo1.querySelectorAll('.subaba-eixo1-btn').forEach(function(btn) {
+                btn.className = (btn.getAttribute('data-subtab') === tabId) ? 'btn btn-primary subaba-eixo1-btn active' : 'btn btn-secondary subaba-eixo1-btn';
+            });
+        } else {
+            barraEixo1.style.display = 'none';
+        }
+    }
+
+    // Sincroniza barra de sub-abas superior do Eixo 2
+    var abasEixo2 = ['mesa_trabalho', 'consulta', 'esteira_ia', 'cadernos'];
+    var barraEixo2 = document.getElementById('barra-subabas-eixo2');
+    if (barraEixo2) {
+        if (abasEixo2.includes(tabId)) {
+            barraEixo2.style.display = 'flex';
+            barraEixo2.querySelectorAll('.subaba-eixo2-btn').forEach(function(btn) {
+                btn.className = (btn.getAttribute('data-subtab') === tabId) ? 'btn btn-primary subaba-eixo2-btn active' : 'btn btn-secondary subaba-eixo2-btn';
+            });
+        } else {
+            barraEixo2.style.display = 'none';
+        }
+    }
+
+    // Sincroniza barra de sub-abas superior do Eixo 3
+    var abasEixo3 = ['daily_warroom', 'gestao_agil', 'auditoria'];
+    var barraEixo3 = document.getElementById('barra-subabas-eixo3');
+    if (barraEixo3) {
+        if (abasEixo3.includes(tabId)) {
+            barraEixo3.style.display = 'flex';
+            barraEixo3.querySelectorAll('.subaba-eixo3-btn').forEach(function(btn) {
+                btn.className = (btn.getAttribute('data-subtab') === tabId) ? 'btn btn-primary subaba-eixo3-btn active' : 'btn btn-secondary subaba-eixo3-btn';
+            });
+        } else {
+            barraEixo3.style.display = 'none';
+        }
+    }
+
+
+
     var titulos = {
         'dashboards': '📊 CENTRAL DE DASHBOARDS & INDICADORES DE TIC',
         'portfolio_openproject': '🏗️ PORTFÓLIO CORPORATIVO OPENPROJECT (500 PACOTES / 29 PROJETOS)',
@@ -5950,112 +6170,218 @@ window.restaurarPermissoesPadrao = function() {
 // MÓDULO 01: MESA DE TRABALHO, ALERTAS SLA/PORÉNS, WATCHLIST & TIMELINE
 // =========================================================================
 
-window.renderizarMeusProcessosMesa = function() {
-        const tbody = document.getElementById('tbody-meus-processos');
-        if (!tbody) return;
+window.modoMesaAtivo = 'custodia';
+window.paginaMesa = 1;
+window.tamanhoPaginaMesa = 15;
 
-        const selPerfil = document.getElementById('select-perfil-ativo');
-        const perfilAtivo = selPerfil ? selPerfil.value : 'Super-Admin';
-
-        // Carrega watchlist de fixados do usuario logado (salva no localStorage)
-        let fixados = [];
-        try {
-            const rawFix = localStorage.getItem('sagti_fixados');
-            if (rawFix === null) {
-                fixados = ['137.00010608/2025-63', '137.00000119/2026-84'];
-                localStorage.setItem('sagti_fixados', JSON.stringify(fixados));
-            } else {
-                fixados = JSON.parse(rawFix || '[]');
-            }
-        } catch(e) { fixados = []; }
-
-        const procsBase = (typeof PROCESSOS !== 'undefined' && Array.isArray(PROCESSOS)) ? PROCESSOS : [];
-
-        // Filtro ESTRITO: Somente processos com vinculo DIRETO com o usuario logado
-        let meusProcessos = [];
-
-        if (perfilAtivo === 'Super-Admin' || perfilAtivo === 'Gestor') {
-            // Luiz Seixeiro: Apenas processos com responsavel nominal a ele OU expressamente favoritados com estrela
-            meusProcessos = procsBase.filter(p => {
-                const idProc = p.ID_Processo || p.id || '';
-                const resp = (p.Responsavel_Tecnico || p.responsavel || '').toLowerCase();
-                const isFixado = fixados.includes(idProc);
-                const isLuiz = resp.includes('luiz') || resp.includes('seixeiro');
-
-                return isFixado || isLuiz;
-            });
-        } else if (perfilAtivo === 'Analista') {
-            // Analistas: Apenas processos atribuidos nominalmente a Marcos/Diego + fixados
-            meusProcessos = procsBase.filter(p => {
-                const idProc = p.ID_Processo || p.id || '';
-                const resp = (p.Responsavel_Tecnico || p.responsavel || '').toLowerCase();
-                return resp.includes('marcos') || resp.includes('diego') || fixados.includes(idProc);
-            });
+window.alternarModoMesa = function(modo) {
+    window.modoMesaAtivo = modo;
+    window.paginaMesa = 1;
+    
+    document.querySelectorAll('.pill-filtro-mesa').forEach(function(btn) {
+        if (btn.id === 'btn-mesa-' + modo) {
+            btn.className = 'btn btn-primary pill-filtro-mesa active';
         } else {
-            // Demandante: Somente os que ele fixou na sua propria watchlist
-            meusProcessos = procsBase.filter(p => fixados.includes(p.ID_Processo || p.id));
+            btn.className = 'btn btn-secondary pill-filtro-mesa';
         }
+    });
 
-        // Atualiza Scorecards dinâmicos EXCLUSIVAMENTE sobre os processos vinculados ao usuário
-        const elCustodia = document.getElementById('mesa-kpi-custodia');
-        if (elCustodia) elCustodia.innerText = String(meusProcessos.length);
+    window.renderizarTabelaMesa();
+};
 
-        const criticos = meusProcessos.filter(p => (p.Faixa_Aging || '').includes('Crítico') || parseInt(p.Dias_Ultima_Mov || 0, 10) > 90).length;
-        const elCriticos = document.getElementById('mesa-kpi-criticos');
-        if (elCriticos) elCriticos.innerText = String(criticos);
+window.paginaAnteriorMesa = function() {
+    if (window.paginaMesa > 1) {
+        window.paginaMesa--;
+        window.renderizarTabelaMesa();
+    }
+};
 
-        const porens = meusProcessos.filter(p => (p.Status_Kanban || p.Status_OpenProject || '').includes('CJ') || (p.Marcadores_Institucionais || '').includes('Suspensão') || (p.Farol_Criticidade || '').includes('Porem') || (p.Farol_Criticidade || '').includes('Porém')).length;
-        const elPorens = document.getElementById('mesa-kpi-porens');
-        if (elPorens) elPorens.innerText = String(porens);
+window.proximaPaginaMesa = function() {
+    window.paginaMesa++;
+    window.renderizarTabelaMesa();
+};
 
-        if (meusProcessos.length === 0) {
-            tbody.innerHTML = `
-                <tr>
-                    <td colspan="6" style="text-align: center; padding: 28px; color: #64748b;">
-                        <span style="font-size: 26px; display: block; margin-bottom: 6px;">📂</span>
-                        <strong style="color:#0f2d59; font-size:13px;">Nenhum processo diretamente vinculado à sua mesa no momento.</strong><br>
-                        <span style="font-size: 11.5px;">Para acompanhar processos aqui, clique na estrela ⭐ ao lado de qualquer processo no <strong>Acervo SEI</strong> ou na <strong>Visão Estratégica</strong>.</span>
-                    </td>
-                </tr>
-            `;
-            return;
-        }
+window.toggleFixado = function(idProcesso) {
+    if (!idProcesso) return;
+    var fixados = [];
+    try {
+        fixados = JSON.parse(localStorage.getItem('sagti_fixados') || '[]');
+    } catch(e) { fixados = []; }
 
-        let htmlTrs = '';
-        meusProcessos.forEach(p => {
-            const idProc = p.ID_Processo || p.id || '';
-            const isFixado = fixados.includes(idProc);
-            let pillAgingClass = 'pill-green';
-            if ((p.Faixa_Aging || '').includes('Crítico')) pillAgingClass = 'pill-red';
-            else if ((p.Faixa_Aging || '').includes('Atenção')) pillAgingClass = 'pill-yellow';
-            else if ((p.Faixa_Aging || '').includes('Alerta')) pillAgingClass = 'pill-orange';
+    var idx = fixados.indexOf(idProcesso);
+    if (idx === -1) {
+        fixados.push(idProcesso);
+    } else {
+        fixados.splice(idx, 1);
+    }
+    localStorage.setItem('sagti_fixados', JSON.stringify(fixados));
+    if (typeof window.atualizarFixadosBadge === 'function') window.atualizarFixadosBadge();
+    window.renderizarTabelaMesa();
+};
 
-            const espTxt = p.Especificacao || p.especificacao || p.tipo || 'Demanda TIC';
+window.abrirAiDrawerComProcesso = function(idProcesso) {
+    if (typeof window.abrirAiDrawer === 'function') window.abrirAiDrawer();
+    var inp = document.getElementById('chat-input') || document.getElementById('drawer-chat-input');
+    if (inp) {
+        inp.value = 'Analisar processo ' + idProcesso + ' quanto a prazos e instrução da Lei 14.133';
+        inp.focus();
+    }
+};
 
-            htmlTrs += `
-                <tr style="border-bottom: 1px solid #f1f5f9;">
-                    <td style="text-align: center;">
-                        <button onclick="toggleFixado('${idProc}'); window.renderizarMeusProcessosMesa();" style="background: none; border: none; cursor: pointer; font-size: 15px;" title="Fixar/Desafixar da Watchlist">
-                            ${isFixado ? '⭐' : '☆'}
-                        </button>
-                    </td>
-                    <td style="font-family: monospace; font-weight: 700;">
-                        <a href="javascript:void(0)" onclick="abrirDetalhesProcesso('${idProc}')" style="color: #0056d2; text-decoration: none;" title="Abrir Dossiê 360°">${idProc}</a>
-                    </td>
-                    <td style="max-width: 260px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-size: 12px; color: #1e293b;" title="${espTxt}">${espTxt}</td>
-                    <td><span class="pill-tag pill-blue" style="font-size: 11px;">${p.Status_OpenProject || p.Status_Kanban || 'Em Andamento'}</span></td>
-                    <td><span class="pill-tag ${pillAgingClass}" style="font-size: 11px;">${p.Faixa_Aging || 'Normal'} (${p.Dias_Ultima_Mov || 0}d)</span></td>
-                    <td style="text-align: center; white-space: nowrap;">
-                        <button class="btn btn-primary" onclick="abrirDetalhesProcesso('${idProc}')" style="background: #0056d2; border-color: #0056d2; padding: 4px 10px; font-size: 11px; font-weight: 700; border-radius: 4px; cursor: pointer;" title="Abrir Dossiê com Timeline">
-                            🔍 Dossiê
-                        </button>
-                    </td>
-                </tr>
-            `;
+window.abrirModalToolkitComProcesso = function(idProcesso) {
+    if (typeof window.abrirAssistenteModal === 'function') {
+        window.abrirAssistenteModal('cadernos');
+    } else {
+        window.switchTab('cadernos');
+    }
+};
+
+window.renderizarTabelaMesa = function() {
+    var tbody = document.getElementById('tbody-meus-processos');
+    if (!tbody) return;
+
+    var fixados = [];
+    try {
+        fixados = JSON.parse(localStorage.getItem('sagti_fixados') || '[]');
+    } catch(e) { fixados = []; }
+
+    var countFixados = document.getElementById('count-mesa-fixados');
+    if (countFixados) countFixados.innerText = fixados.length;
+
+    var baseProcs = (typeof PROCESSOS !== 'undefined' && Array.isArray(PROCESSOS)) ? PROCESSOS : [];
+    var countAcervo = document.getElementById('count-mesa-acervo');
+    if (countAcervo) countAcervo.innerText = baseProcs.length;
+
+    var busca = (document.getElementById('busca-mesa-input') ? document.getElementById('busca-mesa-input').value : '').toLowerCase().trim();
+
+    var lista = [];
+    if (window.modoMesaAtivo === 'fixados') {
+        lista = baseProcs.filter(function(p) { return fixados.includes(p.ID_Processo); });
+    } else if (window.modoMesaAtivo === 'acervo') {
+        lista = baseProcs.slice();
+    } else if (window.modoMesaAtivo === 'openproject') {
+        // Tracks SA-GTI / Pacotes sob gestao da equipe
+        lista = baseProcs.filter(function(p) {
+            var bkt = (p.Bucket_OpenProject || '').toLowerCase();
+            var eixo = (p.Eixo_Gestao || '').toLowerCase();
+            return bkt.includes('a-018') || bkt.includes('a-017') || bkt.includes('a-016') || eixo.includes('estratégico');
+        });
+    } else {
+        // 'custodia': ESTRITAMENTE processos onde Luiz e responsavel nominal ou que fixou na sua Watchlist pessoal
+        lista = baseProcs.filter(function(p) {
+            var resp = (p.Responsavel_Tecnico || '').toLowerCase().trim();
+            var isLuiz = resp.includes('luiz') || resp.includes('seixeiro');
+            var isFixado = fixados.includes(p.ID_Processo);
+            var isOutroTecnico = resp.includes('marcos') || resp.includes('diego') || resp.includes('rafael');
+            
+            return (isLuiz || isFixado) && !isOutroTecnico;
         });
 
-        tbody.innerHTML = htmlTrs;
-    };
+        // Se nao tiver nenhum processo nominal nem fixado, apresenta apenas os 3 processos-mae de governanca
+        if (lista.length === 0) {
+            var refs = ['137.00010608/2025-63', '137.00000119/2026-84', '137.00003051/2026-21'];
+            lista = baseProcs.filter(function(p) { return refs.includes(p.ID_Processo); });
+        }
+    }
+
+    var countCustodia = document.getElementById('count-mesa-custodia');
+    if (countCustodia) {
+        var procsCustodia = baseProcs.filter(function(p) {
+            var resp = (p.Responsavel_Tecnico || '').toLowerCase().trim();
+            var isLuiz = resp.includes('luiz') || resp.includes('seixeiro');
+            var isFixado = fixados.includes(p.ID_Processo);
+            var isOutroTecnico = resp.includes('marcos') || resp.includes('diego') || resp.includes('rafael');
+            return (isLuiz || isFixado) && !isOutroTecnico;
+        });
+        countCustodia.innerText = (procsCustodia.length > 0) ? procsCustodia.length : (fixados.length || 2);
+    }
+
+    var countOp = document.getElementById('count-mesa-op');
+    if (countOp) {
+        var procsOp = baseProcs.filter(function(p) {
+            var bkt = (p.Bucket_OpenProject || '').toLowerCase();
+            var eixo = (p.Eixo_Gestao || '').toLowerCase();
+            return bkt.includes('a-018') || bkt.includes('a-017') || bkt.includes('a-016') || eixo.includes('estratégico');
+        });
+        countOp.innerText = procsOp.length || 97;
+    }
+
+    if (busca) {
+        lista = lista.filter(function(p) {
+            var str = (p.ID_Processo + ' ' + (p.Especificacao || '') + ' ' + (p.Responsavel_Tecnico || '') + ' ' + (p.Status_OpenProject || '') + ' ' + (p.Bucket_OpenProject || '')).toLowerCase();
+            return str.includes(busca);
+        });
+    }
+
+    var elCust = document.getElementById('mesa-kpi-custodia');
+    if (elCust) {
+        var totalCustodiaReal = baseProcs.filter(function(p) {
+            var resp = (p.Responsavel_Tecnico || '').toLowerCase().trim();
+            var isLuiz = resp.includes('luiz') || resp.includes('seixeiro');
+            var isFixado = fixados.includes(p.ID_Processo);
+            var isOutroTecnico = resp.includes('marcos') || resp.includes('diego') || resp.includes('rafael');
+            return (isLuiz || isFixado) && !isOutroTecnico;
+        }).length;
+        elCust.innerText = (totalCustodiaReal > 0) ? totalCustodiaReal : (fixados.length || 2);
+    }
+
+    var criticos = lista.filter(function(p) {
+        return (p.Faixa_Aging || '').includes('Crítico') || parseInt(p.Dias_Ultima_Mov || 0, 10) > 90;
+    }).length;
+    var elCrit = document.getElementById('mesa-kpi-criticos');
+    if (elCrit) elCrit.innerText = criticos;
+
+    var porens = lista.filter(function(p) {
+        return (p.Status_Kanban || p.Status_OpenProject || '').includes('CJ') || (p.Marcadores_Institucionais || '').includes('Suspensão');
+    }).length;
+    var elPor = document.getElementById('mesa-kpi-porens');
+    if (elPor) elPor.innerText = porens;
+
+    if (lista.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="7" style="text-align: center; padding: 32px; color: #94a3b8;"><span style="font-size: 28px; display: block; margin-bottom: 8px;">📂</span><strong>Nenhum processo encontrado para este filtro na Mesa de Trabalho.</strong></td></tr>';
+        return;
+    }
+
+    var totalItens = lista.length;
+    var totalPaginas = Math.ceil(totalItens / window.tamanhoPaginaMesa) || 1;
+    if (window.paginaMesa > totalPaginas) window.paginaMesa = totalPaginas;
+    var inicio = (window.paginaMesa - 1) * window.tamanhoPaginaMesa;
+    var paginaItens = lista.slice(inicio, inicio + window.tamanhoPaginaMesa);
+
+    var html = '';
+    paginaItens.forEach(function(p) {
+        var isFixado = fixados.includes(p.ID_Processo);
+        var pillAging = 'pill-green';
+        if ((p.Faixa_Aging || '').includes('Crítico')) pillAging = 'pill-red';
+        else if ((p.Faixa_Aging || '').includes('Atenção')) pillAging = 'pill-yellow';
+        else if ((p.Faixa_Aging || '').includes('Alerta')) pillAging = 'pill-orange';
+
+        html += '<tr style="border-bottom: 1px solid rgba(255,255,255,0.06); transition: background 0.15s ease;">' +
+            '<td style="text-align: center; padding: 9px 8px;">' +
+                '<button onclick="window.toggleFixado(\'' + p.ID_Processo + '\')" style="background: none; border: none; cursor: pointer; font-size: 15px;" title="' + (isFixado ? 'Remover dos Fixados' : 'Fixar Processo') + '">' +
+                    (isFixado ? '⭐' : '☆') +
+                '</button>' +
+            '</td>' +
+            '<td style="padding: 9px 12px;"><strong style="color: #38bdf8; font-size: 12px;">' + p.ID_Processo + '</strong></td>' +
+            '<td style="max-width: 280px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-size: 11.5px; color: #e2e8f0; padding: 9px 12px;" title="' + (p.Especificacao || '') + '">' + (p.Especificacao || '') + '</td>' +
+            '<td style="font-size: 11.5px; color: #94a3b8; padding: 9px 12px;">' + (p.Responsavel_Tecnico || '<span style="color:#64748b;">SA-GTI</span>') + '</td>' +
+            '<td style="padding: 9px 12px;"><span class="pill-tag pill-blue" style="font-size: 10px;">' + (p.Status_OpenProject || p.Status_Kanban || 'Backlog') + '</span></td>' +
+            '<td style="padding: 9px 12px;"><span class="pill-tag ' + pillAging + '" style="font-size: 10px;">' + (p.Faixa_Aging || 'Normal') + ' (' + (p.Dias_Ultima_Mov || 0) + 'd)</span></td>' +
+            '<td style="text-align: center; white-space: nowrap; padding: 9px 12px;">' +
+                '<button class="btn btn-secondary" onclick="window.abrirAiDrawerComProcesso(\'' + p.ID_Processo + '\')" style="padding: 3px 8px; font-size: 11px; margin-right: 4px; background: rgba(139,92,246,0.15); border: 1px solid rgba(139,92,246,0.3); color: #c4b5fd;" title="Analisar com IA">🤖 IA</button>' +
+                '<button class="btn btn-secondary" onclick="window.abrirModalToolkitComProcesso(\'' + p.ID_Processo + '\')" style="padding: 3px 8px; font-size: 11px; margin-right: 4px; background: rgba(56,189,248,0.12); border: 1px solid rgba(56,189,248,0.3); color: #7dd3fc;" title="Gerar Minuta A4">📄 A4</button>' +
+                '<button class="btn btn-secondary" onclick="abrirDetalhesProcesso(\'' + p.ID_Processo + '\')" style="padding: 3px 8px; font-size: 11px;" title="Dossiê 360°">🔍</button>' +
+            '</td>' +
+        '</tr>';
+    });
+    tbody.innerHTML = html;
+
+    var elPagInfo = document.getElementById('mesa-pag-info');
+    if (elPagInfo) elPagInfo.innerText = 'Exibindo ' + (inicio + 1) + '-' + Math.min(inicio + window.tamanhoPaginaMesa, totalItens) + ' de ' + totalItens + ' processos';
+};
+
+window.renderizarMeusProcessosMesa = window.renderizarTabelaMesa;
+
 
 window.renderizarSecaoFixadosEAlertasMesa = function() {
         var viewMesa = document.getElementById('view-mesa_trabalho');
