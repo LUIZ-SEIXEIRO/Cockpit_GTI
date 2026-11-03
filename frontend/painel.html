@@ -835,6 +835,18 @@ th.th-sortable-v9:hover {
     
     </style>
     <link rel="stylesheet" href="/static/estilo_spaguas.css">
+<!-- ======================================================== -->
+<!-- ESTILOS GLASSMORPHISM SAAS - HARMONIZAÇÃO KPI CARDS & PILLS -->
+<!-- ======================================================== -->
+
+<!-- ======================================================== -->
+<!-- ESTILOS GLASSMORPHISM SAAS - HARMONIZAÇÃO KPI CARDS & PILLS -->
+<!-- ======================================================== -->
+
+<!-- ======================================================== -->
+<!-- ESTILOS GLASSMORPHISM SAAS DARK MODE (DEFAULT) + AURORA GLOW -->
+<!-- ======================================================== -->
+
 </head>
 <body>
     <!-- BARRA DO MODO GESTÃO À VISTA (TV KIOSK) -->
@@ -1120,7 +1132,7 @@ th.th-sortable-v9:hover {
             </div>
 
             <!-- SELETOR DE MODOS DE DASHBOARD (PILLS) -->
-            <div style="display: flex; gap: 8px; margin-bottom: 20px; background: white; padding: 10px 14px; border-radius: 8px; border: 1px solid var(--sp-border); overflow-x: auto; box-shadow: 0 1px 3px rgba(0,0,0,0.04);">
+            <div style="display: flex; gap: 8px; margin-bottom: 20px; background: rgba(255,255,255,0.04); padding: 10px 14px; border-radius: 8px; border: 1px solid var(--sp-border); overflow-x: auto; box-shadow: 0 1px 3px rgba(0,0,0,0.04);">
                 <button class="btn btn-primary pill-filtro-dash" id="btn-dash-consolidado" onclick="alternarModoDashboard('consolidado')">🌐 Visão Consolidada 360° (179)</button>
                 <button class="btn btn-secondary pill-filtro-dash" id="btn-dash-esteira" onclick="alternarModoDashboard('esteira')">📑 Esteira de Contratação (55)</button>
                 <button class="btn btn-secondary pill-filtro-dash" id="btn-dash-rotina" onclick="alternarModoDashboard('rotina')">⚙️ Rotina Operacional (93)</button>
@@ -1507,7 +1519,7 @@ th.th-sortable-v9:hover {
             </div>
 
             <!-- SELETOR DE MODOS DE VISUALIZAÇÃO (PILLS) -->
-            <div style="display: flex; gap: 8px; margin-bottom: 16px; background: white; padding: 10px 14px; border-radius: 8px; border: 1px solid var(--sp-border); overflow-x: auto;">
+            <div style="display: flex; gap: 8px; margin-bottom: 16px; background: rgba(255,255,255,0.04); padding: 10px 14px; border-radius: 8px; border: 1px solid var(--sp-border); overflow-x: auto;">
                 <button class="btn btn-primary pill-filtro-farol" id="btn-filtro-todos" onclick="filtrarModoFarol('todos')">🌐 Todos os Processos (87)</button>
                 <button class="btn btn-secondary pill-filtro-farol" id="btn-filtro-vermelho" onclick="filtrarModoFarol('vermelho')">🔴 1 - Intervenção Imediata (0)</button>
                 <button class="btn btn-secondary pill-filtro-farol" id="btn-filtro-laranja" onclick="filtrarModoFarol('laranja')">🟠 2 - Saneamento Prioritário (26)</button>
@@ -3146,7 +3158,7 @@ th.th-sortable-v9:hover {
             </div>
 
             <!-- SELETOR DE SUB-PAINÉIS DE CONFIGURAÇÃO (PILLS) -->
-            <div style="display: flex; gap: 8px; margin-bottom: 20px; background: white; padding: 10px 14px; border-radius: 8px; border: 1px solid var(--sp-border); overflow-x: auto; box-shadow: 0 1px 3px rgba(0,0,0,0.04);">
+            <div style="display: flex; gap: 8px; margin-bottom: 20px; background: rgba(255,255,255,0.04); padding: 10px 14px; border-radius: 8px; border: 1px solid var(--sp-border); overflow-x: auto; box-shadow: 0 1px 3px rgba(0,0,0,0.04);">
                 <button class="btn btn-primary pill-cfg" id="btn-cfg-rbac" onclick="alternarSubConfig('rbac')">🛡️ 1. Perfis de Acesso & RBAC</button>
                 <button class="btn btn-secondary pill-cfg" id="btn-cfg-parametros" onclick="alternarSubConfig('parametros')">⚖️ 2. Parâmetros de Gestão & Sprints</button>
                 <button class="btn btn-secondary pill-cfg" id="btn-cfg-conectores" onclick="alternarSubConfig('conectores')">🔌 3. Conectores & Varredura (6 Fontes)</button>
@@ -13335,5 +13347,808 @@ window.alternarSubConfig = function(modo) {
 };
 </script>
 
+
+
+<!-- =========================================================================
+     DESIGN SYSTEM v11.0: GLASSMORPHISM SAAS DUAL-THEME (DARK DEFAULT & LIGHT)
+     ========================================================================= -->
+<style id="cockpit-glassmorphism-v11">
+:root, [data-theme="dark"] {
+    --bg-canvas: #090d16;
+    --bg-sidebar: rgba(13, 19, 33, 0.78);
+    --bg-header: rgba(13, 19, 33, 0.72);
+    --bg-glass-card: rgba(255, 255, 255, 0.055);
+    --bg-glass-elevated: rgba(255, 255, 255, 0.085);
+    --bg-glass-input: rgba(15, 23, 42, 0.65);
+    --border-glass: rgba(255, 255, 255, 0.12);
+    --border-glass-highlight: rgba(56, 189, 248, 0.35);
+    --shadow-glass: 0 14px 34px -6px rgba(0, 0, 0, 0.55), inset 0 1px 0 0 rgba(255, 255, 255, 0.12);
+    --text-primary: #ffffff;
+    --text-secondary: #94a3b8;
+    --text-muted: #64748b;
+    --accent-tech: #00e5ff;
+    --accent-primary: #3b82f6;
+    --accent-ai: #8b5cf6;
+    --table-row-hover: rgba(59, 130, 246, 0.12);
+    --table-stripe: rgba(255, 255, 255, 0.02);
+    --glow-1: rgba(5, 68, 207, 0.28);
+    --glow-2: rgba(139, 92, 246, 0.22);
+    --glow-3: rgba(6, 182, 212, 0.18);
+}
+
+[data-theme="light"] {
+    --bg-canvas: #f2f6fc;
+    --bg-sidebar: rgba(255, 255, 255, 0.78);
+    --bg-header: rgba(255, 255, 255, 0.75);
+    --bg-glass-card: rgba(255, 255, 255, 0.68);
+    --bg-glass-elevated: rgba(255, 255, 255, 0.92);
+    --bg-glass-input: rgba(255, 255, 255, 0.90);
+    --border-glass: rgba(15, 23, 42, 0.09);
+    --border-glass-highlight: rgba(2, 132, 199, 0.35);
+    --shadow-glass: 0 10px 28px -6px rgba(15, 45, 89, 0.08), inset 0 1px 0 0 rgba(255, 255, 255, 0.85);
+    --text-primary: #1a1a1a;
+    --text-secondary: #475569;
+    --text-muted: #64748b;
+    --accent-tech: #0284c7;
+    --accent-primary: #2563eb;
+    --accent-ai: #7c3aed;
+    --table-row-hover: rgba(2, 132, 199, 0.08);
+    --table-stripe: rgba(15, 23, 42, 0.02);
+    --glow-1: rgba(59, 130, 246, 0.14);
+    --glow-2: rgba(139, 92, 246, 0.11);
+    --glow-3: rgba(6, 182, 212, 0.10);
+}
+
+/* Base & Aurora Backdrop Glow */
+body {
+    background-color: var(--bg-canvas) !important;
+    color: var(--text-primary) !important;
+    transition: background-color 0.35s ease, color 0.35s ease;
+    position: relative;
+    overflow-x: hidden;
+}
+
+#aurora-backdrop-container {
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: 0;
+    overflow: hidden;
+}
+
+.aurora-orb {
+    position: absolute;
+    border-radius: 50%;
+    filter: blur(110px);
+    transition: background 0.5s ease;
+}
+
+.aurora-orb-1 {
+    width: 620px;
+    height: 620px;
+    top: -180px;
+    left: -120px;
+    background: radial-gradient(circle, var(--glow-1) 0%, transparent 70%);
+}
+
+.aurora-orb-2 {
+    width: 540px;
+    height: 540px;
+    top: 22%;
+    right: -140px;
+    background: radial-gradient(circle, var(--glow-2) 0%, transparent 70%);
+}
+
+.aurora-orb-3 {
+    width: 580px;
+    height: 580px;
+    bottom: -200px;
+    left: 28%;
+    background: radial-gradient(circle, var(--glow-3) 0%, transparent 70%);
+}
+
+/* Estrutura Principal sobre o Backdrop */
+#sidebar, .main-wrapper, header, .content-scroll {
+    position: relative;
+    z-index: 1;
+}
+
+.main-wrapper, .content-scroll {
+    background: transparent !important;
+}
+
+/* Sidebar Glassmorphism */
+#sidebar {
+    background: var(--bg-sidebar) !important;
+    backdrop-filter: blur(20px) saturate(160%) !important;
+    -webkit-backdrop-filter: blur(20px) saturate(160%) !important;
+    border-right: 1px solid var(--border-glass) !important;
+    box-shadow: 4px 0 24px rgba(0, 0, 0, 0.25) !important;
+}
+
+[data-theme="light"] #sidebar .brand-title,
+[data-theme="light"] #sidebar .nav-item {
+    color: #1e293b !important;
+}
+
+[data-theme="light"] #sidebar .nav-section-title {
+    color: #0284c7 !important;
+}
+
+#sidebar .nav-item {
+    border-radius: 10px !important;
+    margin: 3px 10px !important;
+    padding: 9px 12px !important;
+    border: 1px solid transparent !important;
+    transition: all 0.2s ease !important;
+}
+
+#sidebar .nav-item:hover {
+    background: var(--bg-glass-elevated) !important;
+    border-color: var(--border-glass) !important;
+    transform: translateX(2px);
+}
+
+#sidebar .nav-item.active {
+    background: linear-gradient(135deg, rgba(59, 130, 246, 0.28) 0%, rgba(139, 92, 246, 0.22) 100%) !important;
+    border: 1px solid var(--border-glass-highlight) !important;
+    box-shadow: 0 4px 15px rgba(59, 130, 246, 0.2) !important;
+    color: var(--text-primary) !important;
+}
+
+/* Header Superior Glassmorphism */
+header, .top-header {
+    background: var(--bg-header) !important;
+    backdrop-filter: blur(18px) saturate(160%) !important;
+    -webkit-backdrop-filter: blur(18px) saturate(160%) !important;
+    border-bottom: 1px solid var(--border-glass) !important;
+    color: var(--text-primary) !important;
+}
+
+header h2, #page-title {
+    color: var(--text-primary) !important;
+}
+
+/* Cards de Vidro Fosco (KPIs, Tabelas, Gráficos) */
+.kpi-card, .table-card, .chart-card {
+    background: var(--bg-glass-card) !important;
+    backdrop-filter: blur(18px) saturate(160%) !important;
+    -webkit-backdrop-filter: blur(18px) saturate(160%) !important;
+    border: 1px solid var(--border-glass) !important;
+    border-radius: 14px !important;
+    box-shadow: var(--shadow-glass) !important;
+    color: var(--text-primary) !important;
+    transition: transform 0.22s ease, box-shadow 0.22s ease, border-color 0.22s ease !important;
+}
+
+.kpi-card:hover {
+    transform: translateY(-2px);
+    border-color: var(--border-glass-highlight) !important;
+}
+
+.kpi-title, .chart-header, .table-header-title {
+    color: var(--text-secondary) !important;
+}
+
+.kpi-val {
+    color: var(--text-primary) !important;
+    letter-spacing: -0.02em;
+}
+
+.table-header-bar, .pagination-bar {
+    background: var(--bg-glass-elevated) !important;
+    border-bottom: 1px solid var(--border-glass) !important;
+    color: var(--text-primary) !important;
+}
+
+/* Banners Superiores com Brilho Translúcido */
+.page-banner {
+    border-radius: 14px !important;
+    border: 1px solid rgba(255, 255, 255, 0.16) !important;
+    box-shadow: 0 12px 30px -6px rgba(0, 0, 0, 0.35) !important;
+    backdrop-filter: blur(14px) !important;
+}
+
+/* Tabelas & Tipografia Adaptativa */
+table {
+    color: var(--text-primary) !important;
+}
+
+thead th {
+    background: rgba(15, 23, 42, 0.75) !important;
+    color: #f8fafc !important;
+    border-bottom: 1px solid var(--border-glass) !important;
+    font-weight: 700 !important;
+}
+
+[data-theme="light"] thead th {
+    background: rgba(15, 45, 89, 0.92) !important;
+    color: #ffffff !important;
+}
+
+tbody tr {
+    border-bottom: 1px solid var(--border-glass) !important;
+    transition: background-color 0.15s ease !important;
+}
+
+tbody tr:nth-child(even) {
+    background-color: var(--table-stripe) !important;
+}
+
+tbody tr:hover {
+    background-color: var(--table-row-hover) !important;
+}
+
+tbody td {
+    color: var(--text-primary) !important;
+}
+
+/* Inputs, Selects e Textareas em Vidro */
+input[type="text"], input[type="number"], input[type="password"], select, textarea {
+    background: var(--bg-glass-input) !important;
+    color: var(--text-primary) !important;
+    border: 1px solid var(--border-glass) !important;
+    border-radius: 8px !important;
+    backdrop-filter: blur(8px) !important;
+}
+
+input::placeholder, textarea::placeholder {
+    color: var(--text-muted) !important;
+}
+
+/* Botões e Ações (CTAs Vibrantes) */
+.btn-primary {
+    background: linear-gradient(135deg, #2563eb 0%, #7c3aed 100%) !important;
+    border: 1px solid rgba(255, 255, 255, 0.22) !important;
+    color: #ffffff !important;
+    box-shadow: 0 4px 14px rgba(59, 130, 246, 0.35) !important;
+    border-radius: 8px !important;
+}
+
+.btn-secondary {
+    background: var(--bg-glass-elevated) !important;
+    border: 1px solid var(--border-glass) !important;
+    color: var(--text-primary) !important;
+    border-radius: 8px !important;
+}
+
+.btn-secondary:hover {
+    border-color: var(--border-glass-highlight) !important;
+}
+
+/* Override suave para divs com background branco chumbado no modo escuro */
+[data-theme="dark"] .table-card div[style*="background: #ffffff"],
+[data-theme="dark"] .table-card div[style*="background:#ffffff"],
+[data-theme="dark"] .table-card div[style*="background: white"],
+[data-theme="dark"] .table-card div[style*="background: #f8fafc"],
+[data-theme="dark"] .table-card div[style*="background:#f8fafc"],
+[data-theme="dark"] .chart-card div[style*="background: #ffffff"],
+[data-theme="dark"] .chart-card div[style*="background: #f8fafc"] {
+    background: rgba(15, 23, 42, 0.45) !important;
+    color: var(--text-primary) !important;
+    border-color: var(--border-glass) !important;
+}
+
+[data-theme="dark"] strong,
+[data-theme="dark"] h3,
+[data-theme="dark"] h4 {
+    color: var(--text-primary) !important;
+}
+
+/* Botão Comutador Dark / Light no Topo */
+#btn-theme-toggle-v11 {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 13px;
+    border-radius: 20px;
+    font-size: 11.5px;
+    font-weight: 800;
+    cursor: pointer;
+    border: 1px solid var(--border-glass-highlight);
+    background: var(--bg-glass-elevated);
+    color: var(--text-primary);
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+    transition: all 0.2s ease;
+}
+#btn-theme-toggle-v11:hover {
+    transform: scale(1.03);
+}
+</style>
+
+<script>
+(function inicializarGlassmorphismV11() {
+    // 1. Aplica tema salvo ou Dark Mode como Default conforme especificação
+    var temaSalvo = localStorage.getItem('sagti_theme_v11') || 'dark';
+    document.documentElement.setAttribute('data-theme', temaSalvo);
+
+    window.alternarTemaCockpitV11 = function() {
+        var atual = document.documentElement.getAttribute('data-theme') || 'dark';
+        var novo = (atual === 'dark') ? 'light' : 'dark';
+        document.documentElement.setAttribute('data-theme', novo);
+        localStorage.setItem('sagti_theme_v11', novo);
+        atualizarTextoBotaoTema(novo);
+    };
+
+    function atualizarTextoBotaoTema(tema) {
+        var btn = document.getElementById('btn-theme-toggle-v11');
+        if (!btn) return;
+        if (tema === 'dark') {
+            btn.innerHTML = '☀️ Modo Claro (Light)';
+            btn.title = 'Mudar para interface clara (Light Glass)';
+        } else {
+            btn.innerHTML = '🌙 Modo Escuro (Dark)';
+            btn.title = 'Mudar para interface escura (Dark Glass Default)';
+        }
+    }
+
+    function montarEstruturaVisual() {
+        // 2. Injeta as esferas de luz Aurora Backdrop se ainda não existirem
+        if (!document.getElementById('aurora-backdrop-container')) {
+            var aurora = document.createElement('div');
+            aurora.id = 'aurora-backdrop-container';
+            aurora.innerHTML = '<div class="aurora-orb aurora-orb-1"></div>' +
+                               '<div class="aurora-orb aurora-orb-2"></div>' +
+                               '<div class="aurora-orb aurora-orb-3"></div>';
+            document.body.insertBefore(aurora, document.body.firstChild);
+        }
+
+        // 3. Insere o botão de alternância Dark/Light no cabeçalho superior
+        if (!document.getElementById('btn-theme-toggle-v11')) {
+            var header = document.querySelector('header');
+            if (header) {
+                var btn = document.createElement('button');
+                btn.id = 'btn-theme-toggle-v11';
+                btn.type = 'button';
+                btn.onclick = window.alternarTemaCockpitV11;
+                var rightBox = header.lastElementChild || header;
+                rightBox.insertBefore(btn, rightBox.firstChild);
+                atualizarTextoBotaoTema(document.documentElement.getAttribute('data-theme') || 'dark');
+            }
+        }
+
+        // 4. Reorganiza os títulos de seção da Sidebar nas 3 Linhas Primárias Estratégicas
+        var secTitles = document.querySelectorAll('#sidebar .nav-section-title');
+        if (secTitles.length >= 3) {
+            if (secTitles[0]) secTitles[0].innerHTML = '📊 EIXO 1: DASHBOARD & DECISÃO 360°';
+            if (secTitles[1]) secTitles[1].innerHTML = '🏛️ EIXO 2: COCKPIT ADM, SEI & IA';
+            if (secTitles[2]) secTitles[2].innerHTML = '🤝 EIXO 3: REUNIÕES & DIRETORIA';
+        }
+    }
+
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', montarEstruturaVisual);
+    } else {
+        montarEstruturaVisual();
+    }
+})();
+</script>
+
+
+
+<style id="cockpit-glass-harmony-v11">
+/* =========================================================================
+   HARMONIZAÇÃO GLASSMORPHISM: CARDS TRANSLÚCIDOS & CONTRASTE WCAG AAA
+   ========================================================================= */
+
+/* Transforma todos os cards brancos sólidos em vidro fosco no Dark Mode */
+[data-theme="dark"] .kpi-card,
+[data-theme="dark"] .table-card,
+[data-theme="dark"] .chart-card,
+[data-theme="dark"] div[style*="background: white"],
+[data-theme="dark"] div[style*="background: #ffffff"],
+[data-theme="dark"] div[style*="background:#ffffff"],
+[data-theme="dark"] div[style*="background: #f8fafc"],
+[data-theme="dark"] div[style*="background:#f8fafc"] {
+    background: rgba(255, 255, 255, 0.055) !important;
+    backdrop-filter: blur(18px) saturate(160%) !important;
+    -webkit-backdrop-filter: blur(18px) saturate(160%) !important;
+    border: 1px solid rgba(255, 255, 255, 0.12) !important;
+    box-shadow: 0 10px 30px -4px rgba(0, 0, 0, 0.5) !important;
+    color: #ffffff !important;
+}
+
+/* Card Hero no Dark Mode */
+[data-theme="dark"] .kpi-card.hero {
+    background: linear-gradient(135deg, rgba(5, 68, 207, 0.45) 0%, rgba(2, 45, 90, 0.6) 100%) !important;
+    border: 1px solid rgba(56, 189, 248, 0.35) !important;
+}
+
+/* Tipografia e Contraste dos Valores Numéricos */
+[data-theme="dark"] .kpi-val,
+[data-theme="dark"] span[id^="kpi-val-"] {
+    color: #ffffff !important;
+    font-weight: 800 !important;
+}
+
+[data-theme="dark"] #kpi-val-rotina { color: #38bdf8 !important; }
+[data-theme="dark"] #kpi-val-esteira { color: #60a5fa !important; }
+[data-theme="dark"] #kpi-val-portfolio { color: #c084fc !important; }
+
+/* Subtítulos e Rótulos Secundários */
+[data-theme="dark"] .kpi-title,
+[data-theme="dark"] span[id^="kpi-sub-"],
+[data-theme="dark"] div[style*="color: #64748b"],
+[data-theme="dark"] span[style*="color: #64748b"],
+[data-theme="dark"] div[style*="color: #475569"],
+[data-theme="dark"] span[style*="color: #475569"],
+[data-theme="dark"] div[style*="color: #334155"] {
+    color: #94a3b8 !important;
+}
+
+/* Pílulas de Modo do Dashboard (Acima dos Cards) */
+.pill-filtro-dash {
+    border-radius: 20px !important;
+    padding: 7px 16px !important;
+    font-size: 11.5px !important;
+    font-weight: 700 !important;
+    transition: all 0.2s ease !important;
+}
+
+[data-theme="dark"] .pill-filtro-dash.btn-secondary {
+    background: rgba(255, 255, 255, 0.08) !important;
+    color: #e2e8f0 !important;
+    border: 1px solid rgba(255, 255, 255, 0.16) !important;
+    backdrop-filter: blur(14px) !important;
+}
+
+[data-theme="dark"] .pill-filtro-dash.btn-secondary:hover {
+    background: rgba(255, 255, 255, 0.16) !important;
+    color: #ffffff !important;
+    border-color: rgba(56, 189, 248, 0.5) !important;
+    transform: translateY(-1px);
+}
+
+[data-theme="dark"] .pill-filtro-dash.btn-primary {
+    background: linear-gradient(135deg, #2563eb 0%, #7c3aed 100%) !important;
+    color: #ffffff !important;
+    border: 1px solid rgba(255, 255, 255, 0.25) !important;
+    box-shadow: 0 4px 16px rgba(59, 130, 246, 0.45) !important;
+}
+
+/* Categorias da Sidebar */
+.menu-category {
+    font-size: 10.5px !important;
+    font-weight: 800 !important;
+    letter-spacing: 0.05em !important;
+    padding: 14px 14px 6px 14px !important;
+    color: #38bdf8 !important;
+}
+
+[data-theme="light"] .menu-category {
+    color: #0369a1 !important;
+}
+</style>
+
+<script>
+// Reorganização dinâmica da Sidebar nos 3 Eixos Estratégicos
+(function reorganizarSidebar3Eixos() {
+    function aplicarMenu3Eixos() {
+        var menu = document.querySelector('#sidebar .sidebar-menu');
+        if (!menu) return;
+
+        // Se já foi reorganizado, não repete
+        if (menu.getAttribute('data-reorganizado-v11') === '1') return;
+        menu.setAttribute('data-reorganizado-v11', '1');
+
+        menu.innerHTML = `
+            <!-- EIXO 1: DASHBOARD & DECISÃO 360° -->
+            <div class="menu-category">📊 EIXO 1: DASHBOARD & DECISÃO 360°</div>
+            <div class="nav-item active" data-tab="dashboards" onclick="switchTab('dashboards')">
+                <div class="nav-item-left">🌐 <span>Central de Dashboards</span></div>
+                <span class="nav-badge">360°</span>
+            </div>
+            <div class="nav-item" data-tab="visao_estrategica" onclick="switchTab('visao_estrategica')">
+                <div class="nav-item-left">🎯 <span>Faróis & Gargalos (87)</span></div>
+                <span class="nav-badge" style="background:#f59e0b; color:#fff;">87</span>
+            </div>
+            <div class="nav-item" data-tab="portfolio_openproject" onclick="switchTab('portfolio_openproject')">
+                <div class="nav-item-left">🏗️ <span>Portfólio OpenProject</span></div>
+                <span class="nav-badge" style="background:#10b981; color:#fff;">500</span>
+            </div>
+            <div class="nav-item" data-tab="tracks_sagti" onclick="switchTab('tracks_sagti')">
+                <div class="nav-item-left">⚡ <span>Tracks SA-GTI (A-018)</span></div>
+                <span class="nav-badge" style="background:#0544cf; color:#fff;">97</span>
+            </div>
+            <div class="nav-item" data-tab="pdtic_eixos" onclick="switchTab('pdtic_eixos')">
+                <div class="nav-item-left">🧭 <span>Governança PDTIC & KPIs</span></div>
+                <span class="nav-badge" style="background:#7c3aed; color:#fff;">35</span>
+            </div>
+            <div class="nav-item" data-tab="gestao_glpi" onclick="switchTab('gestao_glpi')">
+                <div class="nav-item-left">🎫 <span>Atendimento GLPI 10</span></div>
+                <span class="nav-badge" style="background:#0284c7; color:#fff;">13</span>
+            </div>
+
+            <!-- EIXO 2: COCKPIT ADM, SEI & IA -->
+            <div class="menu-category">🏛️ EIXO 2: COCKPIT ADM, SEI & IA</div>
+            <div class="nav-item" data-tab="consulta" onclick="switchTab('consulta')">
+                <div class="nav-item-left">📂 <span>Acervo SEI (Upload PDF v7.1)</span></div>
+                <span class="nav-badge" style="background:#0284c7; color:#fff;">197</span>
+            </div>
+            <div class="nav-item" data-tab="mesa_trabalho" onclick="switchTab('mesa_trabalho')">
+                <div class="nav-item-left">🖥️ <span>Mesa de Trabalho (Custódia)</span></div>
+                <span class="nav-badge" style="background:#10b981; color:#fff;">Luiz</span>
+            </div>
+            <div class="nav-item" data-tab="esteira_ia" onclick="switchTab('esteira_ia')">
+                <div class="nav-item-left">🤖 <span>Assistente Pessoal IA & RACI</span></div>
+                <span class="nav-badge" style="background:#8b5cf6; color:#fff;">Pool</span>
+            </div>
+            <div class="nav-item" data-tab="cadernos" onclick="switchTab('cadernos')">
+                <div class="nav-item-left">📚 <span>Cadernos, Toolkits & A4</span></div>
+                <span class="nav-badge">15</span>
+            </div>
+
+            <!-- EIXO 3: REUNIÕES & PRESTAÇÃO DE CONTAS -->
+            <div class="menu-category">🤝 EIXO 3: REUNIÕES & PRESTAÇÃO DE CONTAS</div>
+            <div class="nav-item" data-tab="daily_warroom" onclick="switchTab('daily_warroom')">
+                <div class="nav-item-left">⏱️ <span>War Room (Ata A4 & Pauta)</span></div>
+                <span class="nav-badge" style="background:#0544cf; color:#fff;">15m</span>
+            </div>
+            <div class="nav-item" data-tab="gestao_agil" onclick="switchTab('gestao_agil')">
+                <div class="nav-item-left">📋 <span>Sprint Planning & Kanban</span></div>
+                <span class="nav-badge">Agile</span>
+            </div>
+            <div class="nav-item" data-tab="auditoria" onclick="switchTab('auditoria')">
+                <div class="nav-item-left">🛡️ <span>Auditoria TCE-SP & Súmula 269</span></div>
+                <span class="nav-badge" style="background:#10b981; color:#fff;">88.5%</span>
+            </div>
+
+            <!-- GAVETA DE INFRAESTRUTURA & CONFIGURAÇÕES -->
+            <div class="menu-category" style="color: #64748b;">⚙️ SISTEMA</div>
+            <div class="nav-item" data-tab="configuracoes" onclick="switchTab('configuracoes')">
+                <div class="nav-item-left">🔧 <span>Configurações & RBAC</span></div>
+                <span class="nav-badge">Admin</span>
+            </div>
+        `;
+
+        // Mantém a aba ativa selecionada visualmente
+        var tabAtual = window.currentTab || 'dashboards';
+        var itemAtivo = menu.querySelector(`.nav-item[data-tab="${tabAtual}"]`);
+        if (itemAtivo) {
+            menu.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
+            itemAtivo.classList.add('active');
+        }
+    }
+
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', aplicarMenu3Eixos);
+    } else {
+        aplicarMenu3Eixos();
+    }
+})();
+</script>
+
+
+<!-- ======================================================== -->
+<!-- MOTOR GLASSMORPHISM SAAS DUAL-THEME (DOM + CSS FINAL)    -->
+<!-- ======================================================== -->
+<style id="glassmorphism-ultimate-v11">
+    html body.theme-dark,
+    html body.theme-dark #main {
+        background-color: #090d16 !important;
+        background-image: 
+            radial-gradient(at 12% 18%, rgba(5, 68, 207, 0.25) 0px, transparent 50%),
+            radial-gradient(at 88% 12%, rgba(124, 58, 237, 0.22) 0px, transparent 50%),
+            radial-gradient(at 50% 85%, rgba(14, 165, 233, 0.18) 0px, transparent 50%) !important;
+        background-attachment: fixed !important;
+        color: #f8fafc !important;
+    }
+
+    html body.theme-dark .content-scroll,
+    html body.theme-dark .tab-view {
+        background: transparent !important;
+    }
+
+    html body.theme-dark #topbar {
+        background: rgba(9, 13, 22, 0.82) !important;
+        backdrop-filter: blur(18px) !important;
+        -webkit-backdrop-filter: blur(18px) !important;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.08) !important;
+    }
+
+    html body.theme-dark .kpi-row .kpi-card:not(.hero),
+    html body.theme-dark .kpi-card:not(.hero) {
+        background: rgba(15, 23, 42, 0.68) !important;
+        backdrop-filter: blur(18px) !important;
+        -webkit-backdrop-filter: blur(18px) !important;
+        border: 1px solid rgba(255, 255, 255, 0.12) !important;
+        border-radius: 12px !important;
+        box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.38) !important;
+    }
+</style>
+
+<script id="glassmorphism-enforcer-v11">
+(function() {
+    window.sagtiTemaAtual = localStorage.getItem('sagti_theme_mode') || 'dark';
+
+    window.aplicarGlassmorphismDualTheme = function(tema) {
+        if (tema) {
+            window.sagtiTemaAtual = tema;
+            try { localStorage.setItem('sagti_theme_mode', tema); } catch(e) {}
+        }
+        var isDark = (window.sagtiTemaAtual !== 'light');
+        var body = document.body;
+        var main = document.getElementById('main');
+        var topbar = document.getElementById('topbar');
+
+        if (body) {
+            if (isDark) {
+                body.classList.add('theme-dark');
+                body.classList.remove('theme-light');
+            } else {
+                body.classList.add('theme-light');
+                body.classList.remove('theme-dark');
+            }
+        }
+
+        // 1. Fundo Principal (#main, body e .content-scroll)
+        var bgMain = isDark
+            ? 'radial-gradient(at 12% 18%, rgba(5, 68, 207, 0.25) 0px, transparent 50%), radial-gradient(at 88% 12%, rgba(124, 58, 237, 0.22) 0px, transparent 50%), radial-gradient(at 50% 85%, rgba(14, 165, 233, 0.18) 0px, transparent 50%), #090d16'
+            : 'radial-gradient(at 12% 18%, rgba(5, 68, 207, 0.08) 0px, transparent 50%), radial-gradient(at 88% 12%, rgba(124, 58, 237, 0.07) 0px, transparent 50%), #f2f6fc';
+
+        if (body) {
+            body.style.setProperty('background', bgMain, 'important');
+            body.style.setProperty('color', isDark ? '#f8fafc' : '#1a1a1a', 'important');
+        }
+        if (main) {
+            main.style.setProperty('background', bgMain, 'important');
+            main.style.setProperty('color', isDark ? '#f8fafc' : '#1a1a1a', 'important');
+        }
+        document.querySelectorAll('.content-scroll, .tab-view').forEach(function(el) {
+            el.style.setProperty('background', 'transparent', 'important');
+        });
+
+        // 2. Topbar (Barra Superior)
+        if (topbar) {
+            topbar.style.setProperty('background', isDark ? 'rgba(9, 13, 22, 0.82)' : 'rgba(255, 255, 255, 0.78)', 'important');
+            topbar.style.setProperty('backdrop-filter', 'blur(18px)', 'important');
+            topbar.style.setProperty('-webkit-backdrop-filter', 'blur(18px)', 'important');
+            topbar.style.setProperty('border-bottom', isDark ? '1px solid rgba(255, 255, 255, 0.08)' : '1px solid rgba(226, 232, 240, 0.9)', 'important');
+        }
+        document.querySelectorAll('.topbar-title h2').forEach(function(el) {
+            el.style.setProperty('color', isDark ? '#ffffff' : '#0f172a', 'important');
+        });
+        document.querySelectorAll('.topbar-title span').forEach(function(el) {
+            el.style.setProperty('color', isDark ? '#94a3b8' : '#475569', 'important');
+        });
+
+        // Pílulas do Header
+        document.querySelectorAll('.user-pill, #pill-diretoria-spaguas').forEach(function(el) {
+            el.style.setProperty('background', isDark ? 'rgba(30, 41, 59, 0.75)' : 'rgba(255, 255, 255, 0.85)', 'important');
+            el.style.setProperty('backdrop-filter', 'blur(14px)', 'important');
+            el.style.setProperty('border', isDark ? '1px solid rgba(255, 255, 255, 0.16)' : '1px solid rgba(5, 68, 207, 0.25)', 'important');
+            el.style.setProperty('color', isDark ? '#f1f5f9' : '#002d5a', 'important');
+            var sel = el.querySelector('select');
+            if (sel) {
+                sel.style.setProperty('color', isDark ? '#f8fafc' : '#002d5a', 'important');
+                sel.style.setProperty('background', 'transparent', 'important');
+            }
+        });
+
+        var btnGv = document.getElementById('btn-gestao-vista');
+        if (btnGv) {
+            btnGv.style.setProperty('background', isDark ? 'rgba(30, 41, 59, 0.75)' : 'rgba(255, 255, 255, 0.85)', 'important');
+            btnGv.style.setProperty('border', isDark ? '1px solid rgba(255, 255, 255, 0.16)' : '1px solid #cbd5e1', 'important');
+            btnGv.style.setProperty('color', isDark ? '#f8fafc' : '#002d5a', 'important');
+        }
+
+        // 3. Os 4 KPI Cards e o Hero Card no Topo
+        document.querySelectorAll('.kpi-card').forEach(function(card) {
+            var isHero = card.classList.contains('hero');
+            if (isHero) {
+                card.style.setProperty('background', isDark
+                    ? 'linear-gradient(135deg, rgba(5, 68, 207, 0.65) 0%, rgba(15, 23, 42, 0.88) 100%)'
+                    : 'linear-gradient(135deg, #0056d2 0%, #002d5a 100%)', 'important');
+                card.style.setProperty('backdrop-filter', 'blur(18px)', 'important');
+                card.style.setProperty('-webkit-backdrop-filter', 'blur(18px)', 'important');
+                card.style.setProperty('border', isDark ? '1px solid rgba(96, 165, 250, 0.4)' : 'none', 'important');
+                card.style.setProperty('box-shadow', '0 8px 32px rgba(0, 0, 0, 0.3)', 'important');
+                card.style.setProperty('border-radius', '12px', 'important');
+                var hTitle = card.querySelector('.kpi-title');
+                if (hTitle) hTitle.style.setProperty('color', '#bfdbfe', 'important');
+                var hVal = card.querySelector('.kpi-val');
+                if (hVal) hVal.style.setProperty('color', '#ffffff', 'important');
+                var hSpan = card.querySelector('span');
+                if (hSpan) hSpan.style.setProperty('color', '#bfdbfe', 'important');
+            } else {
+                var rawStyle = card.getAttribute('style') || '';
+                card.style.setProperty('background', isDark ? 'rgba(15, 23, 42, 0.68)' : 'rgba(255, 255, 255, 0.72)', 'important');
+                card.style.setProperty('backdrop-filter', 'blur(18px)', 'important');
+                card.style.setProperty('-webkit-backdrop-filter', 'blur(18px)', 'important');
+                card.style.setProperty('border-top', isDark ? '1px solid rgba(255, 255, 255, 0.14)' : '1px solid rgba(255, 255, 255, 0.8)', 'important');
+                card.style.setProperty('border-right', isDark ? '1px solid rgba(255, 255, 255, 0.08)' : '1px solid rgba(203, 213, 225, 0.6)', 'important');
+                card.style.setProperty('border-bottom', isDark ? '1px solid rgba(255, 255, 255, 0.08)' : '1px solid rgba(203, 213, 225, 0.6)', 'important');
+                card.style.setProperty('border-radius', '12px', 'important');
+                card.style.setProperty('box-shadow', isDark ? '0 8px 32px rgba(0, 0, 0, 0.38)' : '0 8px 24px rgba(15, 23, 42, 0.06)', 'important');
+
+                var kTitle = card.querySelector('.kpi-title');
+                if (kTitle) kTitle.style.setProperty('color', isDark ? '#cbd5e1' : '#334155', 'important');
+
+                var kSpan = card.querySelector('span');
+                if (kSpan) kSpan.style.setProperty('color', isDark ? '#94a3b8' : '#475569', 'important');
+
+                var kVal = card.querySelector('.kpi-val');
+                if (kVal) {
+                    var valId = kVal.id || '';
+                    if (valId.indexOf('intervencao') !== -1 || rawStyle.indexOf('ef4444') !== -1 || rawStyle.indexOf('239, 68, 68') !== -1 || rawStyle.indexOf('f87171') !== -1) {
+                        card.style.setProperty('border-left', '4px solid #f87171', 'important');
+                        kVal.style.setProperty('color', isDark ? '#f87171' : '#dc2626', 'important');
+                    } else if (valId.indexOf('saneamento') !== -1 || rawStyle.indexOf('ea580c') !== -1 || rawStyle.indexOf('234, 88, 12') !== -1 || rawStyle.indexOf('fb923c') !== -1) {
+                        card.style.setProperty('border-left', '4px solid #fb923c', 'important');
+                        kVal.style.setProperty('color', isDark ? '#fb923c' : '#ea580c', 'important');
+                    } else if (valId.indexOf('monitoramento') !== -1 || rawStyle.indexOf('ca8a04') !== -1 || rawStyle.indexOf('202, 138, 4') !== -1 || rawStyle.indexOf('facc15') !== -1) {
+                        card.style.setProperty('border-left', '4px solid #facc15', 'important');
+                        kVal.style.setProperty('color', isDark ? '#facc15' : '#ca8a04', 'important');
+                    } else if (valId.indexOf('fluxo') !== -1 || rawStyle.indexOf('16a34a') !== -1 || rawStyle.indexOf('22, 163, 74') !== -1 || rawStyle.indexOf('4ade80') !== -1) {
+                        card.style.setProperty('border-left', '4px solid #4ade80', 'important');
+                        kVal.style.setProperty('color', isDark ? '#4ade80' : '#16a34a', 'important');
+                    } else {
+                        card.style.setProperty('border-left', '4px solid #38bdf8', 'important');
+                        kVal.style.setProperty('color', isDark ? '#f8fafc' : '#0f172a', 'important');
+                    }
+                }
+            }
+        });
+
+        // 4. Container e Pílulas Superiores do Dashboard e Farol
+        document.querySelectorAll('.pill-filtro-dash, .pill-filtro-farol').forEach(function(btn) {
+            var parent = btn.parentElement;
+            if (parent) {
+                parent.style.setProperty('background', isDark ? 'rgba(15, 23, 42, 0.65)' : 'rgba(255, 255, 255, 0.75)', 'important');
+                parent.style.setProperty('backdrop-filter', 'blur(16px)', 'important');
+                parent.style.setProperty('-webkit-backdrop-filter', 'blur(16px)', 'important');
+                parent.style.setProperty('border', isDark ? '1px solid rgba(255, 255, 255, 0.12)' : '1px solid rgba(203, 213, 225, 0.8)', 'important');
+                parent.style.setProperty('border-radius', '12px', 'important');
+            }
+            var isPrimary = btn.classList.contains('btn-primary');
+            if (isPrimary) {
+                btn.style.setProperty('background', 'linear-gradient(135deg, #4f46e5 0%, #2563eb 100%)', 'important');
+                btn.style.setProperty('color', '#ffffff', 'important');
+                btn.style.setProperty('border', '1px solid rgba(96, 165, 250, 0.5)', 'important');
+                btn.style.setProperty('box-shadow', '0 4px 14px rgba(37, 99, 235, 0.4)', 'important');
+            } else {
+                btn.style.setProperty('background', isDark ? 'rgba(255, 255, 255, 0.07)' : 'rgba(241, 245, 249, 0.9)', 'important');
+                btn.style.setProperty('color', isDark ? '#e2e8f0' : '#334155', 'important');
+                btn.style.setProperty('border', isDark ? '1px solid rgba(255, 255, 255, 0.12)' : '1px solid #cbd5e1', 'important');
+                btn.style.setProperty('box-shadow', 'none', 'important');
+            }
+        });
+
+        // 5. Botão Comutador Dark / Light no Topbar
+        var btnTheme = document.getElementById('btn-toggle-glass-theme');
+        if (!btnTheme && topbar) {
+            var actions = topbar.querySelector('.topbar-actions');
+            if (actions) {
+                btnTheme = document.createElement('button');
+                btnTheme.id = 'btn-toggle-glass-theme';
+                btnTheme.className = 'btn btn-secondary';
+                btnTheme.style.cssText = 'padding: 6px 12px; border-radius: 20px; font-size: 12px; font-weight: 700; cursor: pointer; display: flex; align-items: center; gap: 6px; transition: all 0.2s ease;';
+                btnTheme.onclick = function() {
+                    var novo = (window.sagtiTemaAtual === 'dark') ? 'light' : 'dark';
+                    window.aplicarGlassmorphismDualTheme(novo);
+                };
+                actions.insertBefore(btnTheme, actions.firstChild);
+            }
+        }
+        if (btnTheme) {
+            btnTheme.innerHTML = isDark ? '🌙 Dark Mode' : '☀️ Light Mode';
+            btnTheme.style.setProperty('background', isDark ? 'rgba(99, 102, 241, 0.22)' : 'rgba(255, 255, 255, 0.9)', 'important');
+            btnTheme.style.setProperty('border', isDark ? '1px solid rgba(129, 140, 248, 0.45)' : '1px solid #cbd5e1', 'important');
+            btnTheme.style.setProperty('color', isDark ? '#e0e7ff' : '#1e293b', 'important');
+        }
+    };
+
+    window.aplicarGlassmorphismDualTheme(window.sagtiTemaAtual);
+    document.addEventListener('DOMContentLoaded', function() {
+        window.aplicarGlassmorphismDualTheme(window.sagtiTemaAtual);
+    });
+    window.addEventListener('load', function() {
+        window.aplicarGlassmorphismDualTheme(window.sagtiTemaAtual);
+    });
+    setInterval(function() {
+        window.aplicarGlassmorphismDualTheme(window.sagtiTemaAtual);
+    }, 600);
+})();
+</script>
 </body>
 </html>
