@@ -3882,7 +3882,28 @@ th.th-sortable-v9:hover {
         </div>
 
             <div id="view-gestao_glpi" class="tab-view">
-            <!-- 1. BANNER OFICIAL GLPI 10 PRODUÇÃO -->
+
+            <!-- SELETOR DE SUB-ABAS OFICIAL GLPI (DESIGN SYSTEM SP-ÁGUAS V11) -->
+            <div id="barra-subabas-glpi" style="display: flex; gap: 8px; margin-bottom: 16px; background: rgba(15,23,42,0.85); padding: 8px 12px; border-radius: 10px; border: 1px solid rgba(255,255,255,0.08); align-items: center; flex-wrap: wrap;">
+                <span style="font-size: 11px; font-weight: 800; color: #38bdf8; text-transform: uppercase; letter-spacing: 0.05em; margin-right: 6px; display: flex; align-items: center; gap: 6px;">
+                    <span>🎫</span> MÓDULO GLPI:
+                </span>
+                <button type="button" id="btn-glpi-subaba-operacional" class="btn btn-primary active" onclick="window.alternarSubAbaGlpi('operacional')" style="background: linear-gradient(135deg, #0284c7 0%, #0ea5e9 100%); color: #ffffff; font-weight: 700; font-size: 12px; padding: 7px 16px; border-radius: 8px; border: 1px solid rgba(56,189,248,0.5); cursor: pointer; display: inline-flex; align-items: center; gap: 6px; box-shadow: 0 2px 8px rgba(2,132,199,0.3);">
+                    <span>📊</span> Fila Operacional &amp; Métricas (15)
+                </button>
+                <button type="button" id="btn-glpi-subaba-relatorio" class="btn btn-secondary" onclick="window.alternarSubAbaGlpi('relatorio')" style="background: rgba(255,255,255,0.06); color: #cbd5e1; font-weight: 600; font-size: 12px; padding: 7px 16px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.12); cursor: pointer; display: inline-flex; align-items: center; gap: 6px; transition: all 0.2s ease;">
+                    <span>📑</span> Relatório Mensal Executivo de Suporte TI (Outubro/2026)
+                </button>
+                <div style="margin-left: auto; display: flex; align-items: center; gap: 8px;">
+                    <span id="badge-glpi-subaba-info" style="font-size: 11px; color: #94a3b8; background: rgba(30,41,59,0.6); padding: 4px 10px; border-radius: 6px; border: 1px solid rgba(255,255,255,0.05);">
+                        🟢 Base Oficial Homologada (274 Válidos)
+                    </span>
+                </div>
+            </div>
+
+            <!-- SUB-ABA 1: FILA OPERACIONAL & MÉTRICAS (PRESERVA 100% O CONTEÚDO ATUAL) -->
+            <div id="subview-glpi-operacional" class="subview-glpi">
+<!-- 1. BANNER OFICIAL GLPI 10 PRODUÇÃO -->
             <div class="page-banner" id="glpi-banner-principal" style="background: linear-gradient(135deg, #0f2d59 0%, #0284c7 100%); display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; flex-wrap: wrap; gap: 12px; padding: 16px 20px; border-radius: 12px;">
                 <div>
                     <h3 id="glpi-banner-titulo" style="margin:0; font-size:17px; color:#fff; display:flex; align-items:center; gap:8px;">
@@ -4307,6 +4328,898 @@ th.th-sortable-v9:hover {
 </tbody>
                     </table>
                 </div>
+            </div>
+            </div> <!-- FIM SUBVIEW OPERACIONAL -->
+
+<div id="subview-glpi-relatorio" class="subview-glpi" style="display: none; animation: fadeIn 0.3s ease-in-out;">
+                
+                <!-- CABEÇALHO DO RELATÓRIO / IDENTIDADE INSTITUCIONAL -->
+                <div style="background: linear-gradient(135deg, rgba(15,23,42,0.95) 0%, rgba(30,41,59,0.95) 100%); border: 1px solid rgba(56,189,248,0.25); border-left: 5px solid #0284c7; border-radius: 12px; padding: 20px 24px; margin-bottom: 20px; box-shadow: 0 10px 25px -5px rgba(0,0,0,0.5);">
+                    <div style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 16px;">
+                        <div>
+                            <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 6px;">
+                                <span style="font-size: 11px; font-weight: 800; letter-spacing: 0.08em; text-transform: uppercase; background: rgba(2,132,199,0.25); color: #38bdf8; border: 1px solid rgba(56,189,248,0.4); padding: 3px 10px; border-radius: 20px;">
+                                    SP-ÁGUAS · DIRETORIA COLEGIADA
+                                </span>
+                                <span style="font-size: 11px; font-weight: 700; background: rgba(16,185,129,0.2); color: #4ade80; border: 1px solid rgba(16,185,129,0.4); padding: 3px 10px; border-radius: 20px;">
+                                    DOCUMENTO DE GOVERNANÇA INTERNA
+                                </span>
+                                <span style="font-size: 11px; color: #94a3b8; font-family: monospace;">
+                                    SA-GTI · GTI-SUPORTE
+                                </span>
+                            </div>
+                            <h2 style="margin: 0; font-size: 24px; font-weight: 800; color: #ffffff; letter-spacing: -0.02em; display: flex; align-items: center; gap: 10px;">
+                                <span>📑 Relatório Mensal Executivo — Indicadores de Suporte de TI</span>
+                            </h2>
+                            <p style="margin: 6px 0 0 0; font-size: 13.5px; color: #cbd5e1; line-height: 1.5;">
+                                Período de Apuração: <strong style="color: #38bdf8;">01/10/2026 a 31/10/2026</strong> • Competência: <strong>Outubro de 2026</strong> • Fechamento Definitivo e Auditado
+                            </p>
+                        </div>
+                        <div style="display: flex; flex-direction: column; align-items: flex-end; gap: 8px;">
+                            <div style="background: rgba(15,23,42,0.8); border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; padding: 6px 12px; font-size: 11.5px; color: #94a3b8; font-family: monospace;">
+                                <span>Status: </span><strong style="color: #4ade80;">100% Auditado (274 Válidos)</strong>
+                            </div>
+                            <div style="font-size: 11px; color: #64748b;" id="relatorio-glpi-atualizado-em">
+                                Sincronizado ao acessar a sub-aba
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 1. OS 8 KPIS CENTRAIS DA GOVERNANÇA (PÁGINA 2) -->
+                <div style="margin-bottom: 24px;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+                        <h4 style="margin: 0; font-size: 15px; font-weight: 700; color: #f8fafc; display: flex; align-items: center; gap: 8px;">
+                            <span style="color: #38bdf8;">📊</span> Resumo Executivo — Indicadores Centrais da Operação (Página 2)
+                        </h4>
+                        <span style="font-size: 12px; color: #94a3b8;">Fonte: Base Consolidada GLPI por Chamado</span>
+                    </div>
+
+                    <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-bottom: 12px;">
+                        <!-- KPI 1 -->
+                        <div style="background: rgba(15,23,42,0.7); border: 1px solid rgba(56,189,248,0.25); border-top: 3px solid #38bdf8; border-radius: 10px; padding: 14px 16px;">
+                            <div style="font-size: 11.5px; font-weight: 700; color: #94a3b8; text-transform: uppercase; margin-bottom: 4px;">Chamados Abertos</div>
+                            <div style="font-size: 28px; font-weight: 800; color: #38bdf8; line-height: 1.1;">274</div>
+                            <div style="font-size: 11.5px; color: #64748b; margin-top: 4px;">01 a 29/10 (excluído #1508 teste)</div>
+                        </div>
+                        <!-- KPI 2 -->
+                        <div style="background: rgba(15,23,42,0.7); border: 1px solid rgba(16,185,129,0.25); border-top: 3px solid #10b981; border-radius: 10px; padding: 14px 16px;">
+                            <div style="font-size: 11.5px; font-weight: 700; color: #94a3b8; text-transform: uppercase; margin-bottom: 4px;">Solucionados</div>
+                            <div style="font-size: 28px; font-weight: 800; color: #4ade80; line-height: 1.1;">265</div>
+                            <div style="font-size: 11.5px; color: #10b981; margin-top: 4px; font-weight: 600;">96,7% de taxa de resolução</div>
+                        </div>
+                        <!-- KPI 3 -->
+                        <div style="background: rgba(15,23,42,0.7); border: 1px solid rgba(14,165,233,0.25); border-top: 3px solid #0ea5e9; border-radius: 10px; padding: 14px 16px;">
+                            <div style="font-size: 11.5px; font-weight: 700; color: #94a3b8; text-transform: uppercase; margin-bottom: 4px;">SLA de Solução</div>
+                            <div style="font-size: 28px; font-weight: 800; color: #38bdf8; line-height: 1.1;">94,7%</div>
+                            <div style="font-size: 11.5px; color: #94a3b8; margin-top: 4px;">251 de 265 no prazo estipulado</div>
+                        </div>
+                        <!-- KPI 4 -->
+                        <div style="background: rgba(15,23,42,0.7); border: 1px solid rgba(239,68,68,0.3); border-top: 3px solid #ef4444; border-radius: 10px; padding: 14px 16px;">
+                            <div style="font-size: 11.5px; font-weight: 700; color: #f87171; text-transform: uppercase; margin-bottom: 4px;">Backlog Ativo Residual</div>
+                            <div style="font-size: 28px; font-weight: 800; color: #f87171; line-height: 1.1;">9</div>
+                            <div style="font-size: 11.5px; color: #ef4444; margin-top: 4px; font-weight: 600;">5 sem técnico atribuído • Todos vencidos</div>
+                        </div>
+                    </div>
+
+                    <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px;">
+                        <!-- KPI 5 -->
+                        <div style="background: rgba(15,23,42,0.7); border: 1px solid rgba(255,255,255,0.08); border-top: 3px solid #818cf8; border-radius: 10px; padding: 14px 16px;">
+                            <div style="font-size: 11.5px; font-weight: 700; color: #94a3b8; text-transform: uppercase; margin-bottom: 4px;">TMS Mediano (Solução)</div>
+                            <div style="font-size: 28px; font-weight: 800; color: #a5b4fc; line-height: 1.1;">15 min</div>
+                            <div style="font-size: 11.5px; color: #64748b; margin-top: 4px;">Tempo corrido (atendimento típico)</div>
+                        </div>
+                        <!-- KPI 6 -->
+                        <div style="background: rgba(15,23,42,0.7); border: 1px solid rgba(255,255,255,0.08); border-top: 3px solid #f59e0b; border-radius: 10px; padding: 14px 16px;">
+                            <div style="font-size: 11.5px; font-weight: 700; color: #94a3b8; text-transform: uppercase; margin-bottom: 4px;">Percentil 90 (P90)</div>
+                            <div style="font-size: 28px; font-weight: 800; color: #fcd34d; line-height: 1.1;">44,5 h</div>
+                            <div style="font-size: 11.5px; color: #64748b; margin-top: 4px;">90% dos casos resolvidos até esse tempo</div>
+                        </div>
+                        <!-- KPI 7 -->
+                        <div style="background: rgba(15,23,42,0.7); border: 1px solid rgba(255,255,255,0.08); border-top: 3px solid #06b6d4; border-radius: 10px; padding: 14px 16px;">
+                            <div style="font-size: 11.5px; font-weight: 700; color: #94a3b8; text-transform: uppercase; margin-bottom: 4px;">Respostas Satisfação</div>
+                            <div style="font-size: 28px; font-weight: 800; color: #22d3ee; line-height: 1.1;">25</div>
+                            <div style="font-size: 11.5px; color: #64748b; margin-top: 4px;">10,0% de cobertura sobre os fechados</div>
+                        </div>
+                        <!-- KPI 8 -->
+                        <div style="background: rgba(15,23,42,0.7); border: 1px solid rgba(16,185,129,0.3); border-top: 3px solid #10b981; border-radius: 10px; padding: 14px 16px;">
+                            <div style="font-size: 11.5px; font-weight: 700; color: #94a3b8; text-transform: uppercase; margin-bottom: 4px;">Nota Média de Satisfação</div>
+                            <div style="font-size: 28px; font-weight: 800; color: #4ade80; line-height: 1.1;">5,0 / 5,0</div>
+                            <div style="font-size: 11.5px; color: #10b981; margin-top: 4px; font-weight: 600;">100% de avaliações nota máxima</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- CARD DE LEITURA EXECUTIVA E VALIDAÇÃO -->
+                <div style="background: rgba(15,23,42,0.6); border: 1px solid rgba(255,255,255,0.08); border-radius: 10px; padding: 16px 20px; margin-bottom: 24px;">
+                    <div style="display: flex; gap: 16px; align-items: flex-start; flex-wrap: wrap;">
+                        <div style="flex: 2; min-width: 320px;">
+                            <h5 style="margin: 0 0 8px 0; font-size: 13.5px; font-weight: 700; color: #38bdf8; text-transform: uppercase; letter-spacing: 0.05em;">
+                                📌 Leitura Executiva
+                            </h5>
+                            <p style="margin: 0; font-size: 13px; color: #cbd5e1; line-height: 1.6;">
+                                A operação registrou <strong>274 chamados válidos</strong> no período analisado e <strong>265 soluções</strong>, resultando em taxa de resolução de <strong>96,7%</strong>. O SLA de solução foi cumprido em <strong>94,7%</strong> dos chamados finalizados (251/265). O volume residual é baixo, porém concentrado em risco: os <strong>9 chamados ainda ativos</strong> possuem prazo exportado vencido e 5 não apresentam técnico nominal. A mediana de solução foi de <strong>15 minutos</strong>, enquanto o P90 chegou a <strong>44,5 horas</strong>, mostrando uma parcela menor de casos de longa duração. <em>Computadores e Periféricos</em> lidera a demanda com 27,4%. A satisfação foi máxima nas 25 respostas recebidas, com cobertura de 10% dos fechados.
+                            </p>
+                        </div>
+                        <div style="flex: 1; min-width: 260px; background: rgba(30,41,59,0.6); border: 1px solid rgba(255,255,255,0.06); border-radius: 8px; padding: 12px 14px;">
+                            <div style="font-size: 12px; font-weight: 700; color: #f59e0b; margin-bottom: 4px;">🔍 Validação do Fechamento</div>
+                            <div style="font-size: 12px; color: #94a3b8; line-height: 1.5;">
+                                A lista bruta continha 275 registros. O chamado <strong>#1508</strong> foi auditado e formalmente excluído como registro de teste técnico. A base oficial homologada é de exatamente <strong>274 chamados válidos</strong>.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 2. PANORAMA GERAL & EVOLUÇÃO (PÁGINA 3) -->
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 24px;">
+                    <!-- TABELA DE STATUS GERAL -->
+                    <div style="background: rgba(15,23,42,0.7); border: 1px solid rgba(255,255,255,0.08); border-radius: 10px; padding: 18px;">
+                        <h4 style="margin: 0 0 14px 0; font-size: 14.5px; font-weight: 700; color: #f8fafc; display: flex; align-items: center; gap: 8px;">
+                            <span>📈</span> Panorama Geral e Status Operacional (Página 3)
+                        </h4>
+                        <table style="width: 100%; border-collapse: collapse; font-size: 12.5px;">
+                            <thead>
+                                <tr style="border-bottom: 2px solid rgba(255,255,255,0.1); text-align: left;">
+                                    <th style="padding: 8px 10px; color: #94a3b8;">Indicador</th>
+                                    <th style="padding: 8px 10px; color: #94a3b8; text-align: right;">Valor</th>
+                                    <th style="padding: 8px 10px; color: #94a3b8;">Observação</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr style="border-bottom: 1px solid rgba(255,255,255,0.05);">
+                                    <td style="padding: 8px 10px; font-weight: 600; color: #e2e8f0;">Abertos no período</td>
+                                    <td style="padding: 8px 10px; text-align: right; font-weight: 800; color: #38bdf8;">274</td>
+                                    <td style="padding: 8px 10px; color: #94a3b8; font-size: 11.5px;">Chamados válidos apurados</td>
+                                </tr>
+                                <tr style="border-bottom: 1px solid rgba(255,255,255,0.05);">
+                                    <td style="padding: 8px 10px; font-weight: 600; color: #e2e8f0;">Solucionados</td>
+                                    <td style="padding: 8px 10px; text-align: right; font-weight: 800; color: #4ade80;">265</td>
+                                    <td style="padding: 8px 10px; color: #94a3b8; font-size: 11.5px;">Status Solucionado (16) + Fechado (249)</td>
+                                </tr>
+                                <tr style="border-bottom: 1px solid rgba(255,255,255,0.05);">
+                                    <td style="padding: 8px 10px; font-weight: 600; color: #e2e8f0;">Fechados</td>
+                                    <td style="padding: 8px 10px; text-align: right; font-weight: 700; color: #cbd5e1;">249</td>
+                                    <td style="padding: 8px 10px; color: #94a3b8; font-size: 11.5px;">Status atual Fechado (90,9%)</td>
+                                </tr>
+                                <tr style="border-bottom: 1px solid rgba(255,255,255,0.05);">
+                                    <td style="padding: 8px 10px; font-weight: 600; color: #e2e8f0;">Aguardando fechamento</td>
+                                    <td style="padding: 8px 10px; text-align: right; font-weight: 700; color: #38bdf8;">16</td>
+                                    <td style="padding: 8px 10px; color: #94a3b8; font-size: 11.5px;">Solucionados; não compõem backlog ativo</td>
+                                </tr>
+                                <tr style="border-bottom: 1px solid rgba(255,255,255,0.05);">
+                                    <td style="padding: 8px 10px; font-weight: 600; color: #e2e8f0;">Ativos (Backlog)</td>
+                                    <td style="padding: 8px 10px; text-align: right; font-weight: 800; color: #f87171;">9</td>
+                                    <td style="padding: 8px 10px; color: #f87171; font-size: 11.5px;">Novo 1 · Em atendimento 4 · Pendente 4</td>
+                                </tr>
+                                <tr style="border-bottom: 1px solid rgba(255,255,255,0.05);">
+                                    <td style="padding: 8px 10px; font-weight: 600; color: #e2e8f0;">Saldo operacional</td>
+                                    <td style="padding: 8px 10px; text-align: right; font-weight: 800; color: #e2e8f0;">9</td>
+                                    <td style="padding: 8px 10px; color: #94a3b8; font-size: 11.5px;">Abertos (274) − Solucionados (265)</td>
+                                </tr>
+                                <tr>
+                                    <td style="padding: 8px 10px; font-weight: 700; color: #4ade80;">Taxa de Resolução</td>
+                                    <td style="padding: 8px 10px; text-align: right; font-weight: 800; color: #4ade80;">96,7%</td>
+                                    <td style="padding: 8px 10px; color: #10b981; font-size: 11.5px;">265 ÷ 274 chamados</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <!-- EVOLUÇÃO E PICOS DE ABERTURA -->
+                    <div style="background: rgba(15,23,42,0.7); border: 1px solid rgba(255,255,255,0.08); border-radius: 10px; padding: 18px; display: flex; flex-direction: column; justify-content: space-between;">
+                        <div>
+                            <h4 style="margin: 0 0 14px 0; font-size: 14.5px; font-weight: 700; color: #f8fafc; display: flex; align-items: center; gap: 8px;">
+                                <span>📅</span> Picos de Abertura &amp; Ritmo Operacional
+                            </h4>
+                            <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 16px;">
+                                <div style="background: rgba(56,189,248,0.1); border: 1px solid rgba(56,189,248,0.3); border-radius: 8px; padding: 12px; text-align: center;">
+                                    <div style="font-size: 11px; color: #94a3b8; text-transform: uppercase;">1º Pico (Quarta)</div>
+                                    <div style="font-size: 22px; font-weight: 800; color: #38bdf8; margin: 2px 0;">23</div>
+                                    <div style="font-size: 11px; color: #cbd5e1; font-weight: 600;">07/10/2026</div>
+                                </div>
+                                <div style="background: rgba(56,189,248,0.1); border: 1px solid rgba(56,189,248,0.3); border-radius: 8px; padding: 12px; text-align: center;">
+                                    <div style="font-size: 11px; color: #94a3b8; text-transform: uppercase;">2º Pico (Início)</div>
+                                    <div style="font-size: 22px; font-weight: 800; color: #38bdf8; margin: 2px 0;">21</div>
+                                    <div style="font-size: 11px; color: #cbd5e1; font-weight: 600;">01/10/2026</div>
+                                </div>
+                                <div style="background: rgba(56,189,248,0.1); border: 1px solid rgba(56,189,248,0.3); border-radius: 8px; padding: 12px; text-align: center;">
+                                    <div style="font-size: 11px; color: #94a3b8; text-transform: uppercase;">3º Pico (Terça)</div>
+                                    <div style="font-size: 22px; font-weight: 800; color: #38bdf8; margin: 2px 0;">20</div>
+                                    <div style="font-size: 11px; color: #cbd5e1; font-weight: 600;">13/10/2026</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div style="background: rgba(30,41,59,0.5); border-left: 3px solid #38bdf8; border-radius: 6px; padding: 12px 14px;">
+                            <div style="font-size: 12px; font-weight: 700; color: #38bdf8; margin-bottom: 2px;">💡 Insight Operacional</div>
+                            <div style="font-size: 12px; color: #cbd5e1; line-height: 1.5;">
+                                O saldo final dos chamados abertos no período é <strong>9</strong>, exatamente o número de chamados ativos na base. As maiores concentrações ocorrem às terças e quartas-feiras logo após início de expediente.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 3. EQUIPE TÉCNICA OFICIAL (PÁGINA 4) -->
+                <div style="background: rgba(15,23,42,0.7); border: 1px solid rgba(255,255,255,0.08); border-radius: 10px; padding: 18px; margin-bottom: 24px;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px; flex-wrap: wrap; gap: 8px;">
+                        <div>
+                            <h4 style="margin: 0; font-size: 14.5px; font-weight: 700; color: #f8fafc; display: flex; align-items: center; gap: 8px;">
+                                <span>👥</span> Desempenho da Equipe Técnica Oficial (Página 4)
+                            </h4>
+                            <p style="margin: 3px 0 0 0; font-size: 12px; color: #94a3b8;">
+                                Equipe oficial: <strong>Leonardo, Thais e Paulo</strong>. Concentram 238 chamados (<strong>86,9%</strong> de toda a demanda da SP-Águas).
+                            </p>
+                        </div>
+                        <span style="font-size: 11.5px; background: rgba(2,132,199,0.2); color: #38bdf8; border: 1px solid rgba(56,189,248,0.3); padding: 4px 10px; border-radius: 12px;">
+                            Equipe Suporte N2/N3 SA-GTI
+                        </span>
+                    </div>
+
+                    <div style="overflow-x: auto;">
+                        <table style="width: 100%; border-collapse: collapse; font-size: 12.5px;">
+                            <thead>
+                                <tr style="border-bottom: 2px solid rgba(255,255,255,0.1); background: rgba(30,41,59,0.5); text-align: left;">
+                                    <th style="padding: 10px 12px; color: #94a3b8;">Técnico</th>
+                                    <th style="padding: 10px 12px; color: #94a3b8; text-align: center;">Atrib.</th>
+                                    <th style="padding: 10px 12px; color: #94a3b8; text-align: center;">Soluc.</th>
+                                    <th style="padding: 10px 12px; color: #94a3b8; text-align: center;">Fech.</th>
+                                    <th style="padding: 10px 12px; color: #94a3b8; text-align: center;">Ativos</th>
+                                    <th style="padding: 10px 12px; color: #94a3b8; text-align: center;">Part. (%)</th>
+                                    <th style="padding: 10px 12px; color: #94a3b8; text-align: center;">Mediana</th>
+                                    <th style="padding: 10px 12px; color: #94a3b8; text-align: center;">P90</th>
+                                    <th style="padding: 10px 12px; color: #94a3b8; text-align: center;">SLA Cumprido</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr style="border-bottom: 1px solid rgba(255,255,255,0.06);">
+                                    <td style="padding: 12px; font-weight: 700; color: #ffffff; display: flex; align-items: center; gap: 8px;">
+                                        <span style="width: 8px; height: 8px; border-radius: 50%; background: #38bdf8;"></span>
+                                        Leonardo S. M. Antonio
+                                    </td>
+                                    <td style="padding: 12px; text-align: center; font-weight: 700; color: #38bdf8;">87</td>
+                                    <td style="padding: 12px; text-align: center; color: #4ade80;">85</td>
+                                    <td style="padding: 12px; text-align: center; color: #cbd5e1;">85</td>
+                                    <td style="padding: 12px; text-align: center; color: #f87171; font-weight: 700;">2</td>
+                                    <td style="padding: 12px; text-align: center; font-weight: 600; color: #cbd5e1;">31,8%</td>
+                                    <td style="padding: 12px; text-align: center; font-family: monospace; color: #a5b4fc;">27 min</td>
+                                    <td style="padding: 12px; text-align: center; font-family: monospace; color: #fcd34d;">46,0 h</td>
+                                    <td style="padding: 12px; text-align: center;">
+                                        <span style="background: rgba(16,185,129,0.2); color: #4ade80; border: 1px solid rgba(16,185,129,0.4); padding: 3px 8px; border-radius: 8px; font-weight: 700; font-size: 11.5px;">97,6%</span>
+                                    </td>
+                                </tr>
+                                <tr style="border-bottom: 1px solid rgba(255,255,255,0.06);">
+                                    <td style="padding: 12px; font-weight: 700; color: #ffffff; display: flex; align-items: center; gap: 8px;">
+                                        <span style="width: 8px; height: 8px; border-radius: 50%; background: #10b981;"></span>
+                                        Thais TI
+                                    </td>
+                                    <td style="padding: 12px; text-align: center; font-weight: 700; color: #38bdf8;">87</td>
+                                    <td style="padding: 12px; text-align: center; color: #4ade80;">87</td>
+                                    <td style="padding: 12px; text-align: center; color: #cbd5e1;">79</td>
+                                    <td style="padding: 12px; text-align: center; color: #4ade80; font-weight: 700;">0</td>
+                                    <td style="padding: 12px; text-align: center; font-weight: 600; color: #cbd5e1;">31,8%</td>
+                                    <td style="padding: 12px; text-align: center; font-family: monospace; color: #a5b4fc;">1 min</td>
+                                    <td style="padding: 12px; text-align: center; font-family: monospace; color: #fcd34d;">1,2 h</td>
+                                    <td style="padding: 12px; text-align: center;">
+                                        <span style="background: rgba(16,185,129,0.2); color: #4ade80; border: 1px solid rgba(16,185,129,0.4); padding: 3px 8px; border-radius: 8px; font-weight: 700; font-size: 11.5px;">96,6%</span>
+                                    </td>
+                                </tr>
+                                <tr style="border-bottom: 1px solid rgba(255,255,255,0.06);">
+                                    <td style="padding: 12px; font-weight: 700; color: #ffffff; display: flex; align-items: center; gap: 8px;">
+                                        <span style="width: 8px; height: 8px; border-radius: 50%; background: #f59e0b;"></span>
+                                        Paulo Domingues
+                                    </td>
+                                    <td style="padding: 12px; text-align: center; font-weight: 700; color: #38bdf8;">64</td>
+                                    <td style="padding: 12px; text-align: center; color: #4ade80;">63</td>
+                                    <td style="padding: 12px; text-align: center; color: #cbd5e1;">56</td>
+                                    <td style="padding: 12px; text-align: center; color: #f87171; font-weight: 700;">1</td>
+                                    <td style="padding: 12px; text-align: center; font-weight: 600; color: #cbd5e1;">23,4%</td>
+                                    <td style="padding: 12px; text-align: center; font-family: monospace; color: #a5b4fc;">29 min</td>
+                                    <td style="padding: 12px; text-align: center; font-family: monospace; color: #fcd34d;">18,2 h</td>
+                                    <td style="padding: 12px; text-align: center;">
+                                        <span style="background: rgba(16,185,129,0.2); color: #4ade80; border: 1px solid rgba(16,185,129,0.4); padding: 3px 8px; border-radius: 8px; font-weight: 700; font-size: 11.5px;">95,2%</span>
+                                    </td>
+                                </tr>
+                                <tr style="background: rgba(255,255,255,0.02);">
+                                    <td style="padding: 10px 12px; color: #94a3b8; font-style: italic;">Usuários fora do time (28) / Sem técnico (8)</td>
+                                    <td style="padding: 10px 12px; text-align: center; color: #94a3b8;">36</td>
+                                    <td style="padding: 10px 12px; text-align: center; color: #94a3b8;">30</td>
+                                    <td style="padding: 10px 12px; text-align: center; color: #94a3b8;">29</td>
+                                    <td style="padding: 10px 12px; text-align: center; color: #f87171; font-weight: 700;">6</td>
+                                    <td style="padding: 10px 12px; text-align: center; color: #94a3b8;">13,1%</td>
+                                    <td style="padding: 10px 12px; text-align: center; color: #64748b;">-</td>
+                                    <td style="padding: 10px 12px; text-align: center; color: #64748b;">-</td>
+                                    <td style="padding: 10px 12px; text-align: center; color: #64748b;">-</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div style="margin-top: 12px; background: rgba(30,41,59,0.4); border-left: 3px solid #f59e0b; border-radius: 6px; padding: 10px 14px; font-size: 12px; color: #cbd5e1; line-height: 1.5;">
+                        <strong style="color: #f59e0b;">Regra de Equipe &amp; Interpretação:</strong> A análise por técnico considera exclusivamente os três profissionais do time oficial de suporte. Os 28 registros atribuídos a terceiros e os 8 sem técnico permanecem nos totais gerais. O volume bruto não reflete ranking de produtividade direta, dado que complexidade, categorias e dependências externas impactam a carteira individual.
+                    </div>
+                </div>
+
+                <!-- 4. CATEGORIAS DE ATENDIMENTO (PÁGINA 5) -->
+                <div style="background: rgba(15,23,42,0.7); border: 1px solid rgba(255,255,255,0.08); border-radius: 10px; padding: 18px; margin-bottom: 24px;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px; flex-wrap: wrap; gap: 8px;">
+                        <div>
+                            <h4 style="margin: 0; font-size: 14.5px; font-weight: 700; color: #f8fafc; display: flex; align-items: center; gap: 8px;">
+                                <span>🏷️</span> Análise por Categorias &amp; Pontos Críticos de SLA (Página 5)
+                            </h4>
+                            <p style="margin: 3px 0 0 0; font-size: 12px; color: #94a3b8;">
+                                Os 5 maiores grupos representam <strong>69,4%</strong> do volume total apurado no GLPI da SP-Águas.
+                            </p>
+                        </div>
+                    </div>
+
+                    <div style="overflow-x: auto; margin-bottom: 14px;">
+                        <table style="width: 100%; border-collapse: collapse; font-size: 12.5px;">
+                            <thead>
+                                <tr style="border-bottom: 2px solid rgba(255,255,255,0.1); background: rgba(30,41,59,0.5); text-align: left;">
+                                    <th style="padding: 10px 12px; color: #94a3b8;">Grupo / Categoria</th>
+                                    <th style="padding: 10px 12px; color: #94a3b8; text-align: center;">Volume</th>
+                                    <th style="padding: 10px 12px; color: #94a3b8; text-align: center;">Part. (%)</th>
+                                    <th style="padding: 10px 12px; color: #94a3b8; text-align: center;">Soluc.</th>
+                                    <th style="padding: 10px 12px; color: #94a3b8; text-align: center;">Ativos</th>
+                                    <th style="padding: 10px 12px; color: #94a3b8; text-align: center;">Mediana</th>
+                                    <th style="padding: 10px 12px; color: #94a3b8; text-align: center;">P90</th>
+                                    <th style="padding: 10px 12px; color: #94a3b8; text-align: center;">Violações SLA</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr style="border-bottom: 1px solid rgba(255,255,255,0.06);">
+                                    <td style="padding: 10px 12px; font-weight: 700; color: #ffffff;">Computadores e Periféricos</td>
+                                    <td style="padding: 10px 12px; text-align: center; font-weight: 800; color: #38bdf8;">75</td>
+                                    <td style="padding: 10px 12px; text-align: center; color: #cbd5e1;">27,4%</td>
+                                    <td style="padding: 10px 12px; text-align: center; color: #4ade80;">72</td>
+                                    <td style="padding: 10px 12px; text-align: center; color: #f87171; font-weight: 700;">3</td>
+                                    <td style="padding: 10px 12px; text-align: center; font-family: monospace; color: #a5b4fc;">36 min</td>
+                                    <td style="padding: 10px 12px; text-align: center; font-family: monospace; color: #fcd34d;">46,1 h</td>
+                                    <td style="padding: 10px 12px; text-align: center; color: #f87171; font-weight: 700;">5</td>
+                                </tr>
+                                <tr style="border-bottom: 1px solid rgba(255,255,255,0.06);">
+                                    <td style="padding: 10px 12px; font-weight: 700; color: #ffffff;">Aplicativos e Softwares</td>
+                                    <td style="padding: 10px 12px; text-align: center; font-weight: 800; color: #38bdf8;">32</td>
+                                    <td style="padding: 10px 12px; text-align: center; color: #cbd5e1;">11,7%</td>
+                                    <td style="padding: 10px 12px; text-align: center; color: #4ade80;">31</td>
+                                    <td style="padding: 10px 12px; text-align: center; color: #f87171; font-weight: 700;">1</td>
+                                    <td style="padding: 10px 12px; text-align: center; font-family: monospace; color: #a5b4fc;">3 min</td>
+                                    <td style="padding: 10px 12px; text-align: center; font-family: monospace; color: #fcd34d;">33 min</td>
+                                    <td style="padding: 10px 12px; text-align: center; color: #4ade80; font-weight: 700;">0</td>
+                                </tr>
+                                <tr style="border-bottom: 1px solid rgba(255,255,255,0.06);">
+                                    <td style="padding: 10px 12px; font-weight: 700; color: #ffffff;">Microsoft 365</td>
+                                    <td style="padding: 10px 12px; text-align: center; font-weight: 800; color: #38bdf8;">31</td>
+                                    <td style="padding: 10px 12px; text-align: center; color: #cbd5e1;">11,3%</td>
+                                    <td style="padding: 10px 12px; text-align: center; color: #4ade80;">31</td>
+                                    <td style="padding: 10px 12px; text-align: center; color: #4ade80; font-weight: 700;">0</td>
+                                    <td style="padding: 10px 12px; text-align: center; font-family: monospace; color: #a5b4fc;">27 min</td>
+                                    <td style="padding: 10px 12px; text-align: center; font-family: monospace; color: #fcd34d;">45,1 h</td>
+                                    <td style="padding: 10px 12px; text-align: center; color: #f59e0b; font-weight: 700;">1</td>
+                                </tr>
+                                <tr style="border-bottom: 1px solid rgba(255,255,255,0.06);">
+                                    <td style="padding: 10px 12px; font-weight: 700; color: #ffffff;">Atividade Proativa de TI</td>
+                                    <td style="padding: 10px 12px; text-align: center; font-weight: 800; color: #38bdf8;">28</td>
+                                    <td style="padding: 10px 12px; text-align: center; color: #cbd5e1;">10,2%</td>
+                                    <td style="padding: 10px 12px; text-align: center; color: #4ade80;">28</td>
+                                    <td style="padding: 10px 12px; text-align: center; color: #4ade80; font-weight: 700;">0</td>
+                                    <td style="padding: 10px 12px; text-align: center; font-family: monospace; color: #a5b4fc;">1,8 h</td>
+                                    <td style="padding: 10px 12px; text-align: center; font-family: monospace; color: #fcd34d;">20,4 h</td>
+                                    <td style="padding: 10px 12px; text-align: center; color: #f59e0b; font-weight: 700;">2</td>
+                                </tr>
+                                <tr>
+                                    <td style="padding: 10px 12px; font-weight: 700; color: #ffffff;">Gestão de Acessos</td>
+                                    <td style="padding: 10px 12px; text-align: center; font-weight: 800; color: #38bdf8;">24</td>
+                                    <td style="padding: 10px 12px; text-align: center; color: #cbd5e1;">8,8%</td>
+                                    <td style="padding: 10px 12px; text-align: center; color: #4ade80;">24</td>
+                                    <td style="padding: 10px 12px; text-align: center; color: #4ade80; font-weight: 700;">0</td>
+                                    <td style="padding: 10px 12px; text-align: center; font-family: monospace; color: #a5b4fc;">12 min</td>
+                                    <td style="padding: 10px 12px; text-align: center; font-family: monospace; color: #fcd34d;">2,4 d</td>
+                                    <td style="padding: 10px 12px; text-align: center; color: #f59e0b; font-weight: 700;">2</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <!-- PONTOS DE ATENÇÃO ESPECÍFICOS -->
+                    <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px;">
+                        <div style="background: rgba(239,68,68,0.1); border: 1px solid rgba(239,68,68,0.3); border-radius: 8px; padding: 12px;">
+                            <div style="font-size: 11px; font-weight: 700; color: #f87171; text-transform: uppercase;">Acesso ao SEI</div>
+                            <div style="font-size: 16px; font-weight: 800; color: #ffffff; margin: 4px 0;">11 Chamados</div>
+                            <div style="font-size: 11.5px; color: #cbd5e1; line-height: 1.4;">
+                                Mediana elevada de <strong>3,7 dias</strong> e <strong>3 violações de SLA</strong>. Depende de autorizações externas de chefia.
+                            </div>
+                        </div>
+                        <div style="background: rgba(245,158,11,0.1); border: 1px solid rgba(245,158,11,0.3); border-radius: 8px; padding: 12px;">
+                            <div style="font-size: 11px; font-weight: 700; color: #fcd34d; text-transform: uppercase;">Pastas de Rede</div>
+                            <div style="font-size: 16px; font-weight: 800; color: #ffffff; margin: 4px 0;">19 Ocorrências</div>
+                            <div style="font-size: 11.5px; color: #cbd5e1; line-height: 1.4;">
+                                Concentradas dentro de <em>Gestão de Acessos</em>. Demanda ação preventiva de permissões compartilhadas.
+                            </div>
+                        </div>
+                        <div style="background: rgba(56,189,248,0.1); border: 1px solid rgba(56,189,248,0.3); border-radius: 8px; padding: 12px;">
+                            <div style="font-size: 11px; font-weight: 700; color: #38bdf8; text-transform: uppercase;">Atividade Proativa de TI</div>
+                            <div style="font-size: 16px; font-weight: 800; color: #ffffff; margin: 4px 0;">28 Chamados</div>
+                            <div style="font-size: 11.5px; color: #cbd5e1; line-height: 1.4;">
+                                Demanda interna gerada pelo próprio time para manutenção preventiva e auditorias locais.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 5. LOCALIZAÇÕES, TIPO E PRIORIDADE (PÁGINA 6) -->
+                <div style="display: grid; grid-template-columns: 1fr 2fr; gap: 16px; margin-bottom: 24px;">
+                    <!-- BLOCOS / LOCALIZAÇÃO -->
+                    <div style="background: rgba(15,23,42,0.7); border: 1px solid rgba(255,255,255,0.08); border-radius: 10px; padding: 18px; display: flex; flex-direction: column; justify-content: space-between;">
+                        <div>
+                            <h4 style="margin: 0 0 12px 0; font-size: 14.5px; font-weight: 700; color: #f8fafc; display: flex; align-items: center; gap: 8px;">
+                                <span>🏢</span> Distribuição por Blocos (Página 6)
+                            </h4>
+                            <table style="width: 100%; border-collapse: collapse; font-size: 12.5px; margin-bottom: 12px;">
+                                <thead>
+                                    <tr style="border-bottom: 2px solid rgba(255,255,255,0.1); text-align: left;">
+                                        <th style="padding: 8px; color: #94a3b8;">Bloco</th>
+                                        <th style="padding: 8px; color: #94a3b8; text-align: center;">Chamados</th>
+                                        <th style="padding: 8px; color: #94a3b8; text-align: right;">Part. (%)</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr style="border-bottom: 1px solid rgba(255,255,255,0.05);">
+                                        <td style="padding: 8px; font-weight: 700; color: #ffffff;">Bloco A</td>
+                                        <td style="padding: 8px; text-align: center; font-weight: 800; color: #38bdf8;">233</td>
+                                        <td style="padding: 8px; text-align: right; color: #4ade80; font-weight: 700;">86,0%</td>
+                                    </tr>
+                                    <tr style="border-bottom: 1px solid rgba(255,255,255,0.05);">
+                                        <td style="padding: 8px; font-weight: 700; color: #ffffff;">Bloco B</td>
+                                        <td style="padding: 8px; text-align: center; font-weight: 800; color: #38bdf8;">29</td>
+                                        <td style="padding: 8px; text-align: right; color: #cbd5e1;">10,7%</td>
+                                    </tr>
+                                    <tr>
+                                        <td style="padding: 8px; font-weight: 600; color: #94a3b8;">Sede / Regionais / Outros</td>
+                                        <td style="padding: 8px; text-align: center; color: #cbd5e1;">9</td>
+                                        <td style="padding: 8px; text-align: right; color: #94a3b8;">3,3%</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <div style="background: rgba(30,41,59,0.5); border-radius: 6px; padding: 10px; font-size: 11.5px; color: #94a3b8; line-height: 1.4;">
+                            <strong style="color: #cbd5e1;">Limitação:</strong> Base de localização possui 271 chamados agregados sem ID individual, impossibilitando cálculo auditável de SLA por andar nesta versão.
+                        </div>
+                    </div>
+
+                    <!-- TIPO E PRIORIDADE -->
+                    <div style="background: rgba(15,23,42,0.7); border: 1px solid rgba(255,255,255,0.08); border-radius: 10px; padding: 18px;">
+                        <h4 style="margin: 0 0 12px 0; font-size: 14.5px; font-weight: 700; color: #f8fafc; display: flex; align-items: center; gap: 8px;">
+                            <span>🎯</span> Classificação por Tipo &amp; Prioridade (Página 6)
+                        </h4>
+                        <div style="overflow-x: auto;">
+                            <table style="width: 100%; border-collapse: collapse; font-size: 12px;">
+                                <thead>
+                                    <tr style="border-bottom: 2px solid rgba(255,255,255,0.1); background: rgba(30,41,59,0.5); text-align: left;">
+                                        <th style="padding: 8px 10px; color: #94a3b8;">Recorte</th>
+                                        <th style="padding: 8px 10px; color: #94a3b8; text-align: center;">Vol.</th>
+                                        <th style="padding: 8px 10px; color: #94a3b8; text-align: center;">Part.</th>
+                                        <th style="padding: 8px 10px; color: #94a3b8; text-align: center;">Fin.</th>
+                                        <th style="padding: 8px 10px; color: #94a3b8; text-align: center;">Ativ.</th>
+                                        <th style="padding: 8px 10px; color: #94a3b8; text-align: center;">Mediana</th>
+                                        <th style="padding: 8px 10px; color: #94a3b8; text-align: center;">P90</th>
+                                        <th style="padding: 8px 10px; color: #94a3b8; text-align: center;">Violações</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr style="border-bottom: 1px solid rgba(255,255,255,0.06);">
+                                        <td style="padding: 8px 10px; font-weight: 700; color: #38bdf8;">Incidente</td>
+                                        <td style="padding: 8px 10px; text-align: center; font-weight: 700;">157</td>
+                                        <td style="padding: 8px 10px; text-align: center;">57,3%</td>
+                                        <td style="padding: 8px 10px; text-align: center;">151</td>
+                                        <td style="padding: 8px 10px; text-align: center; color: #f87171; font-weight: 700;">6</td>
+                                        <td style="padding: 8px 10px; text-align: center; font-family: monospace;">22 min</td>
+                                        <td style="padding: 8px 10px; text-align: center; font-family: monospace;">18,5 h</td>
+                                        <td style="padding: 8px 10px; text-align: center; color: #f59e0b; font-weight: 700;">4</td>
+                                    </tr>
+                                    <tr style="border-bottom: 1px solid rgba(255,255,255,0.06);">
+                                        <td style="padding: 8px 10px; font-weight: 700; color: #a855f7;">Requisição</td>
+                                        <td style="padding: 8px 10px; text-align: center; font-weight: 700;">117</td>
+                                        <td style="padding: 8px 10px; text-align: center;">42,7%</td>
+                                        <td style="padding: 8px 10px; text-align: center;">114</td>
+                                        <td style="padding: 8px 10px; text-align: center; color: #f87171; font-weight: 700;">3</td>
+                                        <td style="padding: 8px 10px; text-align: center; font-family: monospace;">4 min</td>
+                                        <td style="padding: 8px 10px; text-align: center; font-family: monospace;">3,7 d</td>
+                                        <td style="padding: 8px 10px; text-align: center; color: #f87171; font-weight: 700;">10</td>
+                                    </tr>
+                                    <tr style="border-bottom: 1px solid rgba(255,255,255,0.06); background: rgba(239,68,68,0.08);">
+                                        <td style="padding: 8px 10px; font-weight: 800; color: #ef4444;">Prioridade Muito Alta</td>
+                                        <td style="padding: 8px 10px; text-align: center; font-weight: 800; color: #ef4444;">1</td>
+                                        <td style="padding: 8px 10px; text-align: center;">0,4%</td>
+                                        <td style="padding: 8px 10px; text-align: center;">0</td>
+                                        <td style="padding: 8px 10px; text-align: center; color: #ef4444; font-weight: 800;">1</td>
+                                        <td style="padding: 8px 10px; text-align: center; color: #64748b;">n/d</td>
+                                        <td style="padding: 8px 10px; text-align: center; color: #64748b;">n/d</td>
+                                        <td style="padding: 8px 10px; text-align: center; color: #64748b;">0</td>
+                                    </tr>
+                                    <tr style="border-bottom: 1px solid rgba(255,255,255,0.06);">
+                                        <td style="padding: 8px 10px; font-weight: 700; color: #f59e0b;">Prioridade Alta</td>
+                                        <td style="padding: 8px 10px; text-align: center; font-weight: 700;">9</td>
+                                        <td style="padding: 8px 10px; text-align: center;">3,3%</td>
+                                        <td style="padding: 8px 10px; text-align: center;">9</td>
+                                        <td style="padding: 8px 10px; text-align: center; color: #4ade80;">0</td>
+                                        <td style="padding: 8px 10px; text-align: center; font-family: monospace;">6 min</td>
+                                        <td style="padding: 8px 10px; text-align: center; font-family: monospace;">54 min</td>
+                                        <td style="padding: 8px 10px; text-align: center; color: #4ade80;">0</td>
+                                    </tr>
+                                    <tr style="border-bottom: 1px solid rgba(255,255,255,0.06);">
+                                        <td style="padding: 8px 10px; font-weight: 700; color: #e2e8f0;">Prioridade Média</td>
+                                        <td style="padding: 8px 10px; text-align: center; font-weight: 700;">263</td>
+                                        <td style="padding: 8px 10px; text-align: center;">96,0%</td>
+                                        <td style="padding: 8px 10px; text-align: center;">255</td>
+                                        <td style="padding: 8px 10px; text-align: center; color: #f87171; font-weight: 700;">8</td>
+                                        <td style="padding: 8px 10px; text-align: center; font-family: monospace;">15 min</td>
+                                        <td style="padding: 8px 10px; text-align: center; font-family: monospace;">45,5 h</td>
+                                        <td style="padding: 8px 10px; text-align: center; color: #f87171; font-weight: 700;">14</td>
+                                    </tr>
+                                    <tr>
+                                        <td style="padding: 8px 10px; font-weight: 600; color: #94a3b8;">Prioridade Baixa</td>
+                                        <td style="padding: 8px 10px; text-align: center;">1</td>
+                                        <td style="padding: 8px 10px; text-align: center;">0,4%</td>
+                                        <td style="padding: 8px 10px; text-align: center;">1</td>
+                                        <td style="padding: 8px 10px; text-align: center; color: #4ade80;">0</td>
+                                        <td style="padding: 8px 10px; text-align: center; font-family: monospace;">26,5 h</td>
+                                        <td style="padding: 8px 10px; text-align: center; font-family: monospace;">26,5 h</td>
+                                        <td style="padding: 8px 10px; text-align: center; color: #4ade80;">0</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 6. SLA DE SOLUÇÃO E TEMPOS DETALHADOS (PÁGINA 7) -->
+                <div style="background: rgba(15,23,42,0.7); border: 1px solid rgba(255,255,255,0.08); border-radius: 10px; padding: 18px; margin-bottom: 24px;">
+                    <h4 style="margin: 0 0 14px 0; font-size: 14.5px; font-weight: 700; color: #f8fafc; display: flex; align-items: center; gap: 8px;">
+                        <span>⏱️</span> SLA de Solução e Dinâmica Temporal de Atendimento (Página 7)
+                    </h4>
+
+                    <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-bottom: 16px;">
+                        <div style="background: rgba(16,185,129,0.1); border: 1px solid rgba(16,185,129,0.3); border-radius: 8px; padding: 14px; text-align: center;">
+                            <div style="font-size: 11px; font-weight: 700; color: #4ade80; text-transform: uppercase;">SLA — Finalizados</div>
+                            <div style="font-size: 32px; font-weight: 800; color: #4ade80; margin: 4px 0;">94,7%</div>
+                            <div style="font-size: 12px; color: #cbd5e1;">251 no prazo / 265 total finalizados</div>
+                        </div>
+                        <div style="background: rgba(245,158,11,0.1); border: 1px solid rgba(245,158,11,0.3); border-radius: 8px; padding: 14px; text-align: center;">
+                            <div style="font-size: 11px; font-weight: 700; color: #fcd34d; text-transform: uppercase;">Finalizados Vencidos</div>
+                            <div style="font-size: 32px; font-weight: 800; color: #fcd34d; margin: 4px 0;">14</div>
+                            <div style="font-size: 12px; color: #cbd5e1;">5,3% dos finalizados violaram prazo</div>
+                        </div>
+                        <div style="background: rgba(239,68,68,0.1); border: 1px solid rgba(239,68,68,0.3); border-radius: 8px; padding: 14px; text-align: center;">
+                            <div style="font-size: 11px; font-weight: 700; color: #f87171; text-transform: uppercase;">Ativos Vencidos</div>
+                            <div style="font-size: 32px; font-weight: 800; color: #f87171; margin: 4px 0;">9</div>
+                            <div style="font-size: 12px; color: #cbd5e1;">100% dos ativos vencidos (4 Pendentes)</div>
+                        </div>
+                    </div>
+
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 14px;">
+                        <table style="width: 100%; border-collapse: collapse; font-size: 12.5px;">
+                            <thead>
+                                <tr style="border-bottom: 2px solid rgba(255,255,255,0.1); text-align: left;">
+                                    <th style="padding: 8px; color: #94a3b8;">Métrica</th>
+                                    <th style="padding: 8px; color: #94a3b8; text-align: right;">Valor</th>
+                                    <th style="padding: 8px; color: #94a3b8;">Observação</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr style="border-bottom: 1px solid rgba(255,255,255,0.05);">
+                                    <td style="padding: 8px; font-weight: 600; color: #e2e8f0;">Média de solução</td>
+                                    <td style="padding: 8px; text-align: right; font-weight: 700; color: #fcd34d;">15,2 h</td>
+                                    <td style="padding: 8px; color: #94a3b8; font-size: 11.5px;">Sensível a casos longos (outliers)</td>
+                                </tr>
+                                <tr style="border-bottom: 1px solid rgba(255,255,255,0.05);">
+                                    <td style="padding: 8px; font-weight: 700; color: #38bdf8;">Mediana de solução</td>
+                                    <td style="padding: 8px; text-align: right; font-weight: 800; color: #38bdf8;">15 min</td>
+                                    <td style="padding: 8px; color: #38bdf8; font-size: 11.5px; font-weight: 600;">Indicador principal de atendimento</td>
+                                </tr>
+                                <tr style="border-bottom: 1px solid rgba(255,255,255,0.05);">
+                                    <td style="padding: 8px; font-weight: 600; color: #e2e8f0;">Percentil 90 (P90)</td>
+                                    <td style="padding: 8px; text-align: right; font-weight: 700; color: #cbd5e1;">44,5 h</td>
+                                    <td style="padding: 8px; color: #94a3b8; font-size: 11.5px;">90% resolvidos até esse limite</td>
+                                </tr>
+                                <tr style="border-bottom: 1px solid rgba(255,255,255,0.05);">
+                                    <td style="padding: 8px; font-weight: 600; color: #e2e8f0;">Resolvidos em até 5 min</td>
+                                    <td style="padding: 8px; text-align: right; font-weight: 800; color: #4ade80;">106</td>
+                                    <td style="padding: 8px; color: #94a3b8; font-size: 11.5px;">40% do total (indício de retroativo)</td>
+                                </tr>
+                                <tr>
+                                    <td style="padding: 8px; font-weight: 600; color: #94a3b8;">TMT / 1ª Atribuição</td>
+                                    <td style="padding: 8px; text-align: right; color: #64748b;">Não calc.</td>
+                                    <td style="padding: 8px; color: #64748b; font-size: 11.5px;">Ausente do log de exportação</td>
+                                </tr>
+                            </tbody>
+                        </table>
+
+                        <div style="background: rgba(30,41,59,0.5); border-radius: 8px; padding: 14px; font-size: 12px; color: #cbd5e1; line-height: 1.55; display: flex; flex-direction: column; justify-content: space-between;">
+                            <div>
+                                <strong style="color: #38bdf8; display: block; margin-bottom: 4px;">Regra Canônica de SLA &amp; Alerta de Outliers:</strong>
+                                O SLA oficial utiliza o vencimento parametrizado exportado pelo GLPI, o qual incorpora calendários úteis e pausas de pendência. Os tempos de solução são apresentados em horas corridas. A média aritmética de 15,2h é distorcida por casos de alta complexidade; a <strong>mediana de 15 minutos</strong> reflete com exatidão a agilidade do atendimento de primeiro nível.
+                            </div>
+                            <div style="font-size: 11px; color: #94a3b8; border-top: 1px solid rgba(255,255,255,0.08); padding-top: 6px; margin-top: 8px;">
+                                Nota: 40% dos chamados foram resolvidos em menos de 5 min, indicando prática de registro e encerramento simultâneo.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 7. BACKLOG ATIVO & OS 9 CHAMADOS CRÍTICOS (PÁGINA 8) -->
+                <div style="background: rgba(15,23,42,0.7); border: 1px solid rgba(239,68,68,0.3); border-radius: 10px; padding: 18px; margin-bottom: 24px;">
+                    <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 14px; flex-wrap: wrap; gap: 10px;">
+                        <div>
+                            <h4 style="margin: 0; font-size: 15px; font-weight: 800; color: #f87171; display: flex; align-items: center; gap: 8px;">
+                                <span>🚨</span> Backlog Ativo Residual &amp; Chamados Críticos (Página 8)
+                            </h4>
+                            <p style="margin: 4px 0 0 0; font-size: 12.5px; color: #cbd5e1;">
+                                Backlog oficial: <strong>9 chamados não solucionados/fechados</strong>. Todos possuem vencimento expirado.
+                            </p>
+                        </div>
+                        <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+                            <span style="background: rgba(239,68,68,0.2); border: 1px solid rgba(239,68,68,0.4); color: #f87171; font-weight: 700; font-size: 11.5px; padding: 3px 10px; border-radius: 12px;">9 Ativos</span>
+                            <span style="background: rgba(245,158,11,0.2); border: 1px solid rgba(245,158,11,0.4); color: #fcd34d; font-weight: 700; font-size: 11.5px; padding: 3px 10px; border-radius: 12px;">5 Sem Técnico</span>
+                            <span style="background: rgba(147,51,234,0.2); border: 1px solid rgba(147,51,234,0.4); color: #c084fc; font-weight: 700; font-size: 11.5px; padding: 3px 10px; border-radius: 12px;">4 Sem Categoria</span>
+                        </div>
+                    </div>
+
+                    <!-- DESTAQUE DO CHAMADO #1357 CRÍTICO -->
+                    <div style="background: linear-gradient(135deg, rgba(239,68,68,0.2) 0%, rgba(185,28,28,0.15) 100%); border: 2px solid #ef4444; border-radius: 8px; padding: 14px 18px; margin-bottom: 16px;">
+                        <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;">
+                            <div>
+                                <div style="display: flex; align-items: center; gap: 8px;">
+                                    <span style="font-size: 10.5px; font-weight: 800; background: #ef4444; color: #ffffff; padding: 2px 8px; border-radius: 6px; text-transform: uppercase;">
+                                        Prioridade Máxima / Risco
+                                    </span>
+                                    <span style="font-size: 15px; font-weight: 800; color: #ffffff; font-family: monospace;">
+                                        Chamado GLPI #1357
+                                    </span>
+                                </div>
+                                <div style="font-size: 13px; color: #fecaca; margin-top: 4px; font-weight: 600;">
+                                    Status: <strong>Em atendimento</strong> • Prioridade: <strong style="color: #ef4444; text-transform: uppercase;">Muito Alta</strong> • Idade: <strong>15,3 dias</strong>
+                                </div>
+                                <div style="font-size: 12px; color: #fca5a5; margin-top: 2px;">
+                                    Situação: <strong>Sem técnico nominal atribuído</strong> • Vencimento oficial exportado expirou em <strong>14/10/2026</strong>.
+                                </div>
+                            </div>
+                            <a href="https://atendimento.spaguas.sp.gov.br/front/ticket.form.php?id=1357" target="_blank" rel="noopener noreferrer" class="btn btn-primary" style="background: #ef4444; color: #ffffff; border: none; font-weight: 700; font-size: 12px; padding: 8px 14px; border-radius: 6px; text-decoration: none; display: inline-flex; align-items: center; gap: 6px;">
+                                ⚠️ Tratar #1357 Imediatamente ↗
+                            </a>
+                        </div>
+                    </div>
+
+                    <!-- TABELA DOS 9 CHAMADOS DO BACKLOG -->
+                    <div style="overflow-x: auto;">
+                        <table style="width: 100%; border-collapse: collapse; font-size: 12px;">
+                            <thead>
+                                <tr style="border-bottom: 2px solid rgba(255,255,255,0.1); background: rgba(30,41,59,0.6); text-align: left;">
+                                    <th style="padding: 8px 10px; color: #94a3b8;">ID</th>
+                                    <th style="padding: 8px 10px; color: #94a3b8;">Status</th>
+                                    <th style="padding: 8px 10px; color: #94a3b8;">Prioridade</th>
+                                    <th style="padding: 8px 10px; color: #94a3b8;">Técnico / Situação</th>
+                                    <th style="padding: 8px 10px; color: #94a3b8; text-align: center;">Idade</th>
+                                    <th style="padding: 8px 10px; color: #94a3b8; text-align: center;">Situação SLA</th>
+                                    <th style="padding: 8px 10px; color: #94a3b8; text-align: center;">Ação</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr style="border-bottom: 1px solid rgba(255,255,255,0.06);">
+                                    <td style="padding: 9px 10px; font-family: monospace; font-weight: 800; color: #38bdf8;">#1239</td>
+                                    <td style="padding: 9px 10px;"><span style="background: rgba(245,158,11,0.2); color: #fcd34d; padding: 2px 7px; border-radius: 6px; font-size: 11px;">Pendente</span></td>
+                                    <td style="padding: 9px 10px; color: #cbd5e1;">Média</td>
+                                    <td style="padding: 9px 10px; color: #f87171;">Fora do time técnico</td>
+                                    <td style="padding: 9px 10px; text-align: center; font-family: monospace; color: #f87171; font-weight: 700;">28,3 d</td>
+                                    <td style="padding: 9px 10px; text-align: center;"><span style="color: #ef4444; font-weight: 700;">Vencido</span></td>
+                                    <td style="padding: 9px 10px; text-align: center;"><a href="https://atendimento.spaguas.sp.gov.br/front/ticket.form.php?id=1239" target="_blank" rel="noopener noreferrer" style="color: #38bdf8; text-decoration: none;">↗ Abrir</a></td>
+                                </tr>
+                                <tr style="border-bottom: 1px solid rgba(255,255,255,0.06);">
+                                    <td style="padding: 9px 10px; font-family: monospace; font-weight: 800; color: #38bdf8;">#1340</td>
+                                    <td style="padding: 9px 10px;"><span style="background: rgba(56,189,248,0.2); color: #38bdf8; padding: 2px 7px; border-radius: 6px; font-size: 11px;">Em atendimento</span></td>
+                                    <td style="padding: 9px 10px; color: #cbd5e1;">Média</td>
+                                    <td style="padding: 9px 10px; color: #f87171; font-weight: 600;">Sem técnico</td>
+                                    <td style="padding: 9px 10px; text-align: center; font-family: monospace; color: #f87171; font-weight: 700;">16,4 d</td>
+                                    <td style="padding: 9px 10px; text-align: center;"><span style="color: #ef4444; font-weight: 700;">Vencido</span></td>
+                                    <td style="padding: 9px 10px; text-align: center;"><a href="https://atendimento.spaguas.sp.gov.br/front/ticket.form.php?id=1340" target="_blank" rel="noopener noreferrer" style="color: #38bdf8; text-decoration: none;">↗ Abrir</a></td>
+                                </tr>
+                                <tr style="border-bottom: 1px solid rgba(255,255,255,0.06); background: rgba(239,68,68,0.12);">
+                                    <td style="padding: 9px 10px; font-family: monospace; font-weight: 800; color: #ef4444;">#1357</td>
+                                    <td style="padding: 9px 10px;"><span style="background: rgba(239,68,68,0.3); color: #fca5a5; padding: 2px 7px; border-radius: 6px; font-size: 11px; font-weight: 700;">Em atendimento</span></td>
+                                    <td style="padding: 9px 10px; color: #ef4444; font-weight: 800;">Muito Alta</td>
+                                    <td style="padding: 9px 10px; color: #ef4444; font-weight: 700;">Sem técnico (Risco Máximo)</td>
+                                    <td style="padding: 9px 10px; text-align: center; font-family: monospace; color: #ef4444; font-weight: 800;">15,3 d</td>
+                                    <td style="padding: 9px 10px; text-align: center;"><span style="color: #ef4444; font-weight: 800;">Vencido</span></td>
+                                    <td style="padding: 9px 10px; text-align: center;"><a href="https://atendimento.spaguas.sp.gov.br/front/ticket.form.php?id=1357" target="_blank" rel="noopener noreferrer" style="color: #ef4444; font-weight: 800; text-decoration: underline;">↗ Priorizar</a></td>
+                                </tr>
+                                <tr style="border-bottom: 1px solid rgba(255,255,255,0.06);">
+                                    <td style="padding: 9px 10px; font-family: monospace; font-weight: 800; color: #38bdf8;">#1395</td>
+                                    <td style="padding: 9px 10px;"><span style="background: rgba(56,189,248,0.2); color: #38bdf8; padding: 2px 7px; border-radius: 6px; font-size: 11px;">Em atendimento</span></td>
+                                    <td style="padding: 9px 10px; color: #cbd5e1;">Média</td>
+                                    <td style="padding: 9px 10px; color: #f87171; font-weight: 600;">Sem técnico</td>
+                                    <td style="padding: 9px 10px; text-align: center; font-family: monospace; color: #cbd5e1;">9,6 d</td>
+                                    <td style="padding: 9px 10px; text-align: center;"><span style="color: #ef4444; font-weight: 700;">Vencido</span></td>
+                                    <td style="padding: 9px 10px; text-align: center;"><a href="https://atendimento.spaguas.sp.gov.br/front/ticket.form.php?id=1395" target="_blank" rel="noopener noreferrer" style="color: #38bdf8; text-decoration: none;">↗ Abrir</a></td>
+                                </tr>
+                                <tr style="border-bottom: 1px solid rgba(255,255,255,0.06);">
+                                    <td style="padding: 9px 10px; font-family: monospace; font-weight: 800; color: #38bdf8;">#1439</td>
+                                    <td style="padding: 9px 10px;"><span style="background: rgba(245,158,11,0.2); color: #fcd34d; padding: 2px 7px; border-radius: 6px; font-size: 11px;">Pendente</span></td>
+                                    <td style="padding: 9px 10px; color: #cbd5e1;">Média</td>
+                                    <td style="padding: 9px 10px; color: #ffffff;">Paulo Domingues</td>
+                                    <td style="padding: 9px 10px; text-align: center; font-family: monospace; color: #cbd5e1;">6,4 d</td>
+                                    <td style="padding: 9px 10px; text-align: center;"><span style="color: #ef4444; font-weight: 700;">Vencido</span></td>
+                                    <td style="padding: 9px 10px; text-align: center;"><a href="https://atendimento.spaguas.sp.gov.br/front/ticket.form.php?id=1439" target="_blank" rel="noopener noreferrer" style="color: #38bdf8; text-decoration: none;">↗ Abrir</a></td>
+                                </tr>
+                                <tr style="border-bottom: 1px solid rgba(255,255,255,0.06);">
+                                    <td style="padding: 9px 10px; font-family: monospace; font-weight: 800; color: #38bdf8;">#1448</td>
+                                    <td style="padding: 9px 10px;"><span style="background: rgba(245,158,11,0.2); color: #fcd34d; padding: 2px 7px; border-radius: 6px; font-size: 11px;">Pendente</span></td>
+                                    <td style="padding: 9px 10px; color: #cbd5e1;">Média</td>
+                                    <td style="padding: 9px 10px; color: #ffffff;">Leonardo S. M. Antonio</td>
+                                    <td style="padding: 9px 10px; text-align: center; font-family: monospace; color: #cbd5e1;">6,4 d</td>
+                                    <td style="padding: 9px 10px; text-align: center;"><span style="color: #ef4444; font-weight: 700;">Vencido</span></td>
+                                    <td style="padding: 9px 10px; text-align: center;"><a href="https://atendimento.spaguas.sp.gov.br/front/ticket.form.php?id=1448" target="_blank" rel="noopener noreferrer" style="color: #38bdf8; text-decoration: none;">↗ Abrir</a></td>
+                                </tr>
+                                <tr style="border-bottom: 1px solid rgba(255,255,255,0.06);">
+                                    <td style="padding: 9px 10px; font-family: monospace; font-weight: 800; color: #38bdf8;">#1449</td>
+                                    <td style="padding: 9px 10px;"><span style="background: rgba(56,189,248,0.2); color: #38bdf8; padding: 2px 7px; border-radius: 6px; font-size: 11px;">Em atendimento</span></td>
+                                    <td style="padding: 9px 10px; color: #cbd5e1;">Média</td>
+                                    <td style="padding: 9px 10px; color: #f87171; font-weight: 600;">Sem técnico</td>
+                                    <td style="padding: 9px 10px; text-align: center; font-family: monospace; color: #cbd5e1;">6,3 d</td>
+                                    <td style="padding: 9px 10px; text-align: center;"><span style="color: #ef4444; font-weight: 700;">Vencido</span></td>
+                                    <td style="padding: 9px 10px; text-align: center;"><a href="https://atendimento.spaguas.sp.gov.br/front/ticket.form.php?id=1449" target="_blank" rel="noopener noreferrer" style="color: #38bdf8; text-decoration: none;">↗ Abrir</a></td>
+                                </tr>
+                                <tr style="border-bottom: 1px solid rgba(255,255,255,0.06);">
+                                    <td style="padding: 9px 10px; font-family: monospace; font-weight: 800; color: #38bdf8;">#1474</td>
+                                    <td style="padding: 9px 10px;"><span style="background: rgba(245,158,11,0.2); color: #fcd34d; padding: 2px 7px; border-radius: 6px; font-size: 11px;">Pendente</span></td>
+                                    <td style="padding: 9px 10px; color: #cbd5e1;">Média</td>
+                                    <td style="padding: 9px 10px; color: #ffffff;">Leonardo S. M. Antonio</td>
+                                    <td style="padding: 9px 10px; text-align: center; font-family: monospace; color: #cbd5e1;">2,6 d</td>
+                                    <td style="padding: 9px 10px; text-align: center;"><span style="color: #ef4444; font-weight: 700;">Vencido</span></td>
+                                    <td style="padding: 9px 10px; text-align: center;"><a href="https://atendimento.spaguas.sp.gov.br/front/ticket.form.php?id=1474" target="_blank" rel="noopener noreferrer" style="color: #38bdf8; text-decoration: none;">↗ Abrir</a></td>
+                                </tr>
+                                <tr>
+                                    <td style="padding: 9px 10px; font-family: monospace; font-weight: 800; color: #38bdf8;">#1488</td>
+                                    <td style="padding: 9px 10px;"><span style="background: rgba(147,51,234,0.2); color: #c084fc; padding: 2px 7px; border-radius: 6px; font-size: 11px;">Novo</span></td>
+                                    <td style="padding: 9px 10px; color: #cbd5e1;">Média</td>
+                                    <td style="padding: 9px 10px; color: #f87171; font-weight: 600;">Sem técnico</td>
+                                    <td style="padding: 9px 10px; text-align: center; font-family: monospace; color: #cbd5e1;">2,3 d</td>
+                                    <td style="padding: 9px 10px; text-align: center;"><span style="color: #ef4444; font-weight: 700;">Vencido</span></td>
+                                    <td style="padding: 9px 10px; text-align: center;"><a href="https://atendimento.spaguas.sp.gov.br/front/ticket.form.php?id=1488" target="_blank" rel="noopener noreferrer" style="color: #38bdf8; text-decoration: none;">↗ Abrir</a></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- 8. SATISFAÇÃO & LIMITAÇÕES METODOLÓGICAS (PÁGINA 9) -->
+                <div style="display: grid; grid-template-columns: 1fr 2fr; gap: 16px; margin-bottom: 24px;">
+                    <!-- PESQUISA DE SATISFAÇÃO -->
+                    <div style="background: rgba(15,23,42,0.7); border: 1px solid rgba(255,255,255,0.08); border-radius: 10px; padding: 18px; display: flex; flex-direction: column; justify-content: space-between;">
+                        <div>
+                            <h4 style="margin: 0 0 12px 0; font-size: 14.5px; font-weight: 700; color: #f8fafc; display: flex; align-items: center; gap: 8px;">
+                                <span>⭐</span> Pesquisa de Satisfação (Página 9)
+                            </h4>
+                            <div style="background: rgba(16,185,129,0.1); border: 1px solid rgba(16,185,129,0.3); border-radius: 8px; padding: 14px; text-align: center; margin-bottom: 12px;">
+                                <div style="font-size: 11px; font-weight: 700; color: #4ade80; text-transform: uppercase;">Nota Média Homologada</div>
+                                <div style="font-size: 32px; font-weight: 800; color: #4ade80; margin: 4px 0;">5,0 / 5,0</div>
+                                <div style="font-size: 12px; color: #cbd5e1;">25 respostas avaliadas (100% nota 5)</div>
+                            </div>
+                            <div style="font-size: 12px; color: #cbd5e1; line-height: 1.5;">
+                                Cobertura amostral: <strong>10,0% dos chamados fechados</strong> (25 de 249). Os IDs e técnicos avaliados foram conferidos e validados nominalmente.
+                            </div>
+                        </div>
+                        <div style="background: rgba(30,41,59,0.5); border-radius: 6px; padding: 10px; font-size: 11.5px; color: #94a3b8; line-height: 1.4; margin-top: 10px;">
+                            <strong style="color: #cbd5e1;">Leitura Técnica:</strong> O resultado reflete excelente percepção dos usuários atendidos, mas deve ser analisado conjuntamente com a taxa de adesão de 10%.
+                        </div>
+                    </div>
+
+                    <!-- LIMITAÇÕES METODOLÓGICAS DA BASE GLPI -->
+                    <div style="background: rgba(15,23,42,0.7); border: 1px solid rgba(255,255,255,0.08); border-radius: 10px; padding: 18px;">
+                        <h4 style="margin: 0 0 12px 0; font-size: 14.5px; font-weight: 700; color: #f8fafc; display: flex; align-items: center; gap: 8px;">
+                            <span>⚠️</span> Limitações Metodológicas &amp; Auditoria de Dados (Página 9)
+                        </h4>
+                        <table style="width: 100%; border-collapse: collapse; font-size: 12px;">
+                            <thead>
+                                <tr style="border-bottom: 2px solid rgba(255,255,255,0.1); background: rgba(30,41,59,0.5); text-align: left;">
+                                    <th style="padding: 8px 10px; color: #94a3b8;">Tema</th>
+                                    <th style="padding: 8px 10px; color: #94a3b8;">Situação na Exportação</th>
+                                    <th style="padding: 8px 10px; color: #94a3b8;">Impacto no Relatório</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr style="border-bottom: 1px solid rgba(255,255,255,0.06);">
+                                    <td style="padding: 8px 10px; font-weight: 700; color: #e2e8f0;">Entidade</td>
+                                    <td style="padding: 8px 10px; color: #f87171;">Coluna ausente</td>
+                                    <td style="padding: 8px 10px; color: #cbd5e1;">Filtro SP-Águas não comprovável no arquivo bruto</td>
+                                </tr>
+                                <tr style="border-bottom: 1px solid rgba(255,255,255,0.06);">
+                                    <td style="padding: 8px 10px; font-weight: 700; color: #e2e8f0;">TMT / Primeira Atribuição</td>
+                                    <td style="padding: 8px 10px; color: #f87171;">Histórico ausente</td>
+                                    <td style="padding: 8px 10px; color: #cbd5e1;">Indicador de tempo até 1º atendimento não calculado</td>
+                                </tr>
+                                <tr style="border-bottom: 1px solid rgba(255,255,255,0.06);">
+                                    <td style="padding: 8px 10px; font-weight: 700; color: #e2e8f0;">Localização</td>
+                                    <td style="padding: 8px 10px; color: #f59e0b;">Arquivo agregado, sem ID</td>
+                                    <td style="padding: 8px 10px; color: #cbd5e1;">Sem cruzamento de SLA e tempo por localização</td>
+                                </tr>
+                                <tr style="border-bottom: 1px solid rgba(255,255,255,0.06);">
+                                    <td style="padding: 8px 10px; font-weight: 700; color: #e2e8f0;">Última Atualização</td>
+                                    <td style="padding: 8px 10px; color: #f59e0b;">Campo ausente</td>
+                                    <td style="padding: 8px 10px; color: #cbd5e1;">Impossibilita indicador de inércia >24/48 horas</td>
+                                </tr>
+                                <tr>
+                                    <td style="padding: 8px 10px; font-weight: 700; color: #e2e8f0;">Painel x Base</td>
+                                    <td style="padding: 8px 10px; color: #38bdf8;">Totais divergentes</td>
+                                    <td style="padding: 8px 10px; color: #cbd5e1;">Base oficial adotada por chamado (rastreabilidade por ID)</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- 9. CONCLUSÃO GERENCIAL & TRÊS AÇÕES PRIORITÁRIAS (PÁGINA 10) -->
+                <div style="background: linear-gradient(135deg, rgba(15,23,42,0.9) 0%, rgba(30,41,59,0.9) 100%); border: 1px solid rgba(56,189,248,0.25); border-radius: 12px; padding: 20px 24px;">
+                    <h4 style="margin: 0 0 12px 0; font-size: 15px; font-weight: 800; color: #f8fafc; display: flex; align-items: center; gap: 8px;">
+                        <span>🎯</span> Conclusão Gerencial do Mês &amp; Ações Estratégicas (Página 10)
+                    </h4>
+                    
+                    <p style="margin: 0 0 16px 0; font-size: 13px; color: #cbd5e1; line-height: 1.6;">
+                        Outubro encerra, na base válida analisada, com <strong>265 soluções para 274 chamados abertos</strong> e taxa de resolução de <strong>96,7%</strong>. O SLA de solução atingiu <strong>94,7%</strong> entre os chamados finalizados. A experiência típica é rápida, com <strong>mediana de 15 minutos</strong>, embora o P90 de 44,5 horas revele um conjunto menor de casos com duração elevada. O principal ponto de atenção não está no volume agregado, mas no <strong>passivo residual</strong>: todos os 9 chamados ativos possuem vencimento exportado no passado e 5 estão sem técnico nominal. A prioridade Muito alta <strong>#1357</strong> merece atuação imediata. Em paralelo, as maiores oportunidades estruturais permanecem na triagem, no fluxo de acessos e na padronização da extração.
+                    </p>
+
+                    <!-- TABELA DAS TRÊS AÇÕES PRIORITÁRIAS -->
+                    <div style="overflow-x: auto; margin-bottom: 16px;">
+                        <table style="width: 100%; border-collapse: collapse; font-size: 12.5px;">
+                            <thead>
+                                <tr style="border-bottom: 2px solid rgba(255,255,255,0.1); background: rgba(30,41,59,0.6); text-align: left;">
+                                    <th style="padding: 10px 12px; color: #94a3b8; width: 80px; text-align: center;">Prioridade</th>
+                                    <th style="padding: 10px 12px; color: #94a3b8; width: 45%;">Ação Estratégica</th>
+                                    <th style="padding: 10px 12px; color: #94a3b8;">Indicador de Sucesso</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr style="border-bottom: 1px solid rgba(255,255,255,0.06); background: rgba(239,68,68,0.06);">
+                                    <td style="padding: 12px; text-align: center;">
+                                        <span style="background: #ef4444; color: #ffffff; padding: 3px 8px; border-radius: 6px; font-weight: 800; font-size: 12px;">1</span>
+                                    </td>
+                                    <td style="padding: 12px; font-weight: 700; color: #fecaca;">
+                                        Tratar os 9 ativos vencidos, começando pelo chamado crítico #1357 e pelos 5 sem técnico nominal.
+                                    </td>
+                                    <td style="padding: 12px; color: #cbd5e1;">
+                                        Redução do backlog vencido para zero; <strong>0 chamado Muito Alta sem responsável</strong>.
+                                    </td>
+                                </tr>
+                                <tr style="border-bottom: 1px solid rgba(255,255,255,0.06); background: rgba(245,158,11,0.06);">
+                                    <td style="padding: 12px; text-align: center;">
+                                        <span style="background: #f59e0b; color: #ffffff; padding: 3px 8px; border-radius: 6px; font-weight: 800; font-size: 12px;">2</span>
+                                    </td>
+                                    <td style="padding: 12px; font-weight: 700; color: #fde68a;">
+                                        Aplicar triagem diária rigorosa com técnico e categoria definidos no primeiro tratamento do ticket.
+                                    </td>
+                                    <td style="padding: 12px; color: #cbd5e1;">
+                                        <strong>0 chamado ativo sem técnico ou sem categoria</strong> nas primeiras 24 horas.
+                                    </td>
+                                </tr>
+                                <tr style="background: rgba(56,189,248,0.06);">
+                                    <td style="padding: 12px; text-align: center;">
+                                        <span style="background: #0284c7; color: #ffffff; padding: 3px 8px; border-radius: 6px; font-weight: 800; font-size: 12px;">3</span>
+                                    </td>
+                                    <td style="padding: 12px; font-weight: 700; color: #bae6fd;">
+                                        Revisar fluxos de acessos/SEI e padronizar a exportação mensal de dados do GLPI e ST-Dashboard.
+                                    </td>
+                                    <td style="padding: 12px; color: #cbd5e1;">
+                                        Redução de violações em Acessos; <strong>disponibilidade de TMT e histórico comparativo</strong>.
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <!-- METODOLOGIA CANÔNICA E STATUS -->
+                    <div style="background: rgba(15,23,42,0.6); border: 1px solid rgba(255,255,255,0.06); border-radius: 8px; padding: 12px 16px; font-size: 11.5px; color: #94a3b8; line-height: 1.5;">
+                        <strong style="color: #cbd5e1;">Metodologia Resumida de Auditoria:</strong> Fonte oficial: exportação direta por chamado do GLPI conferida com ST-Dashboard. Taxa de resolução: solucionados ÷ abertos (265 ÷ 274 = 96,7%). SLA canônico: 251 no prazo ÷ 265 finalizados = 94,7%. Tempo de solução medido em horas corridas. Equipe avaliada: Leonardo, Thais e Paulo.
+                    </div>
+                </div>
+
             </div>
         </div>
 
@@ -7318,7 +8231,7 @@ window.renderizarTabelaMesa = function() {
 
         // Se nao tiver nenhum processo nominal nem fixado, apresenta apenas os 3 processos-mae de governanca
         if (lista.length === 0) {
-            var refs = ['137.00010608/2025-63', '137.00000119/2026-84', '137.00003051/2026-21'];
+            var refs = []; // Fallback removido
             lista = baseProcs.filter(function(p) { return refs.includes(p.ID_Processo); });
         }
     }
