@@ -1,0 +1,1092 @@
+[13:24:48] [✓] Banco de Dados do Cockpit GTI carregado: 179 cards/processos identificados no acervo.
+[13:24:48] [!] API Token OpenProject não configurado. Tentando conexão...
+[13:24:48] [✓] Mapeamento OpenProject ativo: Card #1497 vinculado ao processo FEHIDRO e 0 cards remotos mapeados.
+[13:24:48] --------------------------------------------------------------------------------
+[13:24:48] INICIANDO CICLO INDIVIDUAL PARA TODOS OS 179 CARDS (REVISÃO -> ATUALIZAÇÃO -> SINCRONIZAÇÃO)
+[13:24:48] --------------------------------------------------------------------------------
+[13:24:48] [001/179] [i] Processo 137.00013132/2026-01: Revisado pela IA 2 -> Atualizado no Banco do Cockpit GTI.
+[13:24:48] [002/179] [i] Processo 137.00010608/2025-63: Revisado pela IA 2 -> Atualizado no Banco do Cockpit GTI (Dossiê e RACI prontos).
+[13:24:48] [003/179] [i] Processo 137.00012783/2025-95: Revisado pela IA 2 -> Atualizado no Banco do Cockpit GTI (Dossiê e RACI prontos).
+[13:24:48] [004/179] [i] Processo 137.00000119/2026-84: Revisado pela IA 2 -> Atualizado no Banco do Cockpit GTI (Dossiê e RACI prontos).
+[13:24:49] [005/179] [i] Processo 137.00011105/2025-13: Revisado pela IA 2 -> Atualizado no Banco do Cockpit GTI (Dossiê e RACI prontos).
+[13:24:49] [006/179] [i] Processo 137.00009512/2026-33: Revisado pela IA 2 -> Atualizado no Banco do Cockpit GTI (Dossiê e RACI prontos).
+[13:24:49] [007/179] [i] Processo 137.00010436/2025-28: Revisado pela IA 2 -> Atualizado no Banco do Cockpit GTI (Dossiê e RACI prontos).
+[13:24:49] [008/179] [i] Processo 137.00011338/2026-90: Revisado pela IA 2 -> Atualizado no Banco do Cockpit GTI (Dossiê e RACI prontos).
+[13:24:49] [009/179] [i] Processo 137.00004821/2026-17: Revisado pela IA 2 -> Atualizado no Banco do Cockpit GTI (Dossiê e RACI prontos).
+[13:24:49] [010/179] [i] Processo 137.00007527/2026-67: Revisado pela IA 2 -> Atualizado no Banco do Cockpit GTI (Dossiê e RACI prontos).
+[13:24:49] [011/179] [i] Processo 137.00003191/2026-63: Revisado pela IA 2 -> Atualizado no Banco do Cockpit GTI (Dossiê e RACI prontos).
+[13:24:49] [012/179] [i] Processo 018.00004147/2026-63: Revisado pela IA 2 -> Atualizado no Banco do Cockpit GTI (Dossiê e RACI prontos).
+[13:24:49] [013/179] [i] Processo 137.00006935/2026-00: Revisado pela IA 2 -> Atualizado no Banco do Cockpit GTI (Dossiê e RACI prontos).
+[13:24:49] [014/179] [i] Processo 018.00002165/2026-19: Revisado pela IA 2 -> Atualizado no Banco do Cockpit GTI (Dossiê e RACI prontos).
+[13:24:49] [015/179] [i] Processo 137.00004844/2026-21: Revisado pela IA 2 -> Atualizado no Banco do Cockpit GTI (Dossiê e RACI prontos).
+[13:24:49] [016/179] [i] Processo 137.00011132/2026-60: Revisado pela IA 2 -> Atualizado no Banco do Cockpit GTI (Dossiê e RACI prontos).
+[13:24:49] [017/179] [i] Processo 137.00001716/2024-64: Revisado pela IA 2 -> Atualizado no Banco do Cockpit GTI (Dossiê e RACI prontos).
+[13:24:49] [018/179] [i] Processo 137.00009067/2026-10: Revisado pela IA 2 -> Atualizado no Banco do Cockpit GTI (Dossiê e RACI prontos).
+[13:24:49] [019/179] [i] Processo 137.00011971/2026-87: Revisado pela IA 2 -> Atualizado no Banco do Cockpit GTI (Dossiê e RACI prontos).
+[13:24:49] [020/179] [i] Processo 137.00013086/2026-32: Revisado pela IA 2 -> Atualizado no Banco do Cockpit GTI (Dossiê e RACI prontos).
+[13:24:49] [021/179] [i] Processo 137.00013483/2026-12: Revisado pela IA 2 -> Atualizado no Banco do Cockpit GTI (Dossiê e RACI prontos).
+[13:24:49] [022/179] [i] Processo 137.00011685/2025-31: Revisado pela IA 2 -> Atualizado no Banco do Cockpit GTI (Dossiê e RACI prontos).
+[13:24:49] [023/179] [i] Processo 137.00000117/2023-42: Revisado pela IA 2 -> Atualizado no Banco do Cockpit GTI (Dossiê e RACI prontos).
+[13:24:49] [024/179] [i] Processo 137.00019295/2024-28: Revisado pela IA 2 -> Atualizado no Banco do Cockpit GTI (Dossiê e RACI prontos).
+[13:24:50] [025/179] [i] Processo 137.00012392/2026-51: Revisado pela IA 2 -> Atualizado no Banco do Cockpit GTI (Dossiê e RACI prontos).
+[13:24:50] [026/179] [i] Processo 137.00012379/2026-01: Revisado pela IA 2 -> Atualizado no Banco do Cockpit GTI (Dossiê e RACI prontos).
+[13:24:50] [027/179] [i] Processo 137.00012396/2026-30: Revisado pela IA 2 -> Atualizado no Banco do Cockpit GTI (Dossiê e RACI prontos).
+[13:24:50] [028/179] [i] Processo 137.00012393/2026-04: Revisado pela IA 2 -> Atualizado no Banco do Cockpit GTI (Dossiê e RACI prontos).
+[13:24:50] [029/179] [i] Processo 137.00012389/2026-38: Revisado pela IA 2 -> Atualizado no Banco do Cockpit GTI (Dossiê e RACI prontos).
+[13:24:50] [030/179] [i] Processo 137.00012372/2026-81: Revisado pela IA 2 -> Atualizado no Banco do Cockpit GTI (Dossiê e RACI prontos).
+[13:24:50] [031/179] [i] Processo 137.00012362/2026-45: Revisado pela IA 2 -> Atualizado no Banco do Cockpit GTI (Dossiê e RACI prontos).
+[13:24:50] [032/179] [i] Processo 137.00000057/2023-68: Revisado pela IA 2 -> Atualizado no Banco do Cockpit GTI (Dossiê e RACI prontos).
+[13:24:50] [033/179] [i] Processo 137.00009121/2024-57: Revisado pela IA 2 -> Atualizado no Banco do Cockpit GTI (Dossiê e RACI prontos).
+[13:24:50] [034/179] [i] Processo 137.00016283/2025-22: Revisado pela IA 2 -> Atualizado no Banco do Cockpit GTI (Dossiê e RACI prontos).
+[13:24:50] [035/179] [i] Processo 137.00004823/2026-14: Revisado pela IA 2 -> Atualizado no Banco do Cockpit GTI (Dossiê e RACI prontos).
+[13:24:50] [036/179] [i] Processo 137.00008901/2026-71: Revisado pela IA 2 -> Atualizado no Banco do Cockpit GTI (Dossiê e RACI prontos).
+[13:24:50] [037/179] [i] Processo 137.00010805/2025-82: Revisado pela IA 2 -> Atualizado no Banco do Cockpit GTI (Dossiê e RACI prontos).
+[13:24:50] [038/179] [i] Processo 137.00000001/2026-56: Revisado pela IA 2 -> Atualizado no Banco do Cockpit GTI (Dossiê e RACI prontos).
+[13:24:50] [039/179] [i] Processo 137.00012407/2026-81: Revisado pela IA 2 -> Atualizado no Banco do Cockpit GTI (Dossiê e RACI prontos).
+[13:24:50] [040/179] [i] Processo 137.00012420/2026-31: Revisado pela IA 2 -> Atualizado no Banco do Cockpit GTI (Dossiê e RACI prontos).
+[13:24:50] [041/179] [i] Processo 137.00012403/2026-01: Revisado pela IA 2 -> Atualizado no Banco do Cockpit GTI (Dossiê e RACI prontos).
+[13:24:50] [042/179] [i] Processo 137.00012397/2026-84: Revisado pela IA 2 -> Atualizado no Banco do Cockpit GTI (Dossiê e RACI prontos).
+[13:24:50] [043/179] [i] Processo 137.00012395/2026-95: Revisado pela IA 2 -> Atualizado no Banco do Cockpit GTI (Dossiê e RACI prontos).
+[13:24:50] [044/179] [i] Processo 137.00012390/2026-62: Revisado pela IA 2 -> Atualizado no Banco do Cockpit GTI (Dossiê e RACI prontos).
+[13:24:51] [045/179] [i] Processo 137.00012387/2026-49: Revisado pela IA 2 -> Atualizado no Banco do Cockpit GTI (Dossiê e RACI prontos).
+[13:24:51] [046/179] [i] Processo 137.00012361/2026-00: Revisado pela IA 2 -> Atualizado no Banco do Cockpit GTI (Dossiê e RACI prontos).
+[13:24:51] [047/179] [i] Processo 137.00012405/2026-92: Revisado pela IA 2 -> Atualizado no Banco do Cockpit GTI (Dossiê e RACI prontos).
+[13:24:51] [048/179] [i] Processo 137.00012402/2026-59: Revisado pela IA 2 -> Atualizado no Banco do Cockpit GTI (Dossiê e RACI prontos).
+[13:24:51] [049/179] [i] Processo 137.00012400/2026-60: Revisado pela IA 2 -> Atualizado no Banco do Cockpit GTI (Dossiê e RACI prontos).
+[13:24:51] [050/179] [i] Processo 137.00012399/2026-73: Revisado pela IA 2 -> Atualizado no Banco do Cockpit GTI (Dossiê e RACI prontos).
+[13:24:51] [051/179] [i] Processo 137.00012388/2026-93: Revisado pela IA 2 -> Atualizado no Banco do Cockpit GTI (Dossiê e RACI prontos).
+[13:24:51] [052/179] [i] Processo 137.00012382/2026-18: Revisado pela IA 2 -> Atualizado no Banco do Cockpit GTI (Dossiê e RACI prontos).
+[13:24:51] [053/179] [i] Processo 137.00012381/2026-71: Revisado pela IA 2 -> Atualizado no Banco do Cockpit GTI (Dossiê e RACI prontos).
+[13:24:51] [054/179] [i] Processo 137.00012371/2026-36: Revisado pela IA 2 -> Atualizado no Banco do Cockpit GTI (Dossiê e RACI prontos).
+[13:24:51] [055/179] [i] Processo 137.00012364/2026-34: Revisado pela IA 2 -> Atualizado no Banco do Cockpit GTI (Dossiê e RACI prontos).
+[13:24:51] [056/179] [i] Processo 137.00012363/2026-90: Revisado pela IA 2 -> Atualizado no Banco do Cockpit GTI (Dossiê e RACI prontos).
+[13:24:51] [057/179] [i] Processo 137.00012421/2026-85: Revisado pela IA 2 -> Atualizado no Banco do Cockpit GTI (Dossiê e RACI prontos).
+[13:24:51] [058/179] [i] Processo 137.00012698/2026-16: Revisado pela IA 2 -> Atualizado no Banco do Cockpit GTI (Dossiê e RACI prontos).
+[13:24:51] [059/179] [i] Processo 137.00010899/2025-90: Revisado pela IA 2 -> Atualizado no Banco do Cockpit GTI (Dossiê e RACI prontos).
+[13:24:51] [060/179] [i] Processo 137.00012904/2025-07: Revisado pela IA 2 -> Atualizado no Banco do Cockpit GTI (Dossiê e RACI prontos).
+[13:24:51] [061/179] [i] Processo 137.00010806/2025-27: Revisado pela IA 2 -> Atualizado no Banco do Cockpit GTI (Dossiê e RACI prontos).
+[13:24:51] [062/179] [i] Processo 137.00000018/2025-35: Revisado pela IA 2 -> Atualizado no Banco do Cockpit GTI (Dossiê e RACI prontos).
+[13:24:51] [063/179] [i] Processo 137.00013843/2025-07: Revisado pela IA 2 -> Atualizado no Banco do Cockpit GTI (Dossiê e RACI prontos).
+[13:24:51] [064/179] [i] Processo 137.00013840/2025-53: Revisado pela IA 2 -> Atualizado no Banco do Cockpit GTI (Dossiê e RACI prontos).
+[13:24:51] [065/179] [i] Processo 137.00014541/2025-36: Revisado pela IA 2 -> Atualizado no Banco do Cockpit GTI (Dossiê e RACI prontos).
+[13:24:52] [066/179] [i] Processo 137.00006431/2025-09: Revisado pela IA 2 -> Atualizado no Banco do Cockpit GTI (Dossiê e RACI prontos).
+[13:24:52] [067/179] [i] Processo 137.00004933/2025-97: Revisado pela IA 2 -> Atualizado no Banco do Cockpit GTI (Dossiê e RACI prontos).
+[13:24:52] [068/179] [i] Processo 137.00003431/2023-87: Revisado pela IA 2 -> Atualizado no Banco do Cockpit GTI (Dossiê e RACI prontos).
+[13:24:52] [069/179] [i] Processo 137.00000333/2025-50: Revisado pela IA 2 -> Atualizado no Banco do Cockpit GTI (Dossiê e RACI prontos).
+[13:24:52] [070/179] [i] Processo 137.00009729/2025-62: Revisado pela IA 2 -> Atualizado no Banco do Cockpit GTI (Dossiê e RACI prontos).
+[13:24:52] [071/179] [i] Processo 137.00029841/2026-14: Revisado pela IA 2 -> Atualizado no Banco do Cockpit GTI (Dossiê e RACI prontos).
+[13:24:52] [072/179] [i] Processo 137.00011106/2025-50: Revisado pela IA 2 -> Atualizado no Banco do Cockpit GTI (Dossiê e RACI prontos).
+[13:24:52] [073/179] [i] Processo 137.00010802/2025-49: Revisado pela IA 2 -> Atualizado no Banco do Cockpit GTI (Dossiê e RACI prontos).
+[13:24:52] [074/179] [i] Processo 137.00001873/2025-51: Revisado pela IA 2 -> Atualizado no Banco do Cockpit GTI (Dossiê e RACI prontos).
+[13:24:52] [075/179] [i] Processo 137.00012690/2025-61: Revisado pela IA 2 -> Atualizado no Banco do Cockpit GTI (Dossiê e RACI prontos).
+[13:24:52] [076/179] [i] Processo 137.00008615/2025-03: Revisado pela IA 2 -> Atualizado no Banco do Cockpit GTI (Dossiê e RACI prontos).
+[13:24:52] [077/179] [i] Processo 137.00000885/2025-23: Revisado pela IA 2 -> Atualizado no Banco do Cockpit GTI (Dossiê e RACI prontos).
+[13:24:52] [078/179] [i] Processo 137.00015219/2024-43: Revisado pela IA 2 -> Atualizado no Banco do Cockpit GTI (Dossiê e RACI prontos).
+[13:24:52] [079/179] [i] Processo 137.00010619/2025-43: Revisado pela IA 2 -> Atualizado no Banco do Cockpit GTI (Dossiê e RACI prontos).
+[13:24:52] [080/179] [i] Processo 137.00014339/2025-12: Revisado pela IA 2 -> Atualizado no Banco do Cockpit GTI (Dossiê e RACI prontos).
+[13:24:52] [081/179] [i] Processo 137.00000015/2025-00: Revisado pela IA 2 -> Atualizado no Banco do Cockpit GTI (Dossiê e RACI prontos).
+[13:24:52] [082/179] [i] Processo 137.00015243/2025-63: Revisado pela IA 2 -> Atualizado no Banco do Cockpit GTI (Dossiê e RACI prontos).
+[13:24:52] [083/179] [i] Processo 137.00009538/2024-10: Revisado pela IA 2 -> Atualizado no Banco do Cockpit GTI (Dossiê e RACI prontos).
+[13:24:52] [084/179] [i] Processo 137.00015254/2025-43: Revisado pela IA 2 -> Atualizado no Banco do Cockpit GTI (Dossiê e RACI prontos).
+[13:24:52] [085/179] [i] Processo 137.00003963/2026-67: Revisado pela IA 2 -> Atualizado no Banco do Cockpit GTI (Dossiê e RACI prontos).
+[13:24:53] [086/179] [i] Processo 137.00015266/2025-31: Revisado pela IA 2 -> Atualizado no Banco do Cockpit GTI (Dossiê e RACI prontos).
+[13:24:53] [087/179] [i] Processo 137.00018396/2024-81: Revisado pela IA 2 -> Atualizado no Banco do Cockpit GTI (Dossiê e RACI prontos).
+[13:24:53] [088/179] [i] Processo 137.00010210/2024-46: Revisado pela IA 2 -> Atualizado no Banco do Cockpit GTI (Dossiê e RACI prontos).
+[13:24:53] [089/179] [i] Processo 137.00010555/2025-81: Revisado pela IA 2 -> Atualizado no Banco do Cockpit GTI (Dossiê e RACI prontos).
+[13:24:53] [090/179] [i] Processo 137.00013810/2025-47: Revisado pela IA 2 -> Atualizado no Banco do Cockpit GTI (Dossiê e RACI prontos).
+[13:24:53] [091/179] [i] Processo 137.00000691/2025-28: Revisado pela IA 2 -> Atualizado no Banco do Cockpit GTI (Dossiê e RACI prontos).
+[13:24:53] [092/179] [i] Processo 137.00012972/2025-68: Revisado pela IA 2 -> Atualizado no Banco do Cockpit GTI (Dossiê e RACI prontos).
+[13:24:53] [093/179] [i] Processo 137.00003244/2025-65: Revisado pela IA 2 -> Atualizado no Banco do Cockpit GTI (Dossiê e RACI prontos).
+[13:24:53] [094/179] [i] Processo 137.00014963/2025-10: Revisado pela IA 2 -> Atualizado no Banco do Cockpit GTI (Dossiê e RACI prontos).
+[13:24:53] [095/179] [i] Processo 137.00015862/2025-58: Revisado pela IA 2 -> Atualizado no Banco do Cockpit GTI (Dossiê e RACI prontos).
+[13:24:53] [096/179] [i] Processo 137.00016374/2025-68: Revisado pela IA 2 -> Atualizado no Banco do Cockpit GTI (Dossiê e RACI prontos).
+[13:24:53] [097/179] [i] Processo 137.00015193/2025-14: Revisado pela IA 2 -> Atualizado no Banco do Cockpit GTI (Dossiê e RACI prontos).
+[13:24:53] [098/179] [i] Processo 137.00000340/2026-32: Revisado pela IA 2 -> Atualizado no Banco do Cockpit GTI (Dossiê e RACI prontos).
+[13:24:53] [099/179] [i] Processo 137.00002402/2026-41: Revisado pela IA 2 -> Atualizado no Banco do Cockpit GTI (Dossiê e RACI prontos).
+[13:24:53] [100/179] [i] Processo 137.00008529/2026-73: Revisado pela IA 2 -> Atualizado no Banco do Cockpit GTI (Dossiê e RACI prontos).
+[13:24:53] [101/179] [i] Processo 137.00015487/2025-46: Revisado pela IA 2 -> Atualizado no Banco do Cockpit GTI (Dossiê e RACI prontos).
+[13:24:53] [102/179] [i] Processo 137.00008971/2025-19: Revisado pela IA 2 -> Atualizado no Banco do Cockpit GTI (Dossiê e RACI prontos).
+[13:24:53] [103/179] [i] Processo 137.00012934/2026-96: Revisado pela IA 2 -> Atualizado no Banco do Cockpit GTI (Dossiê e RACI prontos).
+[13:24:53] [104/179] [i] Processo 137.00014265/2026-97: Revisado pela IA 2 -> Atualizado no Banco do Cockpit GTI (Dossiê e RACI prontos).
+[13:24:54] [105/179] [i] Processo 137.00007806/2026-21: Revisado pela IA 2 -> Atualizado no Banco do Cockpit GTI (Dossiê e RACI prontos).
+[13:24:54] [106/179] [i] Processo 137.00016135/2025-16: Revisado pela IA 2 -> Atualizado no Banco do Cockpit GTI (Dossiê e RACI prontos).
+[13:24:54] [107/179] [i] Processo 137.00000270/2023-70: Revisado pela IA 2 -> Atualizado no Banco do Cockpit GTI (Dossiê e RACI prontos).
+[13:24:54] [108/179] [i] Processo 359.00002923/2025-01: Revisado pela IA 2 -> Atualizado no Banco do Cockpit GTI (Dossiê e RACI prontos).
+[13:24:54] [109/179] [i] Processo 359.00005918/2025-42: Revisado pela IA 2 -> Atualizado no Banco do Cockpit GTI (Dossiê e RACI prontos).
+[13:24:54] [110/179] [i] Processo 359.00010545/2025-21: Revisado pela IA 2 -> Atualizado no Banco do Cockpit GTI (Dossiê e RACI prontos).
+[13:24:54] [111/179] [i] Processo 359.00001841/2026-12: Revisado pela IA 2 -> Atualizado no Banco do Cockpit GTI (Dossiê e RACI prontos).
+[13:24:54] [112/179] [i] Processo 359.00001837/2026-54: Revisado pela IA 2 -> Atualizado no Banco do Cockpit GTI (Dossiê e RACI prontos).
+[13:24:54] [113/179] [i] Processo 359.00001838/2026-07: Revisado pela IA 2 -> Atualizado no Banco do Cockpit GTI (Dossiê e RACI prontos).
+[13:24:54] [114/179] [i] Processo 359.00002654/2026-56: Revisado pela IA 2 -> Atualizado no Banco do Cockpit GTI (Dossiê e RACI prontos).
+[13:24:54] [115/179] [i] Processo 359.00002657/2026-90: Revisado pela IA 2 -> Atualizado no Banco do Cockpit GTI (Dossiê e RACI prontos).
+[13:24:54] [116/179] [i] Processo 359.00002655/2026-38: Revisado pela IA 2 -> Atualizado no Banco do Cockpit GTI (Dossiê e RACI prontos).
+[13:24:54] [117/179] [i] Processo 359.00002924/2026-29: Revisado pela IA 2 -> Atualizado no Banco do Cockpit GTI (Dossiê e RACI prontos).
+[13:24:54] [118/179] [i] Processo 359.00003717/2026-91: Revisado pela IA 2 -> Atualizado no Banco do Cockpit GTI (Dossiê e RACI prontos).
+[13:24:54] [119/179] [i] Processo 359.00003715/2026-01: Revisado pela IA 2 -> Atualizado no Banco do Cockpit GTI (Dossiê e RACI prontos).
+[13:24:54] [120/179] [i] Processo 359.00003716/2026-47: Revisado pela IA 2 -> Atualizado no Banco do Cockpit GTI (Dossiê e RACI prontos).
+[13:24:54] [121/179] [i] Processo 359.00003719/2026-81: Revisado pela IA 2 -> Atualizado no Banco do Cockpit GTI (Dossiê e RACI prontos).
+[13:24:54] [122/179] [i] Processo 359.00004822/2026-48: Revisado pela IA 2 -> Atualizado no Banco do Cockpit GTI (Dossiê e RACI prontos).
+[13:24:54] [123/179] [i] Processo 359.00004840/2026-20: Revisado pela IA 2 -> Atualizado no Banco do Cockpit GTI (Dossiê e RACI prontos).
+[13:24:54] [124/179] [i] Processo 359.00010641/2025-70: Revisado pela IA 2 -> Atualizado no Banco do Cockpit GTI (Dossiê e RACI prontos).
+[13:24:55] [125/179] [i] Processo 359.00004843/2026-63: Revisado pela IA 2 -> Atualizado no Banco do Cockpit GTI (Dossiê e RACI prontos).
+[13:24:55] [126/179] [i] Processo 359.00006134/2026-12: Revisado pela IA 2 -> Atualizado no Banco do Cockpit GTI (Dossiê e RACI prontos).
+[13:24:55] [127/179] [i] Processo 359.00006136/2026-10: Revisado pela IA 2 -> Atualizado no Banco do Cockpit GTI (Dossiê e RACI prontos).
+[13:24:55] [128/179] [i] Processo 359.00006133/2026-78: Revisado pela IA 2 -> Atualizado no Banco do Cockpit GTI (Dossiê e RACI prontos).
+[13:24:55] [129/179] [i] Processo 359.00006135/2026-67: Revisado pela IA 2 -> Atualizado no Banco do Cockpit GTI (Dossiê e RACI prontos).
+[13:24:55] [130/179] [i] Processo 137.00000031/2023-10: Revisado pela IA 2 -> Atualizado no Banco do Cockpit GTI (Dossiê e RACI prontos).
+[13:24:55] [131/179] [i] Processo 137.00009440/2023-81: Revisado pela IA 2 -> Atualizado no Banco do Cockpit GTI (Dossiê e RACI prontos).
+[13:24:55] [132/179] [i] Processo 359.00007321/2026-13: Revisado pela IA 2 -> Atualizado no Banco do Cockpit GTI (Dossiê e RACI prontos).
+[13:24:55] [133/179] [i] Processo 359.00007320/2026-79: Revisado pela IA 2 -> Atualizado no Banco do Cockpit GTI (Dossiê e RACI prontos).
+[13:24:55] [134/179] [i] Processo 359.00007322/2026-68: Revisado pela IA 2 -> Atualizado no Banco do Cockpit GTI (Dossiê e RACI prontos).
+[13:24:55] [135/179] [i] Processo 359.00007323/2026-11: Revisado pela IA 2 -> Atualizado no Banco do Cockpit GTI (Dossiê e RACI prontos).
+[13:24:55] [136/179] [i] Processo 137.00000212/2023-46: Revisado pela IA 2 -> Atualizado no Banco do Cockpit GTI (Dossiê e RACI prontos).
+[13:24:55] [137/179] [i] Processo 137.00000037/2023-97: Revisado pela IA 2 -> Atualizado no Banco do Cockpit GTI (Dossiê e RACI prontos).
+[13:24:55] [138/179] [i] Processo 137.00000174/2023-21: Revisado pela IA 2 -> Atualizado no Banco do Cockpit GTI (Dossiê e RACI prontos).
+[13:24:55] [139/179] [i] Processo 137.00009279/2026-99: Revisado pela IA 2 -> Atualizado no Banco do Cockpit GTI (Dossiê e RACI prontos).
+[13:24:55] [140/179] [i] Processo 359.00008263/2026-16: Revisado pela IA 2 -> Atualizado no Banco do Cockpit GTI (Dossiê e RACI prontos).
+[13:24:55] [141/179] [i] Processo 359.00008285/2026-13: Revisado pela IA 2 -> Atualizado no Banco do Cockpit GTI (Dossiê e RACI prontos).
+[13:24:55] [142/179] [i] Processo 359.00008281/2026-27: Revisado pela IA 2 -> Atualizado no Banco do Cockpit GTI (Dossiê e RACI prontos).
+[13:24:55] [143/179] [i] Processo 359.00008284/2026-61: Revisado pela IA 2 -> Atualizado no Banco do Cockpit GTI (Dossiê e RACI prontos).
+[13:24:55] [144/179] [i] Processo 359.00007224/2025-40: Revisado pela IA 2 -> Atualizado no Banco do Cockpit GTI (Dossiê e RACI prontos).
+[13:24:56] [145/179] [i] Processo 137.00001852/2023-11: Revisado pela IA 2 -> Atualizado no Banco do Cockpit GTI (Dossiê e RACI prontos).
+[13:24:56] [146/179] [i] Processo 137.00015391/2024-05: Revisado pela IA 2 -> Atualizado no Banco do Cockpit GTI (Dossiê e RACI prontos).
+[13:24:56] [147/179] [i] Processo 137.00006149/2024-32: Revisado pela IA 2 -> Atualizado no Banco do Cockpit GTI (Dossiê e RACI prontos).
+[13:24:56] [148/179] [i] Processo 137.00005364/2025-05: Revisado pela IA 2 -> Atualizado no Banco do Cockpit GTI (Dossiê e RACI prontos).
+[13:24:56] [149/179] [i] Processo 137.00007443/2025-42: Revisado pela IA 2 -> Atualizado no Banco do Cockpit GTI (Dossiê e RACI prontos).
+[13:24:56] [150/179] [i] Processo 137.00000008/2024-71: Revisado pela IA 2 -> Atualizado no Banco do Cockpit GTI (Dossiê e RACI prontos).
+[13:24:56] [151/179] [i] Processo 137.00004201/2025-05: Revisado pela IA 2 -> Atualizado no Banco do Cockpit GTI (Dossiê e RACI prontos).
+[13:24:56] [152/179] [i] Processo 137.00013847/2024-94: Revisado pela IA 2 -> Atualizado no Banco do Cockpit GTI (Dossiê e RACI prontos).
+[13:24:56] [153/179] [i] Processo 137.00014627/2025-17: Revisado pela IA 2 -> Atualizado no Banco do Cockpit GTI (Dossiê e RACI prontos).
+[13:24:56] [154/179] [i] Processo 137.00000087/2023-74: Revisado pela IA 2 -> Atualizado no Banco do Cockpit GTI (Dossiê e RACI prontos).
+[13:24:56] [155/179] [i] Processo 137.00013943/2025-13: Revisado pela IA 2 -> Atualizado no Banco do Cockpit GTI (Dossiê e RACI prontos).
+[13:24:56] [156/179] [i] Processo 137.00001418/2023-93: Revisado pela IA 2 -> Atualizado no Banco do Cockpit GTI (Dossiê e RACI prontos).
+[13:24:56] [157/179] [i] Processo 359.00009776/2023-21: Revisado pela IA 2 -> Atualizado no Banco do Cockpit GTI (Dossiê e RACI prontos).
+[13:24:56] [158/179] [i] Processo 137.00000400/2023-74: Revisado pela IA 2 -> Atualizado no Banco do Cockpit GTI (Dossiê e RACI prontos).
+[13:24:56] [159/179] [i] Processo 137.00016377/2025-00: Revisado pela IA 2 -> Atualizado no Banco do Cockpit GTI (Dossiê e RACI prontos).
+[13:24:56] [160/179] [i] Processo 137.00016379/2025-01: Revisado pela IA 2 -> Atualizado no Banco do Cockpit GTI (Dossiê e RACI prontos).
+[13:24:56] [161/179] [i] Processo 137.00016467/2025-22: Revisado pela IA 2 -> Atualizado no Banco do Cockpit GTI (Dossiê e RACI prontos).
+[13:24:56] [162/179] [i] Processo 137.00016517/2025-31: Revisado pela IA 2 -> Atualizado no Banco do Cockpit GTI (Dossiê e RACI prontos).
+[13:24:56] [163/179] [i] Processo 137.00012360/2025-75: Revisado pela IA 2 -> Atualizado no Banco do Cockpit GTI (Dossiê e RACI prontos).
+[13:24:56] [164/179] [i] Processo 137.00014834/2025-13: Revisado pela IA 2 -> Atualizado no Banco do Cockpit GTI (Dossiê e RACI prontos).
+[13:24:56] [165/179] [i] Processo 137.00000683/2025-16: Revisado pela IA 2 -> Atualizado no Banco do Cockpit GTI (Dossiê e RACI prontos).
+[13:24:57] [166/179] [i] Processo 137.00001272/2023-86: Revisado pela IA 2 -> Atualizado no Banco do Cockpit GTI (Dossiê e RACI prontos).
+[13:24:57] [167/179] [i] Processo 137.00000106/2023-62: Revisado pela IA 2 -> Atualizado no Banco do Cockpit GTI (Dossiê e RACI prontos).
+[13:24:57] [168/179] [i] Processo 137.00003321/2026-68: Revisado pela IA 2 -> Atualizado no Banco do Cockpit GTI (Dossiê e RACI prontos).
+[13:24:57] [169/179] [i] Processo 137.00017207/2024-53: Revisado pela IA 2 -> Atualizado no Banco do Cockpit GTI (Dossiê e RACI prontos).
+[13:24:57] [170/179] [i] Processo 137.00012207/2025-48: Revisado pela IA 2 -> Atualizado no Banco do Cockpit GTI (Dossiê e RACI prontos).
+[13:24:57] [171/179] [i] Processo 137.00014822/2025-99: Revisado pela IA 2 -> Atualizado no Banco do Cockpit GTI (Dossiê e RACI prontos).
+[13:24:57] [172/179] [i] Processo 137.00016376/2025-57: Revisado pela IA 2 -> Atualizado no Banco do Cockpit GTI (Dossiê e RACI prontos).
+[13:24:57] [173/179] [i] Processo 137.00006198/2026-37: Revisado pela IA 2 -> Atualizado no Banco do Cockpit GTI (Dossiê e RACI prontos).
+[13:24:57] [174/179] [i] Processo 137.00009838/2026-61: Revisado pela IA 2 -> Atualizado no Banco do Cockpit GTI (Dossiê e RACI prontos).
+[13:24:57] [175/179] [i] Processo 137.00003765/2023-51: Revisado pela IA 2 -> Atualizado no Banco do Cockpit GTI (Dossiê e RACI prontos).
+[13:24:57] [176/179] [i] Processo 137.00008662/2023-87: Revisado pela IA 2 -> Atualizado no Banco do Cockpit GTI (Dossiê e RACI prontos).
+[13:24:57] [177/179] [i] Processo 137.00015488/2025-91: Revisado pela IA 2 -> Atualizado no Banco do Cockpit GTI (Dossiê e RACI prontos).
+[13:24:57] [178/179] [i] Processo 137.00004037/2025-28: Revisado pela IA 2 -> Atualizado no Banco do Cockpit GTI (Dossiê e RACI prontos).
+[13:24:57] [179/179] [i] Processo 137.00004486/2026-57: Revisado pela IA 2 -> Atualizado no Banco do Cockpit GTI (Dossiê e RACI prontos).
+[13:24:57] ================================================================================
+[13:24:57] [CONCLUÍDO] Sincronização e Orquestração Geral Finalizada!
+[13:24:57]  • Total de Cards Processados no Banco: 179/179
+[13:24:57]  • Cards Transmitidos e Gravados no OpenProject: 0
+[13:24:57]  • Auditoria registrada em: /working_dir/c_963a102d50d89b20/laudo_sincronizacao_automatica.txt
+[13:24:57] ================================================================================
+[13:40:01] [✓] Banco de Dados do Cockpit GTI carregado: 179 cards/processos identificados no acervo.
+[13:40:01] [!] API Token OpenProject não configurado. Tentando conexão pública...
+[13:40:01] [✓] Mapeamento OpenProject ativo: Card #1497, Card #1498 e 2 cards identificados.
+[13:40:01] [✓] Fase 1 Concluída: Todos os 179 cards foram revisados pela IA 2 e gravados no banco do Cockpit (processos.json)!
+[13:40:01] [001/179] [!] Card #1497 (137.00013132/2026-01): Erro de rede ao espelhar (<urlopen error [Errno -3] Temporary failure in name resolution>).
+[13:40:01] [002/179] [!] Card #1498 (137.00010608/2025-63): Erro de rede ao espelhar (<urlopen error [Errno -3] Temporary failure in name resolution>).
+[13:40:01] [003/179] [i] Processo 137.00012783/2025-95: Homologado no Banco do Cockpit (Dossiê e RACI prontos para vinculação ao OP).
+[13:40:01] [004/179] [i] Processo 137.00000119/2026-84: Homologado no Banco do Cockpit (Dossiê e RACI prontos para vinculação ao OP).
+[13:40:01] [005/179] [i] Processo 137.00011105/2025-13: Homologado no Banco do Cockpit (Dossiê e RACI prontos para vinculação ao OP).
+[13:40:01] [006/179] [i] Processo 137.00009512/2026-33: Homologado no Banco do Cockpit (Dossiê e RACI prontos para vinculação ao OP).
+[13:40:01] [007/179] [i] Processo 137.00010436/2025-28: Homologado no Banco do Cockpit (Dossiê e RACI prontos para vinculação ao OP).
+[13:40:01] [008/179] [i] Processo 137.00011338/2026-90: Homologado no Banco do Cockpit (Dossiê e RACI prontos para vinculação ao OP).
+[13:40:01] [009/179] [i] Processo 137.00004821/2026-17: Homologado no Banco do Cockpit (Dossiê e RACI prontos para vinculação ao OP).
+[13:40:01] [010/179] [i] Processo 137.00007527/2026-67: Homologado no Banco do Cockpit (Dossiê e RACI prontos para vinculação ao OP).
+[13:40:01] [011/179] [i] Processo 137.00003191/2026-63: Homologado no Banco do Cockpit (Dossiê e RACI prontos para vinculação ao OP).
+[13:40:01] [012/179] [i] Processo 018.00004147/2026-63: Homologado no Banco do Cockpit (Dossiê e RACI prontos para vinculação ao OP).
+[13:40:01] [013/179] [i] Processo 137.00006935/2026-00: Homologado no Banco do Cockpit (Dossiê e RACI prontos para vinculação ao OP).
+[13:40:01] [014/179] [i] Processo 018.00002165/2026-19: Homologado no Banco do Cockpit (Dossiê e RACI prontos para vinculação ao OP).
+[13:40:01] [015/179] [i] Processo 137.00004844/2026-21: Homologado no Banco do Cockpit (Dossiê e RACI prontos para vinculação ao OP).
+[13:40:01] [016/179] [i] Processo 137.00011132/2026-60: Homologado no Banco do Cockpit (Dossiê e RACI prontos para vinculação ao OP).
+[13:40:01] [017/179] [i] Processo 137.00001716/2024-64: Homologado no Banco do Cockpit (Dossiê e RACI prontos para vinculação ao OP).
+[13:40:01] [018/179] [i] Processo 137.00009067/2026-10: Homologado no Banco do Cockpit (Dossiê e RACI prontos para vinculação ao OP).
+[13:40:01] [019/179] [i] Processo 137.00011971/2026-87: Homologado no Banco do Cockpit (Dossiê e RACI prontos para vinculação ao OP).
+[13:40:02] [020/179] [i] Processo 137.00013086/2026-32: Homologado no Banco do Cockpit (Dossiê e RACI prontos para vinculação ao OP).
+[13:40:02] [021/179] [i] Processo 137.00013483/2026-12: Homologado no Banco do Cockpit (Dossiê e RACI prontos para vinculação ao OP).
+[13:40:02] [022/179] [i] Processo 137.00011685/2025-31: Homologado no Banco do Cockpit (Dossiê e RACI prontos para vinculação ao OP).
+[13:40:02] [023/179] [i] Processo 137.00000117/2023-42: Homologado no Banco do Cockpit (Dossiê e RACI prontos para vinculação ao OP).
+[13:40:02] [024/179] [i] Processo 137.00019295/2024-28: Homologado no Banco do Cockpit (Dossiê e RACI prontos para vinculação ao OP).
+[13:40:02] [025/179] [i] Processo 137.00012392/2026-51: Homologado no Banco do Cockpit (Dossiê e RACI prontos para vinculação ao OP).
+[13:40:02] [026/179] [i] Processo 137.00012379/2026-01: Homologado no Banco do Cockpit (Dossiê e RACI prontos para vinculação ao OP).
+[13:40:02] [027/179] [i] Processo 137.00012396/2026-30: Homologado no Banco do Cockpit (Dossiê e RACI prontos para vinculação ao OP).
+[13:40:02] [028/179] [i] Processo 137.00012393/2026-04: Homologado no Banco do Cockpit (Dossiê e RACI prontos para vinculação ao OP).
+[13:40:02] [029/179] [i] Processo 137.00012389/2026-38: Homologado no Banco do Cockpit (Dossiê e RACI prontos para vinculação ao OP).
+[13:40:02] [030/179] [i] Processo 137.00012372/2026-81: Homologado no Banco do Cockpit (Dossiê e RACI prontos para vinculação ao OP).
+[13:40:02] [031/179] [i] Processo 137.00012362/2026-45: Homologado no Banco do Cockpit (Dossiê e RACI prontos para vinculação ao OP).
+[13:40:02] [032/179] [i] Processo 137.00000057/2023-68: Homologado no Banco do Cockpit (Dossiê e RACI prontos para vinculação ao OP).
+[13:40:02] [033/179] [i] Processo 137.00009121/2024-57: Homologado no Banco do Cockpit (Dossiê e RACI prontos para vinculação ao OP).
+[13:40:02] [034/179] [i] Processo 137.00016283/2025-22: Homologado no Banco do Cockpit (Dossiê e RACI prontos para vinculação ao OP).
+[13:40:02] [035/179] [i] Processo 137.00004823/2026-14: Homologado no Banco do Cockpit (Dossiê e RACI prontos para vinculação ao OP).
+[13:40:02] [036/179] [i] Processo 137.00008901/2026-71: Homologado no Banco do Cockpit (Dossiê e RACI prontos para vinculação ao OP).
+[13:40:02] [037/179] [i] Processo 137.00010805/2025-82: Homologado no Banco do Cockpit (Dossiê e RACI prontos para vinculação ao OP).
+[13:40:02] [038/179] [i] Processo 137.00000001/2026-56: Homologado no Banco do Cockpit (Dossiê e RACI prontos para vinculação ao OP).
+[13:40:02] [039/179] [i] Processo 137.00012407/2026-81: Homologado no Banco do Cockpit (Dossiê e RACI prontos para vinculação ao OP).
+[13:40:02] [040/179] [i] Processo 137.00012420/2026-31: Homologado no Banco do Cockpit (Dossiê e RACI prontos para vinculação ao OP).
+[13:40:02] [041/179] [i] Processo 137.00012403/2026-01: Homologado no Banco do Cockpit (Dossiê e RACI prontos para vinculação ao OP).
+[13:40:02] [042/179] [i] Processo 137.00012397/2026-84: Homologado no Banco do Cockpit (Dossiê e RACI prontos para vinculação ao OP).
+[13:40:02] [043/179] [i] Processo 137.00012395/2026-95: Homologado no Banco do Cockpit (Dossiê e RACI prontos para vinculação ao OP).
+[13:40:02] [044/179] [i] Processo 137.00012390/2026-62: Homologado no Banco do Cockpit (Dossiê e RACI prontos para vinculação ao OP).
+[13:40:02] [045/179] [i] Processo 137.00012387/2026-49: Homologado no Banco do Cockpit (Dossiê e RACI prontos para vinculação ao OP).
+[13:40:02] [046/179] [i] Processo 137.00012361/2026-00: Homologado no Banco do Cockpit (Dossiê e RACI prontos para vinculação ao OP).
+[13:40:02] [047/179] [i] Processo 137.00012405/2026-92: Homologado no Banco do Cockpit (Dossiê e RACI prontos para vinculação ao OP).
+[13:40:02] [048/179] [i] Processo 137.00012402/2026-59: Homologado no Banco do Cockpit (Dossiê e RACI prontos para vinculação ao OP).
+[13:40:02] [049/179] [i] Processo 137.00012400/2026-60: Homologado no Banco do Cockpit (Dossiê e RACI prontos para vinculação ao OP).
+[13:40:02] [050/179] [i] Processo 137.00012399/2026-73: Homologado no Banco do Cockpit (Dossiê e RACI prontos para vinculação ao OP).
+[13:40:02] [051/179] [i] Processo 137.00012388/2026-93: Homologado no Banco do Cockpit (Dossiê e RACI prontos para vinculação ao OP).
+[13:40:02] [052/179] [i] Processo 137.00012382/2026-18: Homologado no Banco do Cockpit (Dossiê e RACI prontos para vinculação ao OP).
+[13:40:02] [053/179] [i] Processo 137.00012381/2026-71: Homologado no Banco do Cockpit (Dossiê e RACI prontos para vinculação ao OP).
+[13:40:02] [054/179] [i] Processo 137.00012371/2026-36: Homologado no Banco do Cockpit (Dossiê e RACI prontos para vinculação ao OP).
+[13:40:02] [055/179] [i] Processo 137.00012364/2026-34: Homologado no Banco do Cockpit (Dossiê e RACI prontos para vinculação ao OP).
+[13:40:02] [056/179] [i] Processo 137.00012363/2026-90: Homologado no Banco do Cockpit (Dossiê e RACI prontos para vinculação ao OP).
+[13:40:02] [057/179] [i] Processo 137.00012421/2026-85: Homologado no Banco do Cockpit (Dossiê e RACI prontos para vinculação ao OP).
+[13:40:02] [058/179] [i] Processo 137.00012698/2026-16: Homologado no Banco do Cockpit (Dossiê e RACI prontos para vinculação ao OP).
+[13:40:02] [059/179] [i] Processo 137.00010899/2025-90: Homologado no Banco do Cockpit (Dossiê e RACI prontos para vinculação ao OP).
+[13:40:03] [060/179] [i] Processo 137.00012904/2025-07: Homologado no Banco do Cockpit (Dossiê e RACI prontos para vinculação ao OP).
+[13:40:03] [061/179] [i] Processo 137.00010806/2025-27: Homologado no Banco do Cockpit (Dossiê e RACI prontos para vinculação ao OP).
+[13:40:03] [062/179] [i] Processo 137.00000018/2025-35: Homologado no Banco do Cockpit (Dossiê e RACI prontos para vinculação ao OP).
+[13:40:03] [063/179] [i] Processo 137.00013843/2025-07: Homologado no Banco do Cockpit (Dossiê e RACI prontos para vinculação ao OP).
+[13:40:03] [064/179] [i] Processo 137.00013840/2025-53: Homologado no Banco do Cockpit (Dossiê e RACI prontos para vinculação ao OP).
+[13:40:03] [065/179] [i] Processo 137.00014541/2025-36: Homologado no Banco do Cockpit (Dossiê e RACI prontos para vinculação ao OP).
+[13:40:03] [066/179] [i] Processo 137.00006431/2025-09: Homologado no Banco do Cockpit (Dossiê e RACI prontos para vinculação ao OP).
+[13:40:03] [067/179] [i] Processo 137.00004933/2025-97: Homologado no Banco do Cockpit (Dossiê e RACI prontos para vinculação ao OP).
+[13:40:03] [068/179] [i] Processo 137.00003431/2023-87: Homologado no Banco do Cockpit (Dossiê e RACI prontos para vinculação ao OP).
+[13:40:03] [069/179] [i] Processo 137.00000333/2025-50: Homologado no Banco do Cockpit (Dossiê e RACI prontos para vinculação ao OP).
+[13:40:03] [070/179] [i] Processo 137.00009729/2025-62: Homologado no Banco do Cockpit (Dossiê e RACI prontos para vinculação ao OP).
+[13:40:03] [071/179] [i] Processo 137.00029841/2026-14: Homologado no Banco do Cockpit (Dossiê e RACI prontos para vinculação ao OP).
+[13:40:03] [072/179] [i] Processo 137.00011106/2025-50: Homologado no Banco do Cockpit (Dossiê e RACI prontos para vinculação ao OP).
+[13:40:03] [073/179] [i] Processo 137.00010802/2025-49: Homologado no Banco do Cockpit (Dossiê e RACI prontos para vinculação ao OP).
+[13:40:03] [074/179] [i] Processo 137.00001873/2025-51: Homologado no Banco do Cockpit (Dossiê e RACI prontos para vinculação ao OP).
+[13:40:03] [075/179] [i] Processo 137.00012690/2025-61: Homologado no Banco do Cockpit (Dossiê e RACI prontos para vinculação ao OP).
+[13:40:03] [076/179] [i] Processo 137.00008615/2025-03: Homologado no Banco do Cockpit (Dossiê e RACI prontos para vinculação ao OP).
+[13:40:03] [077/179] [i] Processo 137.00000885/2025-23: Homologado no Banco do Cockpit (Dossiê e RACI prontos para vinculação ao OP).
+[13:40:03] [078/179] [i] Processo 137.00015219/2024-43: Homologado no Banco do Cockpit (Dossiê e RACI prontos para vinculação ao OP).
+[13:40:03] [079/179] [i] Processo 137.00010619/2025-43: Homologado no Banco do Cockpit (Dossiê e RACI prontos para vinculação ao OP).
+[13:40:03] [080/179] [i] Processo 137.00014339/2025-12: Homologado no Banco do Cockpit (Dossiê e RACI prontos para vinculação ao OP).
+[13:40:03] [081/179] [i] Processo 137.00000015/2025-00: Homologado no Banco do Cockpit (Dossiê e RACI prontos para vinculação ao OP).
+[13:40:03] [082/179] [i] Processo 137.00015243/2025-63: Homologado no Banco do Cockpit (Dossiê e RACI prontos para vinculação ao OP).
+[13:40:03] [083/179] [i] Processo 137.00009538/2024-10: Homologado no Banco do Cockpit (Dossiê e RACI prontos para vinculação ao OP).
+[13:40:03] [084/179] [i] Processo 137.00015254/2025-43: Homologado no Banco do Cockpit (Dossiê e RACI prontos para vinculação ao OP).
+[13:40:03] [085/179] [i] Processo 137.00003963/2026-67: Homologado no Banco do Cockpit (Dossiê e RACI prontos para vinculação ao OP).
+[13:40:03] [086/179] [i] Processo 137.00015266/2025-31: Homologado no Banco do Cockpit (Dossiê e RACI prontos para vinculação ao OP).
+[13:40:03] [087/179] [i] Processo 137.00018396/2024-81: Homologado no Banco do Cockpit (Dossiê e RACI prontos para vinculação ao OP).
+[13:40:03] [088/179] [i] Processo 137.00010210/2024-46: Homologado no Banco do Cockpit (Dossiê e RACI prontos para vinculação ao OP).
+[13:40:03] [089/179] [i] Processo 137.00010555/2025-81: Homologado no Banco do Cockpit (Dossiê e RACI prontos para vinculação ao OP).
+[13:40:03] [090/179] [i] Processo 137.00013810/2025-47: Homologado no Banco do Cockpit (Dossiê e RACI prontos para vinculação ao OP).
+[13:40:03] [091/179] [i] Processo 137.00000691/2025-28: Homologado no Banco do Cockpit (Dossiê e RACI prontos para vinculação ao OP).
+[13:40:03] [092/179] [i] Processo 137.00012972/2025-68: Homologado no Banco do Cockpit (Dossiê e RACI prontos para vinculação ao OP).
+[13:40:03] [093/179] [i] Processo 137.00003244/2025-65: Homologado no Banco do Cockpit (Dossiê e RACI prontos para vinculação ao OP).
+[13:40:03] [094/179] [i] Processo 137.00014963/2025-10: Homologado no Banco do Cockpit (Dossiê e RACI prontos para vinculação ao OP).
+[13:40:03] [095/179] [i] Processo 137.00015862/2025-58: Homologado no Banco do Cockpit (Dossiê e RACI prontos para vinculação ao OP).
+[13:40:03] [096/179] [i] Processo 137.00016374/2025-68: Homologado no Banco do Cockpit (Dossiê e RACI prontos para vinculação ao OP).
+[13:40:03] [097/179] [i] Processo 137.00015193/2025-14: Homologado no Banco do Cockpit (Dossiê e RACI prontos para vinculação ao OP).
+[13:40:03] [098/179] [i] Processo 137.00000340/2026-32: Homologado no Banco do Cockpit (Dossiê e RACI prontos para vinculação ao OP).
+[13:40:04] [099/179] [i] Processo 137.00002402/2026-41: Homologado no Banco do Cockpit (Dossiê e RACI prontos para vinculação ao OP).
+[13:40:04] [100/179] [i] Processo 137.00008529/2026-73: Homologado no Banco do Cockpit (Dossiê e RACI prontos para vinculação ao OP).
+[13:40:04] [101/179] [i] Processo 137.00015487/2025-46: Homologado no Banco do Cockpit (Dossiê e RACI prontos para vinculação ao OP).
+[13:40:04] [102/179] [i] Processo 137.00008971/2025-19: Homologado no Banco do Cockpit (Dossiê e RACI prontos para vinculação ao OP).
+[13:40:04] [103/179] [i] Processo 137.00012934/2026-96: Homologado no Banco do Cockpit (Dossiê e RACI prontos para vinculação ao OP).
+[13:40:04] [104/179] [i] Processo 137.00014265/2026-97: Homologado no Banco do Cockpit (Dossiê e RACI prontos para vinculação ao OP).
+[13:40:04] [105/179] [i] Processo 137.00007806/2026-21: Homologado no Banco do Cockpit (Dossiê e RACI prontos para vinculação ao OP).
+[13:40:04] [106/179] [i] Processo 137.00016135/2025-16: Homologado no Banco do Cockpit (Dossiê e RACI prontos para vinculação ao OP).
+[13:40:04] [107/179] [i] Processo 137.00000270/2023-70: Homologado no Banco do Cockpit (Dossiê e RACI prontos para vinculação ao OP).
+[13:40:04] [108/179] [i] Processo 359.00002923/2025-01: Homologado no Banco do Cockpit (Dossiê e RACI prontos para vinculação ao OP).
+[13:40:04] [109/179] [i] Processo 359.00005918/2025-42: Homologado no Banco do Cockpit (Dossiê e RACI prontos para vinculação ao OP).
+[13:40:04] [110/179] [i] Processo 359.00010545/2025-21: Homologado no Banco do Cockpit (Dossiê e RACI prontos para vinculação ao OP).
+[13:40:04] [111/179] [i] Processo 359.00001841/2026-12: Homologado no Banco do Cockpit (Dossiê e RACI prontos para vinculação ao OP).
+[13:40:04] [112/179] [i] Processo 359.00001837/2026-54: Homologado no Banco do Cockpit (Dossiê e RACI prontos para vinculação ao OP).
+[13:40:04] [113/179] [i] Processo 359.00001838/2026-07: Homologado no Banco do Cockpit (Dossiê e RACI prontos para vinculação ao OP).
+[13:40:04] [114/179] [i] Processo 359.00002654/2026-56: Homologado no Banco do Cockpit (Dossiê e RACI prontos para vinculação ao OP).
+[13:40:04] [115/179] [i] Processo 359.00002657/2026-90: Homologado no Banco do Cockpit (Dossiê e RACI prontos para vinculação ao OP).
+[13:40:04] [116/179] [i] Processo 359.00002655/2026-38: Homologado no Banco do Cockpit (Dossiê e RACI prontos para vinculação ao OP).
+[13:40:04] [117/179] [i] Processo 359.00002924/2026-29: Homologado no Banco do Cockpit (Dossiê e RACI prontos para vinculação ao OP).
+[13:40:04] [118/179] [i] Processo 359.00003717/2026-91: Homologado no Banco do Cockpit (Dossiê e RACI prontos para vinculação ao OP).
+[13:40:04] [119/179] [i] Processo 359.00003715/2026-01: Homologado no Banco do Cockpit (Dossiê e RACI prontos para vinculação ao OP).
+[13:40:04] [120/179] [i] Processo 359.00003716/2026-47: Homologado no Banco do Cockpit (Dossiê e RACI prontos para vinculação ao OP).
+[13:40:04] [121/179] [i] Processo 359.00003719/2026-81: Homologado no Banco do Cockpit (Dossiê e RACI prontos para vinculação ao OP).
+[13:40:04] [122/179] [i] Processo 359.00004822/2026-48: Homologado no Banco do Cockpit (Dossiê e RACI prontos para vinculação ao OP).
+[13:40:04] [123/179] [i] Processo 359.00004840/2026-20: Homologado no Banco do Cockpit (Dossiê e RACI prontos para vinculação ao OP).
+[13:40:04] [124/179] [i] Processo 359.00010641/2025-70: Homologado no Banco do Cockpit (Dossiê e RACI prontos para vinculação ao OP).
+[13:40:04] [125/179] [i] Processo 359.00004843/2026-63: Homologado no Banco do Cockpit (Dossiê e RACI prontos para vinculação ao OP).
+[13:40:04] [126/179] [i] Processo 359.00006134/2026-12: Homologado no Banco do Cockpit (Dossiê e RACI prontos para vinculação ao OP).
+[13:40:04] [127/179] [i] Processo 359.00006136/2026-10: Homologado no Banco do Cockpit (Dossiê e RACI prontos para vinculação ao OP).
+[13:40:04] [128/179] [i] Processo 359.00006133/2026-78: Homologado no Banco do Cockpit (Dossiê e RACI prontos para vinculação ao OP).
+[13:40:04] [129/179] [i] Processo 359.00006135/2026-67: Homologado no Banco do Cockpit (Dossiê e RACI prontos para vinculação ao OP).
+[13:40:04] [130/179] [i] Processo 137.00000031/2023-10: Homologado no Banco do Cockpit (Dossiê e RACI prontos para vinculação ao OP).
+[13:40:04] [131/179] [i] Processo 137.00009440/2023-81: Homologado no Banco do Cockpit (Dossiê e RACI prontos para vinculação ao OP).
+[13:40:04] [132/179] [i] Processo 359.00007321/2026-13: Homologado no Banco do Cockpit (Dossiê e RACI prontos para vinculação ao OP).
+[13:40:04] [133/179] [i] Processo 359.00007320/2026-79: Homologado no Banco do Cockpit (Dossiê e RACI prontos para vinculação ao OP).
+[13:40:04] [134/179] [i] Processo 359.00007322/2026-68: Homologado no Banco do Cockpit (Dossiê e RACI prontos para vinculação ao OP).
+[13:40:04] [135/179] [i] Processo 359.00007323/2026-11: Homologado no Banco do Cockpit (Dossiê e RACI prontos para vinculação ao OP).
+[13:40:04] [136/179] [i] Processo 137.00000212/2023-46: Homologado no Banco do Cockpit (Dossiê e RACI prontos para vinculação ao OP).
+[13:40:04] [137/179] [i] Processo 137.00000037/2023-97: Homologado no Banco do Cockpit (Dossiê e RACI prontos para vinculação ao OP).
+[13:40:05] [138/179] [i] Processo 137.00000174/2023-21: Homologado no Banco do Cockpit (Dossiê e RACI prontos para vinculação ao OP).
+[13:40:05] [139/179] [i] Processo 137.00009279/2026-99: Homologado no Banco do Cockpit (Dossiê e RACI prontos para vinculação ao OP).
+[13:40:05] [140/179] [i] Processo 359.00008263/2026-16: Homologado no Banco do Cockpit (Dossiê e RACI prontos para vinculação ao OP).
+[13:40:05] [141/179] [i] Processo 359.00008285/2026-13: Homologado no Banco do Cockpit (Dossiê e RACI prontos para vinculação ao OP).
+[13:40:05] [142/179] [i] Processo 359.00008281/2026-27: Homologado no Banco do Cockpit (Dossiê e RACI prontos para vinculação ao OP).
+[13:40:05] [143/179] [i] Processo 359.00008284/2026-61: Homologado no Banco do Cockpit (Dossiê e RACI prontos para vinculação ao OP).
+[13:40:05] [144/179] [i] Processo 359.00007224/2025-40: Homologado no Banco do Cockpit (Dossiê e RACI prontos para vinculação ao OP).
+[13:40:05] [145/179] [i] Processo 137.00001852/2023-11: Homologado no Banco do Cockpit (Dossiê e RACI prontos para vinculação ao OP).
+[13:40:05] [146/179] [i] Processo 137.00015391/2024-05: Homologado no Banco do Cockpit (Dossiê e RACI prontos para vinculação ao OP).
+[13:40:05] [147/179] [i] Processo 137.00006149/2024-32: Homologado no Banco do Cockpit (Dossiê e RACI prontos para vinculação ao OP).
+[13:40:05] [148/179] [i] Processo 137.00005364/2025-05: Homologado no Banco do Cockpit (Dossiê e RACI prontos para vinculação ao OP).
+[13:40:05] [149/179] [i] Processo 137.00007443/2025-42: Homologado no Banco do Cockpit (Dossiê e RACI prontos para vinculação ao OP).
+[13:40:05] [150/179] [i] Processo 137.00000008/2024-71: Homologado no Banco do Cockpit (Dossiê e RACI prontos para vinculação ao OP).
+[13:40:05] [151/179] [i] Processo 137.00004201/2025-05: Homologado no Banco do Cockpit (Dossiê e RACI prontos para vinculação ao OP).
+[13:40:05] [152/179] [i] Processo 137.00013847/2024-94: Homologado no Banco do Cockpit (Dossiê e RACI prontos para vinculação ao OP).
+[13:40:05] [153/179] [i] Processo 137.00014627/2025-17: Homologado no Banco do Cockpit (Dossiê e RACI prontos para vinculação ao OP).
+[13:40:05] [154/179] [i] Processo 137.00000087/2023-74: Homologado no Banco do Cockpit (Dossiê e RACI prontos para vinculação ao OP).
+[13:40:05] [155/179] [i] Processo 137.00013943/2025-13: Homologado no Banco do Cockpit (Dossiê e RACI prontos para vinculação ao OP).
+[13:40:05] [156/179] [i] Processo 137.00001418/2023-93: Homologado no Banco do Cockpit (Dossiê e RACI prontos para vinculação ao OP).
+[13:40:05] [157/179] [i] Processo 359.00009776/2023-21: Homologado no Banco do Cockpit (Dossiê e RACI prontos para vinculação ao OP).
+[13:40:05] [158/179] [i] Processo 137.00000400/2023-74: Homologado no Banco do Cockpit (Dossiê e RACI prontos para vinculação ao OP).
+[13:40:05] [159/179] [i] Processo 137.00016377/2025-00: Homologado no Banco do Cockpit (Dossiê e RACI prontos para vinculação ao OP).
+[13:40:05] [160/179] [i] Processo 137.00016379/2025-01: Homologado no Banco do Cockpit (Dossiê e RACI prontos para vinculação ao OP).
+[13:40:05] [161/179] [i] Processo 137.00016467/2025-22: Homologado no Banco do Cockpit (Dossiê e RACI prontos para vinculação ao OP).
+[13:40:05] [162/179] [i] Processo 137.00016517/2025-31: Homologado no Banco do Cockpit (Dossiê e RACI prontos para vinculação ao OP).
+[13:40:05] [163/179] [i] Processo 137.00012360/2025-75: Homologado no Banco do Cockpit (Dossiê e RACI prontos para vinculação ao OP).
+[13:40:05] [164/179] [i] Processo 137.00014834/2025-13: Homologado no Banco do Cockpit (Dossiê e RACI prontos para vinculação ao OP).
+[13:40:05] [165/179] [i] Processo 137.00000683/2025-16: Homologado no Banco do Cockpit (Dossiê e RACI prontos para vinculação ao OP).
+[13:40:05] [166/179] [i] Processo 137.00001272/2023-86: Homologado no Banco do Cockpit (Dossiê e RACI prontos para vinculação ao OP).
+[13:40:05] [167/179] [i] Processo 137.00000106/2023-62: Homologado no Banco do Cockpit (Dossiê e RACI prontos para vinculação ao OP).
+[13:40:05] [168/179] [i] Processo 137.00003321/2026-68: Homologado no Banco do Cockpit (Dossiê e RACI prontos para vinculação ao OP).
+[13:40:05] [169/179] [i] Processo 137.00017207/2024-53: Homologado no Banco do Cockpit (Dossiê e RACI prontos para vinculação ao OP).
+[13:40:05] [170/179] [i] Processo 137.00012207/2025-48: Homologado no Banco do Cockpit (Dossiê e RACI prontos para vinculação ao OP).
+[13:40:05] [171/179] [i] Processo 137.00014822/2025-99: Homologado no Banco do Cockpit (Dossiê e RACI prontos para vinculação ao OP).
+[13:40:05] [172/179] [i] Processo 137.00016376/2025-57: Homologado no Banco do Cockpit (Dossiê e RACI prontos para vinculação ao OP).
+[13:40:05] [173/179] [i] Processo 137.00006198/2026-37: Homologado no Banco do Cockpit (Dossiê e RACI prontos para vinculação ao OP).
+[13:40:05] [174/179] [i] Processo 137.00009838/2026-61: Homologado no Banco do Cockpit (Dossiê e RACI prontos para vinculação ao OP).
+[13:40:05] [175/179] [i] Processo 137.00003765/2023-51: Homologado no Banco do Cockpit (Dossiê e RACI prontos para vinculação ao OP).
+[13:40:05] [176/179] [i] Processo 137.00008662/2023-87: Homologado no Banco do Cockpit (Dossiê e RACI prontos para vinculação ao OP).
+[13:40:05] [177/179] [i] Processo 137.00015488/2025-91: Homologado no Banco do Cockpit (Dossiê e RACI prontos para vinculação ao OP).
+[13:40:06] [178/179] [i] Processo 137.00004037/2025-28: Homologado no Banco do Cockpit (Dossiê e RACI prontos para vinculação ao OP).
+[13:40:06] [179/179] [i] Processo 137.00004486/2026-57: Homologado no Banco do Cockpit (Dossiê e RACI prontos para vinculação ao OP).
+[13:40:06] [CONCLUÍDO] Orquestração em Duas Fases Finalizada com Sucesso!
+[13:40:06]  • Fase 1 (Banco do Cockpit): 179/179 cards revisados pela IA 2 e gravados.
+[13:40:06]  • Fase 2 (Espelhamento OpenProject): 0 cards gravados com sucesso (incluindo Card #1497 e Card #1498).
+[13:40:06]  • Auditoria registrada em: /working_dir/c_963a102d50d89b20/laudo_sincronizacao_automatica.txt
+[14:07:11] [✓] Configuração da IA 2 sincronizada com o Cockpit GTI:
+[14:07:11]     • Agente Ativo: IA 2 — Orquestração (RAG & Fact-Checker)
+[14:07:11]     • Modelo Configurado: llama3.2:1b
+[14:07:11]     • Endpoint Base: http://10.20.40.212:3001/v1
+[14:07:11]     • Parâmetros: Temp: 0.0 | Max Tokens: 1024 | Timeout: 15.0s
+[14:07:11]     • Auto-Failover: ATIVO
+[14:07:11] [✓] Banco de Dados do Cockpit GTI carregado: 179 cards/processos no acervo.
+[14:07:11] [!] API Token OpenProject não localizado em openproject_token.txt.
+[14:07:11] [✓] Mapeamento OpenProject ativo: Card #1497, Card #1498 e 2 cards mapeados.
+[14:07:13] [✓] Fase 1 Concluída: 179 cards revisados pela IA 2 (llama3.2:1b) e gravados no banco do Cockpit (processos.json)!
+[14:07:13] [001/179] [!] Card #1497 (137.00013132/2026-01): Erro de rede ao espelhar (<urlopen error [Errno -3] Temporary failure in name resolution>).
+[14:07:13] [002/179] [!] Card #1498 (137.00010608/2025-63): Erro de rede ao espelhar (<urlopen error [Errno -3] Temporary failure in name resolution>).
+[14:07:13] [003/179] [i] Processo 137.00012783/2025-95: Homologado no Banco do Cockpit pela IA 2 (llama3.2:1b (Motor Local de Governança)).
+[14:07:13] [004/179] [i] Processo 137.00000119/2026-84: Homologado no Banco do Cockpit pela IA 2 (llama3.2:1b (Motor Local de Governança)).
+[14:07:13] [005/179] [i] Processo 137.00011105/2025-13: Homologado no Banco do Cockpit pela IA 2 (llama3.2:1b (Motor Local de Governança)).
+[14:07:13] [006/179] [i] Processo 137.00009512/2026-33: Homologado no Banco do Cockpit pela IA 2 (llama3.2:1b (Motor Local de Governança)).
+[14:07:13] [007/179] [i] Processo 137.00010436/2025-28: Homologado no Banco do Cockpit pela IA 2 (llama3.2:1b (Motor Local de Governança)).
+[14:07:13] [008/179] [i] Processo 137.00011338/2026-90: Homologado no Banco do Cockpit pela IA 2 (llama3.2:1b (Motor Local de Governança)).
+[14:07:13] [009/179] [i] Processo 137.00004821/2026-17: Homologado no Banco do Cockpit pela IA 2 (llama3.2:1b (Motor Local de Governança)).
+[14:07:13] [010/179] [i] Processo 137.00007527/2026-67: Homologado no Banco do Cockpit pela IA 2 (llama3.2:1b (Motor Local de Governança)).
+[14:07:13] [011/179] [i] Processo 137.00003191/2026-63: Homologado no Banco do Cockpit pela IA 2 (llama3.2:1b (Motor Local de Governança)).
+[14:07:13] [012/179] [i] Processo 018.00004147/2026-63: Homologado no Banco do Cockpit pela IA 2 (llama3.2:1b (Motor Local de Governança)).
+[14:07:13] [013/179] [i] Processo 137.00006935/2026-00: Homologado no Banco do Cockpit pela IA 2 (llama3.2:1b (Motor Local de Governança)).
+[14:07:13] [014/179] [i] Processo 018.00002165/2026-19: Homologado no Banco do Cockpit pela IA 2 (llama3.2:1b (Motor Local de Governança)).
+[14:07:13] [015/179] [i] Processo 137.00004844/2026-21: Homologado no Banco do Cockpit pela IA 2 (llama3.2:1b (Motor Local de Governança)).
+[14:07:13] [016/179] [i] Processo 137.00011132/2026-60: Homologado no Banco do Cockpit pela IA 2 (llama3.2:1b (Motor Local de Governança)).
+[14:07:13] [017/179] [i] Processo 137.00001716/2024-64: Homologado no Banco do Cockpit pela IA 2 (llama3.2:1b (Motor Local de Governança)).
+[14:07:13] [018/179] [i] Processo 137.00009067/2026-10: Homologado no Banco do Cockpit pela IA 2 (llama3.2:1b (Motor Local de Governança)).
+[14:07:13] [019/179] [i] Processo 137.00011971/2026-87: Homologado no Banco do Cockpit pela IA 2 (llama3.2:1b (Motor Local de Governança)).
+[14:07:13] [020/179] [i] Processo 137.00013086/2026-32: Homologado no Banco do Cockpit pela IA 2 (llama3.2:1b (Motor Local de Governança)).
+[14:07:13] [021/179] [i] Processo 137.00013483/2026-12: Homologado no Banco do Cockpit pela IA 2 (llama3.2:1b (Motor Local de Governança)).
+[14:07:13] [022/179] [i] Processo 137.00011685/2025-31: Homologado no Banco do Cockpit pela IA 2 (llama3.2:1b (Motor Local de Governança)).
+[14:07:13] [023/179] [i] Processo 137.00000117/2023-42: Homologado no Banco do Cockpit pela IA 2 (llama3.2:1b (Motor Local de Governança)).
+[14:07:13] [024/179] [i] Processo 137.00019295/2024-28: Homologado no Banco do Cockpit pela IA 2 (llama3.2:1b (Motor Local de Governança)).
+[14:07:13] [025/179] [i] Processo 137.00012392/2026-51: Homologado no Banco do Cockpit pela IA 2 (llama3.2:1b (Motor Local de Governança)).
+[14:07:13] [026/179] [i] Processo 137.00012379/2026-01: Homologado no Banco do Cockpit pela IA 2 (llama3.2:1b (Motor Local de Governança)).
+[14:07:13] [027/179] [i] Processo 137.00012396/2026-30: Homologado no Banco do Cockpit pela IA 2 (llama3.2:1b (Motor Local de Governança)).
+[14:07:13] [028/179] [i] Processo 137.00012393/2026-04: Homologado no Banco do Cockpit pela IA 2 (llama3.2:1b (Motor Local de Governança)).
+[14:07:13] [029/179] [i] Processo 137.00012389/2026-38: Homologado no Banco do Cockpit pela IA 2 (llama3.2:1b (Motor Local de Governança)).
+[14:07:13] [030/179] [i] Processo 137.00012372/2026-81: Homologado no Banco do Cockpit pela IA 2 (llama3.2:1b (Motor Local de Governança)).
+[14:07:13] [031/179] [i] Processo 137.00012362/2026-45: Homologado no Banco do Cockpit pela IA 2 (llama3.2:1b (Motor Local de Governança)).
+[14:07:13] [032/179] [i] Processo 137.00000057/2023-68: Homologado no Banco do Cockpit pela IA 2 (llama3.2:1b (Motor Local de Governança)).
+[14:07:13] [033/179] [i] Processo 137.00009121/2024-57: Homologado no Banco do Cockpit pela IA 2 (llama3.2:1b (Motor Local de Governança)).
+[14:07:13] [034/179] [i] Processo 137.00016283/2025-22: Homologado no Banco do Cockpit pela IA 2 (llama3.2:1b (Motor Local de Governança)).
+[14:07:14] [035/179] [i] Processo 137.00004823/2026-14: Homologado no Banco do Cockpit pela IA 2 (llama3.2:1b (Motor Local de Governança)).
+[14:07:14] [036/179] [i] Processo 137.00008901/2026-71: Homologado no Banco do Cockpit pela IA 2 (llama3.2:1b (Motor Local de Governança)).
+[14:07:14] [037/179] [i] Processo 137.00010805/2025-82: Homologado no Banco do Cockpit pela IA 2 (llama3.2:1b (Motor Local de Governança)).
+[14:07:14] [038/179] [i] Processo 137.00000001/2026-56: Homologado no Banco do Cockpit pela IA 2 (llama3.2:1b (Motor Local de Governança)).
+[14:07:14] [039/179] [i] Processo 137.00012407/2026-81: Homologado no Banco do Cockpit pela IA 2 (llama3.2:1b (Motor Local de Governança)).
+[14:07:14] [040/179] [i] Processo 137.00012420/2026-31: Homologado no Banco do Cockpit pela IA 2 (llama3.2:1b (Motor Local de Governança)).
+[14:07:14] [041/179] [i] Processo 137.00012403/2026-01: Homologado no Banco do Cockpit pela IA 2 (llama3.2:1b (Motor Local de Governança)).
+[14:07:14] [042/179] [i] Processo 137.00012397/2026-84: Homologado no Banco do Cockpit pela IA 2 (llama3.2:1b (Motor Local de Governança)).
+[14:07:14] [043/179] [i] Processo 137.00012395/2026-95: Homologado no Banco do Cockpit pela IA 2 (llama3.2:1b (Motor Local de Governança)).
+[14:07:14] [044/179] [i] Processo 137.00012390/2026-62: Homologado no Banco do Cockpit pela IA 2 (llama3.2:1b (Motor Local de Governança)).
+[14:07:14] [045/179] [i] Processo 137.00012387/2026-49: Homologado no Banco do Cockpit pela IA 2 (llama3.2:1b (Motor Local de Governança)).
+[14:07:14] [046/179] [i] Processo 137.00012361/2026-00: Homologado no Banco do Cockpit pela IA 2 (llama3.2:1b (Motor Local de Governança)).
+[14:07:14] [047/179] [i] Processo 137.00012405/2026-92: Homologado no Banco do Cockpit pela IA 2 (llama3.2:1b (Motor Local de Governança)).
+[14:07:14] [048/179] [i] Processo 137.00012402/2026-59: Homologado no Banco do Cockpit pela IA 2 (llama3.2:1b (Motor Local de Governança)).
+[14:07:14] [049/179] [i] Processo 137.00012400/2026-60: Homologado no Banco do Cockpit pela IA 2 (llama3.2:1b (Motor Local de Governança)).
+[14:07:14] [050/179] [i] Processo 137.00012399/2026-73: Homologado no Banco do Cockpit pela IA 2 (llama3.2:1b (Motor Local de Governança)).
+[14:07:14] [051/179] [i] Processo 137.00012388/2026-93: Homologado no Banco do Cockpit pela IA 2 (llama3.2:1b (Motor Local de Governança)).
+[14:07:14] [052/179] [i] Processo 137.00012382/2026-18: Homologado no Banco do Cockpit pela IA 2 (llama3.2:1b (Motor Local de Governança)).
+[14:07:14] [053/179] [i] Processo 137.00012381/2026-71: Homologado no Banco do Cockpit pela IA 2 (llama3.2:1b (Motor Local de Governança)).
+[14:07:14] [054/179] [i] Processo 137.00012371/2026-36: Homologado no Banco do Cockpit pela IA 2 (llama3.2:1b (Motor Local de Governança)).
+[14:07:14] [055/179] [i] Processo 137.00012364/2026-34: Homologado no Banco do Cockpit pela IA 2 (llama3.2:1b (Motor Local de Governança)).
+[14:07:14] [056/179] [i] Processo 137.00012363/2026-90: Homologado no Banco do Cockpit pela IA 2 (llama3.2:1b (Motor Local de Governança)).
+[14:07:14] [057/179] [i] Processo 137.00012421/2026-85: Homologado no Banco do Cockpit pela IA 2 (llama3.2:1b (Motor Local de Governança)).
+[14:07:14] [058/179] [i] Processo 137.00012698/2026-16: Homologado no Banco do Cockpit pela IA 2 (llama3.2:1b (Motor Local de Governança)).
+[14:07:14] [059/179] [i] Processo 137.00010899/2025-90: Homologado no Banco do Cockpit pela IA 2 (llama3.2:1b (Motor Local de Governança)).
+[14:07:14] [060/179] [i] Processo 137.00012904/2025-07: Homologado no Banco do Cockpit pela IA 2 (llama3.2:1b (Motor Local de Governança)).
+[14:07:14] [061/179] [i] Processo 137.00010806/2025-27: Homologado no Banco do Cockpit pela IA 2 (llama3.2:1b (Motor Local de Governança)).
+[14:07:14] [062/179] [i] Processo 137.00000018/2025-35: Homologado no Banco do Cockpit pela IA 2 (llama3.2:1b (Motor Local de Governança)).
+[14:07:14] [063/179] [i] Processo 137.00013843/2025-07: Homologado no Banco do Cockpit pela IA 2 (llama3.2:1b (Motor Local de Governança)).
+[14:07:14] [064/179] [i] Processo 137.00013840/2025-53: Homologado no Banco do Cockpit pela IA 2 (llama3.2:1b (Motor Local de Governança)).
+[14:07:14] [065/179] [i] Processo 137.00014541/2025-36: Homologado no Banco do Cockpit pela IA 2 (llama3.2:1b (Motor Local de Governança)).
+[14:07:14] [066/179] [i] Processo 137.00006431/2025-09: Homologado no Banco do Cockpit pela IA 2 (llama3.2:1b (Motor Local de Governança)).
+[14:07:14] [067/179] [i] Processo 137.00004933/2025-97: Homologado no Banco do Cockpit pela IA 2 (llama3.2:1b (Motor Local de Governança)).
+[14:07:14] [068/179] [i] Processo 137.00003431/2023-87: Homologado no Banco do Cockpit pela IA 2 (llama3.2:1b (Motor Local de Governança)).
+[14:07:14] [069/179] [i] Processo 137.00000333/2025-50: Homologado no Banco do Cockpit pela IA 2 (llama3.2:1b (Motor Local de Governança)).
+[14:07:14] [070/179] [i] Processo 137.00009729/2025-62: Homologado no Banco do Cockpit pela IA 2 (llama3.2:1b (Motor Local de Governança)).
+[14:07:14] [071/179] [i] Processo 137.00029841/2026-14: Homologado no Banco do Cockpit pela IA 2 (llama3.2:1b (Motor Local de Governança)).
+[14:07:14] [072/179] [i] Processo 137.00011106/2025-50: Homologado no Banco do Cockpit pela IA 2 (llama3.2:1b (Motor Local de Governança)).
+[14:07:14] [073/179] [i] Processo 137.00010802/2025-49: Homologado no Banco do Cockpit pela IA 2 (llama3.2:1b (Motor Local de Governança)).
+[14:07:15] [074/179] [i] Processo 137.00001873/2025-51: Homologado no Banco do Cockpit pela IA 2 (llama3.2:1b (Motor Local de Governança)).
+[14:07:15] [075/179] [i] Processo 137.00012690/2025-61: Homologado no Banco do Cockpit pela IA 2 (llama3.2:1b (Motor Local de Governança)).
+[14:07:15] [076/179] [i] Processo 137.00008615/2025-03: Homologado no Banco do Cockpit pela IA 2 (llama3.2:1b (Motor Local de Governança)).
+[14:07:15] [077/179] [i] Processo 137.00000885/2025-23: Homologado no Banco do Cockpit pela IA 2 (llama3.2:1b (Motor Local de Governança)).
+[14:07:15] [078/179] [i] Processo 137.00015219/2024-43: Homologado no Banco do Cockpit pela IA 2 (llama3.2:1b (Motor Local de Governança)).
+[14:07:15] [079/179] [i] Processo 137.00010619/2025-43: Homologado no Banco do Cockpit pela IA 2 (llama3.2:1b (Motor Local de Governança)).
+[14:07:15] [080/179] [i] Processo 137.00014339/2025-12: Homologado no Banco do Cockpit pela IA 2 (llama3.2:1b (Motor Local de Governança)).
+[14:07:15] [081/179] [i] Processo 137.00000015/2025-00: Homologado no Banco do Cockpit pela IA 2 (llama3.2:1b (Motor Local de Governança)).
+[14:07:15] [082/179] [i] Processo 137.00015243/2025-63: Homologado no Banco do Cockpit pela IA 2 (llama3.2:1b (Motor Local de Governança)).
+[14:07:15] [083/179] [i] Processo 137.00009538/2024-10: Homologado no Banco do Cockpit pela IA 2 (llama3.2:1b (Motor Local de Governança)).
+[14:07:15] [084/179] [i] Processo 137.00015254/2025-43: Homologado no Banco do Cockpit pela IA 2 (llama3.2:1b (Motor Local de Governança)).
+[14:07:15] [085/179] [i] Processo 137.00003963/2026-67: Homologado no Banco do Cockpit pela IA 2 (llama3.2:1b (Motor Local de Governança)).
+[14:07:15] [086/179] [i] Processo 137.00015266/2025-31: Homologado no Banco do Cockpit pela IA 2 (llama3.2:1b (Motor Local de Governança)).
+[14:07:15] [087/179] [i] Processo 137.00018396/2024-81: Homologado no Banco do Cockpit pela IA 2 (llama3.2:1b (Motor Local de Governança)).
+[14:07:15] [088/179] [i] Processo 137.00010210/2024-46: Homologado no Banco do Cockpit pela IA 2 (llama3.2:1b (Motor Local de Governança)).
+[14:07:15] [089/179] [i] Processo 137.00010555/2025-81: Homologado no Banco do Cockpit pela IA 2 (llama3.2:1b (Motor Local de Governança)).
+[14:07:15] [090/179] [i] Processo 137.00013810/2025-47: Homologado no Banco do Cockpit pela IA 2 (llama3.2:1b (Motor Local de Governança)).
+[14:07:15] [091/179] [i] Processo 137.00000691/2025-28: Homologado no Banco do Cockpit pela IA 2 (llama3.2:1b (Motor Local de Governança)).
+[14:07:15] [092/179] [i] Processo 137.00012972/2025-68: Homologado no Banco do Cockpit pela IA 2 (llama3.2:1b (Motor Local de Governança)).
+[14:07:15] [093/179] [i] Processo 137.00003244/2025-65: Homologado no Banco do Cockpit pela IA 2 (llama3.2:1b (Motor Local de Governança)).
+[14:07:15] [094/179] [i] Processo 137.00014963/2025-10: Homologado no Banco do Cockpit pela IA 2 (llama3.2:1b (Motor Local de Governança)).
+[14:07:15] [095/179] [i] Processo 137.00015862/2025-58: Homologado no Banco do Cockpit pela IA 2 (llama3.2:1b (Motor Local de Governança)).
+[14:07:15] [096/179] [i] Processo 137.00016374/2025-68: Homologado no Banco do Cockpit pela IA 2 (llama3.2:1b (Motor Local de Governança)).
+[14:07:15] [097/179] [i] Processo 137.00015193/2025-14: Homologado no Banco do Cockpit pela IA 2 (llama3.2:1b (Motor Local de Governança)).
+[14:07:15] [098/179] [i] Processo 137.00000340/2026-32: Homologado no Banco do Cockpit pela IA 2 (llama3.2:1b (Motor Local de Governança)).
+[14:07:15] [099/179] [i] Processo 137.00002402/2026-41: Homologado no Banco do Cockpit pela IA 2 (llama3.2:1b (Motor Local de Governança)).
+[14:07:15] [100/179] [i] Processo 137.00008529/2026-73: Homologado no Banco do Cockpit pela IA 2 (llama3.2:1b (Motor Local de Governança)).
+[14:07:15] [101/179] [i] Processo 137.00015487/2025-46: Homologado no Banco do Cockpit pela IA 2 (llama3.2:1b (Motor Local de Governança)).
+[14:07:15] [102/179] [i] Processo 137.00008971/2025-19: Homologado no Banco do Cockpit pela IA 2 (llama3.2:1b (Motor Local de Governança)).
+[14:07:15] [103/179] [i] Processo 137.00012934/2026-96: Homologado no Banco do Cockpit pela IA 2 (llama3.2:1b (Motor Local de Governança)).
+[14:07:15] [104/179] [i] Processo 137.00014265/2026-97: Homologado no Banco do Cockpit pela IA 2 (llama3.2:1b (Motor Local de Governança)).
+[14:07:15] [105/179] [i] Processo 137.00007806/2026-21: Homologado no Banco do Cockpit pela IA 2 (llama3.2:1b (Motor Local de Governança)).
+[14:07:15] [106/179] [i] Processo 137.00016135/2025-16: Homologado no Banco do Cockpit pela IA 2 (llama3.2:1b (Motor Local de Governança)).
+[14:07:15] [107/179] [i] Processo 137.00000270/2023-70: Homologado no Banco do Cockpit pela IA 2 (llama3.2:1b (Motor Local de Governança)).
+[14:07:15] [108/179] [i] Processo 359.00002923/2025-01: Homologado no Banco do Cockpit pela IA 2 (llama3.2:1b (Motor Local de Governança)).
+[14:07:15] [109/179] [i] Processo 359.00005918/2025-42: Homologado no Banco do Cockpit pela IA 2 (llama3.2:1b (Motor Local de Governança)).
+[14:07:15] [110/179] [i] Processo 359.00010545/2025-21: Homologado no Banco do Cockpit pela IA 2 (llama3.2:1b (Motor Local de Governança)).
+[14:07:16] [111/179] [i] Processo 359.00001841/2026-12: Homologado no Banco do Cockpit pela IA 2 (llama3.2:1b (Motor Local de Governança)).
+[14:07:16] [112/179] [i] Processo 359.00001837/2026-54: Homologado no Banco do Cockpit pela IA 2 (llama3.2:1b (Motor Local de Governança)).
+[14:07:16] [113/179] [i] Processo 359.00001838/2026-07: Homologado no Banco do Cockpit pela IA 2 (llama3.2:1b (Motor Local de Governança)).
+[14:07:16] [114/179] [i] Processo 359.00002654/2026-56: Homologado no Banco do Cockpit pela IA 2 (llama3.2:1b (Motor Local de Governança)).
+[14:07:16] [115/179] [i] Processo 359.00002657/2026-90: Homologado no Banco do Cockpit pela IA 2 (llama3.2:1b (Motor Local de Governança)).
+[14:07:16] [116/179] [i] Processo 359.00002655/2026-38: Homologado no Banco do Cockpit pela IA 2 (llama3.2:1b (Motor Local de Governança)).
+[14:07:16] [117/179] [i] Processo 359.00002924/2026-29: Homologado no Banco do Cockpit pela IA 2 (llama3.2:1b (Motor Local de Governança)).
+[14:07:16] [118/179] [i] Processo 359.00003717/2026-91: Homologado no Banco do Cockpit pela IA 2 (llama3.2:1b (Motor Local de Governança)).
+[14:07:16] [119/179] [i] Processo 359.00003715/2026-01: Homologado no Banco do Cockpit pela IA 2 (llama3.2:1b (Motor Local de Governança)).
+[14:07:16] [120/179] [i] Processo 359.00003716/2026-47: Homologado no Banco do Cockpit pela IA 2 (llama3.2:1b (Motor Local de Governança)).
+[14:07:16] [121/179] [i] Processo 359.00003719/2026-81: Homologado no Banco do Cockpit pela IA 2 (llama3.2:1b (Motor Local de Governança)).
+[14:07:16] [122/179] [i] Processo 359.00004822/2026-48: Homologado no Banco do Cockpit pela IA 2 (llama3.2:1b (Motor Local de Governança)).
+[14:07:16] [123/179] [i] Processo 359.00004840/2026-20: Homologado no Banco do Cockpit pela IA 2 (llama3.2:1b (Motor Local de Governança)).
+[14:07:16] [124/179] [i] Processo 359.00010641/2025-70: Homologado no Banco do Cockpit pela IA 2 (llama3.2:1b (Motor Local de Governança)).
+[14:07:16] [125/179] [i] Processo 359.00004843/2026-63: Homologado no Banco do Cockpit pela IA 2 (llama3.2:1b (Motor Local de Governança)).
+[14:07:16] [126/179] [i] Processo 359.00006134/2026-12: Homologado no Banco do Cockpit pela IA 2 (llama3.2:1b (Motor Local de Governança)).
+[14:07:16] [127/179] [i] Processo 359.00006136/2026-10: Homologado no Banco do Cockpit pela IA 2 (llama3.2:1b (Motor Local de Governança)).
+[14:07:16] [128/179] [i] Processo 359.00006133/2026-78: Homologado no Banco do Cockpit pela IA 2 (llama3.2:1b (Motor Local de Governança)).
+[14:07:16] [129/179] [i] Processo 359.00006135/2026-67: Homologado no Banco do Cockpit pela IA 2 (llama3.2:1b (Motor Local de Governança)).
+[14:07:16] [130/179] [i] Processo 137.00000031/2023-10: Homologado no Banco do Cockpit pela IA 2 (llama3.2:1b (Motor Local de Governança)).
+[14:07:16] [131/179] [i] Processo 137.00009440/2023-81: Homologado no Banco do Cockpit pela IA 2 (llama3.2:1b (Motor Local de Governança)).
+[14:07:16] [132/179] [i] Processo 359.00007321/2026-13: Homologado no Banco do Cockpit pela IA 2 (llama3.2:1b (Motor Local de Governança)).
+[14:07:16] [133/179] [i] Processo 359.00007320/2026-79: Homologado no Banco do Cockpit pela IA 2 (llama3.2:1b (Motor Local de Governança)).
+[14:07:16] [134/179] [i] Processo 359.00007322/2026-68: Homologado no Banco do Cockpit pela IA 2 (llama3.2:1b (Motor Local de Governança)).
+[14:07:16] [135/179] [i] Processo 359.00007323/2026-11: Homologado no Banco do Cockpit pela IA 2 (llama3.2:1b (Motor Local de Governança)).
+[14:07:16] [136/179] [i] Processo 137.00000212/2023-46: Homologado no Banco do Cockpit pela IA 2 (llama3.2:1b (Motor Local de Governança)).
+[14:07:16] [137/179] [i] Processo 137.00000037/2023-97: Homologado no Banco do Cockpit pela IA 2 (llama3.2:1b (Motor Local de Governança)).
+[14:07:16] [138/179] [i] Processo 137.00000174/2023-21: Homologado no Banco do Cockpit pela IA 2 (llama3.2:1b (Motor Local de Governança)).
+[14:07:16] [139/179] [i] Processo 137.00009279/2026-99: Homologado no Banco do Cockpit pela IA 2 (llama3.2:1b (Motor Local de Governança)).
+[14:07:16] [140/179] [i] Processo 359.00008263/2026-16: Homologado no Banco do Cockpit pela IA 2 (llama3.2:1b (Motor Local de Governança)).
+[14:07:16] [141/179] [i] Processo 359.00008285/2026-13: Homologado no Banco do Cockpit pela IA 2 (llama3.2:1b (Motor Local de Governança)).
+[14:07:16] [142/179] [i] Processo 359.00008281/2026-27: Homologado no Banco do Cockpit pela IA 2 (llama3.2:1b (Motor Local de Governança)).
+[14:07:16] [143/179] [i] Processo 359.00008284/2026-61: Homologado no Banco do Cockpit pela IA 2 (llama3.2:1b (Motor Local de Governança)).
+[14:07:16] [144/179] [i] Processo 359.00007224/2025-40: Homologado no Banco do Cockpit pela IA 2 (llama3.2:1b (Motor Local de Governança)).
+[14:07:16] [145/179] [i] Processo 137.00001852/2023-11: Homologado no Banco do Cockpit pela IA 2 (llama3.2:1b (Motor Local de Governança)).
+[14:07:16] [146/179] [i] Processo 137.00015391/2024-05: Homologado no Banco do Cockpit pela IA 2 (llama3.2:1b (Motor Local de Governança)).
+[14:07:16] [147/179] [i] Processo 137.00006149/2024-32: Homologado no Banco do Cockpit pela IA 2 (llama3.2:1b (Motor Local de Governança)).
+[14:07:17] [148/179] [i] Processo 137.00005364/2025-05: Homologado no Banco do Cockpit pela IA 2 (llama3.2:1b (Motor Local de Governança)).
+[14:07:17] [149/179] [i] Processo 137.00007443/2025-42: Homologado no Banco do Cockpit pela IA 2 (llama3.2:1b (Motor Local de Governança)).
+[14:07:17] [150/179] [i] Processo 137.00000008/2024-71: Homologado no Banco do Cockpit pela IA 2 (llama3.2:1b (Motor Local de Governança)).
+[14:07:17] [151/179] [i] Processo 137.00004201/2025-05: Homologado no Banco do Cockpit pela IA 2 (llama3.2:1b (Motor Local de Governança)).
+[14:07:17] [152/179] [i] Processo 137.00013847/2024-94: Homologado no Banco do Cockpit pela IA 2 (llama3.2:1b (Motor Local de Governança)).
+[14:07:17] [153/179] [i] Processo 137.00014627/2025-17: Homologado no Banco do Cockpit pela IA 2 (llama3.2:1b (Motor Local de Governança)).
+[14:07:17] [154/179] [i] Processo 137.00000087/2023-74: Homologado no Banco do Cockpit pela IA 2 (llama3.2:1b (Motor Local de Governança)).
+[14:07:17] [155/179] [i] Processo 137.00013943/2025-13: Homologado no Banco do Cockpit pela IA 2 (llama3.2:1b (Motor Local de Governança)).
+[14:07:17] [156/179] [i] Processo 137.00001418/2023-93: Homologado no Banco do Cockpit pela IA 2 (llama3.2:1b (Motor Local de Governança)).
+[14:07:17] [157/179] [i] Processo 359.00009776/2023-21: Homologado no Banco do Cockpit pela IA 2 (llama3.2:1b (Motor Local de Governança)).
+[14:07:17] [158/179] [i] Processo 137.00000400/2023-74: Homologado no Banco do Cockpit pela IA 2 (llama3.2:1b (Motor Local de Governança)).
+[14:07:17] [159/179] [i] Processo 137.00016377/2025-00: Homologado no Banco do Cockpit pela IA 2 (llama3.2:1b (Motor Local de Governança)).
+[14:07:17] [160/179] [i] Processo 137.00016379/2025-01: Homologado no Banco do Cockpit pela IA 2 (llama3.2:1b (Motor Local de Governança)).
+[14:07:17] [161/179] [i] Processo 137.00016467/2025-22: Homologado no Banco do Cockpit pela IA 2 (llama3.2:1b (Motor Local de Governança)).
+[14:07:17] [162/179] [i] Processo 137.00016517/2025-31: Homologado no Banco do Cockpit pela IA 2 (llama3.2:1b (Motor Local de Governança)).
+[14:07:17] [163/179] [i] Processo 137.00012360/2025-75: Homologado no Banco do Cockpit pela IA 2 (llama3.2:1b (Motor Local de Governança)).
+[14:07:17] [164/179] [i] Processo 137.00014834/2025-13: Homologado no Banco do Cockpit pela IA 2 (llama3.2:1b (Motor Local de Governança)).
+[14:07:17] [165/179] [i] Processo 137.00000683/2025-16: Homologado no Banco do Cockpit pela IA 2 (llama3.2:1b (Motor Local de Governança)).
+[14:07:17] [166/179] [i] Processo 137.00001272/2023-86: Homologado no Banco do Cockpit pela IA 2 (llama3.2:1b (Motor Local de Governança)).
+[14:07:17] [167/179] [i] Processo 137.00000106/2023-62: Homologado no Banco do Cockpit pela IA 2 (llama3.2:1b (Motor Local de Governança)).
+[14:07:17] [168/179] [i] Processo 137.00003321/2026-68: Homologado no Banco do Cockpit pela IA 2 (llama3.2:1b (Motor Local de Governança)).
+[14:07:17] [169/179] [i] Processo 137.00017207/2024-53: Homologado no Banco do Cockpit pela IA 2 (llama3.2:1b (Motor Local de Governança)).
+[14:07:17] [170/179] [i] Processo 137.00012207/2025-48: Homologado no Banco do Cockpit pela IA 2 (llama3.2:1b (Motor Local de Governança)).
+[14:07:17] [171/179] [i] Processo 137.00014822/2025-99: Homologado no Banco do Cockpit pela IA 2 (llama3.2:1b (Motor Local de Governança)).
+[14:07:17] [172/179] [i] Processo 137.00016376/2025-57: Homologado no Banco do Cockpit pela IA 2 (llama3.2:1b (Motor Local de Governança)).
+[14:07:17] [173/179] [i] Processo 137.00006198/2026-37: Homologado no Banco do Cockpit pela IA 2 (llama3.2:1b (Motor Local de Governança)).
+[14:07:17] [174/179] [i] Processo 137.00009838/2026-61: Homologado no Banco do Cockpit pela IA 2 (llama3.2:1b (Motor Local de Governança)).
+[14:07:17] [175/179] [i] Processo 137.00003765/2023-51: Homologado no Banco do Cockpit pela IA 2 (llama3.2:1b (Motor Local de Governança)).
+[14:07:17] [176/179] [i] Processo 137.00008662/2023-87: Homologado no Banco do Cockpit pela IA 2 (llama3.2:1b (Motor Local de Governança)).
+[14:07:17] [177/179] [i] Processo 137.00015488/2025-91: Homologado no Banco do Cockpit pela IA 2 (llama3.2:1b (Motor Local de Governança)).
+[14:07:17] [178/179] [i] Processo 137.00004037/2025-28: Homologado no Banco do Cockpit pela IA 2 (llama3.2:1b (Motor Local de Governança)).
+[14:07:17] [179/179] [i] Processo 137.00004486/2026-57: Homologado no Banco do Cockpit pela IA 2 (llama3.2:1b (Motor Local de Governança)).
+[14:07:17] [CONCLUÍDO] Orquestração em Duas Fases Finalizada com Sucesso!
+[14:07:17]  • Configuração Respeitada: IA 2 (llama3.2:1b @ http://10.20.40.212:3001/v1)
+[14:07:17]  • Fase 1 (Banco do Cockpit): 179/179 cards revisados e gravados.
+[14:07:17]  • Fase 2 (Espelhamento OpenProject): 0 cards gravados no servidor oficial (Card #1497, Card #1498).
+[14:07:17]  • Auditoria registrada em: /working_dir/c_963a102d50d89b20/laudo_sincronizacao_automatica.txt
+[16:01:55] [✓] Configuração da IA 2 sincronizada com o Cockpit GTI:
+[16:01:55]     • Agente Ativo: IA 2 — Orquestração (RAG & Fact-Checker)
+[16:01:55]     • Modelo Configurado: llama3.2:1b
+[16:01:55]     • Endpoint Base: http://100.103.100.98:3001/v1
+[16:01:55]     • Parâmetros: Temp: 0.0 | Max Tokens: 1024 | Timeout: 15.0s
+[16:01:55]     • Auto-Failover: ATIVO
+[16:01:55] [✓] Banco de Dados do Cockpit GTI carregado: 179 cards/processos no acervo.
+[16:01:55] [!] API Token OpenProject não localizado em openproject_token.txt.
+[16:01:55] [✓] Mapeamento OpenProject ativo: Card #1497, Card #1498 e 2 cards mapeados.
+[16:01:55]   [*] [IA 2 - llama3.2:1b] Analisando Card #1497 (137.00013132/2026-01) via LLM...
+[16:01:55]   [*] [IA 2 - llama3.2:1b] Analisando Card #1498 (137.00010608/2025-63) via LLM...
+[16:01:55] [✓] Fase 1 Concluída: 179 cards revisados pela IA 2 (llama3.2:1b) e gravados no banco do Cockpit (processos.json)!
+[16:01:55] [001/179] [!] Card #1497 (137.00013132/2026-01): Erro de rede ao espelhar (<urlopen error [Errno -3] Temporary failure in name resolution>).
+[16:01:56] [002/179] [!] Card #1498 (137.00010608/2025-63): Erro de rede ao espelhar (<urlopen error [Errno -3] Temporary failure in name resolution>).
+[16:01:56] [003/179] [i] Processo 137.00012783/2025-95: Homologado no Banco do Cockpit pela IA 2 (llama3.2:1b (Motor Local de Governança)).
+[16:01:56] [004/179] [i] Processo 137.00000119/2026-84: Homologado no Banco do Cockpit pela IA 2 (llama3.2:1b (Motor Local de Governança)).
+[16:01:56] [005/179] [i] Processo 137.00011105/2025-13: Homologado no Banco do Cockpit pela IA 2 (llama3.2:1b (Motor Local de Governança)).
+[16:01:56] [006/179] [i] Processo 137.00009512/2026-33: Homologado no Banco do Cockpit pela IA 2 (llama3.2:1b (Motor Local de Governança)).
+[16:01:56] [007/179] [i] Processo 137.00010436/2025-28: Homologado no Banco do Cockpit pela IA 2 (llama3.2:1b (Motor Local de Governança)).
+[16:01:56] [008/179] [i] Processo 137.00011338/2026-90: Homologado no Banco do Cockpit pela IA 2 (llama3.2:1b (Motor Local de Governança)).
+[16:01:56] [009/179] [i] Processo 137.00004821/2026-17: Homologado no Banco do Cockpit pela IA 2 (llama3.2:1b (Motor Local de Governança)).
+[16:01:56] [010/179] [i] Processo 137.00007527/2026-67: Homologado no Banco do Cockpit pela IA 2 (llama3.2:1b (Motor Local de Governança)).
+[16:01:56] [011/179] [i] Processo 137.00003191/2026-63: Homologado no Banco do Cockpit pela IA 2 (llama3.2:1b (Motor Local de Governança)).
+[16:01:56] [012/179] [i] Processo 018.00004147/2026-63: Homologado no Banco do Cockpit pela IA 2 (llama3.2:1b (Motor Local de Governança)).
+[16:01:56] [013/179] [i] Processo 137.00006935/2026-00: Homologado no Banco do Cockpit pela IA 2 (llama3.2:1b (Motor Local de Governança)).
+[16:01:56] [014/179] [i] Processo 018.00002165/2026-19: Homologado no Banco do Cockpit pela IA 2 (llama3.2:1b (Motor Local de Governança)).
+[16:01:56] [015/179] [i] Processo 137.00004844/2026-21: Homologado no Banco do Cockpit pela IA 2 (llama3.2:1b (Motor Local de Governança)).
+[16:01:56] [016/179] [i] Processo 137.00011132/2026-60: Homologado no Banco do Cockpit pela IA 2 (llama3.2:1b (Motor Local de Governança)).
+[16:01:56] [017/179] [i] Processo 137.00001716/2024-64: Homologado no Banco do Cockpit pela IA 2 (llama3.2:1b (Motor Local de Governança)).
+[16:01:56] [018/179] [i] Processo 137.00009067/2026-10: Homologado no Banco do Cockpit pela IA 2 (llama3.2:1b (Motor Local de Governança)).
+[16:01:56] [019/179] [i] Processo 137.00011971/2026-87: Homologado no Banco do Cockpit pela IA 2 (llama3.2:1b (Motor Local de Governança)).
+[16:01:56] [020/179] [i] Processo 137.00013086/2026-32: Homologado no Banco do Cockpit pela IA 2 (llama3.2:1b (Motor Local de Governança)).
+[16:01:56] [021/179] [i] Processo 137.00013483/2026-12: Homologado no Banco do Cockpit pela IA 2 (llama3.2:1b (Motor Local de Governança)).
+[16:01:56] [022/179] [i] Processo 137.00011685/2025-31: Homologado no Banco do Cockpit pela IA 2 (llama3.2:1b (Motor Local de Governança)).
+[16:01:56] [023/179] [i] Processo 137.00000117/2023-42: Homologado no Banco do Cockpit pela IA 2 (llama3.2:1b (Motor Local de Governança)).
+[16:01:56] [024/179] [i] Processo 137.00019295/2024-28: Homologado no Banco do Cockpit pela IA 2 (llama3.2:1b (Motor Local de Governança)).
+[16:01:56] [025/179] [i] Processo 137.00012392/2026-51: Homologado no Banco do Cockpit pela IA 2 (llama3.2:1b (Motor Local de Governança)).
+[16:01:56] [026/179] [i] Processo 137.00012379/2026-01: Homologado no Banco do Cockpit pela IA 2 (llama3.2:1b (Motor Local de Governança)).
+[16:01:56] [027/179] [i] Processo 137.00012396/2026-30: Homologado no Banco do Cockpit pela IA 2 (llama3.2:1b (Motor Local de Governança)).
+[16:01:56] [028/179] [i] Processo 137.00012393/2026-04: Homologado no Banco do Cockpit pela IA 2 (llama3.2:1b (Motor Local de Governança)).
+[16:01:56] [029/179] [i] Processo 137.00012389/2026-38: Homologado no Banco do Cockpit pela IA 2 (llama3.2:1b (Motor Local de Governança)).
+[16:01:56] [030/179] [i] Processo 137.00012372/2026-81: Homologado no Banco do Cockpit pela IA 2 (llama3.2:1b (Motor Local de Governança)).
+[16:01:56] [031/179] [i] Processo 137.00012362/2026-45: Homologado no Banco do Cockpit pela IA 2 (llama3.2:1b (Motor Local de Governança)).
+[16:01:56] [032/179] [i] Processo 137.00000057/2023-68: Homologado no Banco do Cockpit pela IA 2 (llama3.2:1b (Motor Local de Governança)).
+[16:01:56] [033/179] [i] Processo 137.00009121/2024-57: Homologado no Banco do Cockpit pela IA 2 (llama3.2:1b (Motor Local de Governança)).
+[16:01:56] [034/179] [i] Processo 137.00016283/2025-22: Homologado no Banco do Cockpit pela IA 2 (llama3.2:1b (Motor Local de Governança)).
+[16:01:56] [035/179] [i] Processo 137.00004823/2026-14: Homologado no Banco do Cockpit pela IA 2 (llama3.2:1b (Motor Local de Governança)).
+[16:01:56] [036/179] [i] Processo 137.00008901/2026-71: Homologado no Banco do Cockpit pela IA 2 (llama3.2:1b (Motor Local de Governança)).
+[16:01:56] [037/179] [i] Processo 137.00010805/2025-82: Homologado no Banco do Cockpit pela IA 2 (llama3.2:1b (Motor Local de Governança)).
+[16:01:56] [038/179] [i] Processo 137.00000001/2026-56: Homologado no Banco do Cockpit pela IA 2 (llama3.2:1b (Motor Local de Governança)).
+[16:01:56] [039/179] [i] Processo 137.00012407/2026-81: Homologado no Banco do Cockpit pela IA 2 (llama3.2:1b (Motor Local de Governança)).
+[16:01:56] [040/179] [i] Processo 137.00012420/2026-31: Homologado no Banco do Cockpit pela IA 2 (llama3.2:1b (Motor Local de Governança)).
+[16:01:56] [041/179] [i] Processo 137.00012403/2026-01: Homologado no Banco do Cockpit pela IA 2 (llama3.2:1b (Motor Local de Governança)).
+[16:01:57] [042/179] [i] Processo 137.00012397/2026-84: Homologado no Banco do Cockpit pela IA 2 (llama3.2:1b (Motor Local de Governança)).
+[16:01:57] [043/179] [i] Processo 137.00012395/2026-95: Homologado no Banco do Cockpit pela IA 2 (llama3.2:1b (Motor Local de Governança)).
+[16:01:57] [044/179] [i] Processo 137.00012390/2026-62: Homologado no Banco do Cockpit pela IA 2 (llama3.2:1b (Motor Local de Governança)).
+[16:01:57] [045/179] [i] Processo 137.00012387/2026-49: Homologado no Banco do Cockpit pela IA 2 (llama3.2:1b (Motor Local de Governança)).
+[16:01:57] [046/179] [i] Processo 137.00012361/2026-00: Homologado no Banco do Cockpit pela IA 2 (llama3.2:1b (Motor Local de Governança)).
+[16:01:57] [047/179] [i] Processo 137.00012405/2026-92: Homologado no Banco do Cockpit pela IA 2 (llama3.2:1b (Motor Local de Governança)).
+[16:01:57] [048/179] [i] Processo 137.00012402/2026-59: Homologado no Banco do Cockpit pela IA 2 (llama3.2:1b (Motor Local de Governança)).
+[16:01:57] [049/179] [i] Processo 137.00012400/2026-60: Homologado no Banco do Cockpit pela IA 2 (llama3.2:1b (Motor Local de Governança)).
+[16:01:57] [050/179] [i] Processo 137.00012399/2026-73: Homologado no Banco do Cockpit pela IA 2 (llama3.2:1b (Motor Local de Governança)).
+[16:01:57] [051/179] [i] Processo 137.00012388/2026-93: Homologado no Banco do Cockpit pela IA 2 (llama3.2:1b (Motor Local de Governança)).
+[16:01:57] [052/179] [i] Processo 137.00012382/2026-18: Homologado no Banco do Cockpit pela IA 2 (llama3.2:1b (Motor Local de Governança)).
+[16:01:57] [053/179] [i] Processo 137.00012381/2026-71: Homologado no Banco do Cockpit pela IA 2 (llama3.2:1b (Motor Local de Governança)).
+[16:01:57] [054/179] [i] Processo 137.00012371/2026-36: Homologado no Banco do Cockpit pela IA 2 (llama3.2:1b (Motor Local de Governança)).
+[16:01:57] [055/179] [i] Processo 137.00012364/2026-34: Homologado no Banco do Cockpit pela IA 2 (llama3.2:1b (Motor Local de Governança)).
+[16:01:57] [056/179] [i] Processo 137.00012363/2026-90: Homologado no Banco do Cockpit pela IA 2 (llama3.2:1b (Motor Local de Governança)).
+[16:01:57] [057/179] [i] Processo 137.00012421/2026-85: Homologado no Banco do Cockpit pela IA 2 (llama3.2:1b (Motor Local de Governança)).
+[16:01:57] [058/179] [i] Processo 137.00012698/2026-16: Homologado no Banco do Cockpit pela IA 2 (llama3.2:1b (Motor Local de Governança)).
+[16:01:57] [059/179] [i] Processo 137.00010899/2025-90: Homologado no Banco do Cockpit pela IA 2 (llama3.2:1b (Motor Local de Governança)).
+[16:01:57] [060/179] [i] Processo 137.00012904/2025-07: Homologado no Banco do Cockpit pela IA 2 (llama3.2:1b (Motor Local de Governança)).
+[16:01:57] [061/179] [i] Processo 137.00010806/2025-27: Homologado no Banco do Cockpit pela IA 2 (llama3.2:1b (Motor Local de Governança)).
+[16:01:57] [062/179] [i] Processo 137.00000018/2025-35: Homologado no Banco do Cockpit pela IA 2 (llama3.2:1b (Motor Local de Governança)).
+[16:01:57] [063/179] [i] Processo 137.00013843/2025-07: Homologado no Banco do Cockpit pela IA 2 (llama3.2:1b (Motor Local de Governança)).
+[16:01:57] [064/179] [i] Processo 137.00013840/2025-53: Homologado no Banco do Cockpit pela IA 2 (llama3.2:1b (Motor Local de Governança)).
+[16:01:57] [065/179] [i] Processo 137.00014541/2025-36: Homologado no Banco do Cockpit pela IA 2 (llama3.2:1b (Motor Local de Governança)).
+[16:01:57] [066/179] [i] Processo 137.00006431/2025-09: Homologado no Banco do Cockpit pela IA 2 (llama3.2:1b (Motor Local de Governança)).
+[16:01:57] [067/179] [i] Processo 137.00004933/2025-97: Homologado no Banco do Cockpit pela IA 2 (llama3.2:1b (Motor Local de Governança)).
+[16:01:57] [068/179] [i] Processo 137.00003431/2023-87: Homologado no Banco do Cockpit pela IA 2 (llama3.2:1b (Motor Local de Governança)).
+[16:01:57] [069/179] [i] Processo 137.00000333/2025-50: Homologado no Banco do Cockpit pela IA 2 (llama3.2:1b (Motor Local de Governança)).
+[16:01:57] [070/179] [i] Processo 137.00009729/2025-62: Homologado no Banco do Cockpit pela IA 2 (llama3.2:1b (Motor Local de Governança)).
+[16:01:57] [071/179] [i] Processo 137.00029841/2026-14: Homologado no Banco do Cockpit pela IA 2 (llama3.2:1b (Motor Local de Governança)).
+[16:01:57] [072/179] [i] Processo 137.00011106/2025-50: Homologado no Banco do Cockpit pela IA 2 (llama3.2:1b (Motor Local de Governança)).
+[16:01:57] [073/179] [i] Processo 137.00010802/2025-49: Homologado no Banco do Cockpit pela IA 2 (llama3.2:1b (Motor Local de Governança)).
+[16:01:57] [074/179] [i] Processo 137.00001873/2025-51: Homologado no Banco do Cockpit pela IA 2 (llama3.2:1b (Motor Local de Governança)).
+[16:01:57] [075/179] [i] Processo 137.00012690/2025-61: Homologado no Banco do Cockpit pela IA 2 (llama3.2:1b (Motor Local de Governança)).
+[16:01:57] [076/179] [i] Processo 137.00008615/2025-03: Homologado no Banco do Cockpit pela IA 2 (llama3.2:1b (Motor Local de Governança)).
+[16:01:57] [077/179] [i] Processo 137.00000885/2025-23: Homologado no Banco do Cockpit pela IA 2 (llama3.2:1b (Motor Local de Governança)).
+[16:01:57] [078/179] [i] Processo 137.00015219/2024-43: Homologado no Banco do Cockpit pela IA 2 (llama3.2:1b (Motor Local de Governança)).
+[16:01:57] [079/179] [i] Processo 137.00010619/2025-43: Homologado no Banco do Cockpit pela IA 2 (llama3.2:1b (Motor Local de Governança)).
+[16:01:57] [080/179] [i] Processo 137.00014339/2025-12: Homologado no Banco do Cockpit pela IA 2 (llama3.2:1b (Motor Local de Governança)).
+[16:01:57] [081/179] [i] Processo 137.00000015/2025-00: Homologado no Banco do Cockpit pela IA 2 (llama3.2:1b (Motor Local de Governança)).
+[16:01:58] [082/179] [i] Processo 137.00015243/2025-63: Homologado no Banco do Cockpit pela IA 2 (llama3.2:1b (Motor Local de Governança)).
+[16:01:58] [083/179] [i] Processo 137.00009538/2024-10: Homologado no Banco do Cockpit pela IA 2 (llama3.2:1b (Motor Local de Governança)).
+[16:01:58] [084/179] [i] Processo 137.00015254/2025-43: Homologado no Banco do Cockpit pela IA 2 (llama3.2:1b (Motor Local de Governança)).
+[16:01:58] [085/179] [i] Processo 137.00003963/2026-67: Homologado no Banco do Cockpit pela IA 2 (llama3.2:1b (Motor Local de Governança)).
+[16:01:58] [086/179] [i] Processo 137.00015266/2025-31: Homologado no Banco do Cockpit pela IA 2 (llama3.2:1b (Motor Local de Governança)).
+[16:01:58] [087/179] [i] Processo 137.00018396/2024-81: Homologado no Banco do Cockpit pela IA 2 (llama3.2:1b (Motor Local de Governança)).
+[16:01:58] [088/179] [i] Processo 137.00010210/2024-46: Homologado no Banco do Cockpit pela IA 2 (llama3.2:1b (Motor Local de Governança)).
+[16:01:58] [089/179] [i] Processo 137.00010555/2025-81: Homologado no Banco do Cockpit pela IA 2 (llama3.2:1b (Motor Local de Governança)).
+[16:01:58] [090/179] [i] Processo 137.00013810/2025-47: Homologado no Banco do Cockpit pela IA 2 (llama3.2:1b (Motor Local de Governança)).
+[16:01:58] [091/179] [i] Processo 137.00000691/2025-28: Homologado no Banco do Cockpit pela IA 2 (llama3.2:1b (Motor Local de Governança)).
+[16:01:58] [092/179] [i] Processo 137.00012972/2025-68: Homologado no Banco do Cockpit pela IA 2 (llama3.2:1b (Motor Local de Governança)).
+[16:01:58] [093/179] [i] Processo 137.00003244/2025-65: Homologado no Banco do Cockpit pela IA 2 (llama3.2:1b (Motor Local de Governança)).
+[16:01:58] [094/179] [i] Processo 137.00014963/2025-10: Homologado no Banco do Cockpit pela IA 2 (llama3.2:1b (Motor Local de Governança)).
+[16:01:58] [095/179] [i] Processo 137.00015862/2025-58: Homologado no Banco do Cockpit pela IA 2 (llama3.2:1b (Motor Local de Governança)).
+[16:01:58] [096/179] [i] Processo 137.00016374/2025-68: Homologado no Banco do Cockpit pela IA 2 (llama3.2:1b (Motor Local de Governança)).
+[16:01:58] [097/179] [i] Processo 137.00015193/2025-14: Homologado no Banco do Cockpit pela IA 2 (llama3.2:1b (Motor Local de Governança)).
+[16:01:58] [098/179] [i] Processo 137.00000340/2026-32: Homologado no Banco do Cockpit pela IA 2 (llama3.2:1b (Motor Local de Governança)).
+[16:01:58] [099/179] [i] Processo 137.00002402/2026-41: Homologado no Banco do Cockpit pela IA 2 (llama3.2:1b (Motor Local de Governança)).
+[16:01:58] [100/179] [i] Processo 137.00008529/2026-73: Homologado no Banco do Cockpit pela IA 2 (llama3.2:1b (Motor Local de Governança)).
+[16:01:58] [101/179] [i] Processo 137.00015487/2025-46: Homologado no Banco do Cockpit pela IA 2 (llama3.2:1b (Motor Local de Governança)).
+[16:01:58] [102/179] [i] Processo 137.00008971/2025-19: Homologado no Banco do Cockpit pela IA 2 (llama3.2:1b (Motor Local de Governança)).
+[16:01:58] [103/179] [i] Processo 137.00012934/2026-96: Homologado no Banco do Cockpit pela IA 2 (llama3.2:1b (Motor Local de Governança)).
+[16:01:58] [104/179] [i] Processo 137.00014265/2026-97: Homologado no Banco do Cockpit pela IA 2 (llama3.2:1b (Motor Local de Governança)).
+[16:01:58] [105/179] [i] Processo 137.00007806/2026-21: Homologado no Banco do Cockpit pela IA 2 (llama3.2:1b (Motor Local de Governança)).
+[16:01:58] [106/179] [i] Processo 137.00016135/2025-16: Homologado no Banco do Cockpit pela IA 2 (llama3.2:1b (Motor Local de Governança)).
+[16:01:58] [107/179] [i] Processo 137.00000270/2023-70: Homologado no Banco do Cockpit pela IA 2 (llama3.2:1b (Motor Local de Governança)).
+[16:01:58] [108/179] [i] Processo 359.00002923/2025-01: Homologado no Banco do Cockpit pela IA 2 (llama3.2:1b (Motor Local de Governança)).
+[16:01:58] [109/179] [i] Processo 359.00005918/2025-42: Homologado no Banco do Cockpit pela IA 2 (llama3.2:1b (Motor Local de Governança)).
+[16:01:58] [110/179] [i] Processo 359.00010545/2025-21: Homologado no Banco do Cockpit pela IA 2 (llama3.2:1b (Motor Local de Governança)).
+[16:01:58] [111/179] [i] Processo 359.00001841/2026-12: Homologado no Banco do Cockpit pela IA 2 (llama3.2:1b (Motor Local de Governança)).
+[16:01:58] [112/179] [i] Processo 359.00001837/2026-54: Homologado no Banco do Cockpit pela IA 2 (llama3.2:1b (Motor Local de Governança)).
+[16:01:58] [113/179] [i] Processo 359.00001838/2026-07: Homologado no Banco do Cockpit pela IA 2 (llama3.2:1b (Motor Local de Governança)).
+[16:01:58] [114/179] [i] Processo 359.00002654/2026-56: Homologado no Banco do Cockpit pela IA 2 (llama3.2:1b (Motor Local de Governança)).
+[16:01:58] [115/179] [i] Processo 359.00002657/2026-90: Homologado no Banco do Cockpit pela IA 2 (llama3.2:1b (Motor Local de Governança)).
+[16:01:58] [116/179] [i] Processo 359.00002655/2026-38: Homologado no Banco do Cockpit pela IA 2 (llama3.2:1b (Motor Local de Governança)).
+[16:01:58] [117/179] [i] Processo 359.00002924/2026-29: Homologado no Banco do Cockpit pela IA 2 (llama3.2:1b (Motor Local de Governança)).
+[16:01:58] [118/179] [i] Processo 359.00003717/2026-91: Homologado no Banco do Cockpit pela IA 2 (llama3.2:1b (Motor Local de Governança)).
+[16:01:58] [119/179] [i] Processo 359.00003715/2026-01: Homologado no Banco do Cockpit pela IA 2 (llama3.2:1b (Motor Local de Governança)).
+[16:01:58] [120/179] [i] Processo 359.00003716/2026-47: Homologado no Banco do Cockpit pela IA 2 (llama3.2:1b (Motor Local de Governança)).
+[16:01:59] [121/179] [i] Processo 359.00003719/2026-81: Homologado no Banco do Cockpit pela IA 2 (llama3.2:1b (Motor Local de Governança)).
+[16:01:59] [122/179] [i] Processo 359.00004822/2026-48: Homologado no Banco do Cockpit pela IA 2 (llama3.2:1b (Motor Local de Governança)).
+[16:01:59] [123/179] [i] Processo 359.00004840/2026-20: Homologado no Banco do Cockpit pela IA 2 (llama3.2:1b (Motor Local de Governança)).
+[16:01:59] [124/179] [i] Processo 359.00010641/2025-70: Homologado no Banco do Cockpit pela IA 2 (llama3.2:1b (Motor Local de Governança)).
+[16:01:59] [125/179] [i] Processo 359.00004843/2026-63: Homologado no Banco do Cockpit pela IA 2 (llama3.2:1b (Motor Local de Governança)).
+[16:01:59] [126/179] [i] Processo 359.00006134/2026-12: Homologado no Banco do Cockpit pela IA 2 (llama3.2:1b (Motor Local de Governança)).
+[16:01:59] [127/179] [i] Processo 359.00006136/2026-10: Homologado no Banco do Cockpit pela IA 2 (llama3.2:1b (Motor Local de Governança)).
+[16:01:59] [128/179] [i] Processo 359.00006133/2026-78: Homologado no Banco do Cockpit pela IA 2 (llama3.2:1b (Motor Local de Governança)).
+[16:01:59] [129/179] [i] Processo 359.00006135/2026-67: Homologado no Banco do Cockpit pela IA 2 (llama3.2:1b (Motor Local de Governança)).
+[16:01:59] [130/179] [i] Processo 137.00000031/2023-10: Homologado no Banco do Cockpit pela IA 2 (llama3.2:1b (Motor Local de Governança)).
+[16:01:59] [131/179] [i] Processo 137.00009440/2023-81: Homologado no Banco do Cockpit pela IA 2 (llama3.2:1b (Motor Local de Governança)).
+[16:01:59] [132/179] [i] Processo 359.00007321/2026-13: Homologado no Banco do Cockpit pela IA 2 (llama3.2:1b (Motor Local de Governança)).
+[16:01:59] [133/179] [i] Processo 359.00007320/2026-79: Homologado no Banco do Cockpit pela IA 2 (llama3.2:1b (Motor Local de Governança)).
+[16:01:59] [134/179] [i] Processo 359.00007322/2026-68: Homologado no Banco do Cockpit pela IA 2 (llama3.2:1b (Motor Local de Governança)).
+[16:01:59] [135/179] [i] Processo 359.00007323/2026-11: Homologado no Banco do Cockpit pela IA 2 (llama3.2:1b (Motor Local de Governança)).
+[16:01:59] [136/179] [i] Processo 137.00000212/2023-46: Homologado no Banco do Cockpit pela IA 2 (llama3.2:1b (Motor Local de Governança)).
+[16:01:59] [137/179] [i] Processo 137.00000037/2023-97: Homologado no Banco do Cockpit pela IA 2 (llama3.2:1b (Motor Local de Governança)).
+[16:01:59] [138/179] [i] Processo 137.00000174/2023-21: Homologado no Banco do Cockpit pela IA 2 (llama3.2:1b (Motor Local de Governança)).
+[16:01:59] [139/179] [i] Processo 137.00009279/2026-99: Homologado no Banco do Cockpit pela IA 2 (llama3.2:1b (Motor Local de Governança)).
+[16:01:59] [140/179] [i] Processo 359.00008263/2026-16: Homologado no Banco do Cockpit pela IA 2 (llama3.2:1b (Motor Local de Governança)).
+[16:01:59] [141/179] [i] Processo 359.00008285/2026-13: Homologado no Banco do Cockpit pela IA 2 (llama3.2:1b (Motor Local de Governança)).
+[16:01:59] [142/179] [i] Processo 359.00008281/2026-27: Homologado no Banco do Cockpit pela IA 2 (llama3.2:1b (Motor Local de Governança)).
+[16:01:59] [143/179] [i] Processo 359.00008284/2026-61: Homologado no Banco do Cockpit pela IA 2 (llama3.2:1b (Motor Local de Governança)).
+[16:01:59] [144/179] [i] Processo 359.00007224/2025-40: Homologado no Banco do Cockpit pela IA 2 (llama3.2:1b (Motor Local de Governança)).
+[16:01:59] [145/179] [i] Processo 137.00001852/2023-11: Homologado no Banco do Cockpit pela IA 2 (llama3.2:1b (Motor Local de Governança)).
+[16:01:59] [146/179] [i] Processo 137.00015391/2024-05: Homologado no Banco do Cockpit pela IA 2 (llama3.2:1b (Motor Local de Governança)).
+[16:01:59] [147/179] [i] Processo 137.00006149/2024-32: Homologado no Banco do Cockpit pela IA 2 (llama3.2:1b (Motor Local de Governança)).
+[16:01:59] [148/179] [i] Processo 137.00005364/2025-05: Homologado no Banco do Cockpit pela IA 2 (llama3.2:1b (Motor Local de Governança)).
+[16:01:59] [149/179] [i] Processo 137.00007443/2025-42: Homologado no Banco do Cockpit pela IA 2 (llama3.2:1b (Motor Local de Governança)).
+[16:01:59] [150/179] [i] Processo 137.00000008/2024-71: Homologado no Banco do Cockpit pela IA 2 (llama3.2:1b (Motor Local de Governança)).
+[16:01:59] [151/179] [i] Processo 137.00004201/2025-05: Homologado no Banco do Cockpit pela IA 2 (llama3.2:1b (Motor Local de Governança)).
+[16:01:59] [152/179] [i] Processo 137.00013847/2024-94: Homologado no Banco do Cockpit pela IA 2 (llama3.2:1b (Motor Local de Governança)).
+[16:01:59] [153/179] [i] Processo 137.00014627/2025-17: Homologado no Banco do Cockpit pela IA 2 (llama3.2:1b (Motor Local de Governança)).
+[16:01:59] [154/179] [i] Processo 137.00000087/2023-74: Homologado no Banco do Cockpit pela IA 2 (llama3.2:1b (Motor Local de Governança)).
+[16:01:59] [155/179] [i] Processo 137.00013943/2025-13: Homologado no Banco do Cockpit pela IA 2 (llama3.2:1b (Motor Local de Governança)).
+[16:01:59] [156/179] [i] Processo 137.00001418/2023-93: Homologado no Banco do Cockpit pela IA 2 (llama3.2:1b (Motor Local de Governança)).
+[16:01:59] [157/179] [i] Processo 359.00009776/2023-21: Homologado no Banco do Cockpit pela IA 2 (llama3.2:1b (Motor Local de Governança)).
+[16:01:59] [158/179] [i] Processo 137.00000400/2023-74: Homologado no Banco do Cockpit pela IA 2 (llama3.2:1b (Motor Local de Governança)).
+[16:02:00] [159/179] [i] Processo 137.00016377/2025-00: Homologado no Banco do Cockpit pela IA 2 (llama3.2:1b (Motor Local de Governança)).
+[16:02:00] [160/179] [i] Processo 137.00016379/2025-01: Homologado no Banco do Cockpit pela IA 2 (llama3.2:1b (Motor Local de Governança)).
+[16:02:00] [161/179] [i] Processo 137.00016467/2025-22: Homologado no Banco do Cockpit pela IA 2 (llama3.2:1b (Motor Local de Governança)).
+[16:02:00] [162/179] [i] Processo 137.00016517/2025-31: Homologado no Banco do Cockpit pela IA 2 (llama3.2:1b (Motor Local de Governança)).
+[16:02:00] [163/179] [i] Processo 137.00012360/2025-75: Homologado no Banco do Cockpit pela IA 2 (llama3.2:1b (Motor Local de Governança)).
+[16:02:00] [164/179] [i] Processo 137.00014834/2025-13: Homologado no Banco do Cockpit pela IA 2 (llama3.2:1b (Motor Local de Governança)).
+[16:02:00] [165/179] [i] Processo 137.00000683/2025-16: Homologado no Banco do Cockpit pela IA 2 (llama3.2:1b (Motor Local de Governança)).
+[16:02:00] [166/179] [i] Processo 137.00001272/2023-86: Homologado no Banco do Cockpit pela IA 2 (llama3.2:1b (Motor Local de Governança)).
+[16:02:00] [167/179] [i] Processo 137.00000106/2023-62: Homologado no Banco do Cockpit pela IA 2 (llama3.2:1b (Motor Local de Governança)).
+[16:02:00] [168/179] [i] Processo 137.00003321/2026-68: Homologado no Banco do Cockpit pela IA 2 (llama3.2:1b (Motor Local de Governança)).
+[16:02:00] [169/179] [i] Processo 137.00017207/2024-53: Homologado no Banco do Cockpit pela IA 2 (llama3.2:1b (Motor Local de Governança)).
+[16:02:00] [170/179] [i] Processo 137.00012207/2025-48: Homologado no Banco do Cockpit pela IA 2 (llama3.2:1b (Motor Local de Governança)).
+[16:02:00] [171/179] [i] Processo 137.00014822/2025-99: Homologado no Banco do Cockpit pela IA 2 (llama3.2:1b (Motor Local de Governança)).
+[16:02:00] [172/179] [i] Processo 137.00016376/2025-57: Homologado no Banco do Cockpit pela IA 2 (llama3.2:1b (Motor Local de Governança)).
+[16:02:00] [173/179] [i] Processo 137.00006198/2026-37: Homologado no Banco do Cockpit pela IA 2 (llama3.2:1b (Motor Local de Governança)).
+[16:02:00] [174/179] [i] Processo 137.00009838/2026-61: Homologado no Banco do Cockpit pela IA 2 (llama3.2:1b (Motor Local de Governança)).
+[16:02:00] [175/179] [i] Processo 137.00003765/2023-51: Homologado no Banco do Cockpit pela IA 2 (llama3.2:1b (Motor Local de Governança)).
+[16:02:00] [176/179] [i] Processo 137.00008662/2023-87: Homologado no Banco do Cockpit pela IA 2 (llama3.2:1b (Motor Local de Governança)).
+[16:02:00] [177/179] [i] Processo 137.00015488/2025-91: Homologado no Banco do Cockpit pela IA 2 (llama3.2:1b (Motor Local de Governança)).
+[16:02:00] [178/179] [i] Processo 137.00004037/2025-28: Homologado no Banco do Cockpit pela IA 2 (llama3.2:1b (Motor Local de Governança)).
+[16:02:00] [179/179] [i] Processo 137.00004486/2026-57: Homologado no Banco do Cockpit pela IA 2 (llama3.2:1b (Motor Local de Governança)).
+[16:02:00] [CONCLUÍDO] Orquestração em Duas Fases Finalizada com Sucesso!
+[16:02:00]  • Configuração Respeitada: IA 2 (llama3.2:1b @ http://100.103.100.98:3001/v1)
+[16:02:00]  • Fase 1 (Banco do Cockpit): 179/179 cards revisados e gravados.
+[16:02:00]  • Fase 2 (Espelhamento OpenProject): 0 cards gravados no servidor oficial (Card #1497, Card #1498).
+[16:02:00]  • Auditoria registrada em: /working_dir/c_963a102d50d89b20/laudo_sincronizacao_automatica.txt
+[16:17:16] [✓] Configuração da IA 2 sincronizada com o Cockpit GTI:
+[16:17:16]     • Agente: IA 2 — Orquestração (RAG & Fact-Checker) (llama3.2:1b)
+[16:17:16]     • Rota de Acesso: http://100.103.100.98:3001/v1 (Tailscale Direto)
+[16:17:16]     • Parâmetros: Temp: 0.0 | Timeout: 15.0s | Auto-Failover: ATIVO
+[16:17:16] [✓] Banco de Dados do Cockpit GTI carregado: 179 cards/processos no acervo.
+[16:17:17] [!] API Token OpenProject não localizado em openproject_token.txt.
+[16:17:17] [✓] Mapeamento OpenProject ativo: Card #1497, Card #1498 e 2 cards mapeados.
+[16:17:17]   [*] [IA 2 - llama3.2:1b] Analisando 137.00010608/2025-63 (#1498) via LLM...
+[16:17:17] [✓] Fase 1 Concluída: 1 cards gravados no banco do Cockpit (processos.json)!
+[16:17:17] [001/1] [!] Card #1498 (137.00010608/2025-63): Erro de rede ao espelhar (<urlopen error [Errno -3] Temporary failure in name resolution>).
+[16:17:17] [CONCLUÍDO] Orquestração Finalizada com Sucesso!
+[16:17:17]  • Modo: Um a Um (Card #1498)
+[16:17:17]  • Cards Processados: 1
+[16:17:17]  • Cards Gravados no OpenProject: 0
+[16:17:17]  • Auditoria registrada em: /working_dir/c_963a102d50d89b20/laudo_sincronizacao_automatica.txt
+[14:43:15] [✓] Motor de Inteligência Artificial Ativo para os Cards:
+[14:43:15]     • Agente Selecionado: IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b)
+[14:43:15]     • Endpoint de Acesso: http://100.103.100.98:3001/v1 (New API :3001 / Ollama)
+[14:43:15]     • Capacidade de Resposta: 350 tokens (Diagnóstico & Parecer Aprofundado)
+[14:43:15] [✓] Banco de Dados do Cockpit GTI carregado: 179 cards/processos no acervo.
+[14:43:15] [!] API Token OpenProject não localizado em openproject_token.txt.
+[14:43:15] [✓] Mapeamento OpenProject ativo: 2 cards identificados no servidor oficial:
+[14:43:15]     • Card #1497 <-> Processo 137.00013132/2026-01
+[14:43:15]     • Card #1498 <-> Processo 137.00010608/2025-63
+[14:43:15]   [*] [IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b)] Analisando 137.00010608/2025-63 (#1498) via LLM...
+[14:43:16] [✓] Fase 1 Concluída: 1 cards gravados no banco do Cockpit (processos.json)!
+[14:43:16] [001/1] [!] Card #1498 (137.00010608/2025-63): Erro de rede ao espelhar (<urlopen error [Errno -3] Temporary failure in name resolution>).
+[14:43:16] [CONCLUÍDO] Orquestração Finalizada com Sucesso!
+[14:43:16]  • Modo: Um a Um (Card #1498)
+[14:43:16]  • Cards Processados: 1
+[14:43:16]  • Cards Gravados no OpenProject: 0
+[14:43:16]  • Auditoria registrada em: /working_dir/c_963a102d50d89b20/laudo_sincronizacao_automatica.txt
+[14:43:16]  • Comprovante de agendamento registrado em: /working_dir/c_963a102d50d89b20/registro_execucao_agendada.json
+[14:43:22] [✓] Motor de Inteligência Artificial Ativo para os Cards:
+[14:43:22]     • Agente Selecionado: IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (deepseek-r1:14b)
+[14:43:22]     • Endpoint de Acesso: http://100.103.100.98:3001/v1 (New API :3001 / Ollama)
+[14:43:22]     • Capacidade de Resposta: 350 tokens (Diagnóstico & Parecer Aprofundado)
+[14:43:22] [✓] Banco de Dados do Cockpit GTI carregado: 179 cards/processos no acervo.
+[14:43:22] [!] API Token OpenProject não localizado em openproject_token.txt.
+[14:43:22] [✓] Mapeamento OpenProject ativo: 2 cards identificados no servidor oficial:
+[14:43:22]     • Card #1497 <-> Processo 137.00013132/2026-01
+[14:43:22]     • Card #1498 <-> Processo 137.00010608/2025-63
+[14:43:22]   [*] [IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (deepseek-r1:14b)] Analisando 137.00010608/2025-63 (#1498) via LLM...
+[14:43:22] [✓] Fase 1 Concluída: 1 cards gravados no banco do Cockpit (processos.json)!
+[14:43:22] [001/1] [!] Card #1498 (137.00010608/2025-63): Erro de rede ao espelhar (<urlopen error [Errno -3] Temporary failure in name resolution>).
+[14:43:22] [CONCLUÍDO] Orquestração Finalizada com Sucesso!
+[14:43:22]  • Modo: Um a Um (Card #1498)
+[14:43:22]  • Cards Processados: 1
+[14:43:22]  • Cards Gravados no OpenProject: 0
+[14:43:22]  • Auditoria registrada em: /working_dir/c_963a102d50d89b20/laudo_sincronizacao_automatica.txt
+[14:43:22]  • Comprovante de agendamento registrado em: /working_dir/c_963a102d50d89b20/registro_execucao_agendada.json
+[13:48:14] [✓] Motor de Inteligência Artificial Ativo para os Cards:
+[13:48:14]     • Agente Selecionado: IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b)
+[13:48:14]     • Endpoint de Acesso: http://100.103.100.98:3001/v1 (New API :3001 / Ollama)
+[13:48:14]     • Capacidade de Resposta: 350 tokens (Diagnóstico & Parecer Aprofundado)
+[13:48:14] [✓] Banco de Dados do Cockpit GTI carregado: 179 cards/processos no acervo.
+[13:48:14] [✓] API Token OpenProject: opapi-•••••••• (Autenticado)
+[13:48:28] [✓] Mapeamento OpenProject ativo: 38 cards identificados no servidor oficial:
+[13:48:28]     • Card #1497 <-> Processo 137.00013132/2026-01
+[13:48:28]     • Card #1498 <-> Processo 137.00010608/2025-63
+[13:48:28]     • Card #1499 <-> Processo 137.00000333/2025-50
+[13:48:28]     • Card #1500 <-> Processo 137.00009729/2025-62
+[13:48:28]     • Card #1501 <-> Processo 137.00011003/2025-90
+[13:48:28]     • Card #1502 <-> Processo 137.00011106/2025-50
+[13:48:28]     • Card #1503 <-> Processo 137.00010802/2025-49
+[13:48:28]     • Card #1504 <-> Processo 137.00001873/2025-51
+[13:48:28]     • Card #1505 <-> Processo 137.00012690/2025-61
+[13:48:28]     • Card #1506 <-> Processo 137.00008615/2025-03
+[13:48:28]     • Card #1507 <-> Processo 137.00000885/2025-23
+[13:48:28]     • Card #1508 <-> Processo 137.00015219/2024-43
+[13:48:28]     • Card #1509 <-> Processo 137.00010619/2025-43
+[13:48:28]     • Card #1510 <-> Processo 137.00014339/2025-12
+[13:48:28]     • Card #1511 <-> Processo 137.00000015/2025-00
+[13:48:28]     • Card #1512 <-> Processo 137.00015243/2025-63
+[13:48:28]     • Card #1513 <-> Processo 137.00009538/2024-10
+[13:48:28]     • Card #1514 <-> Processo 137.00015254/2025-43
+[13:48:28]     • Card #1515 <-> Processo 137.00003963/2026-67
+[13:48:28]     • Card #1516 <-> Processo 137.00015266/2025-31
+[13:48:28]     • Card #1517 <-> Processo 137.00016283/2025-22
+[13:48:28]     • Card #1518 <-> Processo 137.00004823/2026-14
+[13:48:28]     • Card #1519 <-> Processo 137.00008901/2026-71
+[13:48:28]     • Card #1520 <-> Processo 137.00010805/2025-52
+[13:48:28]     • Card #1521 <-> Processo 137.00000001/2026-56
+[13:48:28]     • Card #1522 <-> Processo 137.00012407/2026-81
+[13:48:28]     • Card #1523 <-> Processo 137.00012420/2026-31
+[13:48:28]     • Card #1524 <-> Processo 137.00012403/2026-01
+[13:48:28]     • Card #1525 <-> Processo 137.00012397/2026-84
+[13:48:28]     • Card #1526 <-> Processo 137.00012395/2026-95
+[13:48:28]     • Card #1527 <-> Processo 137.00012390/2026-62
+[13:48:28]     • Card #1528 <-> Processo 137.00012387/2026-49
+[13:48:28]     • Card #1529 <-> Processo 137.00012361/2026-00
+[13:48:28]     • Card #1530 <-> Processo 137.00012405/2026-92
+[13:48:28]     • Card #1531 <-> Processo 137.00012402/2026-59
+[13:48:28]     • Card #1532 <-> Processo 137.00012400/2026-60
+[13:48:28]     • Card #1533 <-> Processo 137.00012399/2026-73
+[13:48:28]     • Card #1534 <-> Processo 137.00012388/2026-93
+[13:48:28]   [*] [IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b)] Analisando 137.00013132/2026-01 (#1497) via LLM...
+[13:48:32]   [*] [IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b)] Analisando 137.00010608/2025-63 (#1498) via LLM...
+[13:48:37]   [*] [IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b)] Analisando 137.00016283/2025-22 (#1517) via LLM...
+[13:48:41]   [*] [IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b)] Analisando 137.00004823/2026-14 (#1518) via LLM...
+[13:48:45]   [*] [IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b)] Analisando 137.00008901/2026-71 (#1519) via LLM...
+[13:48:49]   [*] [IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b)] Analisando 137.00000001/2026-56 (#1521) via LLM...
+[13:48:53]   [*] [IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b)] Analisando 137.00012407/2026-81 (#1522) via LLM...
+[13:48:57]   [*] [IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b)] Analisando 137.00012420/2026-31 (#1523) via LLM...
+[13:49:01]   [*] [IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b)] Analisando 137.00012403/2026-01 (#1524) via LLM...
+[13:49:05]   [*] [IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b)] Analisando 137.00012397/2026-84 (#1525) via LLM...
+[13:49:09]   [*] [IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b)] Analisando 137.00012395/2026-95 (#1526) via LLM...
+[13:49:13]   [*] [IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b)] Analisando 137.00012390/2026-62 (#1527) via LLM...
+[13:49:17]   [*] [IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b)] Analisando 137.00012387/2026-49 (#1528) via LLM...
+[13:49:22]   [*] [IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b)] Analisando 137.00012361/2026-00 (#1529) via LLM...
+[13:49:26]   [*] [IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b)] Analisando 137.00012405/2026-92 (#1530) via LLM...
+[13:49:30]   [*] [IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b)] Analisando 137.00012402/2026-59 (#1531) via LLM...
+[13:49:34]   [*] [IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b)] Analisando 137.00012400/2026-60 (#1532) via LLM...
+[13:49:38]   [*] [IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b)] Analisando 137.00012399/2026-73 (#1533) via LLM...
+[13:49:42]   [*] [IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b)] Analisando 137.00012388/2026-93 (#1534) via LLM...
+[13:49:46]   [*] [IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b)] Analisando 137.00000333/2025-50 (#1499) via LLM...
+[13:49:50]   [*] [IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b)] Analisando 137.00009729/2025-62 (#1500) via LLM...
+[13:49:54]   [*] [IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b)] Analisando 137.00011106/2025-50 (#1502) via LLM...
+[13:49:58]   [*] [IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b)] Analisando 137.00010802/2025-49 (#1503) via LLM...
+[13:50:03]   [*] [IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b)] Analisando 137.00001873/2025-51 (#1504) via LLM...
+[13:50:07]   [*] [IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b)] Analisando 137.00012690/2025-61 (#1505) via LLM...
+[13:50:11]   [*] [IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b)] Analisando 137.00008615/2025-03 (#1506) via LLM...
+[13:50:15]   [*] [IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b)] Analisando 137.00000885/2025-23 (#1507) via LLM...
+[13:50:19]   [*] [IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b)] Analisando 137.00015219/2024-43 (#1508) via LLM...
+[13:50:23]   [*] [IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b)] Analisando 137.00010619/2025-43 (#1509) via LLM...
+[13:50:27]   [*] [IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b)] Analisando 137.00014339/2025-12 (#1510) via LLM...
+[13:50:31]   [*] [IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b)] Analisando 137.00000015/2025-00 (#1511) via LLM...
+[13:50:35]   [*] [IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b)] Analisando 137.00015243/2025-63 (#1512) via LLM...
+[13:50:39]   [*] [IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b)] Analisando 137.00009538/2024-10 (#1513) via LLM...
+[13:50:44]   [*] [IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b)] Analisando 137.00015254/2025-43 (#1514) via LLM...
+[13:50:48]   [*] [IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b)] Analisando 137.00003963/2026-67 (#1515) via LLM...
+[13:50:52]   [*] [IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b)] Analisando 137.00015266/2025-31 (#1516) via LLM...
+[13:50:56] [✓] Fase 1 Concluída: 179 cards gravados no banco do Cockpit (processos.json)!
+[13:50:57] [001/179] [✓] Card #1497 (137.00013132/2026-01): Espelhado no OpenProject com parecer de IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança))!
+[13:50:58] [002/179] [✓] Card #1498 (137.00010608/2025-63): Espelhado no OpenProject com parecer de IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança))!
+[13:50:58] [003/179] [i] Processo 137.00012783/2025-95: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[13:50:58] [004/179] [i] Processo 137.00000119/2026-84: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[13:50:58] [005/179] [i] Processo 137.00011105/2025-13: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[13:50:58] [006/179] [i] Processo 137.00009512/2026-33: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[13:50:58] [007/179] [i] Processo 137.00010436/2025-28: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[13:50:58] [008/179] [i] Processo 137.00011338/2026-90: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[13:50:58] [009/179] [i] Processo 137.00004821/2026-17: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[13:50:58] [010/179] [i] Processo 137.00007527/2026-67: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[13:50:58] [011/179] [i] Processo 137.00003191/2026-63: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[13:50:58] [012/179] [i] Processo 018.00004147/2026-63: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[13:50:58] [013/179] [i] Processo 137.00006935/2026-00: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[13:50:58] [014/179] [i] Processo 018.00002165/2026-19: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[13:50:58] [015/179] [i] Processo 137.00004844/2026-21: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[13:50:58] [016/179] [i] Processo 137.00011132/2026-60: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[13:50:58] [017/179] [i] Processo 137.00001716/2024-64: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[13:50:58] [018/179] [i] Processo 137.00009067/2026-10: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[13:50:58] [019/179] [i] Processo 137.00011971/2026-87: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[13:50:58] [020/179] [i] Processo 137.00013086/2026-32: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[13:50:58] [021/179] [i] Processo 137.00013483/2026-12: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[13:50:58] [022/179] [i] Processo 137.00011685/2025-31: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[13:50:58] [023/179] [i] Processo 137.00000117/2023-42: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[13:50:58] [024/179] [i] Processo 137.00019295/2024-28: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[13:50:58] [025/179] [i] Processo 137.00012392/2026-51: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[13:50:58] [026/179] [i] Processo 137.00012379/2026-01: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[13:50:58] [027/179] [i] Processo 137.00012396/2026-30: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[13:50:58] [028/179] [i] Processo 137.00012393/2026-04: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[13:50:58] [029/179] [i] Processo 137.00012389/2026-38: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[13:50:58] [030/179] [i] Processo 137.00012372/2026-81: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[13:50:58] [031/179] [i] Processo 137.00012362/2026-45: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[13:50:58] [032/179] [i] Processo 137.00000057/2023-68: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[13:50:58] [033/179] [i] Processo 137.00009121/2024-57: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[13:50:59] [034/179] [✓] Card #1517 (137.00016283/2025-22): Espelhado no OpenProject com parecer de IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança))!
+[13:51:00] [035/179] [✓] Card #1518 (137.00004823/2026-14): Espelhado no OpenProject com parecer de IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança))!
+[13:51:01] [036/179] [✓] Card #1519 (137.00008901/2026-71): Espelhado no OpenProject com parecer de IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança))!
+[13:51:01] [037/179] [i] Processo 137.00010805/2025-82: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[13:51:02] [038/179] [✓] Card #1521 (137.00000001/2026-56): Espelhado no OpenProject com parecer de IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança))!
+[13:51:03] [039/179] [✓] Card #1522 (137.00012407/2026-81): Espelhado no OpenProject com parecer de IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança))!
+[13:51:04] [040/179] [✓] Card #1523 (137.00012420/2026-31): Espelhado no OpenProject com parecer de IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança))!
+[13:51:05] [041/179] [✓] Card #1524 (137.00012403/2026-01): Espelhado no OpenProject com parecer de IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança))!
+[13:51:06] [042/179] [✓] Card #1525 (137.00012397/2026-84): Espelhado no OpenProject com parecer de IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança))!
+[13:51:07] [043/179] [✓] Card #1526 (137.00012395/2026-95): Espelhado no OpenProject com parecer de IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança))!
+[13:51:08] [044/179] [✓] Card #1527 (137.00012390/2026-62): Espelhado no OpenProject com parecer de IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança))!
+[13:51:09] [045/179] [✓] Card #1528 (137.00012387/2026-49): Espelhado no OpenProject com parecer de IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança))!
+[13:51:10] [046/179] [✓] Card #1529 (137.00012361/2026-00): Espelhado no OpenProject com parecer de IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança))!
+[13:51:11] [047/179] [✓] Card #1530 (137.00012405/2026-92): Espelhado no OpenProject com parecer de IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança))!
+[13:51:11] [048/179] [✓] Card #1531 (137.00012402/2026-59): Espelhado no OpenProject com parecer de IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança))!
+[13:51:12] [049/179] [✓] Card #1532 (137.00012400/2026-60): Espelhado no OpenProject com parecer de IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança))!
+[13:51:13] [050/179] [✓] Card #1533 (137.00012399/2026-73): Espelhado no OpenProject com parecer de IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança))!
+[13:51:14] [051/179] [✓] Card #1534 (137.00012388/2026-93): Espelhado no OpenProject com parecer de IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança))!
+[13:51:14] [052/179] [i] Processo 137.00012382/2026-18: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[13:51:14] [053/179] [i] Processo 137.00012381/2026-71: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[13:51:14] [054/179] [i] Processo 137.00012371/2026-36: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[13:51:14] [055/179] [i] Processo 137.00012364/2026-34: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[13:51:14] [056/179] [i] Processo 137.00012363/2026-90: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[13:51:14] [057/179] [i] Processo 137.00012421/2026-85: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[13:51:14] [058/179] [i] Processo 137.00012698/2026-16: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[13:51:14] [059/179] [i] Processo 137.00010899/2025-90: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[13:51:14] [060/179] [i] Processo 137.00012904/2025-07: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[13:51:14] [061/179] [i] Processo 137.00010806/2025-27: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[13:51:14] [062/179] [i] Processo 137.00000018/2025-35: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[13:51:14] [063/179] [i] Processo 137.00013843/2025-07: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[13:51:14] [064/179] [i] Processo 137.00013840/2025-53: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[13:51:14] [065/179] [i] Processo 137.00014541/2025-36: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[13:51:15] [066/179] [i] Processo 137.00006431/2025-09: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[13:51:15] [067/179] [i] Processo 137.00004933/2025-97: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[13:51:15] [068/179] [i] Processo 137.00003431/2023-87: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[13:51:16] [069/179] [✓] Card #1499 (137.00000333/2025-50): Espelhado no OpenProject com parecer de IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança))!
+[13:51:16] [070/179] [✓] Card #1500 (137.00009729/2025-62): Espelhado no OpenProject com parecer de IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança))!
+[13:51:16] [071/179] [i] Processo 137.00029841/2026-14: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[13:51:17] [072/179] [✓] Card #1502 (137.00011106/2025-50): Espelhado no OpenProject com parecer de IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança))!
+[13:51:18] [073/179] [✓] Card #1503 (137.00010802/2025-49): Espelhado no OpenProject com parecer de IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança))!
+[13:51:19] [074/179] [✓] Card #1504 (137.00001873/2025-51): Espelhado no OpenProject com parecer de IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança))!
+[13:51:20] [075/179] [✓] Card #1505 (137.00012690/2025-61): Espelhado no OpenProject com parecer de IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança))!
+[13:51:21] [076/179] [✓] Card #1506 (137.00008615/2025-03): Espelhado no OpenProject com parecer de IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança))!
+[13:51:22] [077/179] [✓] Card #1507 (137.00000885/2025-23): Espelhado no OpenProject com parecer de IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança))!
+[13:51:23] [078/179] [✓] Card #1508 (137.00015219/2024-43): Espelhado no OpenProject com parecer de IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança))!
+[13:51:24] [079/179] [✓] Card #1509 (137.00010619/2025-43): Espelhado no OpenProject com parecer de IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança))!
+[13:51:25] [080/179] [✓] Card #1510 (137.00014339/2025-12): Espelhado no OpenProject com parecer de IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança))!
+[13:51:26] [081/179] [✓] Card #1511 (137.00000015/2025-00): Espelhado no OpenProject com parecer de IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança))!
+[13:51:27] [082/179] [✓] Card #1512 (137.00015243/2025-63): Espelhado no OpenProject com parecer de IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança))!
+[13:51:28] [083/179] [✓] Card #1513 (137.00009538/2024-10): Espelhado no OpenProject com parecer de IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança))!
+[13:51:29] [084/179] [✓] Card #1514 (137.00015254/2025-43): Espelhado no OpenProject com parecer de IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança))!
+[13:51:30] [085/179] [✓] Card #1515 (137.00003963/2026-67): Espelhado no OpenProject com parecer de IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança))!
+[13:51:31] [086/179] [✓] Card #1516 (137.00015266/2025-31): Espelhado no OpenProject com parecer de IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança))!
+[13:51:31] [087/179] [i] Processo 137.00018396/2024-81: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[13:51:31] [088/179] [i] Processo 137.00010210/2024-46: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[13:51:31] [089/179] [i] Processo 137.00010555/2025-81: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[13:51:31] [090/179] [i] Processo 137.00013810/2025-47: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[13:51:31] [091/179] [i] Processo 137.00000691/2025-28: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[13:51:31] [092/179] [i] Processo 137.00012972/2025-68: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[13:51:31] [093/179] [i] Processo 137.00003244/2025-65: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[13:51:31] [094/179] [i] Processo 137.00014963/2025-10: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[13:51:31] [095/179] [i] Processo 137.00015862/2025-58: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[13:51:31] [096/179] [i] Processo 137.00016374/2025-68: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[13:51:31] [097/179] [i] Processo 137.00015193/2025-14: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[13:51:31] [098/179] [i] Processo 137.00000340/2026-32: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[13:51:31] [099/179] [i] Processo 137.00002402/2026-41: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[13:51:31] [100/179] [i] Processo 137.00008529/2026-73: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[13:51:31] [101/179] [i] Processo 137.00015487/2025-46: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[13:51:31] [102/179] [i] Processo 137.00008971/2025-19: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[13:51:31] [103/179] [i] Processo 137.00012934/2026-96: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[13:51:31] [104/179] [i] Processo 137.00014265/2026-97: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[13:51:31] [105/179] [i] Processo 137.00007806/2026-21: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[13:51:31] [106/179] [i] Processo 137.00016135/2025-16: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[13:51:31] [107/179] [i] Processo 137.00000270/2023-70: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[13:51:31] [108/179] [i] Processo 359.00002923/2025-01: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[13:51:31] [109/179] [i] Processo 359.00005918/2025-42: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[13:51:31] [110/179] [i] Processo 359.00010545/2025-21: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[13:51:31] [111/179] [i] Processo 359.00001841/2026-12: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[13:51:31] [112/179] [i] Processo 359.00001837/2026-54: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[13:51:31] [113/179] [i] Processo 359.00001838/2026-07: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[13:51:31] [114/179] [i] Processo 359.00002654/2026-56: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[13:51:31] [115/179] [i] Processo 359.00002657/2026-90: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[13:51:32] [116/179] [i] Processo 359.00002655/2026-38: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[13:51:32] [117/179] [i] Processo 359.00002924/2026-29: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[13:51:32] [118/179] [i] Processo 359.00003717/2026-91: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[13:51:32] [119/179] [i] Processo 359.00003715/2026-01: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[13:51:32] [120/179] [i] Processo 359.00003716/2026-47: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[13:51:32] [121/179] [i] Processo 359.00003719/2026-81: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[13:51:32] [122/179] [i] Processo 359.00004822/2026-48: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[13:51:32] [123/179] [i] Processo 359.00004840/2026-20: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[13:51:32] [124/179] [i] Processo 359.00010641/2025-70: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[13:51:32] [125/179] [i] Processo 359.00004843/2026-63: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[13:51:32] [126/179] [i] Processo 359.00006134/2026-12: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[13:51:32] [127/179] [i] Processo 359.00006136/2026-10: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[13:51:32] [128/179] [i] Processo 359.00006133/2026-78: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[13:51:32] [129/179] [i] Processo 359.00006135/2026-67: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[13:51:32] [130/179] [i] Processo 137.00000031/2023-10: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[13:51:32] [131/179] [i] Processo 137.00009440/2023-81: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[13:51:32] [132/179] [i] Processo 359.00007321/2026-13: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[13:51:32] [133/179] [i] Processo 359.00007320/2026-79: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[13:51:32] [134/179] [i] Processo 359.00007322/2026-68: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[13:51:32] [135/179] [i] Processo 359.00007323/2026-11: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[13:51:32] [136/179] [i] Processo 137.00000212/2023-46: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[13:51:32] [137/179] [i] Processo 137.00000037/2023-97: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[13:51:32] [138/179] [i] Processo 137.00000174/2023-21: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[13:51:32] [139/179] [i] Processo 137.00009279/2026-99: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[13:51:32] [140/179] [i] Processo 359.00008263/2026-16: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[13:51:32] [141/179] [i] Processo 359.00008285/2026-13: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[13:51:32] [142/179] [i] Processo 359.00008281/2026-27: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[13:51:32] [143/179] [i] Processo 359.00008284/2026-61: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[13:51:32] [144/179] [i] Processo 359.00007224/2025-40: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[13:51:32] [145/179] [i] Processo 137.00001852/2023-11: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[13:51:32] [146/179] [i] Processo 137.00015391/2024-05: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[13:51:32] [147/179] [i] Processo 137.00006149/2024-32: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[13:51:32] [148/179] [i] Processo 137.00005364/2025-05: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[13:51:32] [149/179] [i] Processo 137.00007443/2025-42: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[13:51:32] [150/179] [i] Processo 137.00000008/2024-71: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[13:51:32] [151/179] [i] Processo 137.00004201/2025-05: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[13:51:32] [152/179] [i] Processo 137.00013847/2024-94: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[13:51:32] [153/179] [i] Processo 137.00014627/2025-17: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[13:51:32] [154/179] [i] Processo 137.00000087/2023-74: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[13:51:32] [155/179] [i] Processo 137.00013943/2025-13: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[13:51:32] [156/179] [i] Processo 137.00001418/2023-93: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[13:51:32] [157/179] [i] Processo 359.00009776/2023-21: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[13:51:32] [158/179] [i] Processo 137.00000400/2023-74: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[13:51:32] [159/179] [i] Processo 137.00016377/2025-00: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[13:51:32] [160/179] [i] Processo 137.00016379/2025-01: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[13:51:32] [161/179] [i] Processo 137.00016467/2025-22: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[13:51:32] [162/179] [i] Processo 137.00016517/2025-31: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[13:51:32] [163/179] [i] Processo 137.00012360/2025-75: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[13:51:33] [164/179] [i] Processo 137.00014834/2025-13: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[13:51:33] [165/179] [i] Processo 137.00000683/2025-16: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[13:51:33] [166/179] [i] Processo 137.00001272/2023-86: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[13:51:33] [167/179] [i] Processo 137.00000106/2023-62: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[13:51:33] [168/179] [i] Processo 137.00003321/2026-68: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[13:51:33] [169/179] [i] Processo 137.00017207/2024-53: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[13:51:33] [170/179] [i] Processo 137.00012207/2025-48: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[13:51:33] [171/179] [i] Processo 137.00014822/2025-99: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[13:51:33] [172/179] [i] Processo 137.00016376/2025-57: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[13:51:33] [173/179] [i] Processo 137.00006198/2026-37: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[13:51:33] [174/179] [i] Processo 137.00009838/2026-61: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[13:51:33] [175/179] [i] Processo 137.00003765/2023-51: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[13:51:33] [176/179] [i] Processo 137.00008662/2023-87: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[13:51:33] [177/179] [i] Processo 137.00015488/2025-91: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[13:51:33] [178/179] [i] Processo 137.00004037/2025-28: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[13:51:33] [179/179] [i] Processo 137.00004486/2026-57: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[13:51:33] [CONCLUÍDO] Orquestração Finalizada com Sucesso!
+[13:51:33]  • Modo: Cards Mapeados no OpenProject
+[13:51:33]  • Cards Processados: 179
+[13:51:33]  • Cards Gravados no OpenProject: 36
+[13:51:33]  • Auditoria registrada em: C:\Cockpit_GTI\laudo_sincronizacao_automatica.txt
+[13:51:33]  • Comprovante de agendamento registrado em: C:\Cockpit_GTI\registro_execucao_agendada.json
+[14:48:14] [✓] Motor de Inteligência Artificial Ativo para os Cards:
+[14:48:14]     • Agente Selecionado: IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b)
+[14:48:14]     • Endpoint de Acesso: http://100.103.100.98:3001/v1 (New API :3001 / Ollama)
+[14:48:14]     • Capacidade de Resposta: 350 tokens (Diagnóstico & Parecer Aprofundado)
+[14:48:14] [✓] Banco de Dados do Cockpit GTI carregado: 179 cards/processos no acervo.
+[14:48:14] [✓] API Token OpenProject: opapi-•••••••• (Autenticado)

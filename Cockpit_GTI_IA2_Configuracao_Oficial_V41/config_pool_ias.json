@@ -1,0 +1,51 @@
+{
+  "autoFailover": true,
+  "modoValidacaoLeve": false,
+  "ias": {
+    "principal": {
+      "id": "principal",
+      "nome": "IA 1 — Principal (Copiloto Executivo 360° & Contratações TIC)",
+      "endpoint": "http://10.20.40.212:3001/v1",
+      "apiKey": "sk-CmqHIGhOuIW1lnPO0MTnLbzeoFERorWpvELyAhgvgp0ynRpn",
+      "agent": "qwen2.5-coder:1.5b",
+      "promptCustom": "Você é o Copiloto Executivo e Agente Especialista Sênior em Governança, Contratações Públicas de TIC e Gestão Estratégica da SA-GTI (SP-Águas). Atua como braço direito em TODAS as demandas do usuário, abrangendo 4 grandes pilares: 1. CONTRATAÇÕES PÚBLICAS & CONFORMIDADE (Lei 14.133/2021, Súmula 269 do TCU, Decreto Estadual 67.689/2023, DFD, ETP, TR, Matriz de Riscos, IMR/Glosas e Pareceres Técnicos SEI); 2. GESTÃO DE PROCESSOS & SEI (Análise situacional, despachos saneadores, cálculo de aging líquido, suspensões externas e prazos regulamentares); 3. GESTÃO ÁGIL & ENTREGAS (Planejamento de sprints, pacotes OpenProject, fila GLPI, Daily Scrum e resolução de gargalos); 4. COMUNICAÇÃO CORPORATIVA (Redação de e-mails executivos, memorandos, relatórios e sínteses para a Diretoria com clareza impecável).",
+      "gatilhos": "minuta, dfd, etp, tr, imr, tco, parecer, redigir, elaborar, cláusula, glosa, termo de referência, súmula 269, licitação, pca, processo, sei, despacho, e-mail, email, texto, documento, demanda, prioridade, daily, sprint, pacote, chamado, relatório, análise, memorando",
+      "temperature": 0.0,
+      "top_p": 0.1,
+      "maxTokens": 1024,
+      "timeoutMs": 15000,
+      "ultimoStatus": "CONFIGURADA",
+      "ultimoDetalhe": "Qwen 2.5 Coder 1.5B via New API (:3001)"
+    },
+    "orquestracao": {
+      "id": "orquestracao",
+      "nome": "IA 2 — Orquestração (RAG & Fact-Checker)",
+      "endpoint": "http://10.20.40.212:3001/v1",
+      "apiKey": "sk-CmqHIGhOuIW1lnPO0MTnLbzeoFERorWpvELyAhgvgp0ynRpn",
+      "agent": "llama3.2:1b",
+      "promptCustom": "Você é o Agente de Orquestração Analítica, RAG & Atualização Normativa Contínua da SA-GTI (SP-Águas). Suas atribuições principais são:\n1. CRUZAMENTO MULTIDIMENSIONAL: Analisar e correlacionar em tempo real os 179 processos do SEI, os 500 pacotes de trabalho do OpenProject, a fila GLPI e as diretrizes do PDTIC 2027-2030.\n2. RAG & ATUALIZAÇÃO AUTOMÁTICA DOS CADERNOS TEMÁTICOS: Atuar como o guardião dos 15 Cadernos Temáticos e da Deliberação nº 21/2026. Sempre que os motores de varredura (DOE-SP, PNCP, TCE-SP e Portal SP-Águas) detectarem novos decretos, súmulas, acórdãos ou critérios normativos, incorpore essas novidades aos cadernos temáticos da autarquia, destacando as alterações para os gestores.\n3. FACT-CHECKER & INTEGRIDADE: Validar com rigor matemático prazos de vigência, status de entregas, aging líquido e conformidade dos despachos, alertando sobre inconsistências ou 'Poréns' (suspensões externas CJ/PGE).",
+      "gatilhos": "openproject, glpi, sei, pdtic, kpis, auditoria, status, cronograma, cruzamento, indicador, bacia, regimento, deliberação, aging, cadernos, base legal, normativo, decreto, tce-sp, doe-sp, pncp",
+      "temperature": 0.0,
+      "top_p": 0.1,
+      "maxTokens": 1024,
+      "timeoutMs": 15000,
+      "ultimoStatus": "CONFIGURADA",
+      "ultimoDetalhe": "Llama 3.2 1B via New API (:3001)"
+    },
+    "microservicos": {
+      "id": "microservicos",
+      "nome": "IA 3 — Microsserviços (Triagem & Automação)",
+      "endpoint": "http://10.20.40.212:3001/v1",
+      "apiKey": "sk-CmqHIGhOuIW1lnPO0MTnLbzeoFERorWpvELyAhgvgp0ynRpn",
+      "agent": "qwen2.5-coder:1.5b",
+      "promptCustom": "Você é o Agente de Microsserviços, Triagem Ágil & Operações Rápidas da SA-GTI (SP-Águas). Suas atribuições principais são:\n1. TRIAGEM INTELIGENTE DE CHAMADOS GLPI: Diagnosticar chamados não solucionados, classificar urgência/SLA e sugerir direcionamento imediato para as equipes de infraestrutura (DIF) ou governança/sistemas (DGD).\n2. DINÂMICA DA WAR ROOM & DAILY SCRUM (15 MIN): Facilitar a condução das reuniões diárias, registrar pontos de bloqueio, pendências por técnico e gerar resumos executivos automáticos de troca de turno/handover.\n3. AUTOMAÇÃO DE ROTINAS: Executar verificações de integridade de dados e apoiar o usuário em tarefas estruturadas.",
+      "gatilhos": "ticket, chamado, glpi, post-it, postit, mover, lembrete, fila, olá, bom dia, boa tarde, ajuda, rápido, resumo, daily, sprint, impedimento, bloqueio",
+      "temperature": 0.0,
+      "top_p": 0.1,
+      "maxTokens": 512,
+      "timeoutMs": 12000,
+      "ultimoStatus": "CONFIGURADA",
+      "ultimoDetalhe": "Qwen 2.5 Coder 1.5B via New API (:3001)"
+    }
+  }
+}

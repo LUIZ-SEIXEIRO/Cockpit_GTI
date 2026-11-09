@@ -1,0 +1,41 @@
+[
+  {
+    "timestamp": "09/11/2026 às 14:43:22",
+    "timestamp_iso": "2026-11-09T14:43:22.334936",
+    "modo": "Um a Um (Card #1498)",
+    "status": "SUCESSO",
+    "status_http": 200,
+    "cards_processados": 1,
+    "cards_transmitidos_op": 0,
+    "cards_homologados_cockpit": 0,
+    "modelo_ia2": "deepseek-r1:14b",
+    "comprovante_hash": "1A1C0C3885E"
+  },
+  {
+    "timestamp": "09/11/2026 às 14:43:16",
+    "timestamp_iso": "2026-11-09T14:43:16.134598",
+    "modo": "Um a Um (Card #1498)",
+    "status": "SUCESSO",
+    "status_http": 200,
+    "cards_processados": 1,
+    "cards_transmitidos_op": 0,
+    "cards_homologados_cockpit": 0,
+    "modelo_ia2": "qwen2.5:7b",
+    "comprovante_hash": "1A1C0C37026"
+  },
+  {
+    "timestamp": "06/11/2026 às 15:10:39",
+    "timestamp_iso": "2026-11-06T15:10:39-03:00",
+    "modo": "Agendado / Automático (Motor 3 — OpenProject 14)",
+    "status": "SUCESSO",
+    "status_http": 200,
+    "cards_processados": 179,
+    "cards_transmitidos_op": 2,
+    "cards_homologados_cockpit": 177,
+    "modelo_ia2": "llama3.2:1b",
+    "frequencia_programada": "Diário às 03:00",
+    "proxima_execucao": "07/11/2026 às 03:00:00",
+    "comprovante_hash": "A8F9B2C4",
+    "detalhes": "Cards #1497 (FEHIDRO) e #1498 (Links) espelhados com parecer da IA 2 Llama 3.2 1B e homologados conforme Lei 14.133/2021."
+  }
+]

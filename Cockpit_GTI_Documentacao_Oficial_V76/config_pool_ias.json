@@ -1,0 +1,54 @@
+{
+  "autoFailover": true,
+  "modoValidacaoLeve": false,
+  "ias": {
+    "principal": {
+      "id": "principal",
+      "nome": "IA 1 — Principal (Interação, Copiloto 360° & Atendimento)",
+      "endpoint": "http://100.103.100.98:3001/v1",
+      "apiKey": "sk-RAZNLjgeaKLVgufkyiemxilJb2HZU6ilvkmTpvLXoOwyIaUL",
+      "agent": "qwen2.5:7b",
+      "reserva": "deepseek-r1:14b",
+      "promptCustom": "Você é a IA pessoal e parceiro executivo do Luiz Antonio Seixeiro na SA-GTI da SP-Águas. Responda SEMPRE de forma DIRETA, CLARA, OBJETIVA e CONVERSACIONAL em português, indo direto ao ponto da dúvida dele. Se ele perguntar sobre uma tarefa ou se nela existe dossiê, responda DIRETAMENTE com fatos reais. NUNCA use frases evasivas como 'Dei uma olhada na nossa base', NUNCA mencione pacotes não solicitados e NUNCA responda genericamente.",
+      "gatilhos": "minuta, dfd, etp, tr, imr, tco, parecer, redigir, elaborar, cláusula, glosa, termo de referência, súmula 269, licitação, pca, processo, sei, despacho, e-mail, email, texto, documento, demanda, prioridade, daily, sprint, pacote, chamado, relatório, análise, memorando, tarefa, card, dossie",
+      "temperature": 0.0,
+      "top_p": 0.1,
+      "maxTokens": 1024,
+      "timeoutMs": 15000,
+      "ultimoStatus": "CONFIGURADA",
+      "ultimoDetalhe": "Qwen 2.5 7B (Titular) • New API (:3001)"
+    },
+    "orquestracao": {
+      "id": "orquestracao",
+      "nome": "IA 2 — Orquestração (Governança & Escrita OpenProject)",
+      "endpoint": "http://100.103.100.98:3001/v1",
+      "apiKey": "sk-GxdEHwXjAPXW50uuBVeDLAEeSXdt6kJfcduffPsjBnmsRs3H",
+      "agent": "qwen2.5-coder:7b",
+      "reserva": "deepseek-r1:14b",
+      "promptCustom": "Você é a IA 2 de Governança e Escrita no OpenProject da SA-GTI (SP-Águas). Atua na elaboração e homologação de Dossiês Técnicos de Governança, Contratação & Orquestração em conformidade com a Lei 14.133/2021, Súmula 269 TCU e PDTIC 2027-2030, gravando pareceres objetivos e estruturados.",
+      "gatilhos": "openproject, glpi, sei, pdtic, kpis, auditoria, status, cronograma, cruzamento, indicador, bacia, regimento, deliberação, aging, cadernos, base legal, normativo, decreto, tce-sp, doe-sp, pncp, dossie, orquestracao",
+      "temperature": 0.0,
+      "top_p": 0.1,
+      "maxTokens": 1024,
+      "timeoutMs": 15000,
+      "ultimoStatus": "CONFIGURADA",
+      "ultimoDetalhe": "Qwen 2.5 Coder 7B (Titular) • New API (:3001)"
+    },
+    "microservicos": {
+      "id": "microservicos",
+      "nome": "IA 3 — Microsserviços (Triagem Ágil & Suporte Rápido)",
+      "endpoint": "http://100.103.100.98:3001/v1",
+      "apiKey": "sk-RAZNLjgeaKLVgufkyiemxilJb2HZU6ilvkmTpvLXoOwyIaUL",
+      "agent": "qwen2.5-coder:1.5b",
+      "reserva": "deepseek-r1:14b",
+      "promptCustom": "Você é o Agente de Microsserviços e Triagem Ágil da SA-GTI. Diagnostica chamados GLPI e apoia na dinâmica da Daily Scrum com máxima concisão e precisão.",
+      "gatilhos": "ticket, chamado, glpi, post-it, postit, mover, lembrete, fila, olá, bom dia, boa tarde, ajuda, daily, scrum, kanban, pauta, ata, ata daily, reunião, rituais",
+      "temperature": 0.0,
+      "top_p": 0.1,
+      "maxTokens": 512,
+      "timeoutMs": 12000,
+      "ultimoStatus": "CONFIGURADA",
+      "ultimoDetalhe": "Qwen 2.5 Coder 1.5B (Titular) + DeepSeek R1 14B (Reserva) • New API (:3001)"
+    }
+  }
+}

@@ -1,0 +1,33 @@
+==============================================================================
+ LAUDO TÉCNICO DE AVALIAÇÃO DO CANAL OPENPROJECT (SA-GTI / SP-ÁGUAS)
+ Data/Hora: 06/11/2026 09:35:54 | Diretório: C:\Cockpit_GTI
+ Backup: C:\Cockpit_GTI\backups\Cockpit_Backup_Pre_Diagnostico_20261106_093554.zip
+==============================================================================
+
+[OK] DNS: projetos.spaguas.sp.gov.br -> 143.107.108.115
+[ABERTA] OpenProject HTTPS Remoto: projetos.spaguas.sp.gov.br:443 (14ms)
+[ABERTA] OpenProject HTTP Remoto: projetos.spaguas.sp.gov.br:80 (3ms)
+[FECHADA] OpenProject Container Local: 127.0.0.1:8090
+[ABERTA] Cockpit Backend Flask: 127.0.0.1:5000 (16ms)
+[FECHADA] Gateway New API AI: 127.0.0.1:3001
+[ABERTA] Banco de Dados MariaDB: 127.0.0.1:3306 (0ms)
+[CORS OPTIONS] Status: 200 | Allow-Origin: [NÃO RETORNADO]
+[CARD 1497 LEITURA] HTTP 401: Unauthorized
+
+==============================================================================
+ 📋 PARECER TÉCNICO & RECOMENDAÇÃO PRESCRITIVA (SA-GTI / SP-ÁGUAS)
+==============================================================================
+1. LOCALIZAÇÃO E CONEXÃO:
+   • O servidor oficial do OpenProject (projetos.spaguas.sp.gov.br) responde na porta 443 HTTPS.
+   • A tarefa do Processo SEI 137.00013132/2026-01 é oficialmente o Card #1497.
+
+2. CAUSA DO BLOQUEIO DE ESCRITA NO NAVEGADOR:
+   • O navegador aplica restrição compulsória de CORS ao tentar enviar PATCH direto
+     de 'http://localhost:5000' para 'https://projetos.spaguas.sp.gov.br'.
+   • Sem o cabeçalho 'Access-Control-Allow-Origin: *' no servidor da autarquia, o navegador
+     aborta a conexão de rede silenciosamente.
+
+3. SOLUÇÃO DEFINITIVA SEM PEDIR TOKEN AO USUÁRIO:
+   • Utilizar o Proxy no Backend Flask (:5000) com requests/urllib (que não tem CORS).
+   • Ou acionar a gravação a partir da aba ativa do OpenProject onde o usuário já está logado.
+==============================================================================
