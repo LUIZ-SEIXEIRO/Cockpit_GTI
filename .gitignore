@@ -1,8 +1,92 @@
-﻿volumes_docker/
-html/vendor/
-Aider_Cockpit_GTI/
-*.tar
-*.tar.gz
-*.zip
+# ==============================================================================
+# SP-ÁGUAS / SA-GTI -- .gitignore Oficial do Cockpit GTI
+# ==============================================================================
+
+# Ambientes Virtuais e Cache Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+venv/
+.venv/
+ENV/
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# Arquivos de Configuração Sensíveis e Chaves
 .env
-.aider*
+.env.local
+.env.*.local
+*.key
+*.pem
+
+# Backups, Snapshots e Arquivos Compactados
+*.zip
+*.tar.gz
+*.tgz
+*.rar
+*.7z
+*.bak
+*.old
+*.swp
+*~
+backups/
+recovered/
+
+# Arquivos de Testes, Logs e Depuração Local
+*.log
+test_*
+temp_*
+syntax_*
+verify_*
+auditar_*
+dummy_*
+patch_*
+laudo_*.txt
+
+# Diretórios de Sandbox e Artefatos Temporários
+agent_sandbox/
+artifacts/
+user_uploaded_files/
+
+# IDEs e Editores
+.vscode/
+.idea/
+*.sublime-project
+*.sublime-workspace
+.project
+.pydevproject
+
+# Sistemas Operacionais
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+desktop.ini
+
+volumes_docker/
+Cockpit_GTI_Release*
+24276311*
+*.ibd
+*.frm
+ibdata*
+ib_logfile*
+
