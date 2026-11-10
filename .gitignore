@@ -35,6 +35,13 @@ wheels/
 *.key
 *.pem
 
+# Volumes Docker e Bancos de Dados Locais
+volumes_docker/
+*.ibd
+*.frm
+ibdata*
+ib_logfile*
+
 # Backups, Snapshots e Arquivos Compactados
 *.zip
 *.tar.gz
@@ -82,14 +89,5 @@ ehthumbs.db
 Thumbs.db
 desktop.ini
 
-volumes_docker/
-Cockpit_GTI_Release*
-24276311*
-*.ibd
-*.frm
-ibdata*
-ib_logfile*
-
-
-_lixo_desenvolvimento_legado/
-
+# Aider
+.aider*

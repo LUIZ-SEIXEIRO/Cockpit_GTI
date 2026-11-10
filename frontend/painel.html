@@ -1,4 +1,4 @@
-﻿
+
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
@@ -6566,7 +6566,7 @@ th.th-sortable-v9:hover {
 
                     <!-- BOTÃO DIRETO DO REPOSITÓRIO GITHUB -->
                     <div style="display: flex; gap: 10px; align-items: center; flex-wrap: wrap;">
-                        <a href="https://github.com/luizseixeiro/cockpit-gti-spaguas" target="_blank" rel="noopener noreferrer" class="btn btn-primary" style="padding: 10px 18px; font-size: 12.5px; font-weight: 800; background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%); border: 1.5px solid #38bdf8; color: #fff; border-radius: 8px; text-decoration: none; display: inline-flex; align-items: center; gap: 8px; box-shadow: 0 4px 14px rgba(0,0,0,0.4); transition: all 0.2s ease;">
+                        <a href="https://github.com/LUIZ-SEIXEIRO/cockpit-gti-spaguas" target="_blank" rel="noopener noreferrer" class="btn btn-primary" style="padding: 10px 18px; font-size: 12.5px; font-weight: 800; background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%); border: 1.5px solid #38bdf8; color: #fff; border-radius: 8px; text-decoration: none; display: inline-flex; align-items: center; gap: 8px; box-shadow: 0 4px 14px rgba(0,0,0,0.4); transition: all 0.2s ease;">
                             <span style="font-size: 16px;">🐙</span>
                             <span>Repositório Oficial no GitHub ↗</span>
                         </a>
@@ -6693,7 +6693,7 @@ python sincronizar_openproject_backend.py --card 1498</pre>
                         <div style="background: rgba(30,41,59,0.5); border: 1px solid rgba(56,189,248,0.3); border-radius: 8px; padding: 16px 20px; margin-bottom: 20px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px;">
                             <div>
                                 <strong style="color: #ffffff; font-size: 13.5px;">URL Oficial do Projeto:</strong><br>
-                                <code style="color: #38bdf8; font-size: 12.5px;">https://github.com/luizseixeiro/cockpit-gti-spaguas</code>
+                                <code style="color: #38bdf8; font-size: 12.5px;">https://github.com/LUIZ-SEIXEIRO/cockpit-gti-spaguas</code>
                             </div>
                             <span style="background: rgba(16,185,129,0.2); border: 1px solid #34d399; color: #34d399; padding: 4px 10px; border-radius: 6px; font-size: 11px; font-weight: 700;">
                                 Branch Principal: main
@@ -13526,7 +13526,7 @@ window.STORAGE_KEY_POOL_3_IAS = 'sagti_pool_tres_ias_v96';
 
         try {
             var ctrl = new AbortController();
-            var tid = setTimeout(function() { ctrl.abort(); }, 8000);
+            var tid = setTimeout(function() { ctrl.abort(); }, 45000);
             var resp = await fetch('/api/v1/ia/testar_slot', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
@@ -13549,7 +13549,7 @@ window.STORAGE_KEY_POOL_3_IAS = 'sagti_pool_tres_ias_v96';
         } catch (e) {
             try {
                 var ctrl2 = new AbortController();
-                var tid2 = setTimeout(function() { ctrl2.abort(); }, 5000);
+                var tid2 = setTimeout(function() { ctrl2.abort(); }, 30000);
                 var urlDirect = ep.replace(/\/$/, '') + '/chat/completions';
                 var resp2 = await fetch(urlDirect, {
                     method: 'POST',

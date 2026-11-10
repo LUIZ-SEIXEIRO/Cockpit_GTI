@@ -1,23 +1,9 @@
 # -*- coding: utf-8 -*-
-"""
-==============================================================================
- SP-ÁGUAS / SA-GTI -- SERVIDOR BACKEND FLASK OFICIAL (:5000)
- Cockpit GTI: Governança, Acervo SEI, Portfólio OpenProject & Pool Multi-IA
-==============================================================================
-"""
-
-import os
-import sys
-import json
-import time
-import socket
-import urllib.request
-import urllib.error
+import os, sys, json, time, socket, urllib.request, urllib.error
 from flask import Flask, request, jsonify, send_from_directory
 
-app = Flask(__name__, static_folder='../frontend', static_url_path='/static')
+app = Flask(__name__)
 
-# Permite chamadas locais do painel web
 @app.after_request
 def adicionar_cabecalhos_cors(response):
     response.headers['Access-Control-Allow-Origin'] = '*'
@@ -25,17 +11,60 @@ def adicionar_cabecalhos_cors(response):
     response.headers['Access-Control-Allow-Headers'] = 'Content-Type, Authorization, X-Requested-With'
     return response
 
-# Rota principal para servir o painel web caso acessado via http://localhost:5000/
-@app.route('/')
-def rota_raiz():
-    frontend_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), '../frontend'))
-    if os.path.exists(os.path.join(frontend_dir, 'painel.html')):
-        return send_from_directory(frontend_dir, 'painel.html')
-    return send_from_directory(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')), 'painel.html')
+def encontrar_arquivo_painel():
+    base = os.path.dirname(os.path.abspath(__file__))
+    candidatos = [
+        os.path.join(base, 'painel.html'),
+        os.path.join(base, 'frontend', 'painel.html'),
+        os.path.abspath('painel.html'),
+        os.path.abspath('frontend/painel.html')
+    ]
+    for c in candidatos:
+        if os.path.exists(c):
+            return os.path.split(os.path.abspath(c))
+    return None, None
 
-# -------------------------------------------------------------------------
-# 1. TELEMETRIA E HEALTH CHECK DOS 5 PILARES (:5000)
-# -------------------------------------------------------------------------
+@app.route('/')
+@app.route('/painel')
+@app.route('/frontend/painel.html')
+def rota_raiz():
+    d, f = encontrar_arquivo_painel()
+    if d and f:
+        return send_from_directory(d, f)
+    return "<h2>Cockpit GTI: painel.html não encontrado</h2>", 404
+
+@app.route('/static/<path:filename>')
+@app.route('/frontend/<path:filename>')
+def servir_estaticos(filename):
+    base = os.path.dirname(os.path.abspath(__file__))
+    pastas = [os.path.join(base, 'frontend'), os.path.abspath('frontend')]
+    for p in pastas:
+        if os.path.exists(os.path.join(p, filename)):
+            return send_from_directory(p, filename)
+    return "Arquivo não encontrado", 404
+
+def normalizar_endpoint_ia(endpoint):
+    if not endpoint:
+        endpoint = 'http://100.103.100.98:3001/v1'
+    endpoint = endpoint.strip().rstrip('/')
+    if 'localhost:3001' in endpoint or '127.0.0.1:3001' in endpoint:
+        endpoint = endpoint.replace('localhost:3001', '100.103.100.98:3001').replace('127.0.0.1:3001', '100.103.100.98:3001')
+    if not endpoint.endswith('/v1'):
+        endpoint += '/v1'
+    return endpoint
+
+def localizar_config_pool():
+    base = os.path.dirname(os.path.abspath(__file__))
+    candidatos = [
+        os.path.join(base, 'config_pool_ias.json'),
+        os.path.join(base, 'backend', 'config_pool_ias.json'),
+        os.path.abspath('config_pool_ias.json')
+    ]
+    for c in candidatos:
+        if os.path.exists(c):
+            return c
+    return os.path.join(base, 'config_pool_ias.json')
+
 @app.route('/api/v1/telemetria', methods=['GET'])
 def rota_telemetria():
     def checar_porta(host, porta, timeout=0.8):
@@ -45,37 +74,31 @@ def rota_telemetria():
             return True
         except Exception:
             return False
-
-    status = {
+    return jsonify({
         'mariadb': checar_porta('127.0.0.1', 3306),
         'ollama': checar_porta('127.0.0.1', 11434),
         'glpi': checar_porta('10.199.43.26', 443) or checar_porta('127.0.0.1', 8088),
         'openproject': checar_porta('143.107.108.115', 443) or checar_porta('127.0.0.1', 8090),
-        'newapi': checar_porta('127.0.0.1', 3001)
-    }
-    return jsonify(status)
-
-# -------------------------------------------------------------------------
-# 2. GESTÃO DO POOL MULTI-IA (QWEN 2.5 CODER + LLAMA 3.2 VIA NEW API)
-# -------------------------------------------------------------------------
-CONFIG_POOL_ARQ = os.path.join(os.path.dirname(__file__), 'config_pool_ias.json')
+        'newapi': checar_porta('100.103.100.98', 3001) or checar_porta('127.0.0.1', 3001)
+    })
 
 @app.route('/api/v1/ia/pool', methods=['GET', 'POST'])
 def api_v1_ia_pool():
+    cfg_path = localizar_config_pool()
     if request.method == 'POST':
         try:
             dados = request.get_json(force=True) or {}
-            with open(CONFIG_POOL_ARQ, 'w', encoding='utf-8') as f:
+            with open(cfg_path, 'w', encoding='utf-8') as f:
                 json.dump(dados, f, indent=2, ensure_ascii=False)
-            return jsonify({'status': 'sucesso', 'mensagem': 'Configuração do Pool de IAs salva com sucesso!'})
+            return jsonify({'sucesso': True, 'status': 'sucesso', 'mensagem': 'Pool salvo!'})
         except Exception as e:
-            return jsonify({'status': 'erro', 'mensagem': str(e)}), 500
-    try:
-        if os.path.exists(CONFIG_POOL_ARQ):
-            with open(CONFIG_POOL_ARQ, 'r', encoding='utf-8') as f:
+            return jsonify({'sucesso': False, 'status': 'erro', 'mensagem': str(e)}), 200
+    if os.path.exists(cfg_path):
+        try:
+            with open(cfg_path, 'r', encoding='utf-8') as f:
                 return jsonify(json.load(f))
-    except Exception as e:
-        return jsonify({'status': 'erro', 'mensagem': str(e)}), 500
+        except Exception:
+            pass
     return jsonify({'status': 'padrao'})
 
 @app.route('/api/v1/ia/testar_slot', methods=['POST'])
@@ -83,10 +106,12 @@ def api_v1_ia_testar_slot():
     try:
         t0 = time.time()
         dados = request.get_json(force=True) or {}
-        endpoint = dados.get('endpoint', 'http://100.103.100.98:3001/v1').rstrip('/')
-        api_key = dados.get('apiKey', '')
-        model = dados.get('model', 'qwen2.5-coder:7b')
-        
+        raw_endpoint = dados.get('endpoint', 'http://100.103.100.98:3001/v1')
+        endpoint = normalizar_endpoint_ia(raw_endpoint)
+        api_key = dados.get('apiKey', 'sk-RAZNLjgeaKLVgufkyiemxilJb2HZU6ilvkmTpvLXoOwyIaUL')
+        model = dados.get('model', 'qwen2.5:14b')
+        slot = dados.get('slot', 'ia')
+
         url = endpoint + '/chat/completions'
         payload = {
             'model': model,
@@ -101,16 +126,32 @@ def api_v1_ia_testar_slot():
                 'Authorization': f'Bearer {api_key}'
             }
         )
-        with urllib.request.urlopen(req, timeout=10) as resp:
+        with urllib.request.urlopen(req, timeout=40) as resp:
             latencia = int((time.time() - t0) * 1000)
             return jsonify({
+                'sucesso': True,
                 'status': 'sucesso',
+                'codigo': resp.status,
                 'codigoHttp': resp.status,
                 'latenciaMs': latencia,
-                'mensagem': f'Slot {model} ativo e respondendo ({latencia}ms)!'
+                'latencia_ms': latencia,
+                'mensagem': f'Slot {model} ativo ({latencia}ms)!'
             })
+    except urllib.error.HTTPError as he:
+        detalhe = he.read().decode('utf-8', errors='ignore') if he.fp else str(he)
+        return jsonify({
+            'sucesso': False,
+            'status': 'erro',
+            'erro': f'HTTP {he.code}: {he.reason}',
+            'mensagem': f'Erro HTTP {he.code}: {detalhe[:120]}'
+        }), 200
     except Exception as e:
-        return jsonify({'status': 'erro', 'mensagem': str(e)}), 500
+        return jsonify({
+            'sucesso': False,
+            'status': 'erro',
+            'erro': str(e),
+            'mensagem': f'Erro de conexao: {str(e)}'
+        }), 200
 
 @app.route('/api/v1/ia/chat', methods=['POST'])
 def api_v1_ia_chat():
@@ -118,23 +159,10 @@ def api_v1_ia_chat():
         dados = request.get_json(force=True) or {}
         mensagens = dados.get('mensagens', [])
         ia_alvo = dados.get('ia', 'principal')
-        
-        # Recupera endpoint e chave da IA
-        endpoint = 'http://100.103.100.98:3001/v1'
-        api_key = 'sk-RAZNLjgeaKLVgufkyiemxilJb2HZU6ilvkmTpvLXoOwyIaU'
-        model = 'qwen2.5-coder:7b' if ia_alvo == 'principal' else 'llama3.2:1b'
-        
-        if os.path.exists(CONFIG_POOL_ARQ):
-            try:
-                with open(CONFIG_POOL_ARQ, 'r', encoding='utf-8') as f:
-                    cfg = json.load(f)
-                    info = cfg.get('ias', {}).get(ia_alvo, {})
-                    endpoint = info.get('endpoint', endpoint).rstrip('/')
-                    api_key = info.get('apiKey', api_key)
-                    model = info.get('model', model)
-            except Exception:
-                pass
-                
+        endpoint = normalizar_endpoint_ia(dados.get('endpoint', 'http://100.103.100.98:3001/v1'))
+        api_key = dados.get('apiKey', 'sk-RAZNLjgeaKLVgufkyiemxilJb2HZU6ilvkmTpvLXoOwyIaUL')
+        model = dados.get('model', 'qwen2.5:14b' if ia_alvo == 'principal' else 'qwen2.5:7b')
+
         url = endpoint + '/chat/completions'
         payload = {
             'model': model,
@@ -152,72 +180,20 @@ def api_v1_ia_chat():
         )
         with urllib.request.urlopen(req, timeout=30) as resp:
             corpo = json.loads(resp.read().decode('utf-8'))
-            resposta_texto = corpo['choices'][0]['message']['content']
             return jsonify({
+                'sucesso': True,
                 'status': 'sucesso',
-                'resposta': resposta_texto,
+                'resposta': corpo['choices'][0]['message']['content'],
                 'modelo': model,
                 'ia': ia_alvo
             })
     except Exception as e:
-        return jsonify({'status': 'erro', 'mensagem': str(e)}), 500
+        return jsonify({'sucesso': False, 'status': 'erro', 'mensagem': str(e)}), 200
 
-# -------------------------------------------------------------------------
-# 3. CONECTOR OPENPROJECT (SINCRONIZAÇÃO DE CARDS & BATCH API v3)
-# -------------------------------------------------------------------------
-@app.route('/api/v1/openproject/sync_card', methods=['POST'])
-def api_v1_op_sync_card():
-    try:
-        dados = request.get_json(force=True) or {}
-        card_id = dados.get('card_id')
-        comentario = dados.get('comentario', '')
-        # Retorno afirmativo de sincronização
-        return jsonify({
-            'status': 'sucesso',
-            'card_id': card_id,
-            'mensagem': f'Card #{card_id} sincronizado com sucesso no OpenProject!'
-        })
-    except Exception as e:
-        return jsonify({'status': 'erro', 'mensagem': str(e)}), 500
-
-@app.route('/api/v1/openproject/sync_batch', methods=['POST'])
-def api_v1_op_sync_batch():
-    try:
-        dados = request.get_json(force=True) or {}
-        itens = dados.get('itens', [])
-        return jsonify({'status': 'sucesso', 'total_processado': len(itens)})
-    except Exception as e:
-        return jsonify({'status': 'erro', 'mensagem': str(e)}), 500
-
-@app.route('/api/v1/openproject/historico_agendado_v2', methods=['GET'])
-def api_v1_op_historico():
-    hist_file = os.path.join(os.path.dirname(__file__), '../data/registro_execucao_agendada.json')
-    if os.path.exists(hist_file):
-        try:
-            with open(hist_file, 'r', encoding='utf-8') as f:
-                return jsonify(json.load(f))
-        except Exception:
-            pass
-    return jsonify({'status': 'sucesso', 'historico': []})
-
-# -------------------------------------------------------------------------
-# 4. CONECTOR GLPI 10 (CHAMADOS & CMDB ATIVOS)
-# -------------------------------------------------------------------------
 @app.route('/api/v1/glpi/tickets', methods=['GET'])
 def api_v1_glpi_tickets():
-    cache_file = os.path.join(os.path.dirname(__file__), '../data/glpi_producao_cache.json')
-    if os.path.exists(cache_file):
-        try:
-            with open(cache_file, 'r', encoding='utf-8') as f:
-                return jsonify(json.load(f))
-        except Exception:
-            pass
     return jsonify({'origem': 'GLPI 10 Cache', 'total': 15, 'tickets': []})
 
-# -------------------------------------------------------------------------
-# INICIALIZAÇÃO DO SERVIDOR NA PORTA 5000
-# -------------------------------------------------------------------------
 if __name__ == '__main__':
     porta = int(os.environ.get('PORT', 5000))
-    print(f'[*] Iniciando Backend Cockpit GTI na porta {porta}...')
     app.run(host='0.0.0.0', port=porta, debug=False)

@@ -1,0 +1,45 @@
+name: cockpit-gti
+
+services:
+  ollama:
+    image: ollama/ollama:latest
+    container_name: cockpit-gti-ollama
+    restart: unless-stopped
+    ports:
+      - "11434:11434"
+    volumes:
+      - H:/spaguas/ia-multiagente/ollama_data:/root/.ollama
+    environment:
+      - OLLAMA_KEEP_ALIVE=24h
+
+  new-api:
+    image: calciumion/new-api:latest
+    container_name: cockpit-gti-newapi
+    restart: unless-stopped
+    ports:
+      - "3001:3000"
+    volumes:
+      - new-api-data:/data
+    depends_on:
+      - ollama
+
+  cockpit-backend:
+    image: cockpit-gti-cockpit-backend
+    container_name: cockpit-gti-backend
+    restart: unless-stopped
+    ports:
+      - "5000:5000"
+    volumes:
+      - ./main.py:/app/main.py
+      - ./painel.html:/app/painel.html
+      - ./config_pool_ias.json:/app/config_pool_ias.json
+    environment:
+      - PORT=5000
+      - PYTHONUNBUFFERED=1
+    depends_on:
+      - new-api
+      - ollama
+
+volumes:
+  new-api-data:
+    external: true
