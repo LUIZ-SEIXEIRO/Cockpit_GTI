@@ -1,0 +1,74 @@
+{
+    "versao_regra": "7.1",
+    "data_atualizacao": "29/10/2026",
+    "base_normativa": "Lei 14.133/2021, Decreto Estadual 69.339/2025 e Diretriz 01/2026 SA-GTI",
+    "faixas_aging": {
+        "normal_max": 30,
+        "atencao_max": 90,
+        "alerta_max": 180
+    },
+    "porem_prazos": {
+        "tolerancia_regular_max": 30,
+        "reiteracao_obrigatoria_max": 60
+    },
+    "porem_gatilhos": {
+        "eleitoral": [
+            "ELEITORAL",
+            "ELEICAO",
+            "ELEICOES",
+            "DEFESO ELEITORAL",
+            "VEDACAO ELEITORAL",
+            "LEI 9.504"
+        ],
+        "orgaos_externos": [
+            "AGUARDANDO PGE",
+            "CONSULTORIA JURIDICA",
+            "AGUARDANDO CJ",
+            "COTA DA CJ",
+            "COTA CJ",
+            "PARECER DA CJ",
+            "RESPOSTA DA CJ",
+            "SUBMETIDO A CJ",
+            "TCE",
+            "TRIBUNAL DE CONTAS",
+            "MANIFESTACAO EXTERNA",
+            "AGUARDANDO DMO",
+            "RETIDO EM ORGAO EXTERNO"
+        ],
+        "contingenciamento": [
+            "CONTINGENCIAMENTO",
+            "CONTINGENCIADO",
+            "BLOQUEIO ORCAMENTARIO",
+            "RESTRICAO DE EMPENHO",
+            "SEM DOTACAO",
+            "CONGELAMENTO DE RECURSOS",
+            "AGUARDANDO CREDITO"
+        ],
+        "judicial": [
+            "SUSPENSAO JUDICIAL",
+            "DECISAO JUDICIAL",
+            "ORDEM JUDICIAL",
+            "LIMINAR",
+            "MANDADO DE SEGURANCA",
+            "IMPUGNACAO SUSPENSIVA",
+            "SUSPENSO POR LIMINAR"
+        ]
+    },
+    "analistas_conhecidos": [
+        "Luiz Antonio da Silva Seixeiro",
+        "Luiz Antonio Seixeiro",
+        "Luiz Seixeiro",
+        "Marcos Tadeu Yamamoto",
+        "Marcos Tadeu",
+        "Diego Monteiro",
+        "Rafael Frossard Piteri",
+        "Rafael Piteri",
+        "Reyser Hideaki Uyeky Montenegro",
+        "Reyser Hideaki",
+        "Mario Liboni",
+        "Alessandro Delbue Silva",
+        "Alessandro Delbue",
+        "Rodrigo Nunes de Souza",
+        "Daniel"
+    ]
+}
