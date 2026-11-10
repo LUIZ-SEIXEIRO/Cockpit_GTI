@@ -1,6 +1,0 @@
-
-# 2026-10-29 11:45:26.284698
-+/add main.py
-
-# 2026-10-29 11:45:34.979224
-+Verifique no main.py se as rotas /api/v1/telemetria e /api/v1/feeds/publicacoes estao ativas e com tratamento seguro de excecao para o MariaDB.
