@@ -1,48 +1,182 @@
-import logging
+# -*- coding: utf-8 -*-
+import os, sys, json, time, socket, urllib.request, urllib.error
+from flask import Flask, request, jsonify, send_from_directory
 
-from fastapi import FastAPI, HTTPException
-from fastapi.staticfiles import StaticFiles
-from fastapi.responses import FileResponse
-import os
+app = Flask(__name__)
 
-from backenddatabase_mariadb import check_database_connection
+@app.after_request
+def adicionar_cabecalhos_cors(response):
+    response.headers['Access-Control-Allow-Origin'] = '*'
+    response.headers['Access-Control-Allow-Methods'] = 'GET, POST, OPTIONS, PUT, DELETE'
+    response.headers['Access-Control-Allow-Headers'] = 'Content-Type, Authorization, X-Requested-With'
+    return response
 
-logger = logging.getLogger(__name__)
+def encontrar_arquivo_painel():
+    base = os.path.dirname(os.path.abspath(__file__))
+    candidatos = [
+        os.path.join(base, 'painel.html'),
+        os.path.join(base, 'frontend', 'painel.html'),
+        os.path.abspath('painel.html'),
+        os.path.abspath('frontend/painel.html')
+    ]
+    for c in candidatos:
+        if os.path.exists(c):
+            return os.path.split(os.path.abspath(c))
+    return None, None
 
-app = FastAPI(title="SP Águas - Cockpit de Gestão")
+@app.route('/')
+@app.route('/painel')
+@app.route('/frontend/painel.html')
+def rota_raiz():
+    d, f = encontrar_arquivo_painel()
+    if d and f:
+        return send_from_directory(d, f)
+    return "<h2>Cockpit GTI: painel.html não encontrado</h2>", 404
 
-# Caminho absoluto para a pasta frontend (um nível acima do backend)
-FRONTEND_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'frontend'))
+@app.route('/static/<path:filename>')
+@app.route('/frontend/<path:filename>')
+def servir_estaticos(filename):
+    base = os.path.dirname(os.path.abspath(__file__))
+    pastas = [os.path.join(base, 'frontend'), os.path.abspath('frontend')]
+    for p in pastas:
+        if os.path.exists(os.path.join(p, filename)):
+            return send_from_directory(p, filename)
+    return "Arquivo não encontrado", 404
 
-# Monta a pasta frontend na raiz para servir CSS, JS e Imagens
-app.mount("/static", StaticFiles(directory=FRONTEND_DIR), name="static")
+def normalizar_endpoint_ia(endpoint):
+    if not endpoint:
+        endpoint = 'http://100.103.100.98:3001/v1'
+    endpoint = endpoint.strip().rstrip('/')
+    if 'localhost:3001' in endpoint or '127.0.0.1:3001' in endpoint:
+        endpoint = endpoint.replace('localhost:3001', '100.103.100.98:3001').replace('127.0.0.1:3001', '100.103.100.98:3001')
+    if not endpoint.endswith('/v1'):
+        endpoint += '/v1'
+    return endpoint
 
-@app.get("/")
-async def serve_painel():
-    """Entrega a casca principal da SPA (painel.html)"""
-    return FileResponse(os.path.join(FRONTEND_DIR, "painel.html"))
+@app.route('/api/v1/telemetria', methods=['GET'])
+def rota_telemetria():
+    def checar_porta(host, porta, timeout=0.8):
+        try:
+            s = socket.create_connection((host, porta), timeout=timeout)
+            s.close()
+            return True
+        except Exception:
+            return False
+    return jsonify({
+        'mariadb': checar_porta('127.0.0.1', 3306),
+        'ollama': checar_porta('127.0.0.1', 11434),
+        'glpi': checar_porta('10.199.43.26', 443) or checar_porta('127.0.0.1', 8088),
+        'openproject': checar_porta('143.107.108.115', 443) or checar_porta('127.0.0.1', 8090),
+        'newapi': checar_porta('100.103.100.98', 3001) or checar_porta('127.0.0.1', 3001)
+    })
 
-@app.get("/api/health")
-async def health_check():
-    """Rota simples para verificar se o backend está online"""
-    return {"status": "online", "service": "FastAPI SP-Águas"}
+@app.route('/api/v1/ia/pool', methods=['GET', 'POST'])
+def api_v1_ia_pool():
+    cfg_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'config_pool_ias.json')
+    if request.method == 'POST':
+        try:
+            dados = request.get_json(force=True) or {}
+            with open(cfg_path, 'w', encoding='utf-8') as f:
+                json.dump(dados, f, indent=2, ensure_ascii=False)
+            return jsonify({'sucesso': True, 'status': 'sucesso', 'mensagem': 'Pool salvo!'})
+        except Exception as e:
+            return jsonify({'sucesso': False, 'status': 'erro', 'mensagem': str(e)}), 200
+    if os.path.exists(cfg_path):
+        try:
+            with open(cfg_path, 'r', encoding='utf-8') as f:
+                return jsonify(json.load(f))
+        except Exception:
+            pass
+    return jsonify({'status': 'padrao'})
 
-
-@app.get("/api/mesa/minhas-tarefas")
-async def mesa_tasks_unavailable():
-    """Falha fechada enquanto não houver identidade e projeto GLPI configurados."""
-    raise HTTPException(
-        status_code=503,
-        detail="Persistência da Mesa indisponível: autenticação e projeto GLPI local não configurados.",
-    )
-
-
-@app.get("/api/health/db")
-def database_health_check():
-    """Verifica se o backend consegue executar SELECT 1 no MariaDB"""
+@app.route('/api/v1/ia/testar_slot', methods=['POST'])
+def api_v1_ia_testar_slot():
     try:
-        check_database_connection()
-    except Exception:
-        logger.exception("Falha na verificação de saúde do banco de dados")
-        raise HTTPException(status_code=503, detail="Banco de dados indisponível")
-    return {"status": "online", "database": "connected"}
+        t0 = time.time()
+        dados = request.get_json(force=True) or {}
+        raw_endpoint = dados.get('endpoint', 'http://100.103.100.98:3001/v1')
+        endpoint = normalizar_endpoint_ia(raw_endpoint)
+        api_key = dados.get('apiKey', 'sk-RAZNLjgeaKLVgufkyiemxilJb2HZU6ilvkmTpvLXoOwyIaUL')
+        model = dados.get('model', 'qwen2.5:7b')
+        slot = dados.get('slot', 'ia')
+
+        url = endpoint + '/chat/completions'
+        payload = {
+            'model': model,
+            'messages': [{'role': 'user', 'content': 'ping'}],
+            'max_tokens': 10
+        }
+        req = urllib.request.Request(
+            url,
+            data=json.dumps(payload).encode('utf-8'),
+            headers={
+                'Content-Type': 'application/json',
+                'Authorization': f'Bearer {api_key}'
+            }
+        )
+        with urllib.request.urlopen(req, timeout=12) as resp:
+            latencia = int((time.time() - t0) * 1000)
+            return jsonify({
+                'sucesso': True,
+                'status': 'sucesso',
+                'codigo': resp.status,
+                'codigoHttp': resp.status,
+                'latenciaMs': latencia,
+                'latencia_ms': latencia,
+                'mensagem': f'Slot {model} ativo ({latencia}ms)!'
+            })
+    except urllib.error.HTTPError as he:
+        return jsonify({
+            'sucesso': False,
+            'status': 'erro',
+            'erro': f'HTTP {he.code}: {he.reason}',
+            'mensagem': f'Erro HTTP {he.code}'
+        }), 200
+    except Exception as e:
+        return jsonify({
+            'sucesso': False,
+            'status': 'erro',
+            'erro': str(e),
+            'mensagem': f'Erro de conexao: {str(e)}'
+        }), 200
+
+@app.route('/api/v1/ia/chat', methods=['POST'])
+def api_v1_ia_chat():
+    try:
+        dados = request.get_json(force=True) or {}
+        mensagens = dados.get('mensagens', [])
+        ia_alvo = dados.get('ia', 'principal')
+        endpoint = normalizar_endpoint_ia(dados.get('endpoint', 'http://100.103.100.98:3001/v1'))
+        api_key = dados.get('apiKey', 'sk-RAZNLjgeaKLVgufkyiemxilJb2HZU6ilvkmTpvLXoOwyIaUL')
+        model = dados.get('model', 'qwen2.5:7b' if ia_alvo == 'principal' else 'qwen2.5-coder:7b')
+
+        url = endpoint + '/chat/completions'
+        payload = {
+            'model': model,
+            'messages': mensagens,
+            'temperature': 0.3,
+            'max_tokens': 2000
+        }
+        req = urllib.request.Request(
+            url,
+            data=json.dumps(payload).encode('utf-8'),
+            headers={
+                'Content-Type': 'application/json',
+                'Authorization': f'Bearer {api_key}'
+            }
+        )
+        with urllib.request.urlopen(req, timeout=30) as resp:
+            corpo = json.loads(resp.read().decode('utf-8'))
+            return jsonify({
+                'sucesso': True,
+                'status': 'sucesso',
+                'resposta': corpo['choices'][0]['message']['content'],
+                'modelo': model,
+                'ia': ia_alvo
+            })
+    except Exception as e:
+        return jsonify({'sucesso': False, 'status': 'erro', 'mensagem': str(e)}), 200
+
+if __name__ == '__main__':
+    porta = int(os.environ.get('PORT', 5000))
+    app.run(host='0.0.0.0', port=porta, debug=False)

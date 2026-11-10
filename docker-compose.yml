@@ -1,90 +1,43 @@
+name: cockpit-gti
+
 services:
-  db:
-    image: mariadb:10.11
-    container_name: spaguas-mariadb
+  ollama:
+    image: ollama/ollama:latest
+    container_name: cockpit-gti-ollama
     restart: unless-stopped
-    environment:
-      MYSQL_ROOT_PASSWORD: ${DB_ROOT_PASSWORD:?Defina DB_ROOT_PASSWORD no .env}
-      MYSQL_DATABASE: ${DB_NAME:?Defina DB_NAME no .env}
-      MYSQL_USER: ${DB_USER:?Defina DB_USER no .env}
-      MYSQL_PASSWORD: ${DB_PASSWORD:?Defina DB_PASSWORD no .env}
     ports:
-      - "3306:3306"
+      - "11434:11434"
     volumes:
-      - ./volumes_docker/mariadb_3306:/var/lib/mysql
-    healthcheck:
-      test: ["CMD", "healthcheck.sh", "--connect", "--innodb_initialized"]
-      interval: 10s
-      timeout: 5s
-      retries: 10
-      start_period: 30s
+      - H:/spaguas/ia-multiagente/ollama_data:/root/.ollama
+    environment:
+      - OLLAMA_KEEP_ALIVE=24h
 
-  backend:
-    build: 
-      context: ./backend
-    container_name: spaguas-fastapi
+  new-api:
+    image: calciumion/new-api:latest
+    container_name: cockpit-gti-newapi
     restart: unless-stopped
     ports:
-      - "8000:8000"
-    environment:
-      DB_HOST: db
-      DB_PORT: "3306"
-      DB_NAME: ${DB_NAME:?Defina DB_NAME no .env}
-      DB_USER: ${DB_USER:?Defina DB_USER no .env}
-      DB_PASSWORD: ${DB_PASSWORD:?Defina DB_PASSWORD no .env}
+      - "3001:3000"
     volumes:
-      - ./backend:/app
-      - ./frontend:/frontend
+      - new-api-data:/data
     depends_on:
-      db:
-        condition: service_healthy
+      - ollama
 
-  glpi-db:
-    image: mariadb:10.11
-    container_name: cockpit-glpi-mariadb
-    restart: unless-stopped
-    environment:
-      MYSQL_ROOT_PASSWORD: ${GLPI_LOCAL_DB_ROOT_PASSWORD:?Defina GLPI_LOCAL_DB_ROOT_PASSWORD no .env}
-      MYSQL_DATABASE: ${GLPI_LOCAL_DB_NAME:?Defina GLPI_LOCAL_DB_NAME no .env}
-      MYSQL_USER: ${GLPI_LOCAL_DB_USER:?Defina GLPI_LOCAL_DB_USER no .env}
-      MYSQL_PASSWORD: ${GLPI_LOCAL_DB_PASSWORD:?Defina GLPI_LOCAL_DB_PASSWORD no .env}
-    volumes:
-      - glpi_local_db:/var/lib/mysql
-    healthcheck:
-      test: ["CMD", "healthcheck.sh", "--connect", "--innodb_initialized"]
-      interval: 10s
-      timeout: 5s
-      retries: 10
-      start_period: 30s
-
-  glpi-local:
-    image: ghcr.io/glpi-project/glpi:12.0.0
-    container_name: cockpit-glpi-local
+  cockpit-backend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: cockpit-gti-backend
     restart: unless-stopped
     ports:
-      - "8088:80"
+      - "5000:5000"
     environment:
-      GLPI_DB_HOST: glpi-db
-      GLPI_DB_PORT: "3306"
-      GLPI_DB_NAME: ${GLPI_LOCAL_DB_NAME:?Defina GLPI_LOCAL_DB_NAME no .env}
-      GLPI_DB_USER: ${GLPI_LOCAL_DB_USER:?Defina GLPI_LOCAL_DB_USER no .env}
-      GLPI_DB_PASSWORD: ${GLPI_LOCAL_DB_PASSWORD:?Defina GLPI_LOCAL_DB_PASSWORD no .env}
-    volumes:
-      - glpi_local_data:/var/glpi
+      - PORT=5000
+      - PYTHONUNBUFFERED=1
     depends_on:
-      glpi-db:
-        condition: service_healthy
-    healthcheck:
-      test: ["CMD-SHELL", "curl -fsS -o /dev/null http://localhost/ || exit 1"]
-      interval: 15s
-      timeout: 10s
-      retries: 20
-      start_period: 180s
+      - new-api
+      - ollama
 
 volumes:
-  mariadb_3306:
-    driver: local
-  glpi_local_db:
-    driver: local
-  glpi_local_data:
-    driver: local
+  new-api-data:
+    external: true
