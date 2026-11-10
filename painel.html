@@ -6584,6 +6584,9 @@ th.th-sortable-v9:hover {
                     <button type="button" class="btn btn-secondary subaba-doc-btn" id="btn-doc-github" onclick="window.alternarSubAbaDoc('github')" style="padding: 8px 16px; font-size: 12.5px; font-weight: 600; border-radius: 8px; background: rgba(255,255,255,0.06); color: #cbd5e1; border: 1px solid rgba(255,255,255,0.15); cursor: pointer; display: inline-flex; align-items: center; gap: 6px;">
                         <span>🐙</span> 3. Repositório GitHub &amp; Estrutura do Projeto
                     </button>
+                    <button type="button" class="btn btn-secondary subaba-doc-btn" id="btn-doc-readme" onclick="window.alternarSubAbaDoc('readme')" style="padding: 8px 16px; font-size: 12.5px; font-weight: 600; border-radius: 8px; background: rgba(255,255,255,0.06); color: #cbd5e1; border: 1px solid rgba(255,255,255,0.15); cursor: pointer; display: inline-flex; align-items: center; gap: 6px;">
+                        <span>🌊</span> 4. Apresentação Executiva (README.md)
+                    </button>
                 </div>
 
                 <!-- 3. CONTEÚDO 1: MANUAL DO USUÁRIO -->
@@ -6723,6 +6726,12 @@ cockpit-gti-spaguas/
                             <li><strong>Limpeza &amp; Higienização:</strong> Remoção de scripts temporários de teste, backups legados e arquivos `.zip` do repositório base;</li>
                             <li><strong>Estrutura de Commits Semânticos:</strong> Publicação do código com mensagens padronizadas (<code>feat:</code>, <code>fix:</code>, <code>docs:</code>) e tag de release oficial <code>v11.0.0</code>.</li>
                         </ol>
+                    </div>
+                </div>
+                <!-- 6. CONTEÚDO 4: APRESENTAÇÃO EXECUTIVA (README.MD) -->
+                <div id="subview-doc-readme" class="doc-subview" style="display: none; animation: fadeIn 0.3s ease;">
+                    <div style="background: rgba(15,23,42,0.85); border: 1px solid rgba(255,255,255,0.1); border-radius: 12px; padding: 28px 32px; color: #e2e8f0; line-height: 1.7; box-shadow: 0 8px 24px rgba(0,0,0,0.3);">
+                        <div style="padding:20px;text-align:center;color:#38bdf8;font-size:13px;">⏳ Carregando README.md executivo...</div>
                     </div>
                 </div>
             </div>
@@ -22769,7 +22778,8 @@ html body #view-gestao_agil .kanban-card-modelo .k-status-sei-critico {
         var views = [
             { id: 'usuario', view: document.getElementById('subview-doc-usuario'), btn: document.getElementById('btn-doc-usuario') },
             { id: 'tecnica', view: document.getElementById('subview-doc-tecnica'), btn: document.getElementById('btn-doc-tecnica') },
-            { id: 'github', view: document.getElementById('subview-doc-github'), btn: document.getElementById('btn-doc-github') }
+            { id: 'github', view: document.getElementById('subview-doc-github'), btn: document.getElementById('btn-doc-github') },
+            { id: 'readme', view: document.getElementById('subview-doc-readme'), btn: document.getElementById('btn-doc-readme') }
         ];
 
         views.forEach(function(item) {
