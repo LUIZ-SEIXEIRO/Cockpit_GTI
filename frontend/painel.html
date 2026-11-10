@@ -22698,7 +22698,73 @@ html body #view-gestao_agil .kanban-card-modelo .k-status-sei-critico {
     // =========================================================================
     // NAVEGAÇÃO ENTRE SUB-ABAS DA DOCUMENTAÇÃO DO PROJETO (USUÁRIO / TÉCNICA / GITHUB)
     // =========================================================================
+        window.renderizarMarkdown = function(md) {
+        if (!md) return '';
+        var lines = md.split('\n');
+        var html = [];
+        var inCode = false, inTable = false;
+        for (var i = 0; i < lines.length; i++) {
+            var l = lines[i];
+            if (l.trim().indexOf('```') === 0) {
+                if (inCode) { html.push('</code></pre>'); inCode = false; }
+                else { html.push('<pre style="background:rgba(2,6,23,0.85);border:1px solid rgba(255,255,255,0.1);padding:14px;border-radius:8px;overflow-x:auto;font-family:monospace;font-size:12px;color:#38bdf8;margin:14px 0;"><code>'); inCode = true; }
+                continue;
+            }
+            if (inCode) { html.push(l.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')); continue; }
+            if (l.trim().indexOf('|') === 0 && l.trim().indexOf('|', 1) > 0) {
+                if (l.indexOf('---') > -1) continue;
+                var parts = l.split('|').slice(1, -1);
+                if (!inTable) {
+                    html.push('<div style="overflow-x:auto;margin:16px 0;"><table style="width:100%;border-collapse:collapse;font-size:12px;line-height:1.5;"><thead><tr>' + parts.map(function(c) { return '<th style="background:rgba(56,189,248,0.12);color:#38bdf8;padding:8px 12px;border:1px solid rgba(255,255,255,0.1);text-align:left;font-weight:700;">' + c.trim() + '</th>'; }).join('') + '</tr></thead><tbody>');
+                    inTable = true;
+                } else {
+                    html.push('<tr>' + parts.map(function(c) { return '<td style="padding:7px 12px;border:1px solid rgba(255,255,255,0.07);color:#cbd5e1;">' + c.trim() + '</td>'; }).join('') + '</tr>');
+                }
+                continue;
+            } else if (inTable) { html.push('</tbody></table></div>'); inTable = false; }
+
+            var fmt = l.replace(/\*\*(.*?)\*\*/g, '<strong style="color:#ffffff;">$1</strong>')
+                       .replace(/`([^`]+)`/g, '<code style="background:rgba(255,255,255,0.1);color:#38bdf8;padding:2px 5px;border-radius:4px;font-size:11.5px;font-family:monospace;">$1</code>')
+                       .replace(/\[([^\]]+)\]\(([^\)]+)\)/g, '<a href="$2" target="_blank" style="color:#38bdf8;text-decoration:underline;">$1</a>');
+
+            if (fmt.indexOf('# ') === 0) html.push('<h2 style="color:#38bdf8;font-size:18px;margin:22px 0 10px 0;border-bottom:1px solid rgba(56,189,248,0.3);padding-bottom:6px;font-weight:800;">' + fmt.substring(2) + '</h2>');
+            else if (fmt.indexOf('## ') === 0) html.push('<h3 style="color:#ffffff;font-size:15px;margin:18px 0 8px 0;border-bottom:1px solid rgba(255,255,255,0.08);padding-bottom:5px;font-weight:700;">' + fmt.substring(3) + '</h3>');
+            else if (fmt.indexOf('### ') === 0) html.push('<h4 style="color:#7dd3fc;font-size:13.5px;margin:14px 0 6px 0;font-weight:700;">' + fmt.substring(4) + '</h4>');
+            else if (fmt.indexOf('#### ') === 0) html.push('<h5 style="color:#93c5fd;font-size:12.5px;margin:12px 0 4px 0;font-weight:700;">' + fmt.substring(5) + '</h5>');
+            else if (fmt.indexOf('> ') === 0) html.push('<blockquote style="border-left:4px solid #38bdf8;background:rgba(56,189,248,0.08);padding:10px 14px;border-radius:0 8px 8px 0;margin:12px 0;font-size:12.5px;color:#e2e8f0;line-height:1.6;">' + fmt.substring(2) + '</blockquote>');
+            else if (fmt.indexOf('* ') === 0 || fmt.indexOf('- ') === 0) html.push('<li style="margin-left:20px;font-size:12px;color:#cbd5e1;line-height:1.6;">' + fmt.substring(2) + '</li>');
+            else if (fmt.trim() === '---') html.push('<hr style="border:none;border-top:1px solid rgba(255,255,255,0.1);margin:18px 0;">');
+            else if (fmt.trim()) html.push('<p style="font-size:12.5px;color:#cbd5e1;line-height:1.65;margin:8px 0;">' + fmt + '</p>');
+        }
+        if (inTable) html.push('</tbody></table></div>');
+        if (inCode) html.push('</code></pre>');
+        return html.join('\n');
+    };
+
+    window.carregarDocDinamica = function(subAba) {
+        subAba = subAba || 'usuario';
+        var el = document.getElementById('subview-doc-' + subAba);
+        if (!el || el.dataset.docCarregado === 'true') return;
+        var box = el.querySelector('div') || el;
+        box.innerHTML = '<div style="padding:20px;text-align:center;color:#38bdf8;font-size:13px;">⏳ Carregando documentação oficial atualizada (docs/' + subAba.toUpperCase() + ')...</div>';
+        fetch('/api/v1/docs/' + subAba)
+            .then(function(res) { return res.json(); })
+            .then(function(data) {
+                if (data && data.sucesso && data.conteudo_md) {
+                    var headerHtml = '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;padding-bottom:12px;border-bottom:1px solid rgba(255,255,255,0.1);flex-wrap:wrap;gap:10px;">' +
+                        '<div style="font-size:12px;color:#38bdf8;font-weight:700;">📄 Arquivo Oficial: <code>docs/' + data.arquivo + '</code> (Sincronizado)</div>' +
+                        '<a href="[https://github.com/LUIZ-SEIXEIRO/Cockpit_GTI/blob/main/docs/](https://github.com/LUIZ-SEIXEIRO/Cockpit_GTI/blob/main/docs/)' + data.arquivo + '" target="_blank" style="padding:4px 10px;border-radius:6px;background:rgba(56,189,248,0.15);border:1px solid #38bdf8;color:#38bdf8;font-size:11px;font-weight:700;text-decoration:none;">🐙 Ver no GitHub ↗</a>' +
+                        '</div>';
+                    box.innerHTML = headerHtml + window.renderizarMarkdown(data.conteudo_md);
+                    el.dataset.docCarregado = 'true';
+                }
+            })
+            .catch(function(err) {
+                box.innerHTML = '<div style="padding:20px;color:#f87171;">⚠️ Erro ao carregar documentação: ' + err.message + '</div>';
+            });
+    };
     window.alternarSubAbaDoc = function(subAba) {
+        if (typeof window.carregarDocDinamica === 'function') window.carregarDocDinamica(subAba);
         subAba = subAba || 'usuario';
         var views = [
             { id: 'usuario', view: document.getElementById('subview-doc-usuario'), btn: document.getElementById('btn-doc-usuario') },

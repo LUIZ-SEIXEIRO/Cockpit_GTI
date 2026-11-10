@@ -194,6 +194,45 @@ def api_v1_ia_chat():
 def api_v1_glpi_tickets():
     return jsonify({'origem': 'GLPI 10 Cache', 'total': 15, 'tickets': []})
 
+
+# -------------------------------------------------------------------------
+# 5. DOCUMENTAÇÃO OFICIAL DINÂMICA (LEITURA DE DOCS/*.MD)
+# -------------------------------------------------------------------------
+@app.route('/api/v1/docs/<doc_id>', methods=['GET'])
+def api_v1_obter_documento(doc_id):
+    mapa = {
+        'usuario': 'MANUAL_DO_USUARIO.md',
+        'tecnica': 'DOCUMENTACAO_TECNICA.md',
+        'github': 'GUIA_PUBLICACAO_GITHUB.md',
+        'readme': 'README.md'
+    }
+    arquivo = mapa.get(doc_id.lower())
+    if not arquivo:
+        return jsonify({'sucesso': False, 'status': 'erro', 'mensagem': 'Documento não encontrado'}), 404
+        
+    base = os.path.dirname(os.path.abspath(__file__))
+    candidatos = [
+        os.path.join(base, 'docs', arquivo),
+        os.path.join(base, arquivo),
+        os.path.join(base, '..', 'docs', arquivo),
+        os.path.abspath(os.path.join('docs', arquivo))
+    ]
+    for c in candidatos:
+        if os.path.exists(c):
+            try:
+                with open(c, 'r', encoding='utf-8') as f:
+                    return jsonify({
+                        'sucesso': True,
+                        'status': 'sucesso',
+                        'doc_id': doc_id,
+                        'arquivo': arquivo,
+                        'conteudo_md': f.read()
+                    })
+            except Exception as e:
+                return jsonify({'sucesso': False, 'status': 'erro', 'mensagem': str(e)}), 500
+                
+    return jsonify({'sucesso': False, 'status': 'erro', 'mensagem': 'Arquivo não localizado em disco'}), 404
+
 if __name__ == '__main__':
     porta = int(os.environ.get('PORT', 5000))
     app.run(host='0.0.0.0', port=porta, debug=False)
