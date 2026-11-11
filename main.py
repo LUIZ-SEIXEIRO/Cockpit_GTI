@@ -333,35 +333,50 @@ def mascarar_chaves_recursivo(obj):
 
 def extrair_id_item(item):
     if isinstance(item, dict):
-        for k in ('id', 'agent', 'modelo', 'model', 'nome', 'slot'):
+        for k in ('agent', 'modelo', 'model', 'id', 'slot', 'nome', 'name'):
             v = item.get(k)
             if v:
                 return str(v).strip().lower()
     return ''
 
-def resolver_chave_real(identificador=None):
+def resolver_chave_real(modelo=None, slot=None):
     cfg_path = localizar_config_pool()
     if os.path.exists(cfg_path):
         try:
             with open(cfg_path, 'r', encoding='utf-8') as f:
                 dados = json.load(f)
             slots_dict = dados.get('ias', {})
+            
+            # 1. Se informou o slot e o slot existe no dicionário ias (ex: 'principal', 'orquestracao', 'microservicos')
+            if slot and isinstance(slots_dict, dict) and str(slot) in slots_dict:
+                item_slot = slots_dict[str(slot)]
+                if isinstance(item_slot, dict):
+                    for k in ('apiKey', 'api_key', 'chave', 'token', 'secret'):
+                        if item_slot.get(k) and item_slot[k] != '***':
+                            return item_slot[k]
+
             itens = list(slots_dict.values()) if isinstance(slots_dict, dict) else (slots_dict if isinstance(slots_dict, list) else [dados])
             
-            alvo = str(identificador or '').strip().lower()
-            for it in itens:
-                if isinstance(it, dict):
-                    valores = [str(it.get(k) or '').strip().lower() for k in ('agent', 'modelo', 'model', 'id', 'slot', 'nome')]
-                    if alvo and (alvo in valores or any(alvo in v for v in valores if v)):
-                        for k in ('apiKey', 'api_key', 'chave', 'token', 'secret'):
-                            if it.get(k) and it[k] != '***':
-                                return it[k]
-            # Fallback para o primeiro item válido
-            for it in itens:
-                if isinstance(it, dict):
-                    for k in ('apiKey', 'api_key', 'chave', 'token', 'secret'):
-                        if it.get(k) and it[k] != '***':
-                            return it[k]
+            # 2. Busca por modelo/agent específico
+            if modelo:
+                alvo = str(modelo).strip().lower()
+                for it in itens:
+                    if isinstance(it, dict):
+                        valores = [str(it.get(k) or '').strip().lower() for k in ('agent', 'modelo', 'model', 'id', 'slot', 'nome')]
+                        if alvo in valores:
+                            for k in ('apiKey', 'api_key', 'chave', 'token', 'secret'):
+                                if it.get(k) and it[k] != '***':
+                                    return it[k]
+
+            # 3. Busca por identificador de slot na lista
+            if slot:
+                alvo_s = str(slot).strip().lower()
+                for it in itens:
+                    if isinstance(it, dict):
+                        if str(it.get('id') or '').strip().lower() == alvo_s or str(it.get('slot') or '').strip().lower() == alvo_s:
+                            for k in ('apiKey', 'api_key', 'chave', 'token', 'secret'):
+                                if it.get(k) and it[k] != '***':
+                                    return it[k]
         except Exception:
             pass
     return os.getenv('NEWAPI_API_KEY') or os.getenv('NEW_API_KEY') or ''
@@ -382,28 +397,58 @@ def mascarar_chaves_recursivo(obj):
 def mesclar_preservando_segredos(novos, originais):
     if isinstance(novos, dict) and isinstance(originais, dict):
         resultado = dict(novos)
+        
+        # Mapeia originais prioritariamente pela identidade do MODELO/AGENT
+        orig_ias = originais.get('ias')
+        nov_ias = novos.get('ias')
+        if orig_ias and nov_ias:
+            orig_itens = list(orig_ias.values()) if isinstance(orig_ias, dict) else (orig_ias if isinstance(orig_ias, list) else [])
+            mapa_por_modelo = {}
+            for it in orig_itens:
+                if isinstance(it, dict):
+                    m_id = extrair_id_item(it)
+                    if m_id:
+                        mapa_por_modelo[m_id] = it
+            
+            if isinstance(nov_ias, dict):
+                ias_mescladas = {}
+                for s_key, s_val in nov_ias.items():
+                    if isinstance(s_val, dict):
+                        m_id = extrair_id_item(s_val)
+                        # Prioridade: identidade do modelo/agent (nunca a chave do slot)
+                        orig_match = mapa_por_modelo.get(m_id) or (orig_ias.get(s_key) if isinstance(orig_ias, dict) else None)
+                        ias_mescladas[s_key] = mesclar_preservando_segredos(s_val, orig_match) if orig_match else s_val
+                    else:
+                        ias_mescladas[s_key] = s_val
+                resultado['ias'] = ias_mescladas
+            elif isinstance(nov_ias, list):
+                resultado['ias'] = mesclar_preservando_segredos(nov_ias, orig_itens)
+
         for k, v in novos.items():
-            if k in originais:
-                if v == '***' or (isinstance(v, str) and v.startswith('***')):
-                    resultado[k] = originais[k]
-                elif k == 'ias' and isinstance(v, dict) and isinstance(originais[k], dict):
-                    mapa_orig = {}
-                    for orig_k, orig_v in originais[k].items():
-                        if isinstance(orig_v, dict):
-                            mapa_orig[orig_k] = orig_v
-                            for campo in ('id', 'agent', 'modelo'):
-                                if orig_v.get(campo):
-                                    mapa_orig[str(orig_v[campo]).strip().lower()] = orig_v
-                    ias_mescladas = {}
-                    for nov_k, nov_v in v.items():
-                        if isinstance(nov_v, dict):
-                            orig_match = mapa_orig.get(nov_k) or mapa_orig.get(str(nov_v.get('id', '')).strip().lower()) or mapa_orig.get(str(nov_v.get('agent', '')).strip().lower())
-                            ias_mescladas[nov_k] = mesclar_preservando_segredos(nov_v, orig_match) if orig_match else nov_v
-                        else:
-                            ias_mescladas[nov_k] = nov_v
-                    resultado[k] = ias_mescladas
-                elif isinstance(v, (dict, list)):
-                    resultado[k] = mesclar_preservando_segredos(v, originais[k])
+            if k != 'ias':
+                if k in originais:
+                    if v == '***' or (isinstance(v, str) and v.startswith('***')):
+                        resultado[k] = originais[k]
+                    elif isinstance(v, (dict, list)):
+                        resultado[k] = mesclar_preservando_segredos(v, originais[k])
+                else:
+                    resultado[k] = v
+        return resultado
+    elif isinstance(novos, list) and isinstance(originais, list):
+        mapa_por_modelo = {}
+        for it in originais:
+            if isinstance(it, dict):
+                m_id = extrair_id_item(it)
+                if m_id:
+                    mapa_por_modelo[m_id] = it
+        resultado = []
+        for i, novo in enumerate(novos):
+            if isinstance(novo, dict):
+                m_id = extrair_id_item(novo)
+                orig_match = mapa_por_modelo.get(m_id) or (originais[i] if i < len(originais) else None)
+                resultado.append(mesclar_preservando_segredos(novo, orig_match) if orig_match else novo)
+            else:
+                resultado.append(novo)
         return resultado
     return novos
 
@@ -447,7 +492,7 @@ def api_v1_ia_testar_slot():
 
         api_key = dados.get('apiKey') or dados.get('api_key') or ''
         if not api_key or api_key == '***':
-            api_key = resolver_chave_real(model) or resolver_chave_real(slot)
+            api_key = resolver_chave_real(model, slot)
 
         url = endpoint + '/chat/completions'
         payload = {
@@ -487,7 +532,11 @@ def api_v1_ia_chat():
         api_key = dados.get('apiKey') or os.environ.get('NEWAPI_API_KEY', '')
         model = dados.get('model', 'qwen2.5:14b' if ia_alvo == 'principal' else 'qwen2.5:7b')
 
-        url = endpoint + '/chat/completions'
+        url =
+    # Desmascara a chave antes de montar os headers de chamada
+    if not api_key or api_key == '***':
+        api_key = resolver_chave_real(modelo, dados.get('slot')) or resolver_chave_real(modelo)
+ endpoint + '/chat/completions'
         payload = {
             'model': model,
             'messages': mensagens,
