@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """
-Script de Atualização e Homologação SEI 4.1.5 - Versão 10 (Compatibilidade Total Python 3.14 e Windows)
-Exclusão Mútua Persistente e Estrita no Armazenamento via Kernel Lock (fcntl / msvcrt)
+Script de Atualização e Homologação SEI 4.1.5 - Versão 10
+Exclusão Mútua Persistente (Kernel Flock + Dual Lock v9/v10), Thread Timeout e Testes Multiprocesso
 Cockpit GTI 360° - SA-GTI (SP-Águas)
 """
 import os
@@ -296,8 +296,8 @@ class LockProcessosSEI:
     """
     Exclusão mútua persistente e estrita imposta pelo armazenamento e sistema operacional.
     Utiliza fcntl.flock no Linux/POSIX e msvcrt.locking no Windows sobre arquivo de lock dedicado (.flock).
-    A exclusão mútua permanece 100% ativa e válida no kernel do SO durante toda a operação,
-    mesmo durante pausas ou suspensões do processo titular, impedindo qualquer gravação concorrente.
+    Adicionalmente adquire o diretório .lock com lock.info para compatibilidade mútua com versões v9.
+    O arquivo .flock NUNCA é removido, garantindo estabilidade de inode e proteção contínua no kernel.
     """
     def __init__(
         self,
@@ -317,6 +317,7 @@ class LockProcessosSEI:
         self.hostname = hostname or socket.gethostname()
         self.token = str(uuid.uuid4())
         self._adquirido = False
+        self._dir_adquirido = False
         self._fd: Optional[int] = None
         self._heartbeat_thread: Optional[threading.Thread] = None
         self._stop_heartbeat = threading.Event()
@@ -345,7 +346,6 @@ class LockProcessosSEI:
     def verificar_lease_valido(self) -> bool:
         if not self._adquirido or self._fd is None:
             return False
-        # Se houver arquivo de metadados info, valida o token
         if os.path.exists(self.info_file):
             try:
                 with open(self.info_file, "r", encoding="utf-8") as f:
@@ -356,15 +356,38 @@ class LockProcessosSEI:
                 pass
         return True
 
+    def _liberar_kernel_lock(self):
+        if self._fd is not None:
+            if os.name == "nt":
+                try:
+                    import msvcrt
+                    os.lseek(self._fd, 0, os.SEEK_SET)
+                    msvcrt.locking(self._fd, msvcrt.LK_UNLCK, 1)
+                except Exception:
+                    pass
+            else:
+                try:
+                    import fcntl
+                    fcntl.flock(self._fd, fcntl.LOCK_UN)
+                except Exception:
+                    pass
+            try:
+                os.close(self._fd)
+            except OSError:
+                pass
+            self._fd = None
+            self._adquirido = False
+
     def __enter__(self):
         diretorio_pai = os.path.dirname(self.lock_file)
         if diretorio_pai:
             os.makedirs(diretorio_pai, exist_ok=True)
 
         inicio = time.monotonic()
-        # Abre o descritor de arquivo de lock do SO
+        # 1. Abre o descritor de arquivo de lock do SO (NUNCA deletado)
         self._fd = os.open(self.lock_file, os.O_CREAT | os.O_RDWR, 0o600)
 
+        # 2. Adquire exclusão mútua no kernel do SO
         while True:
             try:
                 if os.name == "nt":
@@ -381,21 +404,8 @@ class LockProcessosSEI:
                     import fcntl
                     fcntl.flock(self._fd, fcntl.LOCK_EX | fcntl.LOCK_NB)
 
-                # Exclusão mútua no armazenamento/kernel adquirida com sucesso!
                 self._adquirido = True
-                
-                # Registra metadados informativos no diretório de lock
-                os.makedirs(self.lock_dir, exist_ok=True)
-                self._gravar_heartbeat()
-
-                self._stop_heartbeat.clear()
-                self._heartbeat_thread = threading.Thread(
-                    target=self._loop_heartbeat,
-                    daemon=True,
-                    name="LockSEI-Heartbeat"
-                )
-                self._heartbeat_thread.start()
-                return self
+                break
 
             except (BlockingIOError, OSError, PermissionError):
                 if (time.monotonic() - inicio) >= self.timeout:
@@ -410,43 +420,77 @@ class LockProcessosSEI:
                     )
                 time.sleep(self.poll_interval)
 
+        # 3. Adquire lock de diretório legado para compatibilidade com versões v9
+        while True:
+            try:
+                os.mkdir(self.lock_dir)
+                self._dir_adquirido = True
+                break
+            except FileExistsError:
+                if (time.monotonic() - inicio) >= self.timeout:
+                    self._liberar_kernel_lock()
+                    raise TimeoutError(
+                        f"Timeout ({self.timeout}s) ao aguardar liberação de lock de diretório legado: {self.lock_dir}"
+                    )
+                # Verifica se lock legado está morto ou órfão
+                if not os.path.exists(self.info_file):
+                    try:
+                        os.rmdir(self.lock_dir)
+                        continue
+                    except OSError:
+                        pass
+                else:
+                    try:
+                        with open(self.info_file, "r", encoding="utf-8") as f:
+                            info = json.load(f)
+                        pid = info.get("pid")
+                        ts = info.get("timestamp", 0)
+                        idade = time.time() - ts
+                        if not processo_esta_vivo(pid) or idade > self.max_lock_age:
+                            try:
+                                os.unlink(self.info_file)
+                                os.rmdir(self.lock_dir)
+                                continue
+                            except OSError:
+                                pass
+                    except Exception:
+                        pass
+                time.sleep(self.poll_interval)
+
+        # 4. Registra metadados informativos no diretório de lock
+        self._gravar_heartbeat()
+
+        self._stop_heartbeat.clear()
+        self._heartbeat_thread = threading.Thread(
+            target=self._loop_heartbeat,
+            daemon=True,
+            name="LockSEI-Heartbeat"
+        )
+        self._heartbeat_thread.start()
+        return self
+
     def __exit__(self, exc_type, exc_val, exc_tb):
-        if self._adquirido and self._fd is not None:
+        if self._adquirido:
             self._stop_heartbeat.set()
             if self._heartbeat_thread and self._heartbeat_thread.is_alive():
                 self._heartbeat_thread.join(timeout=0.5)
 
             try:
-                if os.path.exists(self.info_file):
+                if self._dir_adquirido or os.path.exists(self.lock_dir):
+                    if os.path.exists(self.info_file):
+                        try:
+                            with open(self.info_file, "r", encoding="utf-8") as f:
+                                info = json.load(f)
+                            if info.get("token") == self.token:
+                                os.unlink(self.info_file)
+                        except Exception:
+                            pass
                     try:
-                        with open(self.info_file, "r", encoding="utf-8") as f:
-                            info = json.load(f)
-                        if info.get("token") == self.token:
-                            os.unlink(self.info_file)
-                            os.rmdir(self.lock_dir)
-                    except Exception:
-                        pass
-                
-                if os.name == "nt":
-                    try:
-                        import msvcrt
-                        os.lseek(self._fd, 0, os.SEEK_SET)
-                        msvcrt.locking(self._fd, msvcrt.LK_UNLCK, 1)
-                    except Exception:
-                        pass
-                else:
-                    try:
-                        import fcntl
-                        fcntl.flock(self._fd, fcntl.LOCK_UN)
-                    except Exception:
+                        os.rmdir(self.lock_dir)
+                    except OSError:
                         pass
             finally:
-                try:
-                    os.close(self._fd)
-                except OSError:
-                    pass
-                self._fd = None
-                self._adquirido = False
+                self._liberar_kernel_lock()
 
 
 class StrictSEICookiePolicy(http.cookiejar.DefaultCookiePolicy):
@@ -607,8 +651,15 @@ class MotorSEI:
         O lock no kernel (flock/locking) permanece 100% ativo durante toda a operação,
         impedindo que qualquer processo concorrente entre nesta rotina enquanto o titular executa.
         """
-        with self._lock_threads:
-            with LockProcessosSEI(self.caminho_sessao, timeout=timeout) as lock:
+        t_inicio = time.monotonic()
+        if not self._lock_threads.acquire(timeout=timeout):
+            raise TimeoutError(
+                f"Timeout ({timeout}s) ao aguardar lock de thread em salvar_sessao"
+            )
+        try:
+            tempo_decorrido = time.monotonic() - t_inicio
+            tempo_restante = max(0.001, timeout - tempo_decorrido)
+            with LockProcessosSEI(self.caminho_sessao, timeout=tempo_restante) as lock:
                 diretorio = os.path.dirname(os.path.abspath(self.caminho_sessao))
                 if diretorio:
                     os.makedirs(diretorio, exist_ok=True)
@@ -738,6 +789,8 @@ class MotorSEI:
                     raise
 
                 return True
+        finally:
+            self._lock_threads.release()
 
     def validar_action_segura(self, action: str) -> bool:
         if not action:
@@ -1022,6 +1075,7 @@ import stat
 import time
 import shutil
 import tempfile
+import threading
 import unittest
 import socket
 from unittest.mock import patch, MagicMock
@@ -1455,29 +1509,105 @@ class TestMotorSEI(unittest.TestCase):
         with lock_b:
             self.assertTrue(lock_b._adquirido)
 
-    def test_27_concorrencia_suspensao_fencing_armazenamento(self):
+    def test_27_concorrencia_suspensao_fencing_armazenamento_multiprocesso(self):
         self.motor.salvar_sessao({"PHPSESSID": "sessao_inicial"})
         self.assertEqual(self.motor.sessao.cookies.get("PHPSESSID"), "sessao_inicial")
 
-        motor_a = MotorSEI(caminho_sessao=self.caminho_sessao)
-        motor_b = MotorSEI(caminho_sessao=self.caminho_sessao)
+        import multiprocessing as mp
 
-        def simular_suspensao_titular():
-            time.sleep(0.05)
-            with self.assertRaises(TimeoutError):
-                motor_b.salvar_sessao({"PHPSESSID": "sessao_B_tentativa_bloqueada"}, timeout=0.05)
+        def worker_titular(caminho, fila):
+            from motor_sei import MotorSEI
+            m = MotorSEI(caminho_sessao=caminho)
+            orig_replace = os.replace
+            def replace_lento(src, dst):
+                fila.put("TITULAR_SUSPENSO")
+                time.sleep(0.3)
+                return orig_replace(src, dst)
+            with patch("os.replace", side_effect=replace_lento):
+                try:
+                    m.salvar_sessao({"PHPSESSID": "sessao_A_titular"}, timeout=5.0)
+                    fila.put("TITULAR_OK")
+                except Exception as e:
+                    fila.put(f"TITULAR_ERRO:{e}")
 
-        original_replace = os.replace
-        def mock_replace_com_suspensao(origem, destino):
-            simular_suspensao_titular()
-            return original_replace(origem, destino)
+        def worker_concorrente(caminho, fila):
+            from motor_sei import MotorSEI
+            m = MotorSEI(caminho_sessao=caminho)
+            try:
+                m.salvar_sessao({"PHPSESSID": "sessao_B_concorrente"}, timeout=0.05)
+                fila.put("CONCORRENTE_GRAVOU")
+            except TimeoutError:
+                fila.put("CONCORRENTE_TIMEOUT")
+            except Exception as e:
+                fila.put(f"CONCORRENTE_ERRO:{e}")
 
-        with patch("os.replace", side_effect=mock_replace_com_suspensao):
-            motor_a.salvar_sessao({"PHPSESSID": "sessao_A_titular"})
+        fila = mp.Queue()
+        proc_a = mp.Process(target=worker_titular, args=(self.caminho_sessao, fila))
+        proc_a.start()
+
+        msg = fila.get(timeout=3.0)
+        self.assertEqual(msg, "TITULAR_SUSPENSO")
+
+        proc_b = mp.Process(target=worker_concorrente, args=(self.caminho_sessao, fila))
+        proc_b.start()
+        proc_b.join(timeout=3.0)
+        proc_a.join(timeout=3.0)
+
+        respostas = []
+        while not fila.empty():
+            respostas.append(fila.get_nowait())
+
+        self.assertIn("CONCORRENTE_TIMEOUT", respostas)
+        self.assertIn("TITULAR_OK", respostas)
 
         with open(self.caminho_sessao, "r", encoding="utf-8") as f_res:
             dados_final = json.load(f_res)
         self.assertEqual(dados_final["cookies"]["PHPSESSID"], "sessao_A_titular")
+
+    def test_28_timeout_entre_threads_estrito_salvar_sessao(self):
+        self.motor.salvar_sessao({"PHPSESSID": "sessao_inicial"})
+        motor_a = MotorSEI(caminho_sessao=self.caminho_sessao)
+        motor_b = MotorSEI(caminho_sessao=self.caminho_sessao)
+
+        orig_replace = os.replace
+        def replace_lento(src, dst):
+            time.sleep(0.35)
+            return orig_replace(src, dst)
+
+        def worker_a():
+            with patch("os.replace", side_effect=replace_lento):
+                motor_a.salvar_sessao({"PHPSESSID": "sessao_A"})
+
+        th_a = threading.Thread(target=worker_a)
+        th_a.start()
+        time.sleep(0.05)
+
+        t0 = time.monotonic()
+        with self.assertRaises(TimeoutError):
+            motor_b.salvar_sessao({"PHPSESSID": "sessao_B"}, timeout=0.05)
+        duracao = time.monotonic() - t0
+        self.assertLess(duracao, 0.2, f"Thread concorrente demorou {duracao:.3f}s excedendo timeout!")
+
+        th_a.join(timeout=2.0)
+        with open(self.caminho_sessao, "r", encoding="utf-8") as f:
+            d = json.load(f)
+        self.assertEqual(d["cookies"]["PHPSESSID"], "sessao_A")
+
+    def test_29_compatibilidade_mutua_lock_v9_e_v10(self):
+        lock_dir = self.caminho_sessao + ".lock"
+        os.makedirs(lock_dir)
+        with open(os.path.join(lock_dir, "lock.info"), "w", encoding="utf-8") as f:
+            json.dump({"pid": os.getpid(), "timestamp": time.time(), "token": "v9_legado"}, f)
+
+        motor_v10 = MotorSEI(caminho_sessao=self.caminho_sessao)
+        with self.assertRaises(TimeoutError):
+            motor_v10.salvar_sessao({"PHPSESSID": "sessao_v10"}, timeout=0.08)
+
+        os.unlink(os.path.join(lock_dir, "lock.info"))
+        os.rmdir(lock_dir)
+
+        self.assertTrue(motor_v10.salvar_sessao({"PHPSESSID": "sessao_v10_sucesso"}, timeout=1.0))
+        self.assertTrue(os.path.exists(self.caminho_sessao + ".flock"))
 
 
 if __name__ == "__main__":
@@ -1485,16 +1615,16 @@ if __name__ == "__main__":
 '''
 
 def main():
-    print("=== APLICANDO CORRECAO SEI V10 (KERNEL LOCK PERSISTENTE) ===")
+    print("=== APLICANDO CORRECAO SEI V10 (DUAL LOCK + THREAD TIMEOUT + MULTIPROCESSO) ===")
     
     with open("motor_sei.py", "w", encoding="utf-8") as f:
         f.write(MOTOR_SEI_CODE)
-    print("[SUCESSO] motor_sei.py atualizado com kernel flock e msvcrt locking.")
+    print("[SUCESSO] motor_sei.py atualizado.")
 
     os.makedirs("tests", exist_ok=True)
     with open("tests/test_motor_sei.py", "w", encoding="utf-8") as f:
         f.write(TESTS_CODE)
-    print("[SUCESSO] tests/test_motor_sei.py atualizado com 27 testes 100% compativeis.")
+    print("[SUCESSO] tests/test_motor_sei.py atualizado (29 testes).")
 
 if __name__ == "__main__":
     main()

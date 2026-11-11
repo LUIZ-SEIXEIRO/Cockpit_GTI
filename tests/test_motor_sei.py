@@ -5,6 +5,7 @@ import stat
 import time
 import shutil
 import tempfile
+import threading
 import unittest
 import socket
 from unittest.mock import patch, MagicMock
@@ -438,29 +439,105 @@ class TestMotorSEI(unittest.TestCase):
         with lock_b:
             self.assertTrue(lock_b._adquirido)
 
-    def test_27_concorrencia_suspensao_fencing_armazenamento(self):
+    def test_27_concorrencia_suspensao_fencing_armazenamento_multiprocesso(self):
         self.motor.salvar_sessao({"PHPSESSID": "sessao_inicial"})
         self.assertEqual(self.motor.sessao.cookies.get("PHPSESSID"), "sessao_inicial")
 
-        motor_a = MotorSEI(caminho_sessao=self.caminho_sessao)
-        motor_b = MotorSEI(caminho_sessao=self.caminho_sessao)
+        import multiprocessing as mp
 
-        def simular_suspensao_titular():
-            time.sleep(0.05)
-            with self.assertRaises(TimeoutError):
-                motor_b.salvar_sessao({"PHPSESSID": "sessao_B_tentativa_bloqueada"}, timeout=0.05)
+        def worker_titular(caminho, fila):
+            from motor_sei import MotorSEI
+            m = MotorSEI(caminho_sessao=caminho)
+            orig_replace = os.replace
+            def replace_lento(src, dst):
+                fila.put("TITULAR_SUSPENSO")
+                time.sleep(0.3)
+                return orig_replace(src, dst)
+            with patch("os.replace", side_effect=replace_lento):
+                try:
+                    m.salvar_sessao({"PHPSESSID": "sessao_A_titular"}, timeout=5.0)
+                    fila.put("TITULAR_OK")
+                except Exception as e:
+                    fila.put(f"TITULAR_ERRO:{e}")
 
-        original_replace = os.replace
-        def mock_replace_com_suspensao(origem, destino):
-            simular_suspensao_titular()
-            return original_replace(origem, destino)
+        def worker_concorrente(caminho, fila):
+            from motor_sei import MotorSEI
+            m = MotorSEI(caminho_sessao=caminho)
+            try:
+                m.salvar_sessao({"PHPSESSID": "sessao_B_concorrente"}, timeout=0.05)
+                fila.put("CONCORRENTE_GRAVOU")
+            except TimeoutError:
+                fila.put("CONCORRENTE_TIMEOUT")
+            except Exception as e:
+                fila.put(f"CONCORRENTE_ERRO:{e}")
 
-        with patch("os.replace", side_effect=mock_replace_com_suspensao):
-            motor_a.salvar_sessao({"PHPSESSID": "sessao_A_titular"})
+        fila = mp.Queue()
+        proc_a = mp.Process(target=worker_titular, args=(self.caminho_sessao, fila))
+        proc_a.start()
+
+        msg = fila.get(timeout=3.0)
+        self.assertEqual(msg, "TITULAR_SUSPENSO")
+
+        proc_b = mp.Process(target=worker_concorrente, args=(self.caminho_sessao, fila))
+        proc_b.start()
+        proc_b.join(timeout=3.0)
+        proc_a.join(timeout=3.0)
+
+        respostas = []
+        while not fila.empty():
+            respostas.append(fila.get_nowait())
+
+        self.assertIn("CONCORRENTE_TIMEOUT", respostas)
+        self.assertIn("TITULAR_OK", respostas)
 
         with open(self.caminho_sessao, "r", encoding="utf-8") as f_res:
             dados_final = json.load(f_res)
         self.assertEqual(dados_final["cookies"]["PHPSESSID"], "sessao_A_titular")
+
+    def test_28_timeout_entre_threads_estrito_salvar_sessao(self):
+        self.motor.salvar_sessao({"PHPSESSID": "sessao_inicial"})
+        motor_a = MotorSEI(caminho_sessao=self.caminho_sessao)
+        motor_b = MotorSEI(caminho_sessao=self.caminho_sessao)
+
+        orig_replace = os.replace
+        def replace_lento(src, dst):
+            time.sleep(0.35)
+            return orig_replace(src, dst)
+
+        def worker_a():
+            with patch("os.replace", side_effect=replace_lento):
+                motor_a.salvar_sessao({"PHPSESSID": "sessao_A"})
+
+        th_a = threading.Thread(target=worker_a)
+        th_a.start()
+        time.sleep(0.05)
+
+        t0 = time.monotonic()
+        with self.assertRaises(TimeoutError):
+            motor_b.salvar_sessao({"PHPSESSID": "sessao_B"}, timeout=0.05)
+        duracao = time.monotonic() - t0
+        self.assertLess(duracao, 0.2, f"Thread concorrente demorou {duracao:.3f}s excedendo timeout!")
+
+        th_a.join(timeout=2.0)
+        with open(self.caminho_sessao, "r", encoding="utf-8") as f:
+            d = json.load(f)
+        self.assertEqual(d["cookies"]["PHPSESSID"], "sessao_A")
+
+    def test_29_compatibilidade_mutua_lock_v9_e_v10(self):
+        lock_dir = self.caminho_sessao + ".lock"
+        os.makedirs(lock_dir)
+        with open(os.path.join(lock_dir, "lock.info"), "w", encoding="utf-8") as f:
+            json.dump({"pid": os.getpid(), "timestamp": time.time(), "token": "v9_legado"}, f)
+
+        motor_v10 = MotorSEI(caminho_sessao=self.caminho_sessao)
+        with self.assertRaises(TimeoutError):
+            motor_v10.salvar_sessao({"PHPSESSID": "sessao_v10"}, timeout=0.08)
+
+        os.unlink(os.path.join(lock_dir, "lock.info"))
+        os.rmdir(lock_dir)
+
+        self.assertTrue(motor_v10.salvar_sessao({"PHPSESSID": "sessao_v10_sucesso"}, timeout=1.0))
+        self.assertTrue(os.path.exists(self.caminho_sessao + ".flock"))
 
 
 if __name__ == "__main__":
