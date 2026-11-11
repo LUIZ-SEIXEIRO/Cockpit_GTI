@@ -520,13 +520,14 @@ def api_v1_ia_testar_slot():
             'messages': [{'role': 'user', 'content': 'ping'}],
             'max_tokens': 10
         }
+        headers_req = {'Content-Type': 'application/json'}
+        if api_key and api_key.strip():
+            headers_req['Authorization'] = f'Bearer {api_key.strip()}'
+
         req = urllib.request.Request(
             url,
             data=json.dumps(payload).encode('utf-8'),
-            headers={
-                'Content-Type': 'application/json',
-                'Authorization': f'Bearer {api_key}'
-            }
+            headers=headers_req
         )
         with urllib.request.urlopen(req, timeout=45) as resp:
             latencia = int((time.time() - t0) * 1000)
@@ -563,13 +564,14 @@ def api_v1_ia_chat():
             'temperature': 0.3,
             'max_tokens': 2000
         }
+        headers_req = {'Content-Type': 'application/json'}
+        if api_key and api_key.strip():
+            headers_req['Authorization'] = f'Bearer {api_key.strip()}'
+
         req = urllib.request.Request(
             url,
             data=json.dumps(payload).encode('utf-8'),
-            headers={
-                'Content-Type': 'application/json',
-                'Authorization': f'Bearer {api_key}'
-            }
+            headers=headers_req
         )
         with urllib.request.urlopen(req, timeout=45) as resp:
             resp_dados = json.loads(resp.read().decode())
