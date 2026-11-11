@@ -13569,7 +13569,7 @@ window.STORAGE_KEY_POOL_3_IAS = 'sagti_pool_tres_ias_v96';
                 var urlDirect = ep.replace(/\/$/, '') + '/chat/completions';
                 var resp2 = await fetch(urlDirect, {
                     method: 'POST',
-                    headers: obterHeadersComAuth(),
+                    headers: { 'Content-Type': 'application/json', ...(key && key !== '***' ? { 'Authorization': 'Bearer ' + key } : {}) },
                     body: JSON.stringify({ model: mod, messages: [{ role: 'user', content: 'ping' }], max_tokens: 2 }),
                     signal: ctrl2.signal
                 });
@@ -15424,7 +15424,7 @@ window.NEWAPI_DETERMINISTIC_LOCK = Object.freeze({
                     var tid2 = setTimeout(function() { ctrl2.abort(); }, 6000);
                     r = await fetch(urlChat, {
                         method: 'POST',
-                        headers: obterHeadersComAuth(),
+                        headers: { 'Content-Type': 'application/json', ...(cfg.apiKey && cfg.apiKey !== '***' ? { 'Authorization': 'Bearer ' + cfg.apiKey } : {}) },
                         body: JSON.stringify({
                             model: cfg.agent,
                             temperature: 0.0,
