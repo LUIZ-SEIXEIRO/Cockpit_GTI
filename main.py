@@ -834,9 +834,13 @@ def api_v1_sei_salvar_sessao():
     dados = request.get_json(force=True) or {}
     cookies = dados.get('cookies') or dados
     if isinstance(cookies, dict):
-        motor_sei_instance.salvar_sessao(cookies)
-        return jsonify({'sucesso': True, 'mensagem': 'Cookies de sessão do SEI atualizados com sucesso.'}), 200
+        try:
+            motor_sei_instance.salvar_sessao(cookies)
+            return jsonify({'sucesso': True, 'mensagem': 'Cookies de sessão do SEI atualizados com sucesso.'}), 200
+        except Exception as e:
+            return jsonify({'sucesso': False, 'erro': f'Falha ao persistir sessão: {str(e)}'}), 500
     return jsonify({'sucesso': False, 'mensagem': 'Formato de cookies inválido.'}), 400
+
 
 @app.route('/api/v1/sei/processos', methods=['GET'])
 @requer_autenticacao

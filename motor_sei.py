@@ -71,7 +71,7 @@ class MotorSEI:
         self.carregar_sessao()
 
     def salvar_sessao(self, cookies_dict):
-        """Gravação atômica com garantia de fechamento de descritores e destruição de segredos em falhas."""
+        """Gravação atômica via mkstemp com fsync obrigatório garantindo durabilidade física."""
         dir_sessao = os.path.dirname(self.caminho_sessao)
         os.makedirs(dir_sessao, exist_ok=True)
         
@@ -98,17 +98,16 @@ class MotorSEI:
                 if (st.st_mode & 0o077) != 0:
                     raise PermissionError("Insegurança: permissão não restrita para 0600.")
 
+            # Escrita completa em loop
+            escritos = 0
+            while escritos < len(conteudo):
+                n = os.write(tmp_fd, conteudo[escritos:])
+                escritos += n
+
+            # fsync OBRIGATÓRIO: se falhar, a exceção é propagada e os.replace NÃO é executado!
             try:
-                escritos = 0
-                while escritos < len(conteudo):
-                    n = os.write(tmp_fd, conteudo[escritos:])
-                    escritos += n
-                try:
-                    os.fsync(tmp_fd)
-                except Exception:
-                    pass
+                os.fsync(tmp_fd)
             finally:
-                # Garante fechamento do descritor antes de qualquer operação subsequente
                 os.close(tmp_fd)
                 tmp_fd = None
 
@@ -122,26 +121,6 @@ class MotorSEI:
                 except Exception:
                     pass
             if not sucesso_replace and tmp_path and os.path.exists(tmp_path):
-                # Tenta sobrescrita em nível de syscall
-                try:
-                    fd_clean = os.open(tmp_path, os.O_WRONLY)
-                    try:
-                        os.write(fd_clean, b"\x00" * len(conteudo))
-                        os.ftruncate(fd_clean, 0)
-                        os.fsync(fd_clean)
-                    finally:
-                        os.close(fd_clean)
-                except Exception:
-                    pass
-                # Tenta sobrescrita em nível de runtime
-                try:
-                    with open(tmp_path, "wb") as f_del:
-                        f_del.write(b"\x00" * len(conteudo))
-                        f_del.flush()
-                        os.fsync(f_del.fileno())
-                except Exception:
-                    pass
-                # Remove o arquivo
                 try:
                     os.remove(tmp_path)
                 except Exception:
