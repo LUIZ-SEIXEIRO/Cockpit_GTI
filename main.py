@@ -288,7 +288,29 @@ def resolver_chave_real(modelo=None, slot=None):
             slots_dict = dados.get('ias', {})
             itens = list(slots_dict.values()) if isinstance(slots_dict, dict) else (slots_dict if isinstance(slots_dict, list) else (dados if isinstance(dados, list) else [dados]))
 
-            # 1. PRIORIDADE MÁXIMA: Busca pelo modelo/agent específico
+            # 1. PRIORIDADE MÁXIMA: Se informou slot E modelo, valida no slot especificado se o modelo confere
+            if slot and isinstance(slots_dict, dict) and str(slot) in slots_dict and isinstance(slots_dict[str(slot)], dict):
+                it_slot = slots_dict[str(slot)]
+                m_it = str(it_slot.get('agent') or it_slot.get('modelo') or it_slot.get('model') or '').strip().lower()
+                if not modelo or m_it == str(modelo).strip().lower():
+                    for k in ('apiKey', 'api_key', 'chave', 'token', 'secret'):
+                        if it_slot.get(k) and it_slot[k] != '***':
+                            return it_slot[k]
+
+            # 2. Se informou slot e modelo, busca item na lista que bata ambos (id/slot E modelo)
+            if slot and modelo:
+                alvo_s = str(slot).strip().lower()
+                alvo_m = str(modelo).strip().lower()
+                for it in itens:
+                    if isinstance(it, dict):
+                        s_val = str(it.get('id') or it.get('slot') or '').strip().lower()
+                        m_val = str(it.get('agent') or it.get('modelo') or it.get('model') or '').strip().lower()
+                        if s_val == alvo_s and m_val == alvo_m:
+                            for k in ('apiKey', 'api_key', 'chave', 'token', 'secret'):
+                                if it.get(k) and it[k] != '***':
+                                    return it[k]
+
+            # 3. Se informou apenas modelo (sem slot): busca no pool pelo modelo
             if modelo:
                 alvo_m = str(modelo).strip().lower()
                 for it in itens:
@@ -299,13 +321,13 @@ def resolver_chave_real(modelo=None, slot=None):
                                     if it.get(k) and it[k] != '***':
                                         return it[k]
 
-            # 2. Se não achou pelo modelo (ou modelo não informado), busca pelo slot específico
+            # 4. Se informou apenas slot: busca pelo slot/id
             if slot:
                 if isinstance(slots_dict, dict) and str(slot) in slots_dict and isinstance(slots_dict[str(slot)], dict):
-                    it = slots_dict[str(slot)]
+                    it_slot = slots_dict[str(slot)]
                     for k in ('apiKey', 'api_key', 'chave', 'token', 'secret'):
-                        if it.get(k) and it[k] != '***':
-                            return it[k]
+                        if it_slot.get(k) and it_slot[k] != '***':
+                            return it_slot[k]
                 alvo_s = str(slot).strip().lower()
                 for it in itens:
                     if isinstance(it, dict):
@@ -349,21 +371,17 @@ def mesclar_preservando_segredos(novos, originais):
                         id_novo = item_novo.get('id')
                         match_key = None
 
-                        # 1. Match no mesmo slot se o modelo for idêntico e o slot original não foi consumido
-                        if s_key in orig_ias and s_key not in consumidos_originais and isinstance(orig_ias[s_key], dict):
-                            orig_slot = orig_ias[s_key]
-                            m_orig = orig_slot.get('agent') or orig_slot.get('modelo') or orig_slot.get('model') or ''
-                            if m_orig == m_novo and m_novo:
-                                match_key = s_key
-
-                        # 2. Match pelo mesmo ID se não consumido
-                        if not match_key and id_novo:
+                        # 1. PRIORIDADE: Match exato por (ID e MODELO) - a chave segue o ID do modelo
+                        if id_novo and m_novo:
                             for orig_k, orig_v in orig_ias.items():
-                                if orig_k not in consumidos_originais and isinstance(orig_v, dict) and orig_v.get('id') == id_novo:
-                                    match_key = orig_k
-                                    break
+                                if orig_k not in consumidos_originais and isinstance(orig_v, dict):
+                                    id_orig = orig_v.get('id') or orig_k
+                                    m_orig = orig_v.get('agent') or orig_v.get('modelo') or orig_v.get('model') or ''
+                                    if id_orig == id_novo and m_orig == m_novo:
+                                        match_key = orig_k
+                                        break
 
-                        # 3. Match pelo mesmo modelo se foi movido entre slots e não consumido
+                        # 2. Se mudou de slot mantendo o mesmo modelo: pareia com original de mesmo modelo
                         if not match_key and m_novo:
                             for orig_k, orig_v in orig_ias.items():
                                 if orig_k not in consumidos_originais and isinstance(orig_v, dict):
@@ -372,6 +390,7 @@ def mesclar_preservando_segredos(novos, originais):
                                         match_key = orig_k
                                         break
 
+                        # 3. Se recuperou match válido
                         if match_key:
                             consumidos_originais.add(match_key)
                             orig_item = orig_ias[match_key]
@@ -380,6 +399,7 @@ def mesclar_preservando_segredos(novos, originais):
                                 if 'apiKey' in item_novo: item_novo['apiKey'] = k_orig
                                 if 'api_key' in item_novo: item_novo['api_key'] = k_orig
                         else:
+                            # Modelo novo sem correspondência: NÃO herda chave anterior
                             if 'apiKey' in item_novo and item_novo['apiKey'] == '***': item_novo['apiKey'] = ''
                             if 'api_key' in item_novo and item_novo['api_key'] == '***': item_novo['api_key'] = ''
 
