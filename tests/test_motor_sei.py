@@ -6,6 +6,7 @@ import time
 import shutil
 import tempfile
 import unittest
+import socket
 from unittest.mock import patch, MagicMock
 from urllib.parse import urlparse
 import requests
@@ -295,9 +296,9 @@ class TestMotorSEI(unittest.TestCase):
         lock_dir = self.caminho_sessao + ".lock"
         os.makedirs(lock_dir, exist_ok=True)
         
-        # 1. Processo MORTO (PID 999999): deve ser limpo
+        # 1. Processo MORTO no mesmo host (PID 999999): deve ser limpo
         with open(os.path.join(lock_dir, "lock.info"), "w", encoding="utf-8") as f:
-            json.dump({"pid": 999999, "timestamp": time.time() - 100}, f)
+            json.dump({"hostname": socket.gethostname(), "pid": 999999, "timestamp": time.time() - 100}, f)
 
         novo_lock = LockProcessosSEI(self.caminho_sessao, timeout=2.0)
         with novo_lock:
@@ -307,7 +308,7 @@ class TestMotorSEI(unittest.TestCase):
         # 2. Processo VIVO com falha de permissão simulada: NUNCA deve ser tomado!
         os.makedirs(lock_dir, exist_ok=True)
         with open(os.path.join(lock_dir, "lock.info"), "w", encoding="utf-8") as f:
-            json.dump({"pid": 12345, "timestamp": time.time() - 100}, f)
+            json.dump({"hostname": socket.gethostname(), "pid": 12345, "timestamp": time.time() - 100}, f)
 
         with patch("motor_sei._verificar_pid_so", side_effect=PermissionError("Simulando EPERM/Access Denied")):
             lock_concorrente = LockProcessosSEI(self.caminho_sessao, timeout=0.1, max_lock_age=0.05)
@@ -398,6 +399,59 @@ class TestMotorSEI(unittest.TestCase):
             res_busca = self.motor.buscar_processos("12345")
             self.assertFalse(res_busca.get("sucesso"))
             self.assertEqual(res_busca.get("codigo"), 502)
+
+    def test_21_lock_entre_containers_hostname_diferente(self):
+        lock_dir = self.caminho_sessao + ".lock"
+        os.makedirs(lock_dir, exist_ok=True)
+        with open(os.path.join(lock_dir, "lock.info"), "w", encoding="utf-8") as f:
+            json.dump({
+                "hostname": "container-concorrente-xyz",
+                "pid": 10,
+                "timestamp": time.time()
+            }, f)
+
+        lock_local = LockProcessosSEI(self.caminho_sessao, timeout=0.1, max_lock_age=30.0)
+        with self.assertRaises(TimeoutError):
+            with lock_local:
+                pass
+        self.assertTrue(os.path.exists(lock_dir))
+        shutil.rmtree(lock_dir)
+
+    def test_22_rejeitar_form_action_externa_em_validacao_sessao(self):
+        self.motor.salvar_sessao({"PHPSESSID": "sessao_com_form_externo"})
+
+        html_externo = """
+        <html>
+            <body>
+                <form id="frmProcedimentoControlar" action="https://malicioso.com/controlador.php?acao=procedimento_controlar">
+                </form>
+            </body>
+        </html>
+        """
+        mock_resp = MagicMock(status_code=200, text=html_externo, url="https://sei.sp.gov.br/sei/controlador.php")
+        with patch.object(self.motor.sessao, "get", return_value=mock_resp):
+            ativa = self.motor.validar_sessao_ativa()
+            self.assertFalse(ativa)
+
+    def test_23_rejeitar_pagina_erro_com_div_infra_mensagens(self):
+        self.motor.salvar_sessao({"PHPSESSID": "sessao_ok"})
+
+        html_erro_infra = """
+        <html>
+            <body>
+                <div id="divConteudo">
+                    <div id="divInfraMensagens" class="infraMensagem">
+                        Ocorreu uma falha no servidor de banco de dados do SEI.
+                    </div>
+                </div>
+            </body>
+        </html>
+        """
+        mock_resp = MagicMock(status_code=200, text=html_erro_infra)
+        with patch.object(self.motor.sessao, "get", return_value=mock_resp):
+            res = self.motor.listar_caixa_unidade()
+            self.assertFalse(res.get("sucesso"))
+            self.assertEqual(res.get("codigo"), 502)
 
 
 if __name__ == "__main__":

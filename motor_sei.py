@@ -7,6 +7,7 @@ import tempfile
 import logging
 import hashlib
 import threading
+import socket
 from datetime import datetime, timezone
 from typing import Optional, Dict, List, Any
 from urllib.parse import urlparse, parse_qs, unquote
@@ -94,77 +95,16 @@ class ResultadoProcessosSEI(dict):
         return super().__getitem__(item)
 
 
-class ValidadorFormSEI(HTMLParser):
-    def __init__(self, base_url: str = "https://sei.sp.gov.br/sei"):
-        super().__init__()
-        self.base_url = base_url
-        self.form_encontrado = False
-        self.ignorar_conteudo = False
-
-    def handle_starttag(self, tag: str, attrs: list):
-        tag_lower = tag.lower()
-        if tag_lower in ("script", "style"):
-            self.ignorar_conteudo = True
-            return
-
-        if not self.ignorar_conteudo and tag_lower == "form":
-            attr_dict = {k.lower(): v for k, v in attrs if k is not None}
-            form_id = attr_dict.get("id", "").strip().lower()
-            form_name = attr_dict.get("name", "").strip().lower()
-            action = attr_dict.get("action", "").strip()
-
-            if not self._validar_action_segura(action):
-                return
-
-            ids_invalidos = ("frmlogin", "login", "frmacessonegado", "frmerro")
-            if any(inv in form_id or inv in form_name for inv in ids_invalidos):
-                return
-
-            unquoted = unquote(action)
-            parsed = urlparse(unquoted)
-            caminho_norm = posixpath.normpath(parsed.path)
-            basename = posixpath.basename(caminho_norm).lower()
-
-            if "frmprocedimentocontrolar" in form_id or basename == "controlador.php":
-                self.form_encontrado = True
-
-    def _validar_action_segura(self, action: str) -> bool:
-        if not action:
-            return True
-
-        unquoted = unquote(action)
-        if ".." in unquoted:
-            return False
-
-        parsed = urlparse(unquoted)
-        if parsed.netloc:
-            sei_netloc = urlparse(self.base_url).netloc.lower()
-            if parsed.netloc.lower() != sei_netloc:
-                return False
-
-        caminho_norm = posixpath.normpath(parsed.path)
-        if parsed.path.startswith("/"):
-            sei_path = urlparse(self.base_url).path.rstrip("/")
-            if not caminho_norm.startswith(sei_path):
-                return False
-
-        basename = posixpath.basename(caminho_norm).lower()
-        if basename and basename != "controlador.php":
-            return False
-
-        return True
-
-    def handle_endtag(self, tag: str):
-        if tag.lower() in ("script", "style"):
-            self.ignorar_conteudo = False
-
-
 class ValidadorEstruturalSEI(HTMLParser):
-    def __init__(self, tipo_tela: str = "caixa"):
+    def __init__(self, tipo_tela: str = "caixa", base_url: str = "https://sei.sp.gov.br/sei"):
         super().__init__()
         self.tipo_tela = tipo_tela
+        self.base_url = base_url
         self.ignorar_conteudo = False
         self.estrutura_valida = False
+        self.tem_div_mensagens = False
+        self._dentro_div_mensagens = False
+        self._mensagens_infra = []
         self._texto_visivel = []
 
     def handle_comment(self, data):
@@ -182,7 +122,18 @@ class ValidadorEstruturalSEI(HTMLParser):
             form_name = attr_dict.get("name", "")
             action = attr_dict.get("action", "")
 
+            if tag_lower == "div" and attr_dict.get("id") == "divinframensagens":
+                self.tem_div_mensagens = True
+                self._dentro_div_mensagens = True
+
             if tag_lower == "form":
+                if not self._action_segura(action):
+                    return
+
+                ids_invalidos = ("frmlogin", "login", "frmacessonegado", "frmerro")
+                if any(inv in form_id or inv in form_name for inv in ids_invalidos):
+                    return
+
                 basename = posixpath.basename(posixpath.normpath(urlparse(action).path)).lower()
                 if self.tipo_tela == "caixa":
                     if "frmprocedimentocontrolar" in form_id or (basename == "controlador.php" and "procedimento_controlar" in action):
@@ -196,21 +147,54 @@ class ValidadorEstruturalSEI(HTMLParser):
                 if self.tipo_tela == "pesquisa" and nome in ("txtpesquisa", "btnpesquisar"):
                     self.estrutura_valida = True
 
-            elif tag_lower in ("div", "table"):
-                elem_id = attr_dict.get("id", "")
-                if elem_id in ("divconteudo", "divinframensagens", "tblprocessos", "divprocedimentos"):
-                    self.estrutura_valida = True
-
     def handle_endtag(self, tag: str):
-        if tag.lower() in ("script", "style"):
+        tag_lower = tag.lower()
+        if tag_lower in ("script", "style"):
             self.ignorar_conteudo = False
+        elif tag_lower == "div" and self._dentro_div_mensagens:
+            self._dentro_div_mensagens = False
 
     def handle_data(self, data: str):
         if not self.ignorar_conteudo:
             self._texto_visivel.append(data)
+            if self._dentro_div_mensagens:
+                self._mensagens_infra.append(data)
 
     def obter_texto_visivel(self) -> str:
         return " ".join(self._texto_visivel).lower()
+
+    def obter_texto_infra(self) -> str:
+        return " ".join(self._mensagens_infra).strip().lower()
+
+    def _action_segura(self, action: str) -> bool:
+        if not action:
+            return True
+        unquoted = unquote(action)
+        if ".." in unquoted:
+            return False
+        parsed = urlparse(unquoted)
+        if parsed.netloc:
+            sei_netloc = urlparse(self.base_url).netloc.lower()
+            if parsed.netloc.lower() != sei_netloc:
+                return False
+        caminho_norm = posixpath.normpath(parsed.path)
+        if parsed.path.startswith("/"):
+            sei_path = urlparse(self.base_url).path.rstrip("/")
+            if not caminho_norm.startswith(sei_path):
+                return False
+        basename = posixpath.basename(caminho_norm).lower()
+        if basename and basename != "controlador.php":
+            return False
+        return True
+
+
+class ValidadorFormSEI(ValidadorEstruturalSEI):
+    def __init__(self, base_url: str = "https://sei.sp.gov.br/sei"):
+        super().__init__(tipo_tela="caixa", base_url=base_url)
+
+    @property
+    def form_encontrado(self):
+        return self.estrutura_valida
 
 
 class ParserProcessosSEI(HTMLParser):
@@ -288,21 +272,33 @@ class LockProcessosSEI:
             return False
 
         obsoleto = False
+        agora = time.time()
+        local_hostname = socket.gethostname()
+
         if os.path.exists(self.info_file):
             try:
                 with open(self.info_file, "r", encoding="utf-8") as f:
                     info = json.load(f)
+                lock_host = info.get("hostname", local_hostname)
                 pid = info.get("pid")
-                if not processo_esta_vivo(pid):
-                    obsoleto = True
+                ts = info.get("timestamp", 0)
+
+                if lock_host == local_hostname:
+                    if not processo_esta_vivo(pid):
+                        obsoleto = True
+                    else:
+                        obsoleto = False
                 else:
-                    obsoleto = False
+                    if (agora - ts) > self.max_lock_age:
+                        obsoleto = True
+                    else:
+                        obsoleto = False
             except Exception:
                 pass
         else:
             try:
                 mtime = os.path.getmtime(self.lock_dir)
-                if (time.time() - mtime) > self.max_lock_age:
+                if (agora - mtime) > self.max_lock_age:
                     obsoleto = True
             except OSError:
                 pass
@@ -331,7 +327,11 @@ class LockProcessosSEI:
                 os.mkdir(self.lock_dir)
                 try:
                     with open(self.info_file, "w", encoding="utf-8") as f:
-                        json.dump({"pid": os.getpid(), "timestamp": time.time()}, f)
+                        json.dump({
+                            "hostname": socket.gethostname(),
+                            "pid": os.getpid(),
+                            "timestamp": time.time()
+                        }, f)
                 except Exception:
                     pass
                 self._adquirido = True
@@ -696,9 +696,10 @@ class MotorSEI:
             if final_netloc and final_netloc != sei_netloc:
                 return False
 
-            validador = ValidadorEstruturalSEI(tipo_tela="caixa")
+            validador = ValidadorEstruturalSEI(tipo_tela="caixa", base_url=self.base_url)
             validador.feed(resp.text)
             texto_visivel = validador.obter_texto_visivel()
+            texto_infra = validador.obter_texto_infra()
 
             indicadores_invalido = [
                 "acesso negado",
@@ -707,8 +708,12 @@ class MotorSEI:
                 "usuário não autenticado",
                 "usuario nao autenticado"
             ]
-            if any(ind in texto_visivel for ind in indicadores_invalido):
+            if any(ind in texto_visivel for ind in indicadores_invalido) or any(ind in texto_infra for ind in indicadores_invalido):
                 return False
+
+            if validador.tem_div_mensagens and texto_infra:
+                if not any(ok in texto_infra for ok in ("nenhum processo", "nenhum registro", "0 processo")):
+                    return False
 
             return validador.estrutura_valida
         except Exception as e:
@@ -781,9 +786,10 @@ class MotorSEI:
                 "erro": f"SEI SP retornou status HTTP {resp.status_code}"
             }
 
-        validador = ValidadorEstruturalSEI(tipo_tela="caixa")
+        validador = ValidadorEstruturalSEI(tipo_tela="caixa", base_url=self.base_url)
         validador.feed(resp.text)
         texto_visivel = validador.obter_texto_visivel()
+        texto_infra = validador.obter_texto_infra()
 
         if any(err in texto_visivel for err in ("acesso negado", "sessão expirada", "sessao expirada", "usuário não autenticado")):
             return {
@@ -799,6 +805,14 @@ class MotorSEI:
                 "codigo": 502,
                 "erro": "Erro operacional retornado pelo SEI SP"
             }
+
+        if validador.tem_div_mensagens and texto_infra:
+            if not any(vazio in texto_infra for vazio in ("nenhum processo", "nenhum registro", "0 processo")):
+                return {
+                    "sucesso": False,
+                    "codigo": 502,
+                    "erro": f"Mensagem do SEI SP: {texto_infra}"
+                }
 
         parser = ParserProcessosSEI()
         parser.feed(resp.text)
@@ -852,9 +866,10 @@ class MotorSEI:
                 "erro": f"SEI SP retornou status HTTP {resp.status_code} na pesquisa"
             }
 
-        validador = ValidadorEstruturalSEI(tipo_tela="pesquisa")
+        validador = ValidadorEstruturalSEI(tipo_tela="pesquisa", base_url=self.base_url)
         validador.feed(resp.text)
         texto_visivel = validador.obter_texto_visivel()
+        texto_infra = validador.obter_texto_infra()
 
         if any(err in texto_visivel for err in ("acesso negado", "sessão expirada", "sessao expirada", "usuário não autenticado")):
             return {
@@ -870,6 +885,14 @@ class MotorSEI:
                 "codigo": 502,
                 "erro": "Erro operacional retornado pelo SEI SP na pesquisa"
             }
+
+        if validador.tem_div_mensagens and texto_infra:
+            if not any(vazio in texto_infra for vazio in ("nenhum processo", "nenhum registro", "0 processo")):
+                return {
+                    "sucesso": False,
+                    "codigo": 502,
+                    "erro": f"Mensagem do SEI SP: {texto_infra}"
+                }
 
         parser = ParserProcessosSEI()
         parser.feed(resp.text)
