@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """
 Script de Atualização e Homologação SEI 4.1.5 - Versão 10
-Exclusão Mútua Persistente, Liberação Compulsória de Descritores, Proteção Total Contra Roubo de Lock e Teste Subprocess
+Exclusão Mútua Persistente, Fencing de Armazenamento Pré-Substituição e Proteção Contra Corrida de Diretório
 Cockpit GTI 360° - SA-GTI (SP-Águas)
 """
 import os
@@ -429,8 +429,11 @@ class LockProcessosSEI:
                     # Verifica se lock legado pertence a um processo morto
                     if not os.path.exists(self.info_file):
                         try:
-                            os.rmdir(self.lock_dir)
-                            continue
+                            st_dir = os.stat(self.lock_dir)
+                            # Se o diretório foi criado recentemente (< 0.5s), aguarda e NÃO remove para evitar corrida
+                            if (time.time() - st_dir.st_mtime) > 0.5:
+                                os.rmdir(self.lock_dir)
+                                continue
                         except OSError:
                             pass
                     else:
@@ -439,8 +442,8 @@ class LockProcessosSEI:
                                 info = json.load(f)
                             pid = info.get("pid")
                             host = info.get("hostname")
-                            # Só remove se o processo estiver comprovadamente MORTO no mesmo host local
-                            # NUNCA remove por idade de lease para não roubar lock de processo suspenso!
+                            # Só remove se o processo for comprovadamente MORTO no mesmo host local
+                            # Jamais remove por idade de lease se o processo estiver vivo ou suspenso!
                             if host == self.hostname and pid and not processo_esta_vivo(pid):
                                 try:
                                     os.unlink(self.info_file)
@@ -668,6 +671,7 @@ class MotorSEI:
             tempo_decorrido = time.monotonic() - t_inicio
             tempo_restante = max(0.001, timeout - tempo_decorrido)
             with LockProcessosSEI(self.caminho_sessao, timeout=tempo_restante) as lock:
+                fingerprint_inicial = obter_fingerprint_armazenamento(self.caminho_sessao)
                 diretorio = os.path.dirname(os.path.abspath(self.caminho_sessao))
                 if diretorio:
                     os.makedirs(diretorio, exist_ok=True)
@@ -738,6 +742,24 @@ class MotorSEI:
                         except OSError:
                             pass
                     raise
+
+                # Fencing estrito no armazenamento antes da substituição atômica
+                if not lock.verificar_lease_valido():
+                    if os.path.exists(temp_caminho):
+                        try:
+                            os.unlink(temp_caminho)
+                        except OSError:
+                            pass
+                    raise TimeoutError("Perda de posse do lock durante a execução; abortando gravação.")
+
+                fingerprint_atual = obter_fingerprint_armazenamento(self.caminho_sessao)
+                if fingerprint_atual != fingerprint_inicial:
+                    if os.path.exists(temp_caminho):
+                        try:
+                            os.unlink(temp_caminho)
+                        except OSError:
+                            pass
+                    raise TimeoutError("Fencing violado: arquivo modificado concorrentemente durante a execução; abortando gravação.")
 
                 # Substituição atômica no sistema de arquivos
                 try:
@@ -1329,6 +1351,7 @@ class TestMotorSEI(unittest.TestCase):
     def test_16_recuperacao_lock_processo_morto_vs_vivo(self):
         lock_dir = self.caminho_sessao + ".lock"
         os.makedirs(lock_dir, exist_ok=True)
+        os.utime(lock_dir, (time.time() - 10.0, time.time() - 10.0))
         
         # 1. Processo MORTO: lock do kernel liberado automaticamente ao fechar o processo
         lock1 = LockProcessosSEI(self.caminho_sessao, timeout=2.0)
@@ -1639,13 +1662,36 @@ except TimeoutError:
         with lock_b:
             self.assertTrue(lock_b._adquirido)
 
+    def test_31_fencing_armazenamento_impede_sobrescrita_concorrente(self):
+        # Valida que se o arquivo de sessão sofrer alteração concorrente externa durante a execução,
+        # o titular detecta a violação de fencing, aborta e NÃO sobrescreve a gravação externa.
+        self.motor.salvar_sessao({"PHPSESSID": "sessao_inicial"})
+        motor_a = MotorSEI(caminho_sessao=self.caminho_sessao)
+
+        orig_mkstemp = tempfile.mkstemp
+        def mkstemp_com_interferencia_externa(*args, **kwargs):
+            res = orig_mkstemp(*args, **kwargs)
+            # Escritor externo altera a sessão no armazenamento
+            with open(self.caminho_sessao, "w", encoding="utf-8") as f:
+                json.dump({"cookies": {"PHPSESSID": "sessao_externa_prioritaria"}}, f)
+            return res
+
+        with patch("tempfile.mkstemp", side_effect=mkstemp_com_interferencia_externa):
+            with self.assertRaises(TimeoutError):
+                motor_a.salvar_sessao({"PHPSESSID": "sessao_A_titular"})
+
+        # Comprova que a gravação externa não foi sobrescrita
+        with open(self.caminho_sessao, "r", encoding="utf-8") as f:
+            d = json.load(f)
+        self.assertEqual(d["cookies"]["PHPSESSID"], "sessao_externa_prioritaria")
+
 
 if __name__ == "__main__":
     unittest.main()
 '''
 
 def main():
-    print("=== APLICANDO CORRECAO SEI V10 (LIBERACAO COMPULSORIA + FENCING RESTRITO) ===")
+    print("=== APLICANDO CORRECAO SEI V10 (FENCING ESTRITO + GRACE PERIOD DIRETORIO) ===")
     
     with open("motor_sei.py", "w", encoding="utf-8") as f:
         f.write(MOTOR_SEI_CODE)
@@ -1654,7 +1700,7 @@ def main():
     os.makedirs("tests", exist_ok=True)
     with open("tests/test_motor_sei.py", "w", encoding="utf-8") as f:
         f.write(TESTS_CODE)
-    print("[SUCESSO] tests/test_motor_sei.py atualizado (30 testes).")
+    print("[SUCESSO] tests/test_motor_sei.py atualizado (31 testes).")
 
 if __name__ == "__main__":
     main()

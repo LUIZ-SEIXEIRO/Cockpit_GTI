@@ -251,6 +251,7 @@ class TestMotorSEI(unittest.TestCase):
     def test_16_recuperacao_lock_processo_morto_vs_vivo(self):
         lock_dir = self.caminho_sessao + ".lock"
         os.makedirs(lock_dir, exist_ok=True)
+        os.utime(lock_dir, (time.time() - 10.0, time.time() - 10.0))
         
         # 1. Processo MORTO: lock do kernel liberado automaticamente ao fechar o processo
         lock1 = LockProcessosSEI(self.caminho_sessao, timeout=2.0)
@@ -560,6 +561,29 @@ except TimeoutError:
         lock_b = LockProcessosSEI(self.caminho_sessao, timeout=0.5)
         with lock_b:
             self.assertTrue(lock_b._adquirido)
+
+    def test_31_fencing_armazenamento_impede_sobrescrita_concorrente(self):
+        # Valida que se o arquivo de sessão sofrer alteração concorrente externa durante a execução,
+        # o titular detecta a violação de fencing, aborta e NÃO sobrescreve a gravação externa.
+        self.motor.salvar_sessao({"PHPSESSID": "sessao_inicial"})
+        motor_a = MotorSEI(caminho_sessao=self.caminho_sessao)
+
+        orig_mkstemp = tempfile.mkstemp
+        def mkstemp_com_interferencia_externa(*args, **kwargs):
+            res = orig_mkstemp(*args, **kwargs)
+            # Escritor externo altera a sessão no armazenamento
+            with open(self.caminho_sessao, "w", encoding="utf-8") as f:
+                json.dump({"cookies": {"PHPSESSID": "sessao_externa_prioritaria"}}, f)
+            return res
+
+        with patch("tempfile.mkstemp", side_effect=mkstemp_com_interferencia_externa):
+            with self.assertRaises(TimeoutError):
+                motor_a.salvar_sessao({"PHPSESSID": "sessao_A_titular"})
+
+        # Comprova que a gravação externa não foi sobrescrita
+        with open(self.caminho_sessao, "r", encoding="utf-8") as f:
+            d = json.load(f)
+        self.assertEqual(d["cookies"]["PHPSESSID"], "sessao_externa_prioritaria")
 
 
 if __name__ == "__main__":

@@ -420,8 +420,11 @@ class LockProcessosSEI:
                     # Verifica se lock legado pertence a um processo morto
                     if not os.path.exists(self.info_file):
                         try:
-                            os.rmdir(self.lock_dir)
-                            continue
+                            st_dir = os.stat(self.lock_dir)
+                            # Se o diretório foi criado recentemente (< 0.5s), aguarda e NÃO remove para evitar corrida
+                            if (time.time() - st_dir.st_mtime) > 0.5:
+                                os.rmdir(self.lock_dir)
+                                continue
                         except OSError:
                             pass
                     else:
@@ -430,8 +433,8 @@ class LockProcessosSEI:
                                 info = json.load(f)
                             pid = info.get("pid")
                             host = info.get("hostname")
-                            # Só remove se o processo estiver comprovadamente MORTO no mesmo host local
-                            # NUNCA remove por idade de lease para não roubar lock de processo suspenso!
+                            # Só remove se o processo for comprovadamente MORTO no mesmo host local
+                            # Jamais remove por idade de lease se o processo estiver vivo ou suspenso!
                             if host == self.hostname and pid and not processo_esta_vivo(pid):
                                 try:
                                     os.unlink(self.info_file)
@@ -659,6 +662,7 @@ class MotorSEI:
             tempo_decorrido = time.monotonic() - t_inicio
             tempo_restante = max(0.001, timeout - tempo_decorrido)
             with LockProcessosSEI(self.caminho_sessao, timeout=tempo_restante) as lock:
+                fingerprint_inicial = obter_fingerprint_armazenamento(self.caminho_sessao)
                 diretorio = os.path.dirname(os.path.abspath(self.caminho_sessao))
                 if diretorio:
                     os.makedirs(diretorio, exist_ok=True)
@@ -729,6 +733,24 @@ class MotorSEI:
                         except OSError:
                             pass
                     raise
+
+                # Fencing estrito no armazenamento antes da substituição atômica
+                if not lock.verificar_lease_valido():
+                    if os.path.exists(temp_caminho):
+                        try:
+                            os.unlink(temp_caminho)
+                        except OSError:
+                            pass
+                    raise TimeoutError("Perda de posse do lock durante a execução; abortando gravação.")
+
+                fingerprint_atual = obter_fingerprint_armazenamento(self.caminho_sessao)
+                if fingerprint_atual != fingerprint_inicial:
+                    if os.path.exists(temp_caminho):
+                        try:
+                            os.unlink(temp_caminho)
+                        except OSError:
+                            pass
+                    raise TimeoutError("Fencing violado: arquivo modificado concorrentemente durante a execução; abortando gravação.")
 
                 # Substituição atômica no sistema de arquivos
                 try:
