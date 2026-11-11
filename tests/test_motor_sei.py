@@ -20,7 +20,8 @@ from motor_sei import (
     LockProcessosSEI,
     ResultadoProcessosSEI,
     StrictSEISession,
-    processo_esta_vivo
+    processo_esta_vivo,
+    obter_fingerprint_armazenamento
 )
 
 class TestMotorSEI(unittest.TestCase):
@@ -508,25 +509,19 @@ class TestMotorSEI(unittest.TestCase):
             self.assertEqual(res2.get("codigo"), 502)
 
     def test_26_titular_suspenso_nao_remove_lock_alheio_nem_escreve(self):
-        # 1. Titular A adquire o lock com lease de 0.15s
         lock_a = LockProcessosSEI(self.caminho_sessao, timeout=1.0, max_lock_age=0.15, hostname="container-A")
         lock_a.__enter__()
-        token_a = lock_a.token
 
-        # 2. Simula suspensão do Titular A parando o heartbeat e dormindo além do lease
         lock_a._stop_heartbeat.set()
         time.sleep(0.2)
 
-        # 3. Concorrente B adquire legitimamente o lock após expiração do lease
         lock_b = LockProcessosSEI(self.caminho_sessao, timeout=1.0, max_lock_age=0.15, hostname="container-B")
         lock_b.__enter__()
         self.assertTrue(lock_b._adquirido)
         self.assertNotEqual(lock_a.token, lock_b.token)
 
-        # 4. Titular A retoma da suspensão: lease deve ser inválido (fencing token)
         self.assertFalse(lock_a.verificar_lease_valido())
 
-        # 5. Titular A encerra seu contexto: JAMAIS deve remover o lock que agora pertence a B!
         lock_a.__exit__(None, None, None)
         self.assertTrue(os.path.exists(lock_b.lock_dir))
         with open(lock_b.info_file, "r", encoding="utf-8") as f:
@@ -534,9 +529,27 @@ class TestMotorSEI(unittest.TestCase):
         self.assertEqual(info_atual.get("token"), lock_b.token)
         self.assertEqual(info_atual.get("hostname"), "container-B")
 
-        # 6. Titular B encerra normalmente seu contexto e libera o lock com sucesso
         lock_b.__exit__(None, None, None)
         self.assertFalse(os.path.exists(lock_b.lock_dir))
+
+    def test_27_concorrencia_suspensao_fencing_armazenamento(self):
+        self.motor.salvar_sessao({"PHPSESSID": "sessao_inicial"})
+        self.assertEqual(self.motor.sessao.cookies.get("PHPSESSID"), "sessao_inicial")
+
+        motor_a = MotorSEI(caminho_sessao=self.caminho_sessao)
+
+        def mock_suspensao_e_escrita_concorrente():
+            with open(self.caminho_sessao, "w", encoding="utf-8") as f_b:
+                json.dump({"cookies": {"PHPSESSID": "sessao_B_concorrente"}}, f_b)
+
+        motor_a._hook_antes_replace = mock_suspensao_e_escrita_concorrente
+
+        with self.assertRaises(TimeoutError):
+            motor_a.salvar_sessao({"PHPSESSID": "sessao_A_atrasada"})
+
+        with open(self.caminho_sessao, "r", encoding="utf-8") as f_res:
+            dados_final = json.load(f_res)
+        self.assertEqual(dados_final["cookies"]["PHPSESSID"], "sessao_B_concorrente")
 
 
 if __name__ == "__main__":

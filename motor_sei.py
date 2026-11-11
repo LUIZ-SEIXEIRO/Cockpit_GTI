@@ -62,6 +62,19 @@ def processo_esta_vivo(pid: int) -> bool:
         return True
 
 
+def obter_fingerprint_armazenamento(caminho: str) -> Optional[tuple]:
+    if not os.path.exists(caminho):
+        return None
+    try:
+        st = os.stat(caminho)
+        with open(caminho, "rb") as f:
+            conteudo = f.read()
+        h = hashlib.sha256(conteudo).hexdigest()
+        return (st.st_mtime, st.st_size, h)
+    except OSError:
+        return None
+
+
 class StatusRetorno(dict):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -484,16 +497,7 @@ class MotorSEI:
         raise AttributeError(f"'{type(self).__name__}' object has no attribute '{name}'")
 
     def _calcular_fingerprint(self) -> Optional[tuple]:
-        if not os.path.exists(self.caminho_sessao):
-            return None
-        try:
-            st = os.stat(self.caminho_sessao)
-            with open(self.caminho_sessao, "rb") as f:
-                conteudo = f.read()
-            h = hashlib.sha256(conteudo).hexdigest()
-            return (st.st_mtime, h)
-        except OSError:
-            return None
+        return obter_fingerprint_armazenamento(self.caminho_sessao)
 
     def _sincronizar_sessao_se_modificada(self) -> None:
         fp = self._calcular_fingerprint()
@@ -504,7 +508,7 @@ class MotorSEI:
                 self._hash_sessao = None
             return
 
-        mtime_disco, hash_disco = fp
+        mtime_disco, _, hash_disco = fp
         if (
             self._mtime_sessao is None
             or self._hash_sessao is None
@@ -572,6 +576,8 @@ class MotorSEI:
                 if diretorio:
                     os.makedirs(diretorio, exist_ok=True)
 
+                fp_inicial = obter_fingerprint_armazenamento(self.caminho_sessao)
+
                 houve_backup = False
                 backup_caminho = None
                 sessao_anterior_existia = os.path.exists(self.caminho_sessao)
@@ -603,6 +609,7 @@ class MotorSEI:
                 payload = {
                     "cookies": cookies,
                     "usuario": usuario,
+                    "lock_token": lock.token,
                     "atualizado_em": datetime.now(timezone.utc).isoformat()
                 }
                 dados_json = json.dumps(payload, indent=2, ensure_ascii=False).encode("utf-8")
@@ -638,7 +645,13 @@ class MotorSEI:
                             pass
                     raise
 
-                if not lock.verificar_lease_valido():
+                # Hook de teste de simulação de suspensão concorrente
+                if hasattr(self, "_hook_antes_replace") and callable(self._hook_antes_replace):
+                    self._hook_antes_replace()
+
+                # FENCING ATÔMICO IMPOSTO PELO ARMAZENAMENTO ANTES DO REPLACE:
+                fp_atual_disco = obter_fingerprint_armazenamento(self.caminho_sessao)
+                if not lock.verificar_lease_valido() or fp_atual_disco != fp_inicial:
                     if os.path.exists(temp_caminho):
                         try:
                             os.unlink(temp_caminho)
@@ -649,7 +662,10 @@ class MotorSEI:
                             os.unlink(backup_caminho)
                         except OSError:
                             pass
-                    raise TimeoutError("Lease expirou durante escrita; abortando replace para proteger lock alheio.")
+                    raise TimeoutError(
+                        "Fencing de armazenamento violado: o arquivo de sessao foi modificado "
+                        "por outro titular durante suspensao; operacao abortada para proteger a gravacao concorrente."
+                    )
 
                 try:
                     os.replace(temp_caminho, self.caminho_sessao)
@@ -666,11 +682,14 @@ class MotorSEI:
                             pass
                     raise
 
+                fp_pos_replace = obter_fingerprint_armazenamento(self.caminho_sessao)
+
                 try:
                     self._fsync_diretorio(diretorio)
                 except Exception as e_dir:
                     logger.error(f"Falha no fsync do diretorio ({e_dir}). Executando rollback.")
-                    if lock.verificar_lease_valido():
+                    fp_agora = obter_fingerprint_armazenamento(self.caminho_sessao)
+                    if lock.verificar_lease_valido() and fp_agora == fp_pos_replace:
                         if houve_backup and backup_caminho and os.path.exists(backup_caminho):
                             try:
                                 os.replace(backup_caminho, self.caminho_sessao)
@@ -692,7 +711,7 @@ class MotorSEI:
                             self._mtime_sessao = None
                             self._hash_sessao = None
                     else:
-                        logger.warning("Lease perdido no fsync; abortando rollback para proteger nova gravacao.")
+                        logger.warning("Fencing no rollback: arquivo alterado por outro titular apos replace; abortando rollback.")
                     raise
 
                 if houve_backup and backup_caminho and os.path.exists(backup_caminho):
@@ -873,7 +892,6 @@ class MotorSEI:
                     "erro": f"Mensagem do SEI SP: {texto_infra}"
                 }
 
-        # REQUISITO FUNDAMENTAL: A página DEVE conter a estrutura formal do formulário do SEI
         if not validador.estrutura_valida:
             return {
                 "sucesso": False,
@@ -954,7 +972,6 @@ class MotorSEI:
                     "erro": f"Mensagem do SEI SP: {texto_infra}"
                 }
 
-        # REQUISITO FUNDAMENTAL: A pesquisa DEVE conter a estrutura formal do formulário frmPesquisa
         if not validador.estrutura_valida:
             return {
                 "sucesso": False,
