@@ -1,4 +1,4 @@
-import os, json, re, time, requests, urllib.parse, posixpath, tempfile, html as html_lib
+import os, json, re, time, threading, requests, urllib.parse, posixpath, tempfile, html as html_lib
 from html.parser import HTMLParser
 
 class ValidadorFormSEI(HTMLParser):
@@ -19,7 +19,6 @@ class ValidadorFormSEI(HTMLParser):
             f_name = attrs_dict.get('name', '')
             f_act = attrs_dict.get('action', '')
             
-            # Prioridade máxima: rejeita action em host externo
             if f_act:
                 p_act = urllib.parse.urlparse(f_act)
                 if p_act.hostname and p_act.hostname.lower() != 'sei.sp.gov.br':
@@ -41,7 +40,39 @@ class ValidadorFormSEI(HTMLParser):
         if tag.lower() in ('script', 'style'):
             self.em_script = False
 
+class LockProcessosSEI:
+    def __init__(self, lock_path, timeout=10):
+        self.lock_path = lock_path
+        self.timeout = timeout
+        self.adquiriu = False
+
+    def __enter__(self):
+        t0 = time.time()
+        while time.time() - t0 < self.timeout:
+            try:
+                os.mkdir(self.lock_path)
+                self.adquiriu = True
+                return self
+            except FileExistsError:
+                time.sleep(0.02)
+        try:
+            os.rmdir(self.lock_path)
+            os.mkdir(self.lock_path)
+            self.adquiriu = True
+        except Exception:
+            pass
+        return self
+
+    def __exit__(self, exc_type, exc_val, exc_tb):
+        if self.adquiriu and os.path.exists(self.lock_path):
+            try:
+                os.rmdir(self.lock_path)
+            except Exception:
+                pass
+
 class MotorSEI:
+    _lock_threads = threading.Lock()
+    
     BASE_URL = "https://sei.sp.gov.br/sei"
     HOST_PERMITIDO = "sei.sp.gov.br"
     UNIDADE_SAGTI = "110050725"
@@ -66,113 +97,120 @@ class MotorSEI:
         self.carregar_sessao()
 
     def salvar_sessao(self, cookies_dict):
-        dir_sessao = os.path.dirname(self.caminho_sessao)
-        os.makedirs(dir_sessao, exist_ok=True)
-        
-        conteudo = json.dumps({
-            "atualizado_em": time.strftime("%Y-%m-%dT%H:%M:%SZ"),
-            "cookies": cookies_dict
-        }, indent=2).encode("utf-8")
-        
-        tmp_fd = None
-        tmp_path = None
-        backup_fd = None
-        backup_path = None
-        sucesso_replace = False
-        ja_existia = os.path.exists(self.caminho_sessao)
-        
-        try:
-            if ja_existia:
-                try:
-                    backup_fd, backup_path = tempfile.mkstemp(dir=dir_sessao, prefix="sessao_backup_", suffix=".tmp")
-                    try: os.fchmod(backup_fd, 0o600)
-                    except Exception: pass
-                    with open(self.caminho_sessao, "rb") as f_src:
-                        conteudo_backup = f_src.read()
-                    
-                    escritos_bkp = 0
-                    while escritos_bkp < len(conteudo_backup):
-                        n = os.write(backup_fd, conteudo_backup[escritos_bkp:])
-                        escritos_bkp += n
-
-                    os.fsync(backup_fd)
-                    os.close(backup_fd)
-                    backup_fd = None
-                except Exception as e:
-                    raise OSError(f"Falha ao criar backup integro da sessao: {str(e)}")
-
-            tmp_fd, tmp_path = tempfile.mkstemp(dir=dir_sessao, prefix="sessao_sei_", suffix=".tmp")
-            try: os.fchmod(tmp_fd, 0o600)
-            except Exception: pass
-                    
-            if hasattr(os, "fstat") and hasattr(os, "getuid"):
-                st = os.fstat(tmp_fd)
-                if (st.st_mode & 0o077) != 0:
-                    raise PermissionError("Insegurança: permissão não restrita para 0600.")
-
-            escritos = 0
-            while escritos < len(conteudo):
-                n = os.write(tmp_fd, conteudo[escritos:])
-                escritos += n
-
-            try:
-                os.fsync(tmp_fd)
-            finally:
-                os.close(tmp_fd)
-                tmp_fd = None
-
-            os.replace(tmp_path, self.caminho_sessao)
-            sucesso_replace = True
+        lock_caminho = self.caminho_sessao + ".lock"
+        with MotorSEI._lock_threads, LockProcessosSEI(lock_caminho):
+            dir_sessao = os.path.dirname(self.caminho_sessao)
+            os.makedirs(dir_sessao, exist_ok=True)
+            
+            conteudo = json.dumps({
+                "atualizado_em": time.strftime("%Y-%m-%dT%H:%M:%SZ"),
+                "cookies": cookies_dict
+            }, indent=2).encode("utf-8")
+            
+            tmp_fd = None
             tmp_path = None
-
-            if hasattr(os, "O_DIRECTORY"):
-                try:
-                    dir_fd = os.open(dir_sessao, os.O_RDONLY | os.O_DIRECTORY)
+            backup_fd = None
+            backup_path = None
+            sucesso_replace = False
+            ja_existia = os.path.exists(self.caminho_sessao)
+            
+            try:
+                # 1. Criação do backup prévio com fechamento imediato do descritor
+                if ja_existia:
                     try:
-                        os.fsync(dir_fd)
-                    finally:
-                        os.close(dir_fd)
-                except Exception:
-                    if ja_existia and backup_path and os.path.exists(backup_path):
+                        backup_fd, backup_path = tempfile.mkstemp(dir=dir_sessao, prefix="sessao_backup_", suffix=".tmp")
                         try:
-                            os.replace(backup_path, self.caminho_sessao)
-                            backup_path = None
+                            os.fchmod(backup_fd, 0o600)
                         except Exception:
-                            self.session.cookies.clear()
-                            raise
-                    elif not ja_existia and os.path.exists(self.caminho_sessao):
+                            pass
                         try:
-                            os.remove(self.caminho_sessao)
-                        except Exception:
-                            self.session.cookies.clear()
-                            raise
-                    raise
+                            with open(self.caminho_sessao, "rb") as f_src:
+                                conteudo_backup = f_src.read()
+                            escritos_bkp = 0
+                            while escritos_bkp < len(conteudo_backup):
+                                n = os.write(backup_fd, conteudo_backup[escritos_bkp:])
+                                escritos_bkp += n
+                            os.fsync(backup_fd)
+                        finally:
+                            os.close(backup_fd)
+                            backup_fd = None
+                    except Exception as e:
+                        raise OSError(f"Falha ao criar backup integro da sessao: {str(e)}")
 
-            # Recarga estritamente única com limpeza de memória em falha
-            if not self.carregar_sessao():
-                self.session.cookies.clear()
-                raise OSError("Falha crítica ao recarregar a sessão na memória após persistência.")
-
-        finally:
-            if backup_fd is not None:
-                try: os.close(backup_fd)
-                except Exception: pass
-            if backup_path and os.path.exists(backup_path):
-                try: os.remove(backup_path)
-                except Exception: pass
-            if tmp_fd is not None:
-                try: os.close(tmp_fd)
-                except Exception: pass
-            if not sucesso_replace and tmp_path and os.path.exists(tmp_path):
+                # 2. Criação do temporário com 0600
+                tmp_fd, tmp_path = tempfile.mkstemp(dir=dir_sessao, prefix="sessao_sei_", suffix=".tmp")
                 try:
-                    with open(tmp_path, "wb") as f_del:
-                        f_del.write(b"\x00" * len(conteudo))
-                        f_del.truncate(0)
-                        f_del.flush()
-                        os.fsync(f_del.fileno())
-                except Exception: pass
-                try: os.remove(tmp_path)
-                except Exception: pass
+                    os.fchmod(tmp_fd, 0o600)
+                except Exception:
+                    pass
+                        
+                if hasattr(os, "fstat") and hasattr(os, "getuid"):
+                    st = os.fstat(tmp_fd)
+                    if (st.st_mode & 0o077) != 0:
+                        raise PermissionError("Insegurança: permissão não restrita para 0600.")
+
+                escritos = 0
+                while escritos < len(conteudo):
+                    n = os.write(tmp_fd, conteudo[escritos:])
+                    escritos += n
+
+                try:
+                    os.fsync(tmp_fd)
+                finally:
+                    os.close(tmp_fd)
+                    tmp_fd = None
+
+                os.replace(tmp_path, self.caminho_sessao)
+                sucesso_replace = True
+                tmp_path = None
+
+                if hasattr(os, "O_DIRECTORY"):
+                    try:
+                        dir_fd = os.open(dir_sessao, os.O_RDONLY | os.O_DIRECTORY)
+                        try:
+                            os.fsync(dir_fd)
+                        finally:
+                            os.close(dir_fd)
+                    except Exception:
+                        if ja_existia and backup_path and os.path.exists(backup_path):
+                            try:
+                                os.replace(backup_path, self.caminho_sessao)
+                                backup_path = None
+                            except Exception:
+                                self.session.cookies.clear()
+                                raise
+                        elif not ja_existia and os.path.exists(self.caminho_sessao):
+                            try:
+                                os.remove(self.caminho_sessao)
+                            except Exception:
+                                self.session.cookies.clear()
+                                raise
+                        raise
+
+                if not self.carregar_sessao():
+                    self.session.cookies.clear()
+                    raise OSError("Falha crítica ao recarregar a sessão na memória após persistência.")
+
+            finally:
+                if backup_fd is not None:
+                    try: os.close(backup_fd)
+                    except Exception: pass
+                if backup_path and os.path.exists(backup_path):
+                    try: os.remove(backup_path)
+                    except Exception: pass
+                if tmp_fd is not None:
+                    try: os.close(tmp_fd)
+                    except Exception: pass
+                if not sucesso_replace and tmp_path and os.path.exists(tmp_path):
+                    try:
+                        with open(tmp_path, "wb") as f_del:
+                            f_del.write(b"\x00" * len(conteudo))
+                            f_del.truncate(0)
+                            f_del.flush()
+                            os.fsync(f_del.fileno())
+                    except Exception: pass
+                    try: os.remove(tmp_path)
+                    except Exception: pass
 
     def carregar_sessao(self):
         if os.path.exists(self.caminho_sessao):

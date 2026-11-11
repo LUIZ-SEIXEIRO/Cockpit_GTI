@@ -1,15 +1,21 @@
-import unittest, os, json, tempfile
+import unittest, os, json, tempfile, threading, time
 from unittest.mock import patch, MagicMock
 from motor_sei import MotorSEI
 
 class TestMotorSEI(unittest.TestCase):
     def setUp(self):
-        self.temp_dir = tempfile.TemporaryDirectory()
+        try:
+            self.temp_dir = tempfile.TemporaryDirectory(ignore_cleanup_errors=True)
+        except TypeError:
+            self.temp_dir = tempfile.TemporaryDirectory()
         self.caminho_sessao = os.path.join(self.temp_dir.name, "sessao.json")
         self.motor = MotorSEI(caminho_sessao=self.caminho_sessao)
 
     def tearDown(self):
-        self.temp_dir.cleanup()
+        try:
+            self.temp_dir.cleanup()
+        except Exception:
+            pass
 
     def test_01_salvar_sessao_mkstemp_0600(self):
         cookies = {"PHPSESSID": "sessao_123"}
@@ -97,7 +103,7 @@ class TestMotorSEI(unittest.TestCase):
                 raise OSError("Falha simulada no fsync do diretorio pos-replace")
             return real_os_fsync(fd)
 
-        with patch('os.O_DIRECTORY', create=True, new=0),              patch('os.open', side_effect=fake_open),              patch('os.fsync', side_effect=fake_fsync),              patch('os.close'):
+        with patch('os.O_DIRECTORY', create=True, new=0),              patch('os.open', side_effect=fake_open),              patch('os.fsync', side_effect=fake_fsync):
             with self.assertRaises(OSError):
                 self.motor.salvar_sessao({"PHPSESSID": "sessao_nova_revertida"})
 
@@ -126,7 +132,6 @@ class TestMotorSEI(unittest.TestCase):
         self.assertEqual(self.motor.session.cookies.get("PHPSESSID", domain="sei.sp.gov.br"), "sessao_inicial_teste08")
 
     def test_09_falha_recarga_invalida_memoria(self):
-        """Valida que falha na recarga limpa a memória incondicionalmente."""
         cookies_iniciais = {"PHPSESSID": "sessao_inicial_teste09"}
         self.motor.salvar_sessao(cookies_iniciais)
         self.assertEqual(self.motor.session.cookies.get("PHPSESSID", domain="sei.sp.gov.br"), "sessao_inicial_teste09")
@@ -139,6 +144,51 @@ class TestMotorSEI(unittest.TestCase):
                 self.motor.salvar_sessao({"PHPSESSID": "sessao_nova"})
 
         self.assertEqual(len(self.motor.session.cookies), 0)
+
+    def test_10_concorrencia_serializada_em_salvar_sessao(self):
+        cookies_iniciais = {"PHPSESSID": "sessao_inicial_teste10"}
+        self.motor.salvar_sessao(cookies_iniciais)
+
+        resultados = []
+        real_fsync = os.fsync
+
+        def fake_fsync_condicional(fd):
+            if threading.current_thread().name == "Thread1_Falha":
+                raise OSError("Falha simulada na thread 1")
+            return real_fsync(fd)
+
+        def tarefa_falha():
+            try:
+                self.motor.salvar_sessao({"PHPSESSID": "sessao_falha_t1"})
+                resultados.append("t1_sucesso_indevido")
+            except OSError:
+                resultados.append("t1_falha_capturada")
+
+        def tarefa_sucesso():
+            time.sleep(0.02)
+            try:
+                self.motor.salvar_sessao({"PHPSESSID": "sessao_vencedora_t2"})
+                resultados.append("t2_sucesso_ok")
+            except Exception as e:
+                resultados.append(f"t2_erro_{str(e)}")
+
+        with patch('os.fsync', side_effect=fake_fsync_condicional):
+            t1 = threading.Thread(target=tarefa_falha, name="Thread1_Falha")
+            t2 = threading.Thread(target=tarefa_sucesso, name="Thread2_Sucesso")
+
+            t1.start()
+            t2.start()
+
+            t1.join()
+            t2.join()
+
+        self.assertIn("t1_falha_capturada", resultados)
+        self.assertIn("t2_sucesso_ok", resultados)
+
+        with open(self.caminho_sessao, "r", encoding="utf-8") as f:
+            dados_finais = json.load(f)
+        self.assertEqual(dados_finais["cookies"]["PHPSESSID"], "sessao_vencedora_t2")
+        self.assertEqual(self.motor.session.cookies.get("PHPSESSID", domain="sei.sp.gov.br"), "sessao_vencedora_t2")
 
 if __name__ == '__main__':
     unittest.main()
