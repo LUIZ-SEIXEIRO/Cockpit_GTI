@@ -11,7 +11,9 @@ from datetime import datetime, timezone
 from typing import Optional, Dict, List, Any
 from urllib.parse import urlparse, parse_qs, unquote
 import posixpath
+import http.cookiejar
 from html.parser import HTMLParser
+import requests
 
 logger = logging.getLogger("CockpitGTI.MotorSEI")
 
@@ -19,6 +21,9 @@ logger = logging.getLogger("CockpitGTI.MotorSEI")
 def processo_esta_vivo(pid: int) -> bool:
     if not pid or pid <= 0:
         return False
+    if pid == os.getpid():
+        return True
+
     if os.name == "nt":
         try:
             import ctypes
@@ -27,19 +32,31 @@ def processo_esta_vivo(pid: int) -> bool:
             PROCESS_QUERY_LIMITED_INFORMATION = 0x1000
             h_process = kernel32.OpenProcess(PROCESS_QUERY_LIMITED_INFORMATION, False, pid)
             if not h_process:
+                err = kernel32.GetLastError()
+                if err == 5:
+                    return True
                 return False
             exit_code = ctypes.c_ulong()
             success = kernel32.GetExitCodeProcess(h_process, ctypes.byref(exit_code))
             kernel32.CloseHandle(h_process)
             return bool(success and exit_code.value == STILL_ACTIVE)
+        except PermissionError:
+            return True
         except Exception:
-            return False
+            return True
     else:
         try:
             os.kill(pid, 0)
             return True
-        except OSError:
-            return False
+        except PermissionError:
+            return True
+        except OSError as e:
+            import errno
+            if e.errno == errno.EPERM:
+                return True
+            if e.errno == errno.ESRCH:
+                return False
+            return True
 
 
 class StatusRetorno(dict):
@@ -291,12 +308,29 @@ class LockProcessosSEI:
                 self._adquirido = False
 
 
-import requests
+class StrictSEICookiePolicy(http.cookiejar.DefaultCookiePolicy):
+    def __init__(self, host_permitido: str, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.host_permitido = host_permitido.lower()
+
+    def domain_return_ok(self, domain, request):
+        req_host, erhn = http.cookiejar.eff_request_host(request)
+        if (req_host or "").lower() != self.host_permitido and (erhn or "").lower() != self.host_permitido:
+            return False
+        return super().domain_return_ok(domain, request)
+
+    def return_ok_domain(self, cookie, request):
+        req_host, erhn = http.cookiejar.eff_request_host(request)
+        if (req_host or "").lower() != self.host_permitido and (erhn or "").lower() != self.host_permitido:
+            return False
+        return super().return_ok_domain(cookie, request)
+
 
 class StrictSEISession(requests.Session):
     def __init__(self, host_permitido: str, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.host_permitido = host_permitido.lower()
+        self.cookies.set_policy(StrictSEICookiePolicy(host_permitido))
 
     def prepare_request(self, request):
         p = super().prepare_request(request)
@@ -304,12 +338,18 @@ class StrictSEISession(requests.Session):
             parsed = urlparse(p.url)
             req_host = (parsed.hostname or "").lower()
             is_https = parsed.scheme.lower() == "https"
-            
-            if req_host != self.host_permitido:
-                del p.headers["Cookie"]
-            elif not is_https:
+            if req_host != self.host_permitido or not is_https:
                 del p.headers["Cookie"]
         return p
+
+    def send(self, request, **kwargs):
+        if "Cookie" in request.headers:
+            parsed = urlparse(request.url)
+            req_host = (parsed.hostname or "").lower()
+            is_https = parsed.scheme.lower() == "https"
+            if req_host != self.host_permitido or not is_https:
+                del request.headers["Cookie"]
+        return super().send(request, **kwargs)
 
 
 class MotorSEI:
@@ -342,7 +382,7 @@ class MotorSEI:
 
     def __getattr__(self, name: str):
         if any(term in name.lower() for term in ("status", "sessao", "valida", "check")):
-            return self.obter_status_sessao
+            return self.validar_sessao
         raise AttributeError(f"'{type(self).__name__}' object has no attribute '{name}'")
 
     def _calcular_fingerprint(self) -> Optional[tuple]:
@@ -616,14 +656,14 @@ class MotorSEI:
             logger.warning(f"Erro ao validar sessao ativa: {e}")
             return False
 
-    def obter_status_sessao(self) -> StatusRetorno:
+    def validar_sessao(self) -> StatusRetorno:
         self._sincronizar_sessao_se_modificada()
         ativa = bool(self.sessao.cookies) and self.validar_sessao_ativa()
         return StatusRetorno({
             "sucesso": True,
             "ativa": ativa,
             "sessao_ativa": ativa,
-            "autenticado": bool(self.sessao.cookies),
+            "autenticado": bool(ativa),
             "caminho_sessao": self.caminho_sessao,
             "caminho": self.caminho_sessao,
             "mtime": self._mtime_sessao,
@@ -632,32 +672,71 @@ class MotorSEI:
             "unidade": self.id_unidade
         })
 
+    def obter_status_sessao(self) -> StatusRetorno:
+        return self.validar_sessao()
+
     def status_sessao(self) -> StatusRetorno:
-        return self.obter_status_sessao()
+        return self.validar_sessao()
 
     def obter_status(self) -> StatusRetorno:
-        return self.obter_status_sessao()
+        return self.validar_sessao()
 
     def status(self) -> StatusRetorno:
-        return self.obter_status_sessao()
+        return self.validar_sessao()
 
     def verificar_sessao(self) -> StatusRetorno:
-        return self.obter_status_sessao()
+        return self.validar_sessao()
 
-    def listar_caixa_unidade(self) -> ResultadoProcessosSEI:
+    def listar_caixa_unidade(self) -> dict:
         self._sincronizar_sessao_se_modificada()
 
+        if not self.sessao.cookies:
+            return {
+                "sucesso": False,
+                "codigo": 401,
+                "sessao_expirada": True,
+                "erro": "Sessao do SEI nao configurada ou inexistente"
+            }
+
         url_caixa = f"{self.base_url}/controlador.php?acao=procedimento_controlar&infra_unidade_atual={self.id_unidade}&infra_sistema=100000100"
-        resp = self.sessao.get(url_caixa, timeout=15)
+        try:
+            resp = self.sessao.get(url_caixa, timeout=15)
+        except requests.exceptions.Timeout:
+            return {
+                "sucesso": False,
+                "codigo": 504,
+                "erro": "Timeout na conexao com o SEI SP"
+            }
+        except requests.exceptions.RequestException as e:
+            return {
+                "sucesso": False,
+                "codigo": 502,
+                "erro": f"Falha de conexao com o SEI SP: {str(e)}"
+            }
+
         if resp.status_code != 200:
-            resp.raise_for_status()
+            return {
+                "sucesso": False,
+                "codigo": resp.status_code if resp.status_code in (400, 401, 403, 404, 429) else 502,
+                "sessao_expirada": resp.status_code == 401,
+                "erro": f"SEI SP retornou status HTTP {resp.status_code}"
+            }
 
         texto_lower = resp.text.lower()
         if any(err in texto_lower for err in ("acesso negado", "sessão expirada", "sessao expirada", "usuário não autenticado")):
-            raise PermissionError("Sessao expirada ou acesso negado no SEI SP")
+            return {
+                "sucesso": False,
+                "codigo": 401,
+                "sessao_expirada": True,
+                "erro": "Sessao expirada ou acesso negado no SEI SP"
+            }
 
         if any(err in texto_lower for err in ("erro no sistema", "erro de execução", "sistema indisponível")):
-            raise RuntimeError("Erro operacional retornado pelo SEI SP")
+            return {
+                "sucesso": False,
+                "codigo": 502,
+                "erro": "Erro operacional retornado pelo SEI SP"
+            }
 
         parser = ParserProcessosSEI()
         parser.feed(resp.text)
@@ -666,12 +745,24 @@ class MotorSEI:
             validador = ValidadorFormSEI(base_url=self.base_url)
             validador.feed(resp.text)
             if not validador.form_encontrado and "procedimento_controlar" not in resp.text:
-                raise RuntimeError("Resposta do SEI nao contem estrutura valida da caixa de entrada")
+                return {
+                    "sucesso": False,
+                    "codigo": 502,
+                    "erro": "Resposta do SEI nao contem estrutura valida da caixa de entrada"
+                }
 
         return ResultadoProcessosSEI(parser.processos)
 
-    def buscar_processos(self, termo: str) -> ResultadoProcessosSEI:
+    def buscar_processos(self, termo: str) -> dict:
         self._sincronizar_sessao_se_modificada()
+
+        if not self.sessao.cookies:
+            return {
+                "sucesso": False,
+                "codigo": 401,
+                "sessao_expirada": True,
+                "erro": "Sessao do SEI nao configurada ou inexistente"
+            }
 
         url_busca = f"{self.base_url}/controlador.php?acao=pesquisa_processo&infra_unidade_atual={self.id_unidade}&infra_sistema=100000100"
         payload = {
@@ -679,16 +770,52 @@ class MotorSEI:
             "chkSinonimo": "N",
             "btnPesquisar": "Pesquisar"
         }
-        resp = self.sessao.post(url_busca, data=payload, timeout=20)
+        try:
+            resp = self.sessao.post(url_busca, data=payload, timeout=20)
+        except requests.exceptions.Timeout:
+            return {
+                "sucesso": False,
+                "codigo": 504,
+                "erro": "Timeout na conexao com o SEI SP durante pesquisa"
+            }
+        except requests.exceptions.RequestException as e:
+            return {
+                "sucesso": False,
+                "codigo": 502,
+                "erro": f"Falha de conexao com o SEI SP: {str(e)}"
+            }
+
         if resp.status_code != 200:
-            resp.raise_for_status()
+            return {
+                "sucesso": False,
+                "codigo": resp.status_code if resp.status_code in (400, 401, 403, 404, 429) else 502,
+                "sessao_expirada": resp.status_code == 401,
+                "erro": f"SEI SP retornou status HTTP {resp.status_code} na pesquisa"
+            }
 
         texto_lower = resp.text.lower()
         if any(err in texto_lower for err in ("acesso negado", "sessão expirada", "sessao expirada", "usuário não autenticado")):
-            raise PermissionError("Sessao expirada ou acesso negado no SEI SP")
+            return {
+                "sucesso": False,
+                "codigo": 401,
+                "sessao_expirada": True,
+                "erro": "Sessao expirada ou acesso negado no SEI SP"
+            }
 
         if any(err in texto_lower for err in ("erro no sistema", "erro de execução", "sistema indisponível")):
-            raise RuntimeError("Erro operacional retornado pelo SEI SP na pesquisa")
+            return {
+                "sucesso": False,
+                "codigo": 502,
+                "erro": "Erro operacional retornado pelo SEI SP na pesquisa"
+            }
+
+        marcadores_pesquisa = ("pesquisa", "txtpesquisa", "btnpesquisar", "frmpesquisa", "controlador.php")
+        if not any(m in texto_lower for m in marcadores_pesquisa):
+            return {
+                "sucesso": False,
+                "codigo": 502,
+                "erro": "Resposta da pesquisa nao corresponde a uma tela valida do SEI"
+            }
 
         parser = ParserProcessosSEI()
         parser.feed(resp.text)

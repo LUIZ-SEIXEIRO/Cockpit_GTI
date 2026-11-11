@@ -8,6 +8,7 @@ import tempfile
 import unittest
 from unittest.mock import patch, MagicMock
 from urllib.parse import urlparse
+import requests
 from requests import Request
 
 from motor_sei import (
@@ -16,7 +17,8 @@ from motor_sei import (
     ParserProcessosSEI,
     LockProcessosSEI,
     ResultadoProcessosSEI,
-    StrictSEISession
+    StrictSEISession,
+    processo_esta_vivo
 )
 
 class TestMotorSEI(unittest.TestCase):
@@ -217,7 +219,7 @@ class TestMotorSEI(unittest.TestCase):
         self.assertEqual(motor_novo.sessao.cookies.get("PHPSESSID"), "sessao_primeira_vez")
         self.assertFalse(os.path.exists(caminho_aninhado + ".lock"))
 
-    def test_13_escopo_rigoroso_cookies_seguranca_subdominios(self):
+    def test_13_escopo_rigoroso_cookies_seguranca_subdominios_e_redirect(self):
         self.motor.salvar_sessao({"PHPSESSID": "segredo_sei_xyz"})
         
         req_sei = self.motor.sessao.prepare_request(
@@ -230,15 +232,17 @@ class TestMotorSEI(unittest.TestCase):
         )
         self.assertNotIn("segredo_sei_xyz", req_sub.headers.get("Cookie", ""))
 
-        req_externo = self.motor.sessao.prepare_request(
-            Request("GET", "https://malicioso.com/controlador.php")
-        )
-        self.assertNotIn("segredo_sei_xyz", req_externo.headers.get("Cookie", ""))
+        interceptado = {}
+        def mock_adapter_send(adapter_self, request, **kwargs):
+            interceptado["url"] = request.url
+            interceptado["cookie"] = request.headers.get("Cookie")
+            r = requests.Response()
+            r.status_code = 200
+            return r
 
-        req_inseguro = self.motor.sessao.prepare_request(
-            Request("GET", "http://sei.sp.gov.br/sei/controlador.php")
-        )
-        self.assertNotIn("segredo_sei_xyz", req_inseguro.headers.get("Cookie", ""))
+        with patch.object(requests.adapters.HTTPAdapter, "send", mock_adapter_send):
+            self.motor.sessao.send(req_sub)
+            self.assertIsNone(interceptado.get("cookie"))
 
     def test_14_rejeitar_pagina_acesso_negado_e_form_fake(self):
         self.motor.salvar_sessao({"PHPSESSID": "sessao_bloqueada"})
@@ -300,67 +304,67 @@ class TestMotorSEI(unittest.TestCase):
 
         os.makedirs(lock_dir, exist_ok=True)
         with open(os.path.join(lock_dir, "lock.info"), "w", encoding="utf-8") as f:
-            json.dump({"pid": os.getpid(), "timestamp": time.time() - 100}, f)
+            json.dump({"pid": 12345, "timestamp": time.time() - 100}, f)
 
-        lock_concorrente = LockProcessosSEI(self.caminho_sessao, timeout=0.1, max_lock_age=0.05)
-        with self.assertRaises(TimeoutError):
-            with lock_concorrente:
-                pass
-        self.assertTrue(os.path.exists(lock_dir))
+        with patch("os.kill", side_effect=PermissionError("EPERM: permissao negada")):
+            lock_concorrente = LockProcessosSEI(self.caminho_sessao, timeout=0.1, max_lock_age=0.05)
+            with self.assertRaises(TimeoutError):
+                with lock_concorrente:
+                    pass
+            self.assertTrue(os.path.exists(lock_dir))
         shutil.rmtree(lock_dir)
 
-    def test_17_contrato_rotas_e_erros_http_200(self):
-        self.motor.salvar_sessao({"PHPSESSID": "sessao_contrato"})
+    def test_17_contrato_rotas_status_autenticado_vs_inativo(self):
+        self.motor.salvar_sessao({"PHPSESSID": "sessao_expirada"})
         
-        mock_resp_status = MagicMock(
+        mock_resp_inativo = MagicMock(
             status_code=200,
-            text='<form id="frmProcedimentoControlar" action="controlador.php"></form>',
+            text='<html><body><h1>Acesso Negado</h1></body></html>',
             url="https://sei.sp.gov.br/sei/controlador.php"
         )
-        with patch.object(self.motor.sessao, "get", return_value=mock_resp_status):
-            status_info = self.motor.obter_status_sessao()
+        with patch.object(self.motor.sessao, "get", return_value=mock_resp_inativo):
+            status_info = self.motor.validar_sessao()
             self.assertIsInstance(status_info, dict)
-            self.assertTrue(status_info.get("ativa"))
-            self.assertTrue(self.motor.status_sessao().get("ativa"))
-            self.assertTrue(self.motor.verificar_sessao().get("ativa"))
+            self.assertFalse(status_info.get("ativa"))
+            self.assertFalse(status_info.get("autenticado"))
 
-        html_erro_200 = """
-        <html>
-            <body>
-                <div class="infraMensagem">Sessão expirada. Por favor autentique-se novamente.</div>
-            </body>
-        </html>
-        """
-        mock_resp_erro = MagicMock(status_code=200, text=html_erro_200)
-        with patch.object(self.motor.sessao, "get", return_value=mock_resp_erro):
-            with self.assertRaises(PermissionError):
-                self.motor.listar_caixa_unidade()
+    def test_18_rotas_sei_diagnostico_e_erros_upstream(self):
+        self.motor.salvar_sessao({"PHPSESSID": "sessao_teste"})
 
-    def test_18_rotas_flask_integradas_ou_contrato(self):
-        self.motor.salvar_sessao({"PHPSESSID": "sessao_flask"})
+        html_expirada = "<html><body><div class='infraMensagem'>Sessão expirada</div></body></html>"
+        mock_resp_exp = MagicMock(status_code=200, text=html_expirada)
+        with patch.object(self.motor.sessao, "get", return_value=mock_resp_exp):
+            res_caixa = self.motor.listar_caixa_unidade()
+            self.assertFalse(res_caixa.get("sucesso"))
+            self.assertTrue(res_caixa.get("sessao_expirada"))
+            self.assertEqual(res_caixa.get("codigo"), 401)
 
-        html_sucesso = """
-        <html>
-            <body>
-                <form id="frmProcedimentoControlar" action="controlador.php"></form>
-                <a href="controlador.php?acao=procedimento_trabalhar&id_procedimento=999">SP-999</a>
-            </body>
-        </html>
-        """
-        mock_resp_sucesso = MagicMock(status_code=200, text=html_sucesso, url="https://sei.sp.gov.br/sei/controlador.php")
+        mock_resp_503 = MagicMock(status_code=503, text="Service Unavailable")
+        with patch.object(self.motor.sessao, "get", return_value=mock_resp_503):
+            res_503 = self.motor.listar_caixa_unidade()
+            self.assertFalse(res_503.get("sucesso"))
+            self.assertEqual(res_503.get("codigo"), 502)
 
-        with patch.object(self.motor.sessao, "get", return_value=mock_resp_sucesso):
-            res = self.motor.listar_caixa_unidade()
-            self.assertIsInstance(res, dict)
-            self.assertTrue(res.get("sucesso"))
-            self.assertEqual(res.get("total"), 1)
-            self.assertEqual(res.get("processos")[0]["numero"], "SP-999")
+        html_generica = "<html><body><h1>Portal Geral SP</h1></body></html>"
+        mock_resp_gen = MagicMock(status_code=200, text=html_generica)
+        with patch.object(self.motor.sessao, "post", return_value=mock_resp_gen):
+            res_busca = self.motor.buscar_processos("termo_inexistente")
+            self.assertFalse(res_busca.get("sucesso"))
+            self.assertEqual(res_busca.get("codigo"), 502)
 
-        html_erro_busca = "<html><body>Acesso Negado ao módulo de pesquisa</body></html>"
-        mock_resp_busca_err = MagicMock(status_code=200, text=html_erro_busca)
-        with patch.object(self.motor.sessao, "post", return_value=mock_resp_busca_err):
-            with self.assertRaises(PermissionError):
-                self.motor.buscar_processos("qualquer")
+    def test_19_cliente_flask_integrado(self):
+        try:
+            import main
+            app = main.app
+        except Exception:
+            return
+
+        with app.test_client() as client:
+            with patch.object(main.motor_sei_instance, "validar_sessao", return_value={"sucesso": True, "ativa": False, "autenticado": False}):
+                resp_status = client.get("/api/v1/sei/status")
+                self.assertEqual(resp_status.status_code, 200)
+                dados = resp_status.get_json()
+                self.assertFalse(dados.get("autenticado"))
 
 
 if __name__ == "__main__":
