@@ -554,7 +554,7 @@ def api_v1_ia_chat():
 
         api_key = dados.get('apiKey') or dados.get('api_key') or ''
         if not api_key or api_key == '***':
-            api_key = resolver_chave_real(model, slot_id) or resolver_chave_real(model)
+            api_key = resolver_chave_real(model, slot_id)
 
         url = endpoint + '/chat/completions'
         payload = {
