@@ -20,17 +20,21 @@ class ValidadorFormSEI(HTMLParser):
             f_name = attrs_dict.get('name', '')
             f_act = attrs_dict.get('action', '')
             
+            # PRIORIDADE MÁXIMA: Se houver action com hostname externo, REJEITA IMEDIATAMENTE (mesmo com id válido)
+            if f_act:
+                p_act = urllib.parse.urlparse(f_act)
+                if p_act.hostname and p_act.hostname.lower() != 'sei.sp.gov.br':
+                    return
+
             # Valida por ID ou Name do formulário
             for alvo in self.ids_alvo:
                 if alvo == f_id or alvo == f_name:
                     self.encontrou = True
                     return
 
-            # Valida por Action: se houver hostname, deve ser obrigatoriamente sei.sp.gov.br
+            # Valida por Action autorizada sob sei.sp.gov.br
             if f_act:
                 p_act = urllib.parse.urlparse(f_act)
-                if p_act.hostname and p_act.hostname.lower() != 'sei.sp.gov.br':
-                    return
                 caminho_act = posixpath.normpath(urllib.parse.unquote(p_act.path))
                 if caminho_act in ('controlador.php', '/sei/controlador.php') or re.search(r'^(?:/sei/)?controlador\.php(?:\?|$)', f_act):
                     self.encontrou = True
@@ -67,7 +71,7 @@ class MotorSEI:
         self.carregar_sessao()
 
     def salvar_sessao(self, cookies_dict):
-        """Gravação atômica via mkstemp com loop de escrita total e zero-shredding no fd aberto."""
+        """Gravação atômica com garantia de fechamento de descritores e destruição de segredos em falhas."""
         dir_sessao = os.path.dirname(self.caminho_sessao)
         os.makedirs(dir_sessao, exist_ok=True)
         
@@ -94,43 +98,54 @@ class MotorSEI:
                 if (st.st_mode & 0o077) != 0:
                     raise PermissionError("Insegurança: permissão não restrita para 0600.")
 
-            # Escrita em loop garantindo 100% dos bytes gravados
-            escritos = 0
-            while escritos < len(conteudo):
-                n = os.write(tmp_fd, conteudo[escritos:])
-                escritos += n
-                
-            os.fsync(tmp_fd)
-            os.close(tmp_fd)
-            tmp_fd = None
+            try:
+                escritos = 0
+                while escritos < len(conteudo):
+                    n = os.write(tmp_fd, conteudo[escritos:])
+                    escritos += n
+                try:
+                    os.fsync(tmp_fd)
+                except Exception:
+                    pass
+            finally:
+                # Garante fechamento do descritor antes de qualquer operação subsequente
+                os.close(tmp_fd)
+                tmp_fd = None
 
             os.replace(tmp_path, self.caminho_sessao)
             sucesso_replace = True
             tmp_path = None
         finally:
-            if not sucesso_replace:
-                # Se tmp_fd ainda estiver aberto, executa o shredding direto no descritor
-                if tmp_fd is not None:
+            if tmp_fd is not None:
+                try:
+                    os.close(tmp_fd)
+                except Exception:
+                    pass
+            if not sucesso_replace and tmp_path and os.path.exists(tmp_path):
+                # Tenta sobrescrita em nível de syscall
+                try:
+                    fd_clean = os.open(tmp_path, os.O_WRONLY)
                     try:
-                        os.lseek(tmp_fd, 0, os.SEEK_SET)
-                        os.write(tmp_fd, b"\x00" * len(conteudo))
-                        os.ftruncate(tmp_fd, 0)
-                        os.fsync(tmp_fd)
-                        os.close(tmp_fd)
-                    except Exception:
-                        pass
-                if tmp_path and os.path.exists(tmp_path):
-                    try:
-                        with open(tmp_path, "wb") as f_del:
-                            f_del.write(b"\x00" * len(conteudo))
-                            f_del.flush()
-                            os.fsync(f_del.fileno())
-                        os.remove(tmp_path)
-                    except Exception:
-                        try:
-                            os.remove(tmp_path)
-                        except Exception:
-                            pass
+                        os.write(fd_clean, b"\x00" * len(conteudo))
+                        os.ftruncate(fd_clean, 0)
+                        os.fsync(fd_clean)
+                    finally:
+                        os.close(fd_clean)
+                except Exception:
+                    pass
+                # Tenta sobrescrita em nível de runtime
+                try:
+                    with open(tmp_path, "wb") as f_del:
+                        f_del.write(b"\x00" * len(conteudo))
+                        f_del.flush()
+                        os.fsync(f_del.fileno())
+                except Exception:
+                    pass
+                # Remove o arquivo
+                try:
+                    os.remove(tmp_path)
+                except Exception:
+                    pass
                         
         self.carregar_sessao()
 
@@ -189,8 +204,10 @@ class MotorSEI:
         except Exception:
             return False
             
-        # 3. Expuga <script> e <style> antes de checar marcadores da tabela
-        texto_sem_script = re.sub(r"<(script|style)[^>]*>.*?</>", "", texto_limpo, flags=re.DOTALL | re.IGNORECASE).lower()
+        # 3. Remove blocos de script e style sem regex complexo antes de checar marcadores da tabela
+        texto_sem_script = re.sub(r"<script[^>]*>[\s\S]*?</script>", "", texto_limpo, flags=re.IGNORECASE)
+        texto_sem_script = re.sub(r"<style[^>]*>[\s\S]*?</style>", "", texto_sem_script, flags=re.IGNORECASE).lower()
+        
         tem_tabela = "infratabela" in texto_sem_script or "infraareadados" in texto_sem_script or "id_procedimento" in texto_sem_script
         return parser.encontrou and tem_tabela
 
@@ -213,12 +230,13 @@ class MotorSEI:
         except Exception:
             return False
             
-        texto_sem_script = re.sub(r"<(script|style)[^>]*>.*?</>", "", texto_limpo, flags=re.DOTALL | re.IGNORECASE).lower()
+        texto_sem_script = re.sub(r"<script[^>]*>[\s\S]*?</script>", "", texto_limpo, flags=re.IGNORECASE)
+        texto_sem_script = re.sub(r"<style[^>]*>[\s\S]*?</style>", "", texto_sem_script, flags=re.IGNORECASE).lower()
+        
         tem_resultado = "infratabela" in texto_sem_script or "procedimento_trabalhar" in texto_sem_script or "nenhum" in texto_sem_script
         return parser.encontrou and tem_resultado
 
     def _detectar_expiracao(self, resp):
-        """Identifica expiração de sessão inspecionando corpo, URL e cabeçalho Location de redirects."""
         loc = resp.headers.get("Location", "").lower()
         url = resp.url.lower()
         texto = resp.text.lower()
