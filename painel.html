@@ -100,7 +100,7 @@
             box-shadow: 0 2px 10px rgba(0,0,0,0.3);
             font-size: 12px;
         }
-        #kiosk-progress {
+        #kiosk-CHAVE-SANITIZADA-INSTITUCIONAL {
             position: absolute;
             bottom: 0;
             left: 0;
@@ -1684,10 +1684,10 @@ th.th-sortable-v9:hover {
     <div id="kiosk-bar" style="display: none; background: linear-gradient(90deg, #0f172a 0%, #002d5a 50%, #0544cf 100%); color: #ffffff; padding: 8px 20px; align-items: center; justify-content: space-between; font-size: 12px; z-index: 9999; position: fixed; top: 0; left: 0; right: 0; height: 42px; box-shadow: 0 2px 10px rgba(0,0,0,0.35);">
         <div style="display: flex; align-items: center; gap: 12px;">
             <span style="background: #ef4444; color: #fff; font-weight: 800; font-size: 10px; padding: 2px 8px; border-radius: 10px; letter-spacing: 0.5px;">&#128250; GEST&Atilde;O &Agrave; VISTA ATIVA</span>
-            <strong id="kiosk-tela-nome" style="font-size: 12.5px; color: #bae6fd;">Central de Dashboards: Consolidado 360&deg;</strong>
+            <strong id="kiosk-CHAVE-SANITIZADA-INSTITUCIONAL" style="font-size: 12.5px; color: #bae6fd;">Central de Dashboards: Consolidado 360&deg;</strong>
         </div>
         <div style="flex: 1; max-width: 320px; margin: 0 20px; background: rgba(255,255,255,0.2); height: 6px; border-radius: 3px; overflow: hidden;">
-            <div id="kiosk-progress" style="width: 0%; height: 100%; background: #10b981; transition: width 15s linear;"></div>
+            <div id="kiosk-CHAVE-SANITIZADA-INSTITUCIONAL" style="width: 0%; height: 100%; background: #10b981; transition: width 15s linear;"></div>
         </div>
         <div style="display: flex; gap: 8px; align-items: center;">
             <button id="btn-kiosk-pause" onclick="window.pausarRetomarKiosk()" class="btn btn-secondary" style="padding: 3px 10px; font-size: 11px; background: rgba(255,255,255,0.15); color: #fff; border: 1px solid rgba(255,255,255,0.3); cursor: pointer;">&#1419;&#65039; Pausar</button>
@@ -10636,7 +10636,7 @@ window.renderizarSecaoFixadosEAlertasMesa = function() {
     window.executarPassoKiosk = function() {
         clearInterval(window.kioskTimer);
         const tela = window.kioskTelas[window.kioskIndice];
-        const lbl = document.getElementById('kiosk-tela-nome');
+        const lbl = document.getElementById('kiosk-CHAVE-SANITIZADA-INSTITUCIONAL');
         if (lbl) lbl.innerText = tela.nome;
 
         window.switchTab(tela.tab);
@@ -10644,7 +10644,7 @@ window.renderizarSecaoFixadosEAlertasMesa = function() {
             window.alternarModoDashboard(tela.modo);
         }
 
-        const prog = document.getElementById('kiosk-progress');
+        const prog = document.getElementById('kiosk-CHAVE-SANITIZADA-INSTITUCIONAL');
         if (prog) {
             prog.style.transition = 'none';
             prog.style.width = '0%';
@@ -17838,13 +17838,13 @@ window.kioskTelas = [
     window.executarPassoKiosk = function() {
         if (window.kioskTimer) clearInterval(window.kioskTimer);
         var tela = window.kioskTelas[window.kioskIndice] || window.kioskTelas[0];
-        var lbl = document.getElementById('kiosk-tela-nome');
+        var lbl = document.getElementById('kiosk-CHAVE-SANITIZADA-INSTITUCIONAL');
         if (lbl) lbl.innerText = tela.nome;
         window.switchTab(tela.tab);
         if (tela.modo && typeof window.alternarModoDashboard === 'function') {
             window.alternarModoDashboard(tela.modo);
         }
-        var prog = document.getElementById('kiosk-progress');
+        var prog = document.getElementById('kiosk-CHAVE-SANITIZADA-INSTITUCIONAL');
         if (prog) {
             prog.style.transition = 'none';
             prog.style.width = '0%';

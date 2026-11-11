@@ -20,6 +20,7 @@ services:
       - GLPI_APP_TOKEN=${GLPI_APP_TOKEN:-}
       - GLPI_USER_TOKEN=${GLPI_USER_TOKEN:-}
       - NEW_API_KEY=${NEW_API_KEY:-}
+      - NEWAPI_API_KEY=${NEWAPI_API_KEY:-${NEW_API_KEY:-}}
 
   new-api:
     image: calciumion/new-api:latest
@@ -58,6 +59,7 @@ services:
       - GLPI_APP_TOKEN=${GLPI_APP_TOKEN:-}
       - GLPI_USER_TOKEN=${GLPI_USER_TOKEN:-}
       - NEW_API_KEY=${NEW_API_KEY:-}
+      - NEWAPI_API_KEY=${NEWAPI_API_KEY:-${NEW_API_KEY:-}}
     depends_on:
       - new-api
       - ollama
