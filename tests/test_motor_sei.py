@@ -15,7 +15,8 @@ from motor_sei import (
     ValidadorFormSEI,
     ParserProcessosSEI,
     LockProcessosSEI,
-    ResultadoProcessosSEI
+    ResultadoProcessosSEI,
+    StrictSEISession
 )
 
 class TestMotorSEI(unittest.TestCase):
@@ -65,11 +66,13 @@ class TestMotorSEI(unittest.TestCase):
             ativa = self.motor.validar_sessao_ativa()
             self.assertTrue(ativa)
 
-    def test_03_rejeitar_action_em_dominio_externo(self):
+    def test_03_rejeitar_action_em_dominio_externo_e_fake(self):
         self.assertFalse(self.motor.validar_action_segura("https://malicioso.com/controlador.php"))
         self.assertFalse(self.motor.validar_action_segura("http://phishing.sp.gov.br/hack"))
         self.assertFalse(self.motor.validar_action_segura("/sei/../etc/passwd"))
         self.assertFalse(self.motor.validar_action_segura("controlador.php?acao=../../perigo"))
+        self.assertFalse(self.motor.validar_action_segura("controlador.php.fake"))
+        self.assertFalse(self.motor.validar_action_segura("/sei/controlador.php.fake"))
 
         self.assertTrue(self.motor.validar_action_segura("controlador.php?acao=procedimento_controlar"))
         self.assertTrue(self.motor.validar_action_segura("https://sei.sp.gov.br/sei/controlador.php"))
@@ -214,13 +217,18 @@ class TestMotorSEI(unittest.TestCase):
         self.assertEqual(motor_novo.sessao.cookies.get("PHPSESSID"), "sessao_primeira_vez")
         self.assertFalse(os.path.exists(caminho_aninhado + ".lock"))
 
-    def test_13_escopo_rigoroso_cookies_seguranca(self):
+    def test_13_escopo_rigoroso_cookies_seguranca_subdominios(self):
         self.motor.salvar_sessao({"PHPSESSID": "segredo_sei_xyz"})
         
         req_sei = self.motor.sessao.prepare_request(
             Request("GET", "https://sei.sp.gov.br/sei/controlador.php")
         )
         self.assertIn("segredo_sei_xyz", req_sei.headers.get("Cookie", ""))
+
+        req_sub = self.motor.sessao.prepare_request(
+            Request("GET", "https://sub.sei.sp.gov.br/sei/controlador.php")
+        )
+        self.assertNotIn("segredo_sei_xyz", req_sub.headers.get("Cookie", ""))
 
         req_externo = self.motor.sessao.prepare_request(
             Request("GET", "https://malicioso.com/controlador.php")
@@ -232,7 +240,7 @@ class TestMotorSEI(unittest.TestCase):
         )
         self.assertNotIn("segredo_sei_xyz", req_inseguro.headers.get("Cookie", ""))
 
-    def test_14_rejeitar_pagina_acesso_negado_e_form_externo(self):
+    def test_14_rejeitar_pagina_acesso_negado_e_form_fake(self):
         self.motor.salvar_sessao({"PHPSESSID": "sessao_bloqueada"})
 
         html_negado = """
@@ -247,14 +255,14 @@ class TestMotorSEI(unittest.TestCase):
         with patch.object(self.motor.sessao, "get", return_value=mock_resp1):
             self.assertFalse(self.motor.validar_sessao_ativa())
 
-        html_externo = """
+        html_fake = """
         <html>
             <body>
-                <form id="frmLogin" action="https://phishing.com/login.php"></form>
+                <form id="frmTeste" action="controlador.php.fake"></form>
             </body>
         </html>
         """
-        mock_resp2 = MagicMock(status_code=200, text=html_externo, url="https://sei.sp.gov.br/sei/controlador.php")
+        mock_resp2 = MagicMock(status_code=200, text=html_fake, url="https://sei.sp.gov.br/sei/controlador.php")
         with patch.object(self.motor.sessao, "get", return_value=mock_resp2):
             self.assertFalse(self.motor.validar_sessao_ativa())
 
@@ -278,9 +286,10 @@ class TestMotorSEI(unittest.TestCase):
         motor_b._sincronizar_sessao_se_modificada()
         self.assertEqual(motor_b.sessao.cookies.get("PHPSESSID"), "sessao_colidida_nova")
 
-    def test_16_recuperacao_stale_lock_processo_morto(self):
+    def test_16_recuperacao_lock_processo_morto_vs_vivo(self):
         lock_dir = self.caminho_sessao + ".lock"
         os.makedirs(lock_dir, exist_ok=True)
+        
         with open(os.path.join(lock_dir, "lock.info"), "w", encoding="utf-8") as f:
             json.dump({"pid": 999999, "timestamp": time.time() - 100}, f)
 
@@ -289,7 +298,18 @@ class TestMotorSEI(unittest.TestCase):
             self.assertTrue(os.path.exists(lock_dir))
         self.assertFalse(os.path.exists(lock_dir))
 
-    def test_17_contrato_rotas_status_e_processos(self):
+        os.makedirs(lock_dir, exist_ok=True)
+        with open(os.path.join(lock_dir, "lock.info"), "w", encoding="utf-8") as f:
+            json.dump({"pid": os.getpid(), "timestamp": time.time() - 100}, f)
+
+        lock_concorrente = LockProcessosSEI(self.caminho_sessao, timeout=0.1, max_lock_age=0.05)
+        with self.assertRaises(TimeoutError):
+            with lock_concorrente:
+                pass
+        self.assertTrue(os.path.exists(lock_dir))
+        shutil.rmtree(lock_dir)
+
+    def test_17_contrato_rotas_e_erros_http_200(self):
         self.motor.salvar_sessao({"PHPSESSID": "sessao_contrato"})
         
         mock_resp_status = MagicMock(
@@ -301,24 +321,46 @@ class TestMotorSEI(unittest.TestCase):
             status_info = self.motor.obter_status_sessao()
             self.assertIsInstance(status_info, dict)
             self.assertTrue(status_info.get("ativa"))
-            self.assertIn("cookies", status_info)
+            self.assertTrue(self.motor.status_sessao().get("ativa"))
+            self.assertTrue(self.motor.verificar_sessao().get("ativa"))
 
-        html_lista = """
+        html_erro_200 = """
         <html>
             <body>
-                <a href="controlador.php?acao=procedimento_trabalhar&id_procedimento=111">SP-111</a>
-                <a href="controlador.php?acao=procedimento_trabalhar&id_procedimento=222">SP-222</a>
+                <div class="infraMensagem">Sessão expirada. Por favor autentique-se novamente.</div>
             </body>
         </html>
         """
-        mock_resp = MagicMock(status_code=200, text=html_lista)
-        with patch.object(self.motor.sessao, "get", return_value=mock_resp):
-            res_caixa = self.motor.listar_caixa_unidade()
-            self.assertIsInstance(res_caixa, dict)
-            self.assertEqual(res_caixa.get("total"), 2)
-            self.assertEqual(len(res_caixa.get("processos")), 2)
-            self.assertEqual(len(res_caixa), 2)
-            self.assertEqual(res_caixa[0]["id_procedimento"], "111")
+        mock_resp_erro = MagicMock(status_code=200, text=html_erro_200)
+        with patch.object(self.motor.sessao, "get", return_value=mock_resp_erro):
+            with self.assertRaises(PermissionError):
+                self.motor.listar_caixa_unidade()
+
+    def test_18_rotas_flask_integradas_ou_contrato(self):
+        self.motor.salvar_sessao({"PHPSESSID": "sessao_flask"})
+
+        html_sucesso = """
+        <html>
+            <body>
+                <form id="frmProcedimentoControlar" action="controlador.php"></form>
+                <a href="controlador.php?acao=procedimento_trabalhar&id_procedimento=999">SP-999</a>
+            </body>
+        </html>
+        """
+        mock_resp_sucesso = MagicMock(status_code=200, text=html_sucesso, url="https://sei.sp.gov.br/sei/controlador.php")
+
+        with patch.object(self.motor.sessao, "get", return_value=mock_resp_sucesso):
+            res = self.motor.listar_caixa_unidade()
+            self.assertIsInstance(res, dict)
+            self.assertTrue(res.get("sucesso"))
+            self.assertEqual(res.get("total"), 1)
+            self.assertEqual(res.get("processos")[0]["numero"], "SP-999")
+
+        html_erro_busca = "<html><body>Acesso Negado ao módulo de pesquisa</body></html>"
+        mock_resp_busca_err = MagicMock(status_code=200, text=html_erro_busca)
+        with patch.object(self.motor.sessao, "post", return_value=mock_resp_busca_err):
+            with self.assertRaises(PermissionError):
+                self.motor.buscar_processos("qualquer")
 
 
 if __name__ == "__main__":

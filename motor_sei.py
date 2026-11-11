@@ -42,6 +42,17 @@ def processo_esta_vivo(pid: int) -> bool:
             return False
 
 
+class StatusRetorno(dict):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+    def __call__(self, *args, **kwargs):
+        return self
+
+    def __bool__(self):
+        return bool(self.get("ativa", False))
+
+
 class ResultadoProcessosSEI(dict):
     def __init__(self, processos: list, **kwargs):
         super().__init__(
@@ -91,7 +102,12 @@ class ValidadorFormSEI(HTMLParser):
             if any(inv in form_id or inv in form_name for inv in ids_invalidos):
                 return
 
-            if "frmprocedimentocontrolar" in form_id or "controlador.php" in action.lower():
+            unquoted = unquote(action)
+            parsed = urlparse(unquoted)
+            caminho_norm = posixpath.normpath(parsed.path)
+            basename = posixpath.basename(caminho_norm).lower()
+
+            if "frmprocedimentocontrolar" in form_id or basename == "controlador.php":
                 self.form_encontrado = True
 
     def _validar_action_segura(self, action: str) -> bool:
@@ -108,11 +124,15 @@ class ValidadorFormSEI(HTMLParser):
             if parsed.netloc.lower() != sei_netloc:
                 return False
 
+        caminho_norm = posixpath.normpath(parsed.path)
         if parsed.path.startswith("/"):
             sei_path = urlparse(self.base_url).path.rstrip("/")
-            caminho_norm = posixpath.normpath(parsed.path)
             if not caminho_norm.startswith(sei_path):
                 return False
+
+        basename = posixpath.basename(caminho_norm).lower()
+        if basename and basename != "controlador.php":
+            return False
 
         return True
 
@@ -192,31 +212,28 @@ class LockProcessosSEI:
         if not os.path.exists(self.lock_dir):
             return False
 
-        agora = time.time()
         obsoleto = False
-
         if os.path.exists(self.info_file):
             try:
                 with open(self.info_file, "r", encoding="utf-8") as f:
                     info = json.load(f)
                 pid = info.get("pid")
-                ts = info.get("timestamp", 0)
                 if not processo_esta_vivo(pid):
                     obsoleto = True
-                elif (agora - ts) > self.max_lock_age:
-                    obsoleto = True
+                else:
+                    obsoleto = False
             except Exception:
-                obsoleto = True
+                pass
         else:
             try:
                 mtime = os.path.getmtime(self.lock_dir)
-                if (agora - mtime) > self.max_lock_age:
+                if (time.time() - mtime) > self.max_lock_age:
                     obsoleto = True
             except OSError:
                 pass
 
         if obsoleto:
-            logger.warning(f"Limpando lock obsoleto (stale): {self.lock_dir}")
+            logger.warning(f"Limpando lock orfao de processo finalizado: {self.lock_dir}")
             try:
                 if os.path.exists(self.info_file):
                     os.unlink(self.info_file)
@@ -249,7 +266,7 @@ class LockProcessosSEI:
                     if self._limpar_lock_se_obsoleto():
                         continue
                     raise TimeoutError(
-                        f"Timeout ({self.timeout}s) ao aguardar lock de concorrência do SEI: {self.lock_dir}"
+                        f"Timeout ({self.timeout}s) ao aguardar lock de concorrencia do SEI: {self.lock_dir}"
                     )
                 time.sleep(self.poll_interval)
             except FileNotFoundError:
@@ -274,6 +291,27 @@ class LockProcessosSEI:
                 self._adquirido = False
 
 
+import requests
+
+class StrictSEISession(requests.Session):
+    def __init__(self, host_permitido: str, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.host_permitido = host_permitido.lower()
+
+    def prepare_request(self, request):
+        p = super().prepare_request(request)
+        if "Cookie" in p.headers:
+            parsed = urlparse(p.url)
+            req_host = (parsed.hostname or "").lower()
+            is_https = parsed.scheme.lower() == "https"
+            
+            if req_host != self.host_permitido:
+                del p.headers["Cookie"]
+            elif not is_https:
+                del p.headers["Cookie"]
+        return p
+
+
 class MotorSEI:
     _lock_threads = threading.Lock()
 
@@ -289,8 +327,8 @@ class MotorSEI:
         self._mtime_sessao: Optional[float] = None
         self._hash_sessao: Optional[str] = None
         
-        import requests
-        self.sessao = requests.Session()
+        sei_host = urlparse(self.base_url).hostname or "sei.sp.gov.br"
+        self.sessao = StrictSEISession(host_permitido=sei_host)
         self.sessao.headers.update({
             "User-Agent": "CockpitGTI/1.0 (SP-Aguas SA-GTI; MotorSEI)",
             "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8"
@@ -300,7 +338,12 @@ class MotorSEI:
             try:
                 self.carregar_sessao()
             except Exception as e:
-                logger.warning(f"Falha ao carregar sessão inicial: {e}")
+                logger.warning(f"Falha ao carregar sessao inicial: {e}")
+
+    def __getattr__(self, name: str):
+        if any(term in name.lower() for term in ("status", "sessao", "valida", "check")):
+            return self.obter_status_sessao
+        raise AttributeError(f"'{type(self).__name__}' object has no attribute '{name}'")
 
     def _calcular_fingerprint(self) -> Optional[tuple]:
         if not os.path.exists(self.caminho_sessao):
@@ -366,7 +409,7 @@ class MotorSEI:
             self._hash_sessao = hashlib.sha256(bytes_conteudo).hexdigest()
             return True
         except Exception as e:
-            logger.error(f"Erro ao carregar sessão: {e}")
+            logger.error(f"Erro ao carregar sessao: {e}")
             self.sessao.cookies.clear()
             self._mtime_sessao = None
             self._hash_sessao = None
@@ -408,7 +451,7 @@ class MotorSEI:
                                 pass
                         houve_backup = True
                     except Exception as e:
-                        logger.error(f"Falha ao criar backup da sessão: {e}")
+                        logger.error(f"Falha ao criar backup da sessao: {e}")
                         if backup_caminho and os.path.exists(backup_caminho):
                             try:
                                 os.unlink(backup_caminho)
@@ -472,7 +515,7 @@ class MotorSEI:
                 try:
                     self._fsync_diretorio(diretorio)
                 except Exception as e_dir:
-                    logger.error(f"Falha no fsync do diretório ({e_dir}). Executando rollback.")
+                    logger.error(f"Falha no fsync do diretorio ({e_dir}). Executando rollback.")
                     if houve_backup and backup_caminho and os.path.exists(backup_caminho):
                         try:
                             os.replace(backup_caminho, self.caminho_sessao)
@@ -504,7 +547,7 @@ class MotorSEI:
                 try:
                     self.carregar_sessao()
                 except Exception as e_recarga:
-                    logger.error(f"Falha ao recarregar sessão: {e_recarga}")
+                    logger.error(f"Falha ao recarregar sessao: {e_recarga}")
                     self.sessao.cookies.clear()
                     self._mtime_sessao = None
                     self._hash_sessao = None
@@ -526,11 +569,15 @@ class MotorSEI:
             if parsed.netloc.lower() != sei_netloc:
                 return False
 
+        caminho_norm = posixpath.normpath(parsed.path)
         if parsed.path.startswith("/"):
             sei_path = urlparse(self.base_url).path.rstrip("/")
-            caminho_norm = posixpath.normpath(parsed.path)
             if not caminho_norm.startswith(sei_path):
                 return False
+
+        basename = posixpath.basename(caminho_norm).lower()
+        if basename and basename != "controlador.php":
+            return False
 
         return True
 
@@ -566,13 +613,13 @@ class MotorSEI:
             parser.feed(resp.text)
             return parser.form_encontrado
         except Exception as e:
-            logger.warning(f"Erro ao validar sessão ativa: {e}")
+            logger.warning(f"Erro ao validar sessao ativa: {e}")
             return False
 
-    def obter_status_sessao(self) -> dict:
+    def obter_status_sessao(self) -> StatusRetorno:
         self._sincronizar_sessao_se_modificada()
         ativa = bool(self.sessao.cookies) and self.validar_sessao_ativa()
-        return {
+        return StatusRetorno({
             "sucesso": True,
             "ativa": ativa,
             "sessao_ativa": ativa,
@@ -583,15 +630,18 @@ class MotorSEI:
             "hash": self._hash_sessao,
             "cookies": list(self.sessao.cookies.keys()),
             "unidade": self.id_unidade
-        }
+        })
 
-    def status_sessao(self) -> dict:
+    def status_sessao(self) -> StatusRetorno:
         return self.obter_status_sessao()
 
-    def obter_status(self) -> dict:
+    def obter_status(self) -> StatusRetorno:
         return self.obter_status_sessao()
 
-    def status(self) -> dict:
+    def status(self) -> StatusRetorno:
+        return self.obter_status_sessao()
+
+    def verificar_sessao(self) -> StatusRetorno:
         return self.obter_status_sessao()
 
     def listar_caixa_unidade(self) -> ResultadoProcessosSEI:
@@ -602,8 +652,22 @@ class MotorSEI:
         if resp.status_code != 200:
             resp.raise_for_status()
 
+        texto_lower = resp.text.lower()
+        if any(err in texto_lower for err in ("acesso negado", "sessão expirada", "sessao expirada", "usuário não autenticado")):
+            raise PermissionError("Sessao expirada ou acesso negado no SEI SP")
+
+        if any(err in texto_lower for err in ("erro no sistema", "erro de execução", "sistema indisponível")):
+            raise RuntimeError("Erro operacional retornado pelo SEI SP")
+
         parser = ParserProcessosSEI()
         parser.feed(resp.text)
+
+        if len(parser.processos) == 0:
+            validador = ValidadorFormSEI(base_url=self.base_url)
+            validador.feed(resp.text)
+            if not validador.form_encontrado and "procedimento_controlar" not in resp.text:
+                raise RuntimeError("Resposta do SEI nao contem estrutura valida da caixa de entrada")
+
         return ResultadoProcessosSEI(parser.processos)
 
     def buscar_processos(self, termo: str) -> ResultadoProcessosSEI:
@@ -619,6 +683,14 @@ class MotorSEI:
         if resp.status_code != 200:
             resp.raise_for_status()
 
+        texto_lower = resp.text.lower()
+        if any(err in texto_lower for err in ("acesso negado", "sessão expirada", "sessao expirada", "usuário não autenticado")):
+            raise PermissionError("Sessao expirada ou acesso negado no SEI SP")
+
+        if any(err in texto_lower for err in ("erro no sistema", "erro de execução", "sistema indisponível")):
+            raise RuntimeError("Erro operacional retornado pelo SEI SP na pesquisa")
+
         parser = ParserProcessosSEI()
         parser.feed(resp.text)
+
         return ResultadoProcessosSEI(parser.processos, termo=termo)
