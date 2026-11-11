@@ -21,20 +21,24 @@ class TestHomologacaoInstitucional(unittest.TestCase):
         self.assertEqual(res.status_code, 401)
 
     def test_03_mascaramento_pool_get(self):
-        """Valida mascaramento de credenciais no GET /api/v1/ia/pool."""
-        res = self.client.get('/api/v1/ia/pool')
-        self.assertEqual(res.status_code, 200)
-        data = res.get_json()
-        def checar_mascara(obj):
-            if isinstance(obj, dict):
-                for k, v in obj.items():
-                    if any(t in k.lower() for t in ('apikey', 'api_key', 'chave', 'secret', 'token')):
-                        self.assertIn(v, ('', '***'))
-                    else:
-                        checar_mascara(v)
-            elif isinstance(obj, list):
-                for i in obj: checar_mascara(i)
-        checar_mascara(data)
+        """Comprova ativamente que o GET /api/v1/ia/pool mascara chaves reais substituindo por '***'."""
+        pool_com_segredo = {
+            "ias": {
+                "slot_teste": {
+                    "id": "slot_teste",
+                    "agent": "qwen2.5:14b",
+                    "apiKey": "sk-chave-real-secreta-123456"
+                }
+            }
+        }
+        with patch('builtins.open', mock_open(read_data=json.dumps(pool_com_segredo))), \
+             patch('os.path.exists', return_value=True):
+            res = self.client.get('/api/v1/ia/pool')
+            self.assertEqual(res.status_code, 200)
+            data = res.get_json()
+            self.assertIn('ias', data)
+            self.assertEqual(data['ias']['slot_teste']['apiKey'], '***')
+            self.assertNotIn('sk-chave-real-secreta-123456', json.dumps(data))
 
     def test_04_isolamento_chave_vazia_em_slot_existente(self):
         """Valida que um slot existente configurado com apiKey vazia retorna estritamente ''."""
