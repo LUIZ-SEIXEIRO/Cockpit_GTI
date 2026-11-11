@@ -165,8 +165,10 @@ class MotorSEI:
                             self.session.cookies.clear()
                             raise
                     raise
-
-            # 7. Recarrega a memória e exige sucesso absoluto (se falhar, levanta exceção e não retorna 200)
+            # 7. Recarrega a memória e exige sucesso absoluto (se falhar, invalida a memória e aborta)
+            if not self.carregar_sessao():
+                self.session.cookies.clear()
+                raise OSError("Falha crítica ao recarregar a sessão na memória após persistência.")
             if not self.carregar_sessao():
                 raise OSError("Falha crítica ao recarregar a sessão na memória após persistência.")
 
