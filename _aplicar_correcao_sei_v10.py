@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-Script de Atualização e Homologação SEI 4.1.5 - Versão 10
-Exclusão Mútua Persistente (Kernel Flock + Dual Lock v9/v10), Thread Timeout e Testes Multiprocesso
+Script de Atualização e Homologação SEI 4.1.5 - Versão 10 (Dual Lock + Thread Timeout + Subprocess Windows)
 Cockpit GTI 360° - SA-GTI (SP-Águas)
 """
 import os
@@ -1513,52 +1512,63 @@ class TestMotorSEI(unittest.TestCase):
         self.motor.salvar_sessao({"PHPSESSID": "sessao_inicial"})
         self.assertEqual(self.motor.sessao.cookies.get("PHPSESSID"), "sessao_inicial")
 
-        import multiprocessing as mp
+        import subprocess
 
-        def worker_titular(caminho, fila):
-            from motor_sei import MotorSEI
-            m = MotorSEI(caminho_sessao=caminho)
-            orig_replace = os.replace
-            def replace_lento(src, dst):
-                fila.put("TITULAR_SUSPENSO")
-                time.sleep(0.3)
-                return orig_replace(src, dst)
-            with patch("os.replace", side_effect=replace_lento):
-                try:
-                    m.salvar_sessao({"PHPSESSID": "sessao_A_titular"}, timeout=5.0)
-                    fila.put("TITULAR_OK")
-                except Exception as e:
-                    fila.put(f"TITULAR_ERRO:{e}")
+        script_a = f"""
+import time, os
+from motor_sei import MotorSEI
+m = MotorSEI(caminho_sessao=r"{self.caminho_sessao}")
+orig_replace = os.replace
+def replace_lento(src, dst):
+    print("TITULAR_PRONTO", flush=True)
+    time.sleep(0.4)
+    return orig_replace(src, dst)
 
-        def worker_concorrente(caminho, fila):
-            from motor_sei import MotorSEI
-            m = MotorSEI(caminho_sessao=caminho)
-            try:
-                m.salvar_sessao({"PHPSESSID": "sessao_B_concorrente"}, timeout=0.05)
-                fila.put("CONCORRENTE_GRAVOU")
-            except TimeoutError:
-                fila.put("CONCORRENTE_TIMEOUT")
-            except Exception as e:
-                fila.put(f"CONCORRENTE_ERRO:{e}")
+from unittest.mock import patch
+with patch("os.replace", side_effect=replace_lento):
+    m.salvar_sessao({{"PHPSESSID": "sessao_A_titular"}}, timeout=5.0)
+    print("TITULAR_SUCESSO", flush=True)
+"""
 
-        fila = mp.Queue()
-        proc_a = mp.Process(target=worker_titular, args=(self.caminho_sessao, fila))
-        proc_a.start()
+        proc_a = subprocess.Popen(
+            [sys.executable, "-c", script_a],
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE,
+            text=True
+        )
 
-        msg = fila.get(timeout=3.0)
-        self.assertEqual(msg, "TITULAR_SUSPENSO")
+        try:
+            linha_pronto = proc_a.stdout.readline().strip()
+            self.assertEqual(linha_pronto, "TITULAR_PRONTO")
 
-        proc_b = mp.Process(target=worker_concorrente, args=(self.caminho_sessao, fila))
-        proc_b.start()
-        proc_b.join(timeout=3.0)
-        proc_a.join(timeout=3.0)
+            script_b = f"""
+import sys
+from motor_sei import MotorSEI
+m = MotorSEI(caminho_sessao=r"{self.caminho_sessao}")
+try:
+    m.salvar_sessao({{"PHPSESSID": "sessao_B_concorrente"}}, timeout=0.05)
+    print("CONCORRENTE_GRAVOU", flush=True)
+    sys.exit(0)
+except TimeoutError:
+    print("CONCORRENTE_TIMEOUT", flush=True)
+    sys.exit(42)
+"""
 
-        respostas = []
-        while not fila.empty():
-            respostas.append(fila.get_nowait())
+            res_b = subprocess.run(
+                [sys.executable, "-c", script_b],
+                capture_output=True,
+                text=True,
+                timeout=3.0
+            )
+            self.assertEqual(res_b.returncode, 42)
+            self.assertEqual(res_b.stdout.strip(), "CONCORRENTE_TIMEOUT")
 
-        self.assertIn("CONCORRENTE_TIMEOUT", respostas)
-        self.assertIn("TITULAR_OK", respostas)
+            stdout_a, _ = proc_a.communicate(timeout=3.0)
+            self.assertIn("TITULAR_SUCESSO", stdout_a)
+        finally:
+            if proc_a.poll() is None:
+                proc_a.kill()
+                proc_a.wait()
 
         with open(self.caminho_sessao, "r", encoding="utf-8") as f_res:
             dados_final = json.load(f_res)
@@ -1615,7 +1625,7 @@ if __name__ == "__main__":
 '''
 
 def main():
-    print("=== APLICANDO CORRECAO SEI V10 (DUAL LOCK + THREAD TIMEOUT + MULTIPROCESSO) ===")
+    print("=== APLICANDO CORRECAO SEI V10 (DUAL LOCK + THREAD TIMEOUT + SUBPROCESS) ===")
     
     with open("motor_sei.py", "w", encoding="utf-8") as f:
         f.write(MOTOR_SEI_CODE)
@@ -1624,7 +1634,7 @@ def main():
     os.makedirs("tests", exist_ok=True)
     with open("tests/test_motor_sei.py", "w", encoding="utf-8") as f:
         f.write(TESTS_CODE)
-    print("[SUCESSO] tests/test_motor_sei.py atualizado (29 testes).")
+    print("[SUCESSO] tests/test_motor_sei.py atualizado (29 testes compativeis Windows e Linux).")
 
 if __name__ == "__main__":
     main()
