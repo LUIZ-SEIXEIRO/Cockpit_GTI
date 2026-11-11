@@ -18,45 +18,46 @@ import requests
 logger = logging.getLogger("CockpitGTI.MotorSEI")
 
 
+def _verificar_pid_so(pid: int) -> bool:
+    if os.name == "nt":
+        import ctypes
+        kernel32 = ctypes.windll.kernel32
+        STILL_ACTIVE = 259
+        PROCESS_QUERY_LIMITED_INFORMATION = 0x1000
+        h_process = kernel32.OpenProcess(PROCESS_QUERY_LIMITED_INFORMATION, False, pid)
+        if not h_process:
+            err = kernel32.GetLastError()
+            if err == 5:
+                return True
+            return False
+        exit_code = ctypes.c_ulong()
+        success = kernel32.GetExitCodeProcess(h_process, ctypes.byref(exit_code))
+        kernel32.CloseHandle(h_process)
+        return bool(success and exit_code.value == STILL_ACTIVE)
+    else:
+        os.kill(pid, 0)
+        return True
+
+
 def processo_esta_vivo(pid: int) -> bool:
     if not pid or pid <= 0:
         return False
     if pid == os.getpid():
         return True
 
-    if os.name == "nt":
-        try:
-            import ctypes
-            kernel32 = ctypes.windll.kernel32
-            STILL_ACTIVE = 259
-            PROCESS_QUERY_LIMITED_INFORMATION = 0x1000
-            h_process = kernel32.OpenProcess(PROCESS_QUERY_LIMITED_INFORMATION, False, pid)
-            if not h_process:
-                err = kernel32.GetLastError()
-                if err == 5:
-                    return True
-                return False
-            exit_code = ctypes.c_ulong()
-            success = kernel32.GetExitCodeProcess(h_process, ctypes.byref(exit_code))
-            kernel32.CloseHandle(h_process)
-            return bool(success and exit_code.value == STILL_ACTIVE)
-        except PermissionError:
+    try:
+        return _verificar_pid_so(pid)
+    except PermissionError:
+        return True
+    except OSError as e:
+        import errno
+        if getattr(e, "errno", None) == errno.EPERM:
             return True
-        except Exception:
-            return True
-    else:
-        try:
-            os.kill(pid, 0)
-            return True
-        except PermissionError:
-            return True
-        except OSError as e:
-            import errno
-            if e.errno == errno.EPERM:
-                return True
-            if e.errno == errno.ESRCH:
-                return False
-            return True
+        if getattr(e, "errno", None) == errno.ESRCH:
+            return False
+        return True
+    except Exception:
+        return True
 
 
 class StatusRetorno(dict):
@@ -158,6 +159,60 @@ class ValidadorFormSEI(HTMLParser):
             self.ignorar_conteudo = False
 
 
+class ValidadorEstruturalSEI(HTMLParser):
+    def __init__(self, tipo_tela: str = "caixa"):
+        super().__init__()
+        self.tipo_tela = tipo_tela
+        self.ignorar_conteudo = False
+        self.estrutura_valida = False
+        self._texto_visivel = []
+
+    def handle_comment(self, data):
+        pass
+
+    def handle_starttag(self, tag: str, attrs: list):
+        tag_lower = tag.lower()
+        if tag_lower in ("script", "style"):
+            self.ignorar_conteudo = True
+            return
+
+        if not self.ignorar_conteudo:
+            attr_dict = {k.lower(): (v or "").lower() for k, v in attrs if k is not None}
+            form_id = attr_dict.get("id", "")
+            form_name = attr_dict.get("name", "")
+            action = attr_dict.get("action", "")
+
+            if tag_lower == "form":
+                basename = posixpath.basename(posixpath.normpath(urlparse(action).path)).lower()
+                if self.tipo_tela == "caixa":
+                    if "frmprocedimentocontrolar" in form_id or (basename == "controlador.php" and "procedimento_controlar" in action):
+                        self.estrutura_valida = True
+                elif self.tipo_tela == "pesquisa":
+                    if "frmpesquisa" in form_id or "frmpesquisa" in form_name or (basename == "controlador.php" and "pesquisa" in action):
+                        self.estrutura_valida = True
+
+            elif tag_lower == "input":
+                nome = attr_dict.get("name", "")
+                if self.tipo_tela == "pesquisa" and nome in ("txtpesquisa", "btnpesquisar"):
+                    self.estrutura_valida = True
+
+            elif tag_lower in ("div", "table"):
+                elem_id = attr_dict.get("id", "")
+                if elem_id in ("divconteudo", "divinframensagens", "tblprocessos", "divprocedimentos"):
+                    self.estrutura_valida = True
+
+    def handle_endtag(self, tag: str):
+        if tag.lower() in ("script", "style"):
+            self.ignorar_conteudo = False
+
+    def handle_data(self, data: str):
+        if not self.ignorar_conteudo:
+            self._texto_visivel.append(data)
+
+    def obter_texto_visivel(self) -> str:
+        return " ".join(self._texto_visivel).lower()
+
+
 class ParserProcessosSEI(HTMLParser):
     def __init__(self):
         super().__init__()
@@ -166,6 +221,9 @@ class ParserProcessosSEI(HTMLParser):
         self._dentro_de_link = False
         self._link_atual = None
         self._texto_link = []
+
+    def handle_comment(self, data):
+        pass
 
     def handle_starttag(self, tag: str, attrs: list):
         tag_lower = tag.lower()
@@ -638,7 +696,10 @@ class MotorSEI:
             if final_netloc and final_netloc != sei_netloc:
                 return False
 
-            texto_lower = resp.text.lower()
+            validador = ValidadorEstruturalSEI(tipo_tela="caixa")
+            validador.feed(resp.text)
+            texto_visivel = validador.obter_texto_visivel()
+
             indicadores_invalido = [
                 "acesso negado",
                 "sessão expirada",
@@ -646,12 +707,10 @@ class MotorSEI:
                 "usuário não autenticado",
                 "usuario nao autenticado"
             ]
-            if any(ind in texto_lower for ind in indicadores_invalido):
+            if any(ind in texto_visivel for ind in indicadores_invalido):
                 return False
 
-            parser = ValidadorFormSEI(base_url=self.base_url)
-            parser.feed(resp.text)
-            return parser.form_encontrado
+            return validador.estrutura_valida
         except Exception as e:
             logger.warning(f"Erro ao validar sessao ativa: {e}")
             return False
@@ -722,8 +781,11 @@ class MotorSEI:
                 "erro": f"SEI SP retornou status HTTP {resp.status_code}"
             }
 
-        texto_lower = resp.text.lower()
-        if any(err in texto_lower for err in ("acesso negado", "sessão expirada", "sessao expirada", "usuário não autenticado")):
+        validador = ValidadorEstruturalSEI(tipo_tela="caixa")
+        validador.feed(resp.text)
+        texto_visivel = validador.obter_texto_visivel()
+
+        if any(err in texto_visivel for err in ("acesso negado", "sessão expirada", "sessao expirada", "usuário não autenticado")):
             return {
                 "sucesso": False,
                 "codigo": 401,
@@ -731,7 +793,7 @@ class MotorSEI:
                 "erro": "Sessao expirada ou acesso negado no SEI SP"
             }
 
-        if any(err in texto_lower for err in ("erro no sistema", "erro de execução", "sistema indisponível")):
+        if any(err in texto_visivel for err in ("erro no sistema", "erro de execução", "sistema indisponível")):
             return {
                 "sucesso": False,
                 "codigo": 502,
@@ -741,15 +803,12 @@ class MotorSEI:
         parser = ParserProcessosSEI()
         parser.feed(resp.text)
 
-        if len(parser.processos) == 0:
-            validador = ValidadorFormSEI(base_url=self.base_url)
-            validador.feed(resp.text)
-            if not validador.form_encontrado and "procedimento_controlar" not in resp.text:
-                return {
-                    "sucesso": False,
-                    "codigo": 502,
-                    "erro": "Resposta do SEI nao contem estrutura valida da caixa de entrada"
-                }
+        if len(parser.processos) == 0 and not validador.estrutura_valida:
+            return {
+                "sucesso": False,
+                "codigo": 502,
+                "erro": "Resposta invalida ou erro estrutural retornado pelo SEI SP"
+            }
 
         return ResultadoProcessosSEI(parser.processos)
 
@@ -793,8 +852,11 @@ class MotorSEI:
                 "erro": f"SEI SP retornou status HTTP {resp.status_code} na pesquisa"
             }
 
-        texto_lower = resp.text.lower()
-        if any(err in texto_lower for err in ("acesso negado", "sessão expirada", "sessao expirada", "usuário não autenticado")):
+        validador = ValidadorEstruturalSEI(tipo_tela="pesquisa")
+        validador.feed(resp.text)
+        texto_visivel = validador.obter_texto_visivel()
+
+        if any(err in texto_visivel for err in ("acesso negado", "sessão expirada", "sessao expirada", "usuário não autenticado")):
             return {
                 "sucesso": False,
                 "codigo": 401,
@@ -802,22 +864,21 @@ class MotorSEI:
                 "erro": "Sessao expirada ou acesso negado no SEI SP"
             }
 
-        if any(err in texto_lower for err in ("erro no sistema", "erro de execução", "sistema indisponível")):
+        if any(err in texto_visivel for err in ("erro no sistema", "erro de execução", "sistema indisponível")):
             return {
                 "sucesso": False,
                 "codigo": 502,
                 "erro": "Erro operacional retornado pelo SEI SP na pesquisa"
             }
 
-        marcadores_pesquisa = ("pesquisa", "txtpesquisa", "btnpesquisar", "frmpesquisa", "controlador.php")
-        if not any(m in texto_lower for m in marcadores_pesquisa):
+        parser = ParserProcessosSEI()
+        parser.feed(resp.text)
+
+        if len(parser.processos) == 0 and not validador.estrutura_valida:
             return {
                 "sucesso": False,
                 "codigo": 502,
                 "erro": "Resposta da pesquisa nao corresponde a uma tela valida do SEI"
             }
-
-        parser = ParserProcessosSEI()
-        parser.feed(resp.text)
 
         return ResultadoProcessosSEI(parser.processos, termo=termo)

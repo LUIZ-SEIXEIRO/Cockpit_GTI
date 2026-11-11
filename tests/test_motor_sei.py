@@ -14,6 +14,7 @@ from requests import Request
 from motor_sei import (
     MotorSEI,
     ValidadorFormSEI,
+    ValidadorEstruturalSEI,
     ParserProcessosSEI,
     LockProcessosSEI,
     ResultadoProcessosSEI,
@@ -251,7 +252,7 @@ class TestMotorSEI(unittest.TestCase):
         <html>
             <body>
                 <h1>Acesso Negado</h1>
-                <form id="frmProcedimentoControlar" action="controlador.php"></form>
+                <form id="frmProcedimentoControlar" action="controlador.php?acao=procedimento_controlar"></form>
             </body>
         </html>
         """
@@ -294,6 +295,7 @@ class TestMotorSEI(unittest.TestCase):
         lock_dir = self.caminho_sessao + ".lock"
         os.makedirs(lock_dir, exist_ok=True)
         
+        # 1. Processo MORTO (PID 999999): deve ser limpo
         with open(os.path.join(lock_dir, "lock.info"), "w", encoding="utf-8") as f:
             json.dump({"pid": 999999, "timestamp": time.time() - 100}, f)
 
@@ -302,11 +304,12 @@ class TestMotorSEI(unittest.TestCase):
             self.assertTrue(os.path.exists(lock_dir))
         self.assertFalse(os.path.exists(lock_dir))
 
+        # 2. Processo VIVO com falha de permissão simulada: NUNCA deve ser tomado!
         os.makedirs(lock_dir, exist_ok=True)
         with open(os.path.join(lock_dir, "lock.info"), "w", encoding="utf-8") as f:
             json.dump({"pid": 12345, "timestamp": time.time() - 100}, f)
 
-        with patch("os.kill", side_effect=PermissionError("EPERM: permissao negada")):
+        with patch("motor_sei._verificar_pid_so", side_effect=PermissionError("Simulando EPERM/Access Denied")):
             lock_concorrente = LockProcessosSEI(self.caminho_sessao, timeout=0.1, max_lock_age=0.05)
             with self.assertRaises(TimeoutError):
                 with lock_concorrente:
@@ -365,6 +368,36 @@ class TestMotorSEI(unittest.TestCase):
                 self.assertEqual(resp_status.status_code, 200)
                 dados = resp_status.get_json()
                 self.assertFalse(dados.get("autenticado"))
+
+    def test_20_rejeitar_marcadores_falsos_em_script_e_comentarios(self):
+        self.motor.salvar_sessao({"PHPSESSID": "sessao_ativa_valida"})
+
+        html_falsa_injetada = """
+        <html>
+            <head>
+                <script>
+                    var acao = "controlador.php?acao=pesquisa_processo";
+                    var campo = "txtPesquisa";
+                    // <form id="frmProcedimentoControlar" action="controlador.php"></form>
+                </script>
+                <!-- controlador.php?acao=procedimento_controlar -->
+            </head>
+            <body>
+                <div class="aviso">Erro interno no servidor de aplicações SP</div>
+            </body>
+        </html>
+        """
+        mock_resp_falsa = MagicMock(status_code=200, text=html_falsa_injetada)
+
+        with patch.object(self.motor.sessao, "get", return_value=mock_resp_falsa):
+            res_caixa = self.motor.listar_caixa_unidade()
+            self.assertFalse(res_caixa.get("sucesso"))
+            self.assertEqual(res_caixa.get("codigo"), 502)
+
+        with patch.object(self.motor.sessao, "post", return_value=mock_resp_falsa):
+            res_busca = self.motor.buscar_processos("12345")
+            self.assertFalse(res_busca.get("sucesso"))
+            self.assertEqual(res_busca.get("codigo"), 502)
 
 
 if __name__ == "__main__":
