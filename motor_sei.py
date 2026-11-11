@@ -27,14 +27,10 @@ class MotorSEI:
         self.carregar_sessao()
 
     def salvar_sessao(self, cookies_dict):
-        """Grava a sessão com 0600 em nível de syscall validado antes de gravar dados."""
+        """Gravação atômica via .tmp com 0600 validado antes de substituir o arquivo original."""
         os.makedirs(os.path.dirname(self.caminho_sessao), exist_ok=True)
-        if os.path.exists(self.caminho_sessao):
-            try:
-                os.remove(self.caminho_sessao)
-            except Exception:
-                pass
-
+        caminho_tmp = self.caminho_sessao + ".tmp"
+        
         conteudo = json.dumps({
             "atualizado_em": time.strftime("%Y-%m-%dT%H:%M:%SZ"),
             "cookies": cookies_dict
@@ -42,9 +38,8 @@ class MotorSEI:
         
         flags = os.O_WRONLY | os.O_CREAT | os.O_TRUNC
         mode = 0o600
-        fd = os.open(self.caminho_sessao, flags, mode)
+        fd = os.open(caminho_tmp, flags, mode)
         
-        # Garante 0600 antes da escrita
         if hasattr(os, "fchmod"):
             try:
                 os.fchmod(fd, 0o600)
@@ -56,23 +51,25 @@ class MotorSEI:
             if (st.st_mode & 0o077) != 0:
                 os.close(fd)
                 try:
-                    os.remove(self.caminho_sessao)
+                    os.remove(caminho_tmp)
                 except Exception:
                     pass
-                raise PermissionError("Insegurança: impossível garantir permissão 0600 antes da escrita.")
+                raise PermissionError("Insegurança: impossível garantir permissão 0600.")
 
         with os.fdopen(fd, "wb") as f:
             f.write(conteudo)
             
         try:
-            os.chmod(self.caminho_sessao, 0o600)
+            os.chmod(caminho_tmp, 0o600)
         except Exception:
             pass
-            
+
+        # Substituição atômica: arquivo original nunca fica truncado ou corrompido
+        os.replace(caminho_tmp, self.caminho_sessao)
         self.carregar_sessao()
 
     def carregar_sessao(self):
-        """Carrega cookies estritamente para o domínio e path autorizados."""
+        """Carrega cookies vinculando-os exclusivamente ao host sei.sp.gov.br e path /sei."""
         if os.path.exists(self.caminho_sessao):
             try:
                 with open(self.caminho_sessao, "r", encoding="utf-8") as f:
@@ -87,35 +84,39 @@ class MotorSEI:
         return False
 
     def _executar_requisicao_segura(self, metodo, url, **kwargs):
-        """Valida destino normalizado com posixpath e bloqueia vazamento de cookies em redirecionamentos."""
+        """Valida destino decodificando percent-encoding (%2e%2e) e bloqueia vazamento em redirects."""
         parsed = urllib.parse.urlparse(url)
-        norm_path = posixpath.normpath(parsed.path)
+        # Decodifica qualquer percent-encoding (%2e%2e -> ..) antes de normalizar
+        path_decodificado = urllib.parse.unquote(parsed.path)
+        norm_path = posixpath.normpath(path_decodificado)
+        
         if parsed.scheme != "https" or parsed.hostname != self.HOST_PERMITIDO or (not norm_path.startswith("/sei/") and norm_path != "/sei"):
-            raise ValueError(f"Destino não autorizado ou path inválido: {url}")
+            raise ValueError(f"Destino não autorizado ou path traversal detectado: {url}")
             
         resp = self.session.request(metodo, url, allow_redirects=False, **kwargs)
         if resp.is_redirect:
             loc = resp.headers.get("Location", "")
             loc_url = urllib.parse.urljoin(url, loc)
             p_loc = urllib.parse.urlparse(loc_url)
-            norm_loc = posixpath.normpath(p_loc.path)
-            if p_loc.scheme != "https" or p_loc.hostname != self.HOST_PERMITIDO or (not norm_loc.startswith("/sei/") and norm_loc != "/sei"):
+            p_loc_norm = posixpath.normpath(urllib.parse.unquote(p_loc.path))
+            if p_loc.scheme != "https" or p_loc.hostname != self.HOST_PERMITIDO or (not p_loc_norm.startswith("/sei/") and p_loc_norm != "/sei"):
                 return resp
             return self.session.request(metodo, loc_url, allow_redirects=False, **kwargs)
         return resp
 
     def _pagina_caixa_valida(self, resp):
-        """Validação positiva exigindo estrutura e formulário legítimos do SEI sem mensagens de erro."""
+        """Validação positiva exigindo formulário HTML real (<form>), tabela e ausência de erros."""
         if resp.status_code != 200:
             return False
         parsed = urllib.parse.urlparse(resp.url)
-        norm_path = posixpath.normpath(parsed.path)
+        norm_path = posixpath.normpath(urllib.parse.unquote(parsed.path))
         if parsed.scheme != "https" or parsed.hostname != self.HOST_PERMITIDO or (not norm_path.startswith("/sei/") and norm_path != "/sei"):
             return False
         texto = resp.text.lower()
         if any(t in texto for t in self.TERMOS_ERRO):
             return False
-        tem_form = "frmprocedimentocontrolar" in texto or "procedimento_controlar" in texto
+        # Exige tag <form> real do SEI
+        tem_form = bool(re.search(r"<form\s+[^>]*(?:id|name)=["']frmprocedimentocontrolar["']", texto) or re.search(r"<form\s+[^>]*action=["'][^"']*controlador\.php", texto))
         tem_tabela = "infratabela" in texto or "infraareadados" in texto or "id_procedimento" in texto
         return tem_form and tem_tabela
 
@@ -123,15 +124,15 @@ class MotorSEI:
         if resp.status_code != 200:
             return False
         parsed = urllib.parse.urlparse(resp.url)
-        norm_path = posixpath.normpath(parsed.path)
+        norm_path = posixpath.normpath(urllib.parse.unquote(parsed.path))
         if parsed.scheme != "https" or parsed.hostname != self.HOST_PERMITIDO or (not norm_path.startswith("/sei/") and norm_path != "/sei"):
             return False
         texto = resp.text.lower()
         if any(t in texto for t in self.TERMOS_ERRO):
             return False
-        tem_busca = "pesquisa_processo" in texto or "resultado da pesquisa" in texto
+        tem_form = bool(re.search(r"<form\s+[^>]*action=["'][^"']*controlador\.php", texto) or "frmpesquisa" in texto)
         tem_resultado = "infratabela" in texto or "procedimento_trabalhar" in texto or "nenhum" in texto
-        return tem_busca and tem_resultado
+        return tem_form and tem_resultado
 
     def validar_sessao(self):
         try:
