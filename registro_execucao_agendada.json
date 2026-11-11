@@ -1,0 +1,62 @@
+[
+  {
+    "timestamp": "10/11/2026 às 13:48:23",
+    "timestamp_iso": "2026-11-10T13:48:23.185086",
+    "modo": "Agendado / Automático (Motor 3)",
+    "status": "SUCESSO",
+    "status_http": 200,
+    "cards_processados": 179,
+    "cards_transmitidos_op": 0,
+    "cards_homologados_cockpit": 177,
+    "modelo_ia2": "qwen2.5:7b",
+    "comprovante_hash": "1A1C65C5891"
+  },
+  {
+    "timestamp": "10/11/2026 às 12:48:23",
+    "timestamp_iso": "2026-11-10T12:48:23.157889",
+    "modo": "Agendado / Automático (Motor 3)",
+    "status": "SUCESSO",
+    "status_http": 200,
+    "cards_processados": 179,
+    "cards_transmitidos_op": 0,
+    "cards_homologados_cockpit": 177,
+    "modelo_ia2": "qwen2.5:7b",
+    "comprovante_hash": "1A1C62569F5"
+  },
+  {
+    "timestamp": "10/11/2026 às 11:48:23",
+    "timestamp_iso": "2026-11-10T11:48:23.069331",
+    "modo": "Agendado / Automático (Motor 3)",
+    "status": "SUCESSO",
+    "status_http": 200,
+    "cards_processados": 179,
+    "cards_transmitidos_op": 0,
+    "cards_homologados_cockpit": 177,
+    "modelo_ia2": "qwen2.5:7b",
+    "comprovante_hash": "1A1C5EE7B1D"
+  },
+  {
+    "timestamp": "10/11/2026 às 10:48:23",
+    "timestamp_iso": "2026-11-10T10:48:23.046886",
+    "modo": "Agendado / Automático (Motor 3)",
+    "status": "SUCESSO",
+    "status_http": 200,
+    "cards_processados": 179,
+    "cards_transmitidos_op": 0,
+    "cards_homologados_cockpit": 177,
+    "modelo_ia2": "qwen2.5:7b",
+    "comprovante_hash": "1A1C5B78C86"
+  },
+  {
+    "timestamp": "10/11/2026 às 09:48:25",
+    "timestamp_iso": "2026-11-10T09:48:25.141177",
+    "modo": "Agendado / Automático (Motor 3)",
+    "status": "SUCESSO",
+    "status_http": 200,
+    "cards_processados": 179,
+    "cards_transmitidos_op": 0,
+    "cards_homologados_cockpit": 177,
+    "modelo_ia2": "qwen2.5:7b",
+    "comprovante_hash": "1A1C580A635"
+  }
+]
