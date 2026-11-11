@@ -333,18 +333,10 @@ def mascarar_chaves_recursivo(obj):
 
 def extrair_id_item(item):
     if isinstance(item, dict):
-        # 1. ID ou Slot explícito
-        if item.get('id'):
-            return f"id:{item['id']}"
-        if item.get('slot'):
-            return f"slot:{item['slot']}"
-        # 2. Chave composta modelo + endpoint para evitar colisão entre modelos no mesmo host
-        mod = str(item.get('modelo') or item.get('model') or item.get('nome') or item.get('name') or '').strip().lower()
-        ep = str(item.get('endpoint') or item.get('url') or item.get('baseUrl') or item.get('base_url') or '').strip().lower()
-        if mod or ep:
-            return f"mod:{mod}|ep:{ep}"
-        itens_estaveis = {k: v for k, v in item.items() if not any(s in k.lower() for s in ('key', 'token', 'secret'))}
-        return str(sorted(itens_estaveis.items()))
+        for k in ('id', 'agent', 'modelo', 'model', 'nome', 'slot'):
+            v = item.get(k)
+            if v:
+                return str(v).strip().lower()
     return ''
 
 def resolver_chave_real(identificador=None):
@@ -353,25 +345,18 @@ def resolver_chave_real(identificador=None):
         try:
             with open(cfg_path, 'r', encoding='utf-8') as f:
                 dados = json.load(f)
-            itens = []
-            if isinstance(dados, list):
-                itens = dados
-            elif isinstance(dados, dict):
-                for k in ('ias', 'slots', 'models', 'pool'):
-                    if isinstance(dados.get(k), list):
-                        itens.extend(dados[k])
-                if not itens:
-                    itens = [dados]
+            slots_dict = dados.get('ias', {})
+            itens = list(slots_dict.values()) if isinstance(slots_dict, dict) else (slots_dict if isinstance(slots_dict, list) else [dados])
             
             alvo = str(identificador or '').strip().lower()
             for it in itens:
                 if isinstance(it, dict):
-                    valores = [str(v).strip().lower() for k, v in it.items() if k in ('id', 'slot', 'modelo', 'model', 'nome', 'name') and v]
-                    if alvo in valores or not alvo:
+                    valores = [str(it.get(k) or '').strip().lower() for k in ('agent', 'modelo', 'model', 'id', 'slot', 'nome')]
+                    if alvo and (alvo in valores or any(alvo in v for v in valores if v)):
                         for k in ('apiKey', 'api_key', 'chave', 'token', 'secret'):
                             if it.get(k) and it[k] != '***':
                                 return it[k]
-            # Fallback para o primeiro slot com chave real
+            # Fallback para o primeiro item válido
             for it in itens:
                 if isinstance(it, dict):
                     for k in ('apiKey', 'api_key', 'chave', 'token', 'secret'):
@@ -380,7 +365,6 @@ def resolver_chave_real(identificador=None):
         except Exception:
             pass
     return os.getenv('NEWAPI_API_KEY') or os.getenv('NEW_API_KEY') or ''
-
 
 def mascarar_chaves_recursivo(obj):
     if isinstance(obj, dict):
@@ -396,28 +380,28 @@ def mascarar_chaves_recursivo(obj):
     return obj
 
 def mesclar_preservando_segredos(novos, originais):
-    if isinstance(novos, list) and isinstance(originais, list):
-        mapa_originais = {}
-        for orig in originais:
-            chave_id = extrair_id_item(orig)
-            if chave_id:
-                mapa_originais[chave_id] = orig
-
-        resultado = []
-        for i, novo in enumerate(novos):
-            chave_id = extrair_id_item(novo)
-            orig_match = mapa_originais.get(chave_id) if chave_id else (originais[i] if i < len(originais) else None)
-            if orig_match:
-                resultado.append(mesclar_preservando_segredos(novo, orig_match))
-            else:
-                resultado.append(novo)
-        return resultado
-    elif isinstance(novos, dict) and isinstance(originais, dict):
+    if isinstance(novos, dict) and isinstance(originais, dict):
         resultado = dict(novos)
         for k, v in novos.items():
             if k in originais:
                 if v == '***' or (isinstance(v, str) and v.startswith('***')):
                     resultado[k] = originais[k]
+                elif k == 'ias' and isinstance(v, dict) and isinstance(originais[k], dict):
+                    mapa_orig = {}
+                    for orig_k, orig_v in originais[k].items():
+                        if isinstance(orig_v, dict):
+                            mapa_orig[orig_k] = orig_v
+                            for campo in ('id', 'agent', 'modelo'):
+                                if orig_v.get(campo):
+                                    mapa_orig[str(orig_v[campo]).strip().lower()] = orig_v
+                    ias_mescladas = {}
+                    for nov_k, nov_v in v.items():
+                        if isinstance(nov_v, dict):
+                            orig_match = mapa_orig.get(nov_k) or mapa_orig.get(str(nov_v.get('id', '')).strip().lower()) or mapa_orig.get(str(nov_v.get('agent', '')).strip().lower())
+                            ias_mescladas[nov_k] = mesclar_preservando_segredos(nov_v, orig_match) if orig_match else nov_v
+                        else:
+                            ias_mescladas[nov_k] = nov_v
+                    resultado[k] = ias_mescladas
                 elif isinstance(v, (dict, list)):
                     resultado[k] = mesclar_preservando_segredos(v, originais[k])
         return resultado
@@ -458,9 +442,12 @@ def api_v1_ia_testar_slot():
         dados = request.get_json(force=True) or {}
         raw_endpoint = dados.get('endpoint', 'http://127.0.0.1:3001/v1')
         endpoint = normalizar_endpoint_ia(raw_endpoint)
-        api_key = dados.get('apiKey') or os.environ.get('NEWAPI_API_KEY', '')
-        model = dados.get('model', 'qwen2.5:14b')
+        model = dados.get('model') or dados.get('agent') or 'qwen2.5:14b'
         slot = dados.get('slot', 'ia')
+
+        api_key = dados.get('apiKey') or dados.get('api_key') or ''
+        if not api_key or api_key == '***':
+            api_key = resolver_chave_real(model) or resolver_chave_real(slot)
 
         url = endpoint + '/chat/completions'
         payload = {
@@ -484,24 +471,11 @@ def api_v1_ia_testar_slot():
                 'codigo': resp.status,
                 'codigoHttp': resp.status,
                 'latenciaMs': latencia,
-                'latencia_ms': latencia,
-                'mensagem': f'Slot {model} ativo ({latencia}ms)!'
-            })
-    except urllib.error.HTTPError as he:
-        detalhe = he.read().decode('utf-8', errors='ignore') if he.fp else str(he)
-        return jsonify({
-            'sucesso': False,
-            'status': 'erro',
-            'erro': f'HTTP {he.code}: {he.reason}',
-            'mensagem': f'Erro HTTP {he.code}: {detalhe[:120]}'
-        }), 200
+                'resposta': 'pong'
+            }), 200
     except Exception as e:
-        return jsonify({
-            'sucesso': False,
-            'status': 'erro',
-            'erro': str(e),
-            'mensagem': f'Erro de conexao: {str(e)}'
-        }), 200
+        return jsonify({'sucesso': False, 'status': 'erro', 'mensagem': str(e)}), 500
+
 
 @app.route('/api/v1/ia/chat', methods=['POST'])
 def api_v1_ia_chat():
@@ -677,17 +651,20 @@ def api_v1_op_sync_batch():
         if c_id:
             try:
                 patch_url = f"{op_base_url}/api/v3/work_packages/{c_id}"
-                payload_patch = {'lockVersion': c.get('lockVersion', 1)}
-                
-                # Conversão padrão OpenProject v3 para descrição ({"raw": ...})
-                desc = c.get('descricao') or c.get('description')
-                if desc:
-                    payload_patch['description'] = desc if isinstance(desc, dict) else {'raw': str(desc)}
+                payload_patch = {'lockVersion': c.get('lockVersion', 1)}                # Conversão padrão OpenProject v3 para descrição (permite valor vazio para limpeza)
+                if 'descricao' in c or 'description' in c:
+                    desc_val = c.get('descricao') if 'descricao' in c else c.get('description')
+                    if isinstance(desc_val, dict):
+                        payload_patch['description'] = desc_val
+                    elif desc_val is None or desc_val == '':
+                        payload_patch['description'] = {'raw': ''}
+                    else:
+                        payload_patch['description'] = {'raw': str(desc_val)}
                     
                 # Conversão para subject
-                sub = c.get('titulo') or c.get('subject')
-                if sub:
-                    payload_patch['subject'] = sub
+                if 'titulo' in c or 'subject' in c:
+                    sub_val = c.get('titulo') if 'titulo' in c else c.get('subject')
+                    payload_patch['subject'] = '' if sub_val is None else str(sub_val)
 
                 for k, v in c.items():
                     if k not in ('id', 'card_id', 'cardId', 'lockVersion', 'descricao', 'description', 'titulo', 'subject'):
