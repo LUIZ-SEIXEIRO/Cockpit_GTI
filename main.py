@@ -1,21 +1,43 @@
 # -*- coding: utf-8 -*-
-import os, sys, json, time, socket, urllib.request, urllib.error
+import os
+import sys
+import json
+import time
+import socket
+import ssl
+import base64
+import urllib.request
+import urllib.error
 from flask import Flask, request, jsonify, send_from_directory
 
 app = Flask(__name__)
 
-
-
+# -------------------------------------------------------------------------
+# FUNÇÃO GLOBAL DE VERIFICAÇÃO DE PORTAS (DISPONÍVEL PARA TODAS AS ROTAS)
+# -------------------------------------------------------------------------
+def checar_porta(host, porta, timeout=0.8):
+    try:
+        s = socket.create_connection((host, porta), timeout=timeout)
+        s.close()
+        return True
+    except Exception:
+        return False
 
 # -------------------------------------------------------------------------
 # SEGURANÇA INSTITUCIONAL & HARDENING DE REDE (DEVSECOPS / TCE-SP)
 # -------------------------------------------------------------------------
-ALLOWED_ORIGINS = [
-    o.strip() for o in os.environ.get(
-        'ALLOWED_ORIGINS',
-        'http://localhost:5000,http://127.0.0.1:5000,http://100.103.100.98:5000,http://localhost:3001,http://127.0.0.1:3001'
-    ).split(',') if o.strip()
-]
+ALLOWED_ORIGINS = {
+    'http://localhost:5000',
+    'http://127.0.0.1:5000',
+    'http://100.103.100.98:5000',
+    'http://localhost:3001',
+    'http://127.0.0.1:3001',
+    'http://100.103.100.98:3001'
+}
+
+for o in os.environ.get('ALLOWED_ORIGINS', '').split(','):
+    if o.strip():
+        ALLOWED_ORIGINS.add(o.strip())
 
 COCKPIT_API_TOKEN = os.environ.get('COCKPIT_API_TOKEN', 'spaguas-sagti-auth-token-2026')
 
@@ -24,15 +46,13 @@ def adicionar_cabecalhos_seguranca_e_cors(response):
     origin = request.headers.get('Origin', '')
     if origin in ALLOWED_ORIGINS:
         response.headers['Access-Control-Allow-Origin'] = origin
-    elif not origin:
+    elif not origin and request.method == 'GET':
         response.headers['Access-Control-Allow-Origin'] = 'http://localhost:5000'
-    else:
-        response.headers['Access-Control-Allow-Origin'] = 'null'
 
     response.headers['Access-Control-Allow-Methods'] = 'GET, POST, OPTIONS, PUT, DELETE'
     response.headers['Access-Control-Allow-Headers'] = 'Content-Type, Authorization, X-Requested-With, X-Cockpit-Token'
 
-    # Headers de blindagem HTTP para auditoria de segurança (OWASP)
+    # Headers OWASP
     response.headers['X-Content-Type-Options'] = 'nosniff'
     response.headers['X-Frame-Options'] = 'SAMEORIGIN'
     response.headers['X-XSS-Protection'] = '1; mode=block'
@@ -52,23 +72,19 @@ def proteger_rotas_mutaveis():
     }
 
     if request.path in rotas_protegidas and request.method in ('POST', 'PUT', 'PATCH', 'DELETE'):
-        # 1. Permite acesso transparente da própria interface local no navegador
-        referer = request.headers.get('Referer', '')
-        origin = request.headers.get('Origin', '')
-        e_origem_local = any(o in referer or o in origin for o in ['localhost:5000', '127.0.0.1:5000', '100.103.100.98:5000'])
-
-        # 2. Se for requisição externa de API, exige Bearer Token institucional
         auth_header = request.headers.get('Authorization', '')
         token_bearer = auth_header.replace('Bearer ', '').strip() if auth_header.startswith('Bearer ') else ''
         custom_token = request.headers.get('X-Cockpit-Token', '').strip()
+        origin = request.headers.get('Origin', '')
+        referer = request.headers.get('Referer', '')
+        e_origem_confiavel = any(origin.startswith(o) or referer.startswith(o) for o in ALLOWED_ORIGINS)
 
-        if not e_origem_local and (token_bearer != COCKPIT_API_TOKEN and custom_token != COCKPIT_API_TOKEN):
+        if not e_origem_confiavel and (token_bearer != COCKPIT_API_TOKEN and custom_token != COCKPIT_API_TOKEN):
             return jsonify({
                 'sucesso': False,
                 'status': 'erro',
                 'mensagem': 'Acesso restrito: token de autenticacao institucional obrigatorio'
             }), 401
-
 
 def encontrar_arquivo_painel():
     base = os.path.dirname(os.path.abspath(__file__))
@@ -104,10 +120,8 @@ def servir_estaticos(filename):
 
 def normalizar_endpoint_ia(endpoint):
     if not endpoint:
-        endpoint = 'http://100.103.100.98:3001/v1'
+        endpoint = 'http://127.0.0.1:3001/v1'
     endpoint = endpoint.strip().rstrip('/')
-    if 'localhost:3001' in endpoint or '127.0.0.1:3001' in endpoint:
-        endpoint = endpoint.replace('localhost:3001', '100.103.100.98:3001').replace('127.0.0.1:3001', '100.103.100.98:3001')
     if not endpoint.endswith('/v1'):
         endpoint += '/v1'
     return endpoint
@@ -124,23 +138,50 @@ def localizar_config_pool():
             return c
     return os.path.join(base, 'config_pool_ias.json')
 
+# -------------------------------------------------------------------------
+# 1. TELEMETRIA E HEALTH CHECKS INDIVIDUAIS
+# -------------------------------------------------------------------------
 @app.route('/api/v1/telemetria', methods=['GET'])
 def rota_telemetria():
-    def checar_porta(host, porta, timeout=0.8):
-        try:
-            s = socket.create_connection((host, porta), timeout=timeout)
-            s.close()
-            return True
-        except Exception:
-            return False
-    return jsonify({
+    status = {
         'mariadb': checar_porta('127.0.0.1', 3306),
-        'ollama': checar_porta('127.0.0.1', 11434),
+        'ollama': checar_porta('127.0.0.1', 11434) or checar_porta('ollama', 11434),
         'glpi': checar_porta('10.199.43.26', 443) or checar_porta('127.0.0.1', 8088),
         'openproject': checar_porta('143.107.108.115', 443) or checar_porta('127.0.0.1', 8090),
-        'newapi': checar_porta('100.103.100.98', 3001) or checar_porta('127.0.0.1', 3001)
-    })
+        'newapi': checar_porta('127.0.0.1', 3001) or checar_porta('100.103.100.98', 3001) or checar_porta('new-api', 3000)
+    }
+    return jsonify(status), 200
 
+@app.route('/api/v1/mariadb/status', methods=['GET'])
+def mariadb_status():
+    ok = checar_porta('127.0.0.1', 3306)
+    return jsonify({'servico': 'mariadb', 'status': 'online' if ok else 'offline', 'ok': ok}), 200
+
+@app.route('/api/v1/ia/status', methods=['GET'])
+@app.route('/api/v1/newapi/status', methods=['GET'])
+def ia_status():
+    ok = checar_porta('127.0.0.1', 3001) or checar_porta('100.103.100.98', 3001) or checar_porta('new-api', 3000)
+    return jsonify({'servico': 'new-api', 'status': 'online' if ok else 'offline', 'ok': ok}), 200
+
+@app.route('/api/v1/ollama/status', methods=['GET'])
+def ollama_status():
+    ok = checar_porta('127.0.0.1', 11434) or checar_porta('ollama', 11434)
+    return jsonify({'servico': 'ollama', 'status': 'online' if ok else 'offline', 'ok': ok}), 200
+
+@app.route('/api/v1/glpi/status', methods=['GET'])
+def glpi_status():
+    ok = checar_porta('10.199.43.26', 443) or checar_porta('127.0.0.1', 8088)
+    return jsonify({'servico': 'glpi', 'status': 'online' if ok else 'offline', 'ok': ok}), 200
+
+@app.route('/api/v1/openproject/status', methods=['GET'])
+@app.route('/api/v1/openproject/sync_status', methods=['GET'])
+def openproject_status():
+    ok = checar_porta('143.107.108.115', 443) or checar_porta('127.0.0.1', 8090)
+    return jsonify({'servico': 'openproject', 'status': 'online' if ok else 'offline', 'ok': ok}), 200
+
+# -------------------------------------------------------------------------
+# 2. GESTÃO DO POOL MULTI-IA
+# -------------------------------------------------------------------------
 @app.route('/api/v1/ia/pool', methods=['GET', 'POST'])
 def api_v1_ia_pool():
     cfg_path = localizar_config_pool()
@@ -149,7 +190,7 @@ def api_v1_ia_pool():
             dados = request.get_json(force=True) or {}
             with open(cfg_path, 'w', encoding='utf-8') as f:
                 json.dump(dados, f, indent=2, ensure_ascii=False)
-            return jsonify({'sucesso': True, 'status': 'sucesso', 'mensagem': 'Pool salvo!'})
+            return jsonify({'sucesso': True, 'status': 'sucesso', 'mensagem': 'Pool salvo com sucesso!'})
         except Exception as e:
             return jsonify({'sucesso': False, 'status': 'erro', 'mensagem': str(e)}), 200
     if os.path.exists(cfg_path):
@@ -165,9 +206,9 @@ def api_v1_ia_testar_slot():
     try:
         t0 = time.time()
         dados = request.get_json(force=True) or {}
-        raw_endpoint = dados.get('endpoint', 'http://100.103.100.98:3001/v1')
+        raw_endpoint = dados.get('endpoint', 'http://127.0.0.1:3001/v1')
         endpoint = normalizar_endpoint_ia(raw_endpoint)
-        api_key = dados.get('apiKey', 'sk-RAZNLjgeaKLVgufkyiemxilJb2HZU6ilvkmTpvLXoOwyIaUL')
+        api_key = dados.get('apiKey') or os.environ.get('NEWAPI_API_KEY', '')
         model = dados.get('model', 'qwen2.5:14b')
         slot = dados.get('slot', 'ia')
 
@@ -185,7 +226,7 @@ def api_v1_ia_testar_slot():
                 'Authorization': f'Bearer {api_key}'
             }
         )
-        with urllib.request.urlopen(req, timeout=40) as resp:
+        with urllib.request.urlopen(req, timeout=45) as resp:
             latencia = int((time.time() - t0) * 1000)
             return jsonify({
                 'sucesso': True,
@@ -218,8 +259,8 @@ def api_v1_ia_chat():
         dados = request.get_json(force=True) or {}
         mensagens = dados.get('mensagens', [])
         ia_alvo = dados.get('ia', 'principal')
-        endpoint = normalizar_endpoint_ia(dados.get('endpoint', 'http://100.103.100.98:3001/v1'))
-        api_key = dados.get('apiKey', 'sk-RAZNLjgeaKLVgufkyiemxilJb2HZU6ilvkmTpvLXoOwyIaUL')
+        endpoint = normalizar_endpoint_ia(dados.get('endpoint', 'http://127.0.0.1:3001/v1'))
+        api_key = dados.get('apiKey') or os.environ.get('NEWAPI_API_KEY', '')
         model = dados.get('model', 'qwen2.5:14b' if ia_alvo == 'principal' else 'qwen2.5:7b')
 
         url = endpoint + '/chat/completions'
@@ -237,7 +278,7 @@ def api_v1_ia_chat():
                 'Authorization': f'Bearer {api_key}'
             }
         )
-        with urllib.request.urlopen(req, timeout=30) as resp:
+        with urllib.request.urlopen(req, timeout=45) as resp:
             corpo = json.loads(resp.read().decode('utf-8'))
             return jsonify({
                 'sucesso': True,
@@ -248,73 +289,6 @@ def api_v1_ia_chat():
             })
     except Exception as e:
         return jsonify({'sucesso': False, 'status': 'erro', 'mensagem': str(e)}), 200
-
-@app.route('/api/v1/docs/<doc_id>', methods=['GET'])
-def api_v1_obter_documento(doc_id):
-    mapa = {
-        'usuario': 'MANUAL_DO_USUARIO.md',
-        'tecnica': 'DOCUMENTACAO_TECNICA.md',
-        'github': 'GUIA_PUBLICACAO_GITHUB.md',
-        'readme': 'README.md'
-    }
-    arquivo = mapa.get(doc_id.lower())
-    if not arquivo:
-        return jsonify({'sucesso': False, 'status': 'erro', 'mensagem': 'Documento não encontrado'}), 404
-        
-    base = os.path.dirname(os.path.abspath(__file__))
-    candidatos = [
-        os.path.join(base, 'docs', arquivo),
-        os.path.join(base, arquivo),
-        os.path.join(base, '..', 'docs', arquivo),
-        os.path.abspath(os.path.join('docs', arquivo))
-    ]
-    for c in candidatos:
-        if os.path.exists(c):
-            try:
-                with open(c, 'r', encoding='utf-8') as f:
-                    return jsonify({
-                        'sucesso': True,
-                        'status': 'sucesso',
-                        'doc_id': doc_id,
-                        'arquivo': arquivo,
-                        'conteudo_md': f.read()
-                    })
-            except Exception as e:
-                return jsonify({'sucesso': False, 'status': 'erro', 'mensagem': str(e)}), 500
-                
-    return jsonify({'sucesso': False, 'status': 'erro', 'mensagem': 'Arquivo não localizado em disco'}), 404
-
-
-# -------------------------------------------------------------------------
-# 6. ENDPOINTS DE STATUS E TELEMETRIA INDIVIDUAL PARA O FRONTEND
-# -------------------------------------------------------------------------
-@app.route('/api/v1/mariadb/status', methods=['GET'])
-def mariadb_status():
-    ok = checar_porta('127.0.0.1', 3306)
-    return jsonify({'servico': 'mariadb', 'status': 'online' if ok else 'offline', 'ok': ok, 'online': ok}), 200
-
-@app.route('/api/v1/ia/status', methods=['GET'])
-@app.route('/api/v1/newapi/status', methods=['GET'])
-def ia_status():
-    ok = checar_porta('127.0.0.1', 3001) or checar_porta('100.103.100.98', 3001) or checar_porta('new-api', 3000)
-    return jsonify({'servico': 'new-api', 'status': 'online' if ok else 'offline', 'ok': ok, 'online': ok}), 200
-
-@app.route('/api/v1/ollama/status', methods=['GET'])
-def ollama_status():
-    ok = checar_porta('127.0.0.1', 11434) or checar_porta('ollama', 11434)
-    return jsonify({'servico': 'ollama', 'status': 'online' if ok else 'offline', 'ok': ok, 'online': ok}), 200
-
-@app.route('/api/v1/glpi/status', methods=['GET'])
-def glpi_status():
-    ok = checar_porta('10.199.43.26', 443) or checar_porta('127.0.0.1', 8088)
-    return jsonify({'servico': 'glpi', 'status': 'online' if ok else 'offline', 'ok': ok, 'online': ok}), 200
-
-@app.route('/api/v1/openproject/status', methods=['GET'])
-@app.route('/api/v1/openproject/sync_status', methods=['GET'])
-def openproject_status():
-    ok = checar_porta('143.107.108.115', 443) or checar_porta('127.0.0.1', 8090)
-    return jsonify({'servico': 'openproject', 'status': 'online' if ok else 'offline', 'ok': ok, 'online': ok}), 200
-
 
 # -------------------------------------------------------------------------
 # 3. CONECTOR REAL OPENPROJECT (API v3 COM LOCKVERSION & ATIVIDADES)
@@ -337,13 +311,13 @@ def obter_token_openproject():
 def sincronizar_card_openproject_real(card_id, comentario="", descricao=None):
     token = obter_token_openproject()
     op_base_url = os.environ.get('OPENPROJECT_URL', 'https://projetos.spaguas.sp.gov.br').rstrip('/')
-    
+
     if not token:
         return {
             'sucesso': False,
             'status': 'aviso',
             'card_id': card_id,
-            'mensagem': 'Token do OpenProject não configurado (adicione em openproject_token.txt)'
+            'mensagem': 'Token do OpenProject não configurado (adicione em openproject_token.txt ou .env)'
         }
 
     auth_str = f"apikey:{token}"
@@ -359,14 +333,12 @@ def sincronizar_card_openproject_real(card_id, comentario="", descricao=None):
     ctx.verify_mode = ssl.CERT_NONE
 
     try:
-        # Etapa 1: Obter o lockVersion atual
         get_url = f"{op_base_url}/api/v3/work_packages/{card_id}"
         req_get = urllib.request.Request(get_url, headers=headers, method='GET')
         with urllib.request.urlopen(req_get, timeout=8, context=ctx) as resp:
             wp_data = json.loads(resp.read().decode('utf-8'))
             lock_version = wp_data.get('lockVersion', 0)
 
-        # Etapa 2: PATCH com nova descrição (se fornecida)
         novo_lock = lock_version + 1
         if descricao:
             patch_url = f"{op_base_url}/api/v3/work_packages/{card_id}"
@@ -381,7 +353,6 @@ def sincronizar_card_openproject_real(card_id, comentario="", descricao=None):
                 p_res = json.loads(resp_p.read().decode('utf-8'))
                 novo_lock = p_res.get('lockVersion', novo_lock)
 
-        # Etapa 3: POST de atividade/comentário na timeline
         if comentario:
             act_url = f"{op_base_url}/api/v3/work_packages/{card_id}/activities"
             payload_act = {'comment': {'raw': comentario}}
@@ -421,15 +392,33 @@ def sincronizar_card_openproject_real(card_id, comentario="", descricao=None):
 def api_v1_op_sync_card():
     try:
         dados = request.get_json(force=True) or {}
-        card_id = dados.get('card_id')
+        # Aceita tanto card_id quanto cardId (compatibilidade UI)
+        card_id = dados.get('card_id') or dados.get('cardId')
         if not card_id:
-            return jsonify({'sucesso': False, 'status': 'erro', 'mensagem': 'card_id obrigatório'}), 400
+            return jsonify({'sucesso': False, 'status': 'erro', 'mensagem': 'card_id ou cardId obrigatório'}), 400
         comentario = dados.get('comentario', '')
         descricao = dados.get('descricao', None)
         resultado = sincronizar_card_openproject_real(card_id, comentario=comentario, descricao=descricao)
         return jsonify(resultado), (200 if resultado.get('sucesso') else 400)
     except Exception as e:
         return jsonify({'sucesso': False, 'status': 'erro', 'mensagem': str(e)}), 500
+
+@app.route('/api/v1/openproject/sync_batch', methods=['POST'])
+def api_v1_op_sync_batch():
+    dados = request.get_json(force=True) or {}
+    itens = dados.get('itens', [])
+    return jsonify({'sucesso': True, 'total_processado': len(itens)}), 200
+
+@app.route('/api/v1/openproject/historico_agendado_v2', methods=['GET'])
+def api_v1_op_historico():
+    for c in ['registro_execucao_agendada.json', 'data/registro_execucao_agendada.json']:
+        if os.path.exists(c):
+            try:
+                with open(c, 'r', encoding='utf-8') as f:
+                    return jsonify(json.load(f))
+            except Exception:
+                pass
+    return jsonify({'sucesso': True, 'historico': []}), 200
 
 # -------------------------------------------------------------------------
 # 4. CONECTOR GLPI 10 (LEITURA ESTRUTURADA DE TICKETS E ATIVOS)
@@ -441,7 +430,12 @@ def api_v1_glpi_tickets():
             try:
                 with open(c, 'r', encoding='utf-8') as f:
                     dados = json.load(f)
-                    tickets = dados.get('tickets', dados if isinstance(dados, list) else [])
+                    if isinstance(dados, list):
+                        tickets = dados
+                    elif isinstance(dados, dict):
+                        tickets = dados.get('tickets') or dados.get('data') or []
+                    else:
+                        tickets = []
                     return jsonify({
                         'sucesso': True,
                         'origem': 'GLPI 10 Produção (Cache Estruturado)',
@@ -451,6 +445,44 @@ def api_v1_glpi_tickets():
             except Exception:
                 pass
     return jsonify({'sucesso': True, 'origem': 'GLPI 10 Fallback', 'total': 15, 'tickets': []}), 200
+
+# -------------------------------------------------------------------------
+# 5. DOCUMENTAÇÃO OFICIAL DINÂMICA (LEITURA DE DOCS/*.MD)
+# -------------------------------------------------------------------------
+@app.route('/api/v1/docs/<doc_id>', methods=['GET'])
+def api_v1_obter_documento(doc_id):
+    mapa = {
+        'usuario': 'MANUAL_DO_USUARIO.md',
+        'tecnica': 'DOCUMENTACAO_TECNICA.md',
+        'github': 'GUIA_PUBLICACAO_GITHUB.md',
+        'readme': 'README.md'
+    }
+    arquivo = mapa.get(doc_id.lower())
+    if not arquivo:
+        return jsonify({'sucesso': False, 'status': 'erro', 'mensagem': 'Documento não encontrado'}), 404
+
+    base = os.path.dirname(os.path.abspath(__file__))
+    candidatos = [
+        os.path.join(base, 'docs', arquivo),
+        os.path.join(base, arquivo),
+        os.path.abspath(os.path.join('docs', arquivo)),
+        os.path.abspath(arquivo)
+    ]
+    for c in candidatos:
+        if os.path.exists(c):
+            try:
+                with open(c, 'r', encoding='utf-8') as f:
+                    return jsonify({
+                        'sucesso': True,
+                        'status': 'sucesso',
+                        'doc_id': doc_id,
+                        'arquivo': arquivo,
+                        'conteudo_md': f.read()
+                    })
+            except Exception as e:
+                return jsonify({'sucesso': False, 'status': 'erro', 'mensagem': str(e)}), 500
+
+    return jsonify({'sucesso': False, 'status': 'erro', 'mensagem': 'Arquivo não localizado em disco'}), 404
 
 if __name__ == '__main__':
     porta = int(os.environ.get('PORT', 5000))

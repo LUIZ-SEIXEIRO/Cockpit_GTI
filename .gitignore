@@ -1,62 +1,28 @@
-# ==============================================================================
-# SP-ÁGUAS / SA-GTI -- .gitignore Oficial do Cockpit GTI
-# ==============================================================================
-
 # Ambientes Virtuais e Cache Python
 __pycache__/
 *.py[cod]
-*$py.class
-*.so
 .Python
 env/
 venv/
 .venv/
-ENV/
-build/
-develop-eggs/
-dist/
-downloads/
-eggs/
-.eggs/
-lib/
-lib64/
-parts/
-sdist/
-var/
-wheels/
-*.egg-info/
-.installed.cfg
-*.egg
 
-# Arquivos de Configuração Sensíveis e Chaves
+# Blindagem de Credenciais e Dados Sensíveis (LGPD / TCE-SP)
 .env
 .env.local
 .env.*.local
-*.key
-*.pem
-
-# Volumes Docker e Bancos de Dados Locais
+!.env.example
+openproject_token.txt
+data/usuarios_cockpit.json
 volumes_docker/
-*.ibd
-*.frm
-ibdata*
-ib_logfile*
+frontend/painel_backup_*.html
+frontend/frontendpainel.html
 
-# Backups, Snapshots e Arquivos Compactados
+# Arquivos Compactados e Temporários
 *.zip
 *.tar.gz
-*.tgz
-*.rar
-*.7z
 *.bak
-*.old
-*.swp
-*~
 backups/
 recovered/
-
-# Arquivos de Testes, Logs e Depuração Local
-*.log
 test_*
 temp_*
 syntax_*
@@ -65,39 +31,3 @@ auditar_*
 dummy_*
 patch_*
 laudo_*.txt
-
-# Diretórios de Sandbox e Artefatos Temporários
-agent_sandbox/
-artifacts/
-user_uploaded_files/
-
-# IDEs e Editores
-.vscode/
-.idea/
-*.sublime-project
-*.sublime-workspace
-.project
-.pydevproject
-
-# Sistemas Operacionais
-.DS_Store
-.DS_Store?
-._*
-.Spotlight-V100
-.Trashes
-ehthumbs.db
-Thumbs.db
-desktop.ini
-
-# Aider
-.aider*
-
-
-# Blindagem de Credenciais e Dados Sensíveis (LGPD / TCE-SP)
-.env
-.env.*
-*.env
-openproject_token.txt
-data/usuarios_cockpit.json
-frontend/painel_backup_*.html
-frontend/frontendpainel.html
