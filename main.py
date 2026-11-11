@@ -257,7 +257,7 @@ def api_v1_ia_testar_slot():
 def api_v1_ia_chat():
     try:
         dados = request.get_json(force=True) or {}
-        mensagens = dados.get('mensagens', [])
+        mensagens = dados.get('mensagens') or dados.get('messages') or []
         ia_alvo = dados.get('ia', 'principal')
         endpoint = normalizar_endpoint_ia(dados.get('endpoint', 'http://127.0.0.1:3001/v1'))
         api_key = dados.get('apiKey') or os.environ.get('NEWAPI_API_KEY', '')

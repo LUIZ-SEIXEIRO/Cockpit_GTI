@@ -1,33 +1,18 @@
-# Ambientes Virtuais e Cache Python
-__pycache__/
-*.py[cod]
-.Python
-env/
-venv/
-.venv/
-
-# Blindagem de Credenciais e Dados Sensíveis (LGPD / TCE-SP)
+# Ambientes e segredos
 .env
-.env.local
-.env.*.local
+.env.*
 !.env.example
-openproject_token.txt
 data/usuarios_cockpit.json
-volumes_docker/
-frontend/painel_backup_*.html
-frontend/frontendpainel.html
 
-# Arquivos Compactados e Temporários
-*.zip
-*.tar.gz
+# Backups e temporários
+*_backup_*
+*backup*
 *.bak
-backups/
-recovered/
-test_*
-temp_*
-syntax_*
-verify_*
-auditar_*
-dummy_*
-patch_*
-laudo_*.txt
+*.tmp
+*.log
+__pycache__/
+*.pyc
+
+# Armazenamento local de IA
+ollama_data/
+new-api-data/

@@ -1,0 +1,985 @@
+[09:48:14] [✓] Motor de Inteligência Artificial Ativo para os Cards:
+[09:48:14]     • Agente Selecionado: IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b)
+[09:48:14]     • Endpoint de Acesso: http://100.103.100.98:3001/v1 (New API :3001 / Ollama)
+[09:48:14]     • Capacidade de Resposta: 350 tokens (Diagnóstico & Parecer Aprofundado)
+[09:48:15] [✓] Banco de Dados do Cockpit GTI carregado: 179 cards/processos no acervo.
+[09:48:15] [!] API Token OpenProject não localizado em openproject_token.txt.
+[09:48:15] [✓] Mapeamento OpenProject ativo: 2 cards identificados no servidor oficial:
+[09:48:15]     • Card #1497 <-> Processo 137.00013132/2026-01
+[09:48:15]     • Card #1498 <-> Processo 137.00010608/2025-63
+[09:48:15]   [*] [IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b)] Analisando 137.00013132/2026-01 (#1497) via LLM...
+[09:48:17]   [*] [IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b)] Analisando 137.00010608/2025-63 (#1498) via LLM...
+[09:48:19] [✓] Fase 1 Concluída: 179 cards gravados no banco do Cockpit (processos.json)!
+[09:48:20] [001/179] [!] Card #1497 (137.00013132/2026-01): HTTP 401 ao espelhar no OpenProject.
+[09:48:21] [002/179] [!] Card #1498 (137.00010608/2025-63): HTTP 401 ao espelhar no OpenProject.
+[09:48:21] [003/179] [i] Processo 137.00012783/2025-95: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[09:48:21] [004/179] [i] Processo 137.00000119/2026-84: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[09:48:21] [005/179] [i] Processo 137.00011105/2025-13: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[09:48:21] [006/179] [i] Processo 137.00009512/2026-33: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[09:48:21] [007/179] [i] Processo 137.00010436/2025-28: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[09:48:21] [008/179] [i] Processo 137.00011338/2026-90: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[09:48:21] [009/179] [i] Processo 137.00004821/2026-17: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[09:48:21] [010/179] [i] Processo 137.00007527/2026-67: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[09:48:21] [011/179] [i] Processo 137.00003191/2026-63: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[09:48:21] [012/179] [i] Processo 018.00004147/2026-63: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[09:48:21] [013/179] [i] Processo 137.00006935/2026-00: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[09:48:21] [014/179] [i] Processo 018.00002165/2026-19: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[09:48:21] [015/179] [i] Processo 137.00004844/2026-21: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[09:48:21] [016/179] [i] Processo 137.00011132/2026-60: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[09:48:21] [017/179] [i] Processo 137.00001716/2024-64: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[09:48:21] [018/179] [i] Processo 137.00009067/2026-10: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[09:48:21] [019/179] [i] Processo 137.00011971/2026-87: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[09:48:21] [020/179] [i] Processo 137.00013086/2026-32: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[09:48:21] [021/179] [i] Processo 137.00013483/2026-12: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[09:48:21] [022/179] [i] Processo 137.00011685/2025-31: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[09:48:21] [023/179] [i] Processo 137.00000117/2023-42: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[09:48:21] [024/179] [i] Processo 137.00019295/2024-28: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[09:48:21] [025/179] [i] Processo 137.00012392/2026-51: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[09:48:21] [026/179] [i] Processo 137.00012379/2026-01: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[09:48:21] [027/179] [i] Processo 137.00012396/2026-30: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[09:48:21] [028/179] [i] Processo 137.00012393/2026-04: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[09:48:21] [029/179] [i] Processo 137.00012389/2026-38: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[09:48:21] [030/179] [i] Processo 137.00012372/2026-81: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[09:48:21] [031/179] [i] Processo 137.00012362/2026-45: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[09:48:22] [032/179] [i] Processo 137.00000057/2023-68: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[09:48:22] [033/179] [i] Processo 137.00009121/2024-57: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[09:48:22] [034/179] [i] Processo 137.00016283/2025-22: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[09:48:22] [035/179] [i] Processo 137.00004823/2026-14: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[09:48:22] [036/179] [i] Processo 137.00008901/2026-71: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[09:48:22] [037/179] [i] Processo 137.00010805/2025-82: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[09:48:22] [038/179] [i] Processo 137.00000001/2026-56: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[09:48:22] [039/179] [i] Processo 137.00012407/2026-81: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[09:48:22] [040/179] [i] Processo 137.00012420/2026-31: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[09:48:22] [041/179] [i] Processo 137.00012403/2026-01: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[09:48:22] [042/179] [i] Processo 137.00012397/2026-84: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[09:48:22] [043/179] [i] Processo 137.00012395/2026-95: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[09:48:22] [044/179] [i] Processo 137.00012390/2026-62: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[09:48:22] [045/179] [i] Processo 137.00012387/2026-49: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[09:48:22] [046/179] [i] Processo 137.00012361/2026-00: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[09:48:22] [047/179] [i] Processo 137.00012405/2026-92: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[09:48:22] [048/179] [i] Processo 137.00012402/2026-59: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[09:48:22] [049/179] [i] Processo 137.00012400/2026-60: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[09:48:22] [050/179] [i] Processo 137.00012399/2026-73: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[09:48:22] [051/179] [i] Processo 137.00012388/2026-93: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[09:48:22] [052/179] [i] Processo 137.00012382/2026-18: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[09:48:22] [053/179] [i] Processo 137.00012381/2026-71: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[09:48:22] [054/179] [i] Processo 137.00012371/2026-36: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[09:48:22] [055/179] [i] Processo 137.00012364/2026-34: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[09:48:22] [056/179] [i] Processo 137.00012363/2026-90: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[09:48:22] [057/179] [i] Processo 137.00012421/2026-85: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[09:48:22] [058/179] [i] Processo 137.00012698/2026-16: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[09:48:22] [059/179] [i] Processo 137.00010899/2025-90: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[09:48:22] [060/179] [i] Processo 137.00012904/2025-07: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[09:48:22] [061/179] [i] Processo 137.00010806/2025-27: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[09:48:22] [062/179] [i] Processo 137.00000018/2025-35: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[09:48:22] [063/179] [i] Processo 137.00013843/2025-07: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[09:48:22] [064/179] [i] Processo 137.00013840/2025-53: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[09:48:22] [065/179] [i] Processo 137.00014541/2025-36: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[09:48:22] [066/179] [i] Processo 137.00006431/2025-09: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[09:48:22] [067/179] [i] Processo 137.00004933/2025-97: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[09:48:22] [068/179] [i] Processo 137.00003431/2023-87: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[09:48:22] [069/179] [i] Processo 137.00000333/2025-50: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[09:48:22] [070/179] [i] Processo 137.00009729/2025-62: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[09:48:22] [071/179] [i] Processo 137.00029841/2026-14: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[09:48:22] [072/179] [i] Processo 137.00011106/2025-50: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[09:48:22] [073/179] [i] Processo 137.00010802/2025-49: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[09:48:22] [074/179] [i] Processo 137.00001873/2025-51: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[09:48:22] [075/179] [i] Processo 137.00012690/2025-61: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[09:48:22] [076/179] [i] Processo 137.00008615/2025-03: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[09:48:22] [077/179] [i] Processo 137.00000885/2025-23: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[09:48:22] [078/179] [i] Processo 137.00015219/2024-43: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[09:48:23] [079/179] [i] Processo 137.00010619/2025-43: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[09:48:23] [080/179] [i] Processo 137.00014339/2025-12: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[09:48:23] [081/179] [i] Processo 137.00000015/2025-00: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[09:48:23] [082/179] [i] Processo 137.00015243/2025-63: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[09:48:23] [083/179] [i] Processo 137.00009538/2024-10: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[09:48:23] [084/179] [i] Processo 137.00015254/2025-43: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[09:48:23] [085/179] [i] Processo 137.00003963/2026-67: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[09:48:23] [086/179] [i] Processo 137.00015266/2025-31: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[09:48:23] [087/179] [i] Processo 137.00018396/2024-81: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[09:48:23] [088/179] [i] Processo 137.00010210/2024-46: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[09:48:23] [089/179] [i] Processo 137.00010555/2025-81: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[09:48:23] [090/179] [i] Processo 137.00013810/2025-47: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[09:48:23] [091/179] [i] Processo 137.00000691/2025-28: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[09:48:23] [092/179] [i] Processo 137.00012972/2025-68: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[09:48:23] [093/179] [i] Processo 137.00003244/2025-65: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[09:48:23] [094/179] [i] Processo 137.00014963/2025-10: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[09:48:23] [095/179] [i] Processo 137.00015862/2025-58: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[09:48:23] [096/179] [i] Processo 137.00016374/2025-68: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[09:48:23] [097/179] [i] Processo 137.00015193/2025-14: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[09:48:23] [098/179] [i] Processo 137.00000340/2026-32: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[09:48:23] [099/179] [i] Processo 137.00002402/2026-41: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[09:48:23] [100/179] [i] Processo 137.00008529/2026-73: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[09:48:23] [101/179] [i] Processo 137.00015487/2025-46: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[09:48:23] [102/179] [i] Processo 137.00008971/2025-19: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[09:48:23] [103/179] [i] Processo 137.00012934/2026-96: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[09:48:23] [104/179] [i] Processo 137.00014265/2026-97: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[09:48:23] [105/179] [i] Processo 137.00007806/2026-21: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[09:48:23] [106/179] [i] Processo 137.00016135/2025-16: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[09:48:23] [107/179] [i] Processo 137.00000270/2023-70: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[09:48:23] [108/179] [i] Processo 359.00002923/2025-01: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[09:48:23] [109/179] [i] Processo 359.00005918/2025-42: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[09:48:23] [110/179] [i] Processo 359.00010545/2025-21: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[09:48:23] [111/179] [i] Processo 359.00001841/2026-12: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[09:48:23] [112/179] [i] Processo 359.00001837/2026-54: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[09:48:23] [113/179] [i] Processo 359.00001838/2026-07: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[09:48:23] [114/179] [i] Processo 359.00002654/2026-56: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[09:48:23] [115/179] [i] Processo 359.00002657/2026-90: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[09:48:23] [116/179] [i] Processo 359.00002655/2026-38: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[09:48:23] [117/179] [i] Processo 359.00002924/2026-29: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[09:48:23] [118/179] [i] Processo 359.00003717/2026-91: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[09:48:23] [119/179] [i] Processo 359.00003715/2026-01: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[09:48:23] [120/179] [i] Processo 359.00003716/2026-47: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[09:48:23] [121/179] [i] Processo 359.00003719/2026-81: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[09:48:23] [122/179] [i] Processo 359.00004822/2026-48: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[09:48:23] [123/179] [i] Processo 359.00004840/2026-20: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[09:48:23] [124/179] [i] Processo 359.00010641/2025-70: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[09:48:23] [125/179] [i] Processo 359.00004843/2026-63: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[09:48:24] [126/179] [i] Processo 359.00006134/2026-12: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[09:48:24] [127/179] [i] Processo 359.00006136/2026-10: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[09:48:24] [128/179] [i] Processo 359.00006133/2026-78: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[09:48:24] [129/179] [i] Processo 359.00006135/2026-67: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[09:48:24] [130/179] [i] Processo 137.00000031/2023-10: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[09:48:24] [131/179] [i] Processo 137.00009440/2023-81: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[09:48:24] [132/179] [i] Processo 359.00007321/2026-13: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[09:48:24] [133/179] [i] Processo 359.00007320/2026-79: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[09:48:24] [134/179] [i] Processo 359.00007322/2026-68: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[09:48:24] [135/179] [i] Processo 359.00007323/2026-11: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[09:48:24] [136/179] [i] Processo 137.00000212/2023-46: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[09:48:24] [137/179] [i] Processo 137.00000037/2023-97: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[09:48:24] [138/179] [i] Processo 137.00000174/2023-21: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[09:48:24] [139/179] [i] Processo 137.00009279/2026-99: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[09:48:24] [140/179] [i] Processo 359.00008263/2026-16: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[09:48:24] [141/179] [i] Processo 359.00008285/2026-13: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[09:48:24] [142/179] [i] Processo 359.00008281/2026-27: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[09:48:24] [143/179] [i] Processo 359.00008284/2026-61: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[09:48:24] [144/179] [i] Processo 359.00007224/2025-40: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[09:48:24] [145/179] [i] Processo 137.00001852/2023-11: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[09:48:24] [146/179] [i] Processo 137.00015391/2024-05: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[09:48:24] [147/179] [i] Processo 137.00006149/2024-32: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[09:48:24] [148/179] [i] Processo 137.00005364/2025-05: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[09:48:24] [149/179] [i] Processo 137.00007443/2025-42: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[09:48:24] [150/179] [i] Processo 137.00000008/2024-71: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[09:48:24] [151/179] [i] Processo 137.00004201/2025-05: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[09:48:24] [152/179] [i] Processo 137.00013847/2024-94: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[09:48:24] [153/179] [i] Processo 137.00014627/2025-17: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[09:48:24] [154/179] [i] Processo 137.00000087/2023-74: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[09:48:24] [155/179] [i] Processo 137.00013943/2025-13: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[09:48:24] [156/179] [i] Processo 137.00001418/2023-93: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[09:48:24] [157/179] [i] Processo 359.00009776/2023-21: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[09:48:24] [158/179] [i] Processo 137.00000400/2023-74: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[09:48:24] [159/179] [i] Processo 137.00016377/2025-00: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[09:48:24] [160/179] [i] Processo 137.00016379/2025-01: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[09:48:24] [161/179] [i] Processo 137.00016467/2025-22: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[09:48:24] [162/179] [i] Processo 137.00016517/2025-31: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[09:48:24] [163/179] [i] Processo 137.00012360/2025-75: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[09:48:24] [164/179] [i] Processo 137.00014834/2025-13: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[09:48:24] [165/179] [i] Processo 137.00000683/2025-16: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[09:48:24] [166/179] [i] Processo 137.00001272/2023-86: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[09:48:24] [167/179] [i] Processo 137.00000106/2023-62: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[09:48:24] [168/179] [i] Processo 137.00003321/2026-68: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[09:48:24] [169/179] [i] Processo 137.00017207/2024-53: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[09:48:24] [170/179] [i] Processo 137.00012207/2025-48: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[09:48:24] [171/179] [i] Processo 137.00014822/2025-99: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[09:48:24] [172/179] [i] Processo 137.00016376/2025-57: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[09:48:24] [173/179] [i] Processo 137.00006198/2026-37: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[09:48:25] [174/179] [i] Processo 137.00009838/2026-61: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[09:48:25] [175/179] [i] Processo 137.00003765/2023-51: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[09:48:25] [176/179] [i] Processo 137.00008662/2023-87: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[09:48:25] [177/179] [i] Processo 137.00015488/2025-91: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[09:48:25] [178/179] [i] Processo 137.00004037/2025-28: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[09:48:25] [179/179] [i] Processo 137.00004486/2026-57: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[09:48:25] [CONCLUÍDO] Orquestração Finalizada com Sucesso!
+[09:48:25]  • Modo: Cards Mapeados no OpenProject
+[09:48:25]  • Cards Processados: 179
+[09:48:25]  • Cards Gravados no OpenProject: 0
+[09:48:25]  • Auditoria registrada em: C:\Cockpit_GTI\laudo_sincronizacao_automatica.txt
+[09:48:25]  • Comprovante de agendamento registrado em: C:\Cockpit_GTI\registro_execucao_agendada.json
+[10:48:15] [✓] Motor de Inteligência Artificial Ativo para os Cards:
+[10:48:15]     • Agente Selecionado: IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b)
+[10:48:15]     • Endpoint de Acesso: http://100.103.100.98:3001/v1 (New API :3001 / Ollama)
+[10:48:15]     • Capacidade de Resposta: 350 tokens (Diagnóstico & Parecer Aprofundado)
+[10:48:15] [✓] Banco de Dados do Cockpit GTI carregado: 179 cards/processos no acervo.
+[10:48:15] [!] API Token OpenProject não localizado em openproject_token.txt.
+[10:48:15] [✓] Mapeamento OpenProject ativo: 2 cards identificados no servidor oficial:
+[10:48:15]     • Card #1497 <-> Processo 137.00013132/2026-01
+[10:48:15]     • Card #1498 <-> Processo 137.00010608/2025-63
+[10:48:15]   [*] [IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b)] Analisando 137.00013132/2026-01 (#1497) via LLM...
+[10:48:17]   [*] [IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b)] Analisando 137.00010608/2025-63 (#1498) via LLM...
+[10:48:19] [✓] Fase 1 Concluída: 179 cards gravados no banco do Cockpit (processos.json)!
+[10:48:19] [001/179] [!] Card #1497 (137.00013132/2026-01): HTTP 401 ao espelhar no OpenProject.
+[10:48:19] [002/179] [!] Card #1498 (137.00010608/2025-63): HTTP 401 ao espelhar no OpenProject.
+[10:48:19] [003/179] [i] Processo 137.00012783/2025-95: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[10:48:19] [004/179] [i] Processo 137.00000119/2026-84: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[10:48:19] [005/179] [i] Processo 137.00011105/2025-13: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[10:48:19] [006/179] [i] Processo 137.00009512/2026-33: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[10:48:19] [007/179] [i] Processo 137.00010436/2025-28: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[10:48:19] [008/179] [i] Processo 137.00011338/2026-90: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[10:48:19] [009/179] [i] Processo 137.00004821/2026-17: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[10:48:19] [010/179] [i] Processo 137.00007527/2026-67: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[10:48:19] [011/179] [i] Processo 137.00003191/2026-63: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[10:48:19] [012/179] [i] Processo 018.00004147/2026-63: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[10:48:19] [013/179] [i] Processo 137.00006935/2026-00: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[10:48:19] [014/179] [i] Processo 018.00002165/2026-19: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[10:48:19] [015/179] [i] Processo 137.00004844/2026-21: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[10:48:19] [016/179] [i] Processo 137.00011132/2026-60: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[10:48:19] [017/179] [i] Processo 137.00001716/2024-64: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[10:48:19] [018/179] [i] Processo 137.00009067/2026-10: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[10:48:19] [019/179] [i] Processo 137.00011971/2026-87: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[10:48:19] [020/179] [i] Processo 137.00013086/2026-32: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[10:48:19] [021/179] [i] Processo 137.00013483/2026-12: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[10:48:19] [022/179] [i] Processo 137.00011685/2025-31: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[10:48:19] [023/179] [i] Processo 137.00000117/2023-42: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[10:48:19] [024/179] [i] Processo 137.00019295/2024-28: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[10:48:19] [025/179] [i] Processo 137.00012392/2026-51: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[10:48:19] [026/179] [i] Processo 137.00012379/2026-01: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[10:48:19] [027/179] [i] Processo 137.00012396/2026-30: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[10:48:19] [028/179] [i] Processo 137.00012393/2026-04: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[10:48:19] [029/179] [i] Processo 137.00012389/2026-38: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[10:48:19] [030/179] [i] Processo 137.00012372/2026-81: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[10:48:19] [031/179] [i] Processo 137.00012362/2026-45: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[10:48:19] [032/179] [i] Processo 137.00000057/2023-68: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[10:48:19] [033/179] [i] Processo 137.00009121/2024-57: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[10:48:19] [034/179] [i] Processo 137.00016283/2025-22: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[10:48:20] [035/179] [i] Processo 137.00004823/2026-14: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[10:48:20] [036/179] [i] Processo 137.00008901/2026-71: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[10:48:20] [037/179] [i] Processo 137.00010805/2025-82: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[10:48:20] [038/179] [i] Processo 137.00000001/2026-56: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[10:48:20] [039/179] [i] Processo 137.00012407/2026-81: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[10:48:20] [040/179] [i] Processo 137.00012420/2026-31: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[10:48:20] [041/179] [i] Processo 137.00012403/2026-01: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[10:48:20] [042/179] [i] Processo 137.00012397/2026-84: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[10:48:20] [043/179] [i] Processo 137.00012395/2026-95: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[10:48:20] [044/179] [i] Processo 137.00012390/2026-62: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[10:48:20] [045/179] [i] Processo 137.00012387/2026-49: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[10:48:20] [046/179] [i] Processo 137.00012361/2026-00: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[10:48:20] [047/179] [i] Processo 137.00012405/2026-92: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[10:48:20] [048/179] [i] Processo 137.00012402/2026-59: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[10:48:20] [049/179] [i] Processo 137.00012400/2026-60: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[10:48:20] [050/179] [i] Processo 137.00012399/2026-73: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[10:48:20] [051/179] [i] Processo 137.00012388/2026-93: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[10:48:20] [052/179] [i] Processo 137.00012382/2026-18: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[10:48:20] [053/179] [i] Processo 137.00012381/2026-71: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[10:48:20] [054/179] [i] Processo 137.00012371/2026-36: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[10:48:20] [055/179] [i] Processo 137.00012364/2026-34: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[10:48:20] [056/179] [i] Processo 137.00012363/2026-90: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[10:48:20] [057/179] [i] Processo 137.00012421/2026-85: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[10:48:20] [058/179] [i] Processo 137.00012698/2026-16: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[10:48:20] [059/179] [i] Processo 137.00010899/2025-90: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[10:48:20] [060/179] [i] Processo 137.00012904/2025-07: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[10:48:20] [061/179] [i] Processo 137.00010806/2025-27: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[10:48:20] [062/179] [i] Processo 137.00000018/2025-35: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[10:48:20] [063/179] [i] Processo 137.00013843/2025-07: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[10:48:20] [064/179] [i] Processo 137.00013840/2025-53: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[10:48:20] [065/179] [i] Processo 137.00014541/2025-36: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[10:48:20] [066/179] [i] Processo 137.00006431/2025-09: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[10:48:20] [067/179] [i] Processo 137.00004933/2025-97: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[10:48:20] [068/179] [i] Processo 137.00003431/2023-87: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[10:48:20] [069/179] [i] Processo 137.00000333/2025-50: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[10:48:20] [070/179] [i] Processo 137.00009729/2025-62: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[10:48:20] [071/179] [i] Processo 137.00029841/2026-14: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[10:48:20] [072/179] [i] Processo 137.00011106/2025-50: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[10:48:20] [073/179] [i] Processo 137.00010802/2025-49: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[10:48:20] [074/179] [i] Processo 137.00001873/2025-51: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[10:48:20] [075/179] [i] Processo 137.00012690/2025-61: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[10:48:20] [076/179] [i] Processo 137.00008615/2025-03: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[10:48:20] [077/179] [i] Processo 137.00000885/2025-23: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[10:48:20] [078/179] [i] Processo 137.00015219/2024-43: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[10:48:20] [079/179] [i] Processo 137.00010619/2025-43: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[10:48:20] [080/179] [i] Processo 137.00014339/2025-12: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[10:48:20] [081/179] [i] Processo 137.00000015/2025-00: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[10:48:21] [082/179] [i] Processo 137.00015243/2025-63: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[10:48:21] [083/179] [i] Processo 137.00009538/2024-10: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[10:48:21] [084/179] [i] Processo 137.00015254/2025-43: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[10:48:21] [085/179] [i] Processo 137.00003963/2026-67: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[10:48:21] [086/179] [i] Processo 137.00015266/2025-31: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[10:48:21] [087/179] [i] Processo 137.00018396/2024-81: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[10:48:21] [088/179] [i] Processo 137.00010210/2024-46: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[10:48:21] [089/179] [i] Processo 137.00010555/2025-81: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[10:48:21] [090/179] [i] Processo 137.00013810/2025-47: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[10:48:21] [091/179] [i] Processo 137.00000691/2025-28: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[10:48:21] [092/179] [i] Processo 137.00012972/2025-68: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[10:48:21] [093/179] [i] Processo 137.00003244/2025-65: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[10:48:21] [094/179] [i] Processo 137.00014963/2025-10: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[10:48:21] [095/179] [i] Processo 137.00015862/2025-58: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[10:48:21] [096/179] [i] Processo 137.00016374/2025-68: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[10:48:21] [097/179] [i] Processo 137.00015193/2025-14: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[10:48:21] [098/179] [i] Processo 137.00000340/2026-32: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[10:48:21] [099/179] [i] Processo 137.00002402/2026-41: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[10:48:21] [100/179] [i] Processo 137.00008529/2026-73: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[10:48:21] [101/179] [i] Processo 137.00015487/2025-46: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[10:48:21] [102/179] [i] Processo 137.00008971/2025-19: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[10:48:21] [103/179] [i] Processo 137.00012934/2026-96: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[10:48:21] [104/179] [i] Processo 137.00014265/2026-97: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[10:48:21] [105/179] [i] Processo 137.00007806/2026-21: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[10:48:21] [106/179] [i] Processo 137.00016135/2025-16: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[10:48:21] [107/179] [i] Processo 137.00000270/2023-70: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[10:48:21] [108/179] [i] Processo 359.00002923/2025-01: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[10:48:21] [109/179] [i] Processo 359.00005918/2025-42: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[10:48:21] [110/179] [i] Processo 359.00010545/2025-21: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[10:48:21] [111/179] [i] Processo 359.00001841/2026-12: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[10:48:21] [112/179] [i] Processo 359.00001837/2026-54: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[10:48:21] [113/179] [i] Processo 359.00001838/2026-07: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[10:48:21] [114/179] [i] Processo 359.00002654/2026-56: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[10:48:21] [115/179] [i] Processo 359.00002657/2026-90: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[10:48:21] [116/179] [i] Processo 359.00002655/2026-38: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[10:48:21] [117/179] [i] Processo 359.00002924/2026-29: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[10:48:21] [118/179] [i] Processo 359.00003717/2026-91: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[10:48:21] [119/179] [i] Processo 359.00003715/2026-01: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[10:48:21] [120/179] [i] Processo 359.00003716/2026-47: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[10:48:21] [121/179] [i] Processo 359.00003719/2026-81: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[10:48:21] [122/179] [i] Processo 359.00004822/2026-48: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[10:48:21] [123/179] [i] Processo 359.00004840/2026-20: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[10:48:21] [124/179] [i] Processo 359.00010641/2025-70: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[10:48:21] [125/179] [i] Processo 359.00004843/2026-63: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[10:48:21] [126/179] [i] Processo 359.00006134/2026-12: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[10:48:21] [127/179] [i] Processo 359.00006136/2026-10: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[10:48:21] [128/179] [i] Processo 359.00006133/2026-78: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[10:48:21] [129/179] [i] Processo 359.00006135/2026-67: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[10:48:22] [130/179] [i] Processo 137.00000031/2023-10: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[10:48:22] [131/179] [i] Processo 137.00009440/2023-81: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[10:48:22] [132/179] [i] Processo 359.00007321/2026-13: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[10:48:22] [133/179] [i] Processo 359.00007320/2026-79: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[10:48:22] [134/179] [i] Processo 359.00007322/2026-68: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[10:48:22] [135/179] [i] Processo 359.00007323/2026-11: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[10:48:22] [136/179] [i] Processo 137.00000212/2023-46: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[10:48:22] [137/179] [i] Processo 137.00000037/2023-97: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[10:48:22] [138/179] [i] Processo 137.00000174/2023-21: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[10:48:22] [139/179] [i] Processo 137.00009279/2026-99: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[10:48:22] [140/179] [i] Processo 359.00008263/2026-16: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[10:48:22] [141/179] [i] Processo 359.00008285/2026-13: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[10:48:22] [142/179] [i] Processo 359.00008281/2026-27: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[10:48:22] [143/179] [i] Processo 359.00008284/2026-61: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[10:48:22] [144/179] [i] Processo 359.00007224/2025-40: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[10:48:22] [145/179] [i] Processo 137.00001852/2023-11: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[10:48:22] [146/179] [i] Processo 137.00015391/2024-05: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[10:48:22] [147/179] [i] Processo 137.00006149/2024-32: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[10:48:22] [148/179] [i] Processo 137.00005364/2025-05: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[10:48:22] [149/179] [i] Processo 137.00007443/2025-42: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[10:48:22] [150/179] [i] Processo 137.00000008/2024-71: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[10:48:22] [151/179] [i] Processo 137.00004201/2025-05: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[10:48:22] [152/179] [i] Processo 137.00013847/2024-94: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[10:48:22] [153/179] [i] Processo 137.00014627/2025-17: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[10:48:22] [154/179] [i] Processo 137.00000087/2023-74: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[10:48:22] [155/179] [i] Processo 137.00013943/2025-13: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[10:48:22] [156/179] [i] Processo 137.00001418/2023-93: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[10:48:22] [157/179] [i] Processo 359.00009776/2023-21: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[10:48:22] [158/179] [i] Processo 137.00000400/2023-74: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[10:48:22] [159/179] [i] Processo 137.00016377/2025-00: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[10:48:22] [160/179] [i] Processo 137.00016379/2025-01: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[10:48:22] [161/179] [i] Processo 137.00016467/2025-22: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[10:48:22] [162/179] [i] Processo 137.00016517/2025-31: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[10:48:22] [163/179] [i] Processo 137.00012360/2025-75: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[10:48:22] [164/179] [i] Processo 137.00014834/2025-13: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[10:48:22] [165/179] [i] Processo 137.00000683/2025-16: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[10:48:22] [166/179] [i] Processo 137.00001272/2023-86: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[10:48:22] [167/179] [i] Processo 137.00000106/2023-62: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[10:48:22] [168/179] [i] Processo 137.00003321/2026-68: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[10:48:22] [169/179] [i] Processo 137.00017207/2024-53: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[10:48:22] [170/179] [i] Processo 137.00012207/2025-48: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[10:48:22] [171/179] [i] Processo 137.00014822/2025-99: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[10:48:22] [172/179] [i] Processo 137.00016376/2025-57: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[10:48:22] [173/179] [i] Processo 137.00006198/2026-37: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[10:48:22] [174/179] [i] Processo 137.00009838/2026-61: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[10:48:22] [175/179] [i] Processo 137.00003765/2023-51: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[10:48:22] [176/179] [i] Processo 137.00008662/2023-87: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[10:48:22] [177/179] [i] Processo 137.00015488/2025-91: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[10:48:23] [178/179] [i] Processo 137.00004037/2025-28: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[10:48:23] [179/179] [i] Processo 137.00004486/2026-57: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[10:48:23] [CONCLUÍDO] Orquestração Finalizada com Sucesso!
+[10:48:23]  • Modo: Cards Mapeados no OpenProject
+[10:48:23]  • Cards Processados: 179
+[10:48:23]  • Cards Gravados no OpenProject: 0
+[10:48:23]  • Auditoria registrada em: C:\Cockpit_GTI\laudo_sincronizacao_automatica.txt
+[10:48:23]  • Comprovante de agendamento registrado em: C:\Cockpit_GTI\registro_execucao_agendada.json
+[11:48:14] [✓] Motor de Inteligência Artificial Ativo para os Cards:
+[11:48:14]     • Agente Selecionado: IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b)
+[11:48:14]     • Endpoint de Acesso: http://100.103.100.98:3001/v1 (New API :3001 / Ollama)
+[11:48:14]     • Capacidade de Resposta: 350 tokens (Diagnóstico & Parecer Aprofundado)
+[11:48:15] [✓] Banco de Dados do Cockpit GTI carregado: 179 cards/processos no acervo.
+[11:48:15] [!] API Token OpenProject não localizado em openproject_token.txt.
+[11:48:15] [✓] Mapeamento OpenProject ativo: 2 cards identificados no servidor oficial:
+[11:48:15]     • Card #1497 <-> Processo 137.00013132/2026-01
+[11:48:15]     • Card #1498 <-> Processo 137.00010608/2025-63
+[11:48:15]   [*] [IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b)] Analisando 137.00013132/2026-01 (#1497) via LLM...
+[11:48:17]   [*] [IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b)] Analisando 137.00010608/2025-63 (#1498) via LLM...
+[11:48:19] [✓] Fase 1 Concluída: 179 cards gravados no banco do Cockpit (processos.json)!
+[11:48:19] [001/179] [!] Card #1497 (137.00013132/2026-01): HTTP 401 ao espelhar no OpenProject.
+[11:48:19] [002/179] [!] Card #1498 (137.00010608/2025-63): HTTP 401 ao espelhar no OpenProject.
+[11:48:19] [003/179] [i] Processo 137.00012783/2025-95: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[11:48:19] [004/179] [i] Processo 137.00000119/2026-84: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[11:48:19] [005/179] [i] Processo 137.00011105/2025-13: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[11:48:19] [006/179] [i] Processo 137.00009512/2026-33: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[11:48:19] [007/179] [i] Processo 137.00010436/2025-28: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[11:48:19] [008/179] [i] Processo 137.00011338/2026-90: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[11:48:19] [009/179] [i] Processo 137.00004821/2026-17: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[11:48:19] [010/179] [i] Processo 137.00007527/2026-67: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[11:48:19] [011/179] [i] Processo 137.00003191/2026-63: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[11:48:19] [012/179] [i] Processo 018.00004147/2026-63: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[11:48:19] [013/179] [i] Processo 137.00006935/2026-00: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[11:48:19] [014/179] [i] Processo 018.00002165/2026-19: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[11:48:19] [015/179] [i] Processo 137.00004844/2026-21: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[11:48:19] [016/179] [i] Processo 137.00011132/2026-60: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[11:48:19] [017/179] [i] Processo 137.00001716/2024-64: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[11:48:19] [018/179] [i] Processo 137.00009067/2026-10: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[11:48:19] [019/179] [i] Processo 137.00011971/2026-87: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[11:48:19] [020/179] [i] Processo 137.00013086/2026-32: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[11:48:19] [021/179] [i] Processo 137.00013483/2026-12: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[11:48:19] [022/179] [i] Processo 137.00011685/2025-31: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[11:48:19] [023/179] [i] Processo 137.00000117/2023-42: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[11:48:19] [024/179] [i] Processo 137.00019295/2024-28: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[11:48:19] [025/179] [i] Processo 137.00012392/2026-51: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[11:48:19] [026/179] [i] Processo 137.00012379/2026-01: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[11:48:19] [027/179] [i] Processo 137.00012396/2026-30: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[11:48:19] [028/179] [i] Processo 137.00012393/2026-04: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[11:48:19] [029/179] [i] Processo 137.00012389/2026-38: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[11:48:19] [030/179] [i] Processo 137.00012372/2026-81: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[11:48:19] [031/179] [i] Processo 137.00012362/2026-45: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[11:48:19] [032/179] [i] Processo 137.00000057/2023-68: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[11:48:19] [033/179] [i] Processo 137.00009121/2024-57: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[11:48:19] [034/179] [i] Processo 137.00016283/2025-22: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[11:48:20] [035/179] [i] Processo 137.00004823/2026-14: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[11:48:20] [036/179] [i] Processo 137.00008901/2026-71: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[11:48:20] [037/179] [i] Processo 137.00010805/2025-82: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[11:48:20] [038/179] [i] Processo 137.00000001/2026-56: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[11:48:20] [039/179] [i] Processo 137.00012407/2026-81: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[11:48:20] [040/179] [i] Processo 137.00012420/2026-31: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[11:48:20] [041/179] [i] Processo 137.00012403/2026-01: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[11:48:20] [042/179] [i] Processo 137.00012397/2026-84: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[11:48:20] [043/179] [i] Processo 137.00012395/2026-95: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[11:48:20] [044/179] [i] Processo 137.00012390/2026-62: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[11:48:20] [045/179] [i] Processo 137.00012387/2026-49: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[11:48:20] [046/179] [i] Processo 137.00012361/2026-00: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[11:48:20] [047/179] [i] Processo 137.00012405/2026-92: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[11:48:20] [048/179] [i] Processo 137.00012402/2026-59: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[11:48:20] [049/179] [i] Processo 137.00012400/2026-60: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[11:48:20] [050/179] [i] Processo 137.00012399/2026-73: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[11:48:20] [051/179] [i] Processo 137.00012388/2026-93: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[11:48:20] [052/179] [i] Processo 137.00012382/2026-18: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[11:48:20] [053/179] [i] Processo 137.00012381/2026-71: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[11:48:20] [054/179] [i] Processo 137.00012371/2026-36: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[11:48:20] [055/179] [i] Processo 137.00012364/2026-34: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[11:48:20] [056/179] [i] Processo 137.00012363/2026-90: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[11:48:20] [057/179] [i] Processo 137.00012421/2026-85: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[11:48:20] [058/179] [i] Processo 137.00012698/2026-16: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[11:48:20] [059/179] [i] Processo 137.00010899/2025-90: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[11:48:20] [060/179] [i] Processo 137.00012904/2025-07: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[11:48:20] [061/179] [i] Processo 137.00010806/2025-27: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[11:48:20] [062/179] [i] Processo 137.00000018/2025-35: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[11:48:20] [063/179] [i] Processo 137.00013843/2025-07: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[11:48:20] [064/179] [i] Processo 137.00013840/2025-53: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[11:48:20] [065/179] [i] Processo 137.00014541/2025-36: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[11:48:20] [066/179] [i] Processo 137.00006431/2025-09: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[11:48:20] [067/179] [i] Processo 137.00004933/2025-97: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[11:48:20] [068/179] [i] Processo 137.00003431/2023-87: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[11:48:20] [069/179] [i] Processo 137.00000333/2025-50: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[11:48:20] [070/179] [i] Processo 137.00009729/2025-62: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[11:48:20] [071/179] [i] Processo 137.00029841/2026-14: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[11:48:20] [072/179] [i] Processo 137.00011106/2025-50: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[11:48:20] [073/179] [i] Processo 137.00010802/2025-49: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[11:48:20] [074/179] [i] Processo 137.00001873/2025-51: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[11:48:20] [075/179] [i] Processo 137.00012690/2025-61: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[11:48:20] [076/179] [i] Processo 137.00008615/2025-03: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[11:48:20] [077/179] [i] Processo 137.00000885/2025-23: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[11:48:20] [078/179] [i] Processo 137.00015219/2024-43: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[11:48:20] [079/179] [i] Processo 137.00010619/2025-43: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[11:48:20] [080/179] [i] Processo 137.00014339/2025-12: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[11:48:20] [081/179] [i] Processo 137.00000015/2025-00: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[11:48:21] [082/179] [i] Processo 137.00015243/2025-63: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[11:48:21] [083/179] [i] Processo 137.00009538/2024-10: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[11:48:21] [084/179] [i] Processo 137.00015254/2025-43: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[11:48:21] [085/179] [i] Processo 137.00003963/2026-67: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[11:48:21] [086/179] [i] Processo 137.00015266/2025-31: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[11:48:21] [087/179] [i] Processo 137.00018396/2024-81: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[11:48:21] [088/179] [i] Processo 137.00010210/2024-46: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[11:48:21] [089/179] [i] Processo 137.00010555/2025-81: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[11:48:21] [090/179] [i] Processo 137.00013810/2025-47: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[11:48:21] [091/179] [i] Processo 137.00000691/2025-28: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[11:48:21] [092/179] [i] Processo 137.00012972/2025-68: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[11:48:21] [093/179] [i] Processo 137.00003244/2025-65: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[11:48:21] [094/179] [i] Processo 137.00014963/2025-10: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[11:48:21] [095/179] [i] Processo 137.00015862/2025-58: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[11:48:21] [096/179] [i] Processo 137.00016374/2025-68: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[11:48:21] [097/179] [i] Processo 137.00015193/2025-14: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[11:48:21] [098/179] [i] Processo 137.00000340/2026-32: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[11:48:21] [099/179] [i] Processo 137.00002402/2026-41: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[11:48:21] [100/179] [i] Processo 137.00008529/2026-73: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[11:48:21] [101/179] [i] Processo 137.00015487/2025-46: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[11:48:21] [102/179] [i] Processo 137.00008971/2025-19: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[11:48:21] [103/179] [i] Processo 137.00012934/2026-96: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[11:48:21] [104/179] [i] Processo 137.00014265/2026-97: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[11:48:21] [105/179] [i] Processo 137.00007806/2026-21: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[11:48:21] [106/179] [i] Processo 137.00016135/2025-16: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[11:48:21] [107/179] [i] Processo 137.00000270/2023-70: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[11:48:21] [108/179] [i] Processo 359.00002923/2025-01: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[11:48:21] [109/179] [i] Processo 359.00005918/2025-42: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[11:48:21] [110/179] [i] Processo 359.00010545/2025-21: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[11:48:21] [111/179] [i] Processo 359.00001841/2026-12: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[11:48:21] [112/179] [i] Processo 359.00001837/2026-54: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[11:48:21] [113/179] [i] Processo 359.00001838/2026-07: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[11:48:21] [114/179] [i] Processo 359.00002654/2026-56: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[11:48:21] [115/179] [i] Processo 359.00002657/2026-90: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[11:48:21] [116/179] [i] Processo 359.00002655/2026-38: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[11:48:21] [117/179] [i] Processo 359.00002924/2026-29: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[11:48:21] [118/179] [i] Processo 359.00003717/2026-91: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[11:48:21] [119/179] [i] Processo 359.00003715/2026-01: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[11:48:21] [120/179] [i] Processo 359.00003716/2026-47: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[11:48:21] [121/179] [i] Processo 359.00003719/2026-81: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[11:48:21] [122/179] [i] Processo 359.00004822/2026-48: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[11:48:21] [123/179] [i] Processo 359.00004840/2026-20: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[11:48:21] [124/179] [i] Processo 359.00010641/2025-70: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[11:48:21] [125/179] [i] Processo 359.00004843/2026-63: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[11:48:21] [126/179] [i] Processo 359.00006134/2026-12: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[11:48:21] [127/179] [i] Processo 359.00006136/2026-10: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[11:48:21] [128/179] [i] Processo 359.00006133/2026-78: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[11:48:22] [129/179] [i] Processo 359.00006135/2026-67: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[11:48:22] [130/179] [i] Processo 137.00000031/2023-10: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[11:48:22] [131/179] [i] Processo 137.00009440/2023-81: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[11:48:22] [132/179] [i] Processo 359.00007321/2026-13: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[11:48:22] [133/179] [i] Processo 359.00007320/2026-79: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[11:48:22] [134/179] [i] Processo 359.00007322/2026-68: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[11:48:22] [135/179] [i] Processo 359.00007323/2026-11: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[11:48:22] [136/179] [i] Processo 137.00000212/2023-46: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[11:48:22] [137/179] [i] Processo 137.00000037/2023-97: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[11:48:22] [138/179] [i] Processo 137.00000174/2023-21: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[11:48:22] [139/179] [i] Processo 137.00009279/2026-99: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[11:48:22] [140/179] [i] Processo 359.00008263/2026-16: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[11:48:22] [141/179] [i] Processo 359.00008285/2026-13: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[11:48:22] [142/179] [i] Processo 359.00008281/2026-27: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[11:48:22] [143/179] [i] Processo 359.00008284/2026-61: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[11:48:22] [144/179] [i] Processo 359.00007224/2025-40: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[11:48:22] [145/179] [i] Processo 137.00001852/2023-11: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[11:48:22] [146/179] [i] Processo 137.00015391/2024-05: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[11:48:22] [147/179] [i] Processo 137.00006149/2024-32: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[11:48:22] [148/179] [i] Processo 137.00005364/2025-05: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[11:48:22] [149/179] [i] Processo 137.00007443/2025-42: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[11:48:22] [150/179] [i] Processo 137.00000008/2024-71: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[11:48:22] [151/179] [i] Processo 137.00004201/2025-05: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[11:48:22] [152/179] [i] Processo 137.00013847/2024-94: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[11:48:22] [153/179] [i] Processo 137.00014627/2025-17: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[11:48:22] [154/179] [i] Processo 137.00000087/2023-74: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[11:48:22] [155/179] [i] Processo 137.00013943/2025-13: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[11:48:22] [156/179] [i] Processo 137.00001418/2023-93: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[11:48:22] [157/179] [i] Processo 359.00009776/2023-21: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[11:48:22] [158/179] [i] Processo 137.00000400/2023-74: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[11:48:22] [159/179] [i] Processo 137.00016377/2025-00: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[11:48:22] [160/179] [i] Processo 137.00016379/2025-01: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[11:48:22] [161/179] [i] Processo 137.00016467/2025-22: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[11:48:22] [162/179] [i] Processo 137.00016517/2025-31: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[11:48:22] [163/179] [i] Processo 137.00012360/2025-75: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[11:48:22] [164/179] [i] Processo 137.00014834/2025-13: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[11:48:22] [165/179] [i] Processo 137.00000683/2025-16: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[11:48:22] [166/179] [i] Processo 137.00001272/2023-86: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[11:48:22] [167/179] [i] Processo 137.00000106/2023-62: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[11:48:22] [168/179] [i] Processo 137.00003321/2026-68: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[11:48:22] [169/179] [i] Processo 137.00017207/2024-53: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[11:48:22] [170/179] [i] Processo 137.00012207/2025-48: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[11:48:22] [171/179] [i] Processo 137.00014822/2025-99: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[11:48:22] [172/179] [i] Processo 137.00016376/2025-57: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[11:48:22] [173/179] [i] Processo 137.00006198/2026-37: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[11:48:22] [174/179] [i] Processo 137.00009838/2026-61: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[11:48:22] [175/179] [i] Processo 137.00003765/2023-51: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[11:48:22] [176/179] [i] Processo 137.00008662/2023-87: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[11:48:23] [177/179] [i] Processo 137.00015488/2025-91: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[11:48:23] [178/179] [i] Processo 137.00004037/2025-28: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[11:48:23] [179/179] [i] Processo 137.00004486/2026-57: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[11:48:23] [CONCLUÍDO] Orquestração Finalizada com Sucesso!
+[11:48:23]  • Modo: Cards Mapeados no OpenProject
+[11:48:23]  • Cards Processados: 179
+[11:48:23]  • Cards Gravados no OpenProject: 0
+[11:48:23]  • Auditoria registrada em: C:\Cockpit_GTI\laudo_sincronizacao_automatica.txt
+[11:48:23]  • Comprovante de agendamento registrado em: C:\Cockpit_GTI\registro_execucao_agendada.json
+[12:48:15] [✓] Motor de Inteligência Artificial Ativo para os Cards:
+[12:48:15]     • Agente Selecionado: IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b)
+[12:48:15]     • Endpoint de Acesso: http://100.103.100.98:3001/v1 (New API :3001 / Ollama)
+[12:48:15]     • Capacidade de Resposta: 350 tokens (Diagnóstico & Parecer Aprofundado)
+[12:48:15] [✓] Banco de Dados do Cockpit GTI carregado: 179 cards/processos no acervo.
+[12:48:15] [!] API Token OpenProject não localizado em openproject_token.txt.
+[12:48:15] [✓] Mapeamento OpenProject ativo: 2 cards identificados no servidor oficial:
+[12:48:15]     • Card #1497 <-> Processo 137.00013132/2026-01
+[12:48:15]     • Card #1498 <-> Processo 137.00010608/2025-63
+[12:48:15]   [*] [IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b)] Analisando 137.00013132/2026-01 (#1497) via LLM...
+[12:48:17]   [*] [IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b)] Analisando 137.00010608/2025-63 (#1498) via LLM...
+[12:48:19] [✓] Fase 1 Concluída: 179 cards gravados no banco do Cockpit (processos.json)!
+[12:48:19] [001/179] [!] Card #1497 (137.00013132/2026-01): HTTP 401 ao espelhar no OpenProject.
+[12:48:19] [002/179] [!] Card #1498 (137.00010608/2025-63): HTTP 401 ao espelhar no OpenProject.
+[12:48:19] [003/179] [i] Processo 137.00012783/2025-95: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[12:48:19] [004/179] [i] Processo 137.00000119/2026-84: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[12:48:19] [005/179] [i] Processo 137.00011105/2025-13: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[12:48:19] [006/179] [i] Processo 137.00009512/2026-33: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[12:48:19] [007/179] [i] Processo 137.00010436/2025-28: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[12:48:19] [008/179] [i] Processo 137.00011338/2026-90: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[12:48:19] [009/179] [i] Processo 137.00004821/2026-17: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[12:48:19] [010/179] [i] Processo 137.00007527/2026-67: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[12:48:19] [011/179] [i] Processo 137.00003191/2026-63: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[12:48:19] [012/179] [i] Processo 018.00004147/2026-63: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[12:48:19] [013/179] [i] Processo 137.00006935/2026-00: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[12:48:19] [014/179] [i] Processo 018.00002165/2026-19: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[12:48:19] [015/179] [i] Processo 137.00004844/2026-21: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[12:48:19] [016/179] [i] Processo 137.00011132/2026-60: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[12:48:19] [017/179] [i] Processo 137.00001716/2024-64: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[12:48:19] [018/179] [i] Processo 137.00009067/2026-10: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[12:48:19] [019/179] [i] Processo 137.00011971/2026-87: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[12:48:19] [020/179] [i] Processo 137.00013086/2026-32: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[12:48:19] [021/179] [i] Processo 137.00013483/2026-12: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[12:48:19] [022/179] [i] Processo 137.00011685/2025-31: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[12:48:19] [023/179] [i] Processo 137.00000117/2023-42: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[12:48:19] [024/179] [i] Processo 137.00019295/2024-28: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[12:48:19] [025/179] [i] Processo 137.00012392/2026-51: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[12:48:19] [026/179] [i] Processo 137.00012379/2026-01: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[12:48:19] [027/179] [i] Processo 137.00012396/2026-30: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[12:48:19] [028/179] [i] Processo 137.00012393/2026-04: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[12:48:20] [029/179] [i] Processo 137.00012389/2026-38: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[12:48:20] [030/179] [i] Processo 137.00012372/2026-81: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[12:48:20] [031/179] [i] Processo 137.00012362/2026-45: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[12:48:20] [032/179] [i] Processo 137.00000057/2023-68: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[12:48:20] [033/179] [i] Processo 137.00009121/2024-57: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[12:48:20] [034/179] [i] Processo 137.00016283/2025-22: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[12:48:20] [035/179] [i] Processo 137.00004823/2026-14: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[12:48:20] [036/179] [i] Processo 137.00008901/2026-71: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[12:48:20] [037/179] [i] Processo 137.00010805/2025-82: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[12:48:20] [038/179] [i] Processo 137.00000001/2026-56: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[12:48:20] [039/179] [i] Processo 137.00012407/2026-81: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[12:48:20] [040/179] [i] Processo 137.00012420/2026-31: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[12:48:20] [041/179] [i] Processo 137.00012403/2026-01: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[12:48:20] [042/179] [i] Processo 137.00012397/2026-84: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[12:48:20] [043/179] [i] Processo 137.00012395/2026-95: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[12:48:20] [044/179] [i] Processo 137.00012390/2026-62: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[12:48:20] [045/179] [i] Processo 137.00012387/2026-49: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[12:48:20] [046/179] [i] Processo 137.00012361/2026-00: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[12:48:20] [047/179] [i] Processo 137.00012405/2026-92: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[12:48:20] [048/179] [i] Processo 137.00012402/2026-59: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[12:48:20] [049/179] [i] Processo 137.00012400/2026-60: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[12:48:20] [050/179] [i] Processo 137.00012399/2026-73: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[12:48:20] [051/179] [i] Processo 137.00012388/2026-93: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[12:48:20] [052/179] [i] Processo 137.00012382/2026-18: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[12:48:20] [053/179] [i] Processo 137.00012381/2026-71: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[12:48:20] [054/179] [i] Processo 137.00012371/2026-36: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[12:48:20] [055/179] [i] Processo 137.00012364/2026-34: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[12:48:20] [056/179] [i] Processo 137.00012363/2026-90: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[12:48:20] [057/179] [i] Processo 137.00012421/2026-85: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[12:48:20] [058/179] [i] Processo 137.00012698/2026-16: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[12:48:20] [059/179] [i] Processo 137.00010899/2025-90: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[12:48:20] [060/179] [i] Processo 137.00012904/2025-07: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[12:48:20] [061/179] [i] Processo 137.00010806/2025-27: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[12:48:20] [062/179] [i] Processo 137.00000018/2025-35: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[12:48:20] [063/179] [i] Processo 137.00013843/2025-07: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[12:48:20] [064/179] [i] Processo 137.00013840/2025-53: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[12:48:20] [065/179] [i] Processo 137.00014541/2025-36: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[12:48:20] [066/179] [i] Processo 137.00006431/2025-09: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[12:48:20] [067/179] [i] Processo 137.00004933/2025-97: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[12:48:20] [068/179] [i] Processo 137.00003431/2023-87: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[12:48:20] [069/179] [i] Processo 137.00000333/2025-50: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[12:48:20] [070/179] [i] Processo 137.00009729/2025-62: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[12:48:20] [071/179] [i] Processo 137.00029841/2026-14: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[12:48:20] [072/179] [i] Processo 137.00011106/2025-50: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[12:48:20] [073/179] [i] Processo 137.00010802/2025-49: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[12:48:20] [074/179] [i] Processo 137.00001873/2025-51: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[12:48:20] [075/179] [i] Processo 137.00012690/2025-61: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[12:48:20] [076/179] [i] Processo 137.00008615/2025-03: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[12:48:21] [077/179] [i] Processo 137.00000885/2025-23: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[12:48:21] [078/179] [i] Processo 137.00015219/2024-43: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[12:48:21] [079/179] [i] Processo 137.00010619/2025-43: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[12:48:21] [080/179] [i] Processo 137.00014339/2025-12: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[12:48:21] [081/179] [i] Processo 137.00000015/2025-00: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[12:48:21] [082/179] [i] Processo 137.00015243/2025-63: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[12:48:21] [083/179] [i] Processo 137.00009538/2024-10: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[12:48:21] [084/179] [i] Processo 137.00015254/2025-43: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[12:48:21] [085/179] [i] Processo 137.00003963/2026-67: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[12:48:21] [086/179] [i] Processo 137.00015266/2025-31: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[12:48:21] [087/179] [i] Processo 137.00018396/2024-81: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[12:48:21] [088/179] [i] Processo 137.00010210/2024-46: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[12:48:21] [089/179] [i] Processo 137.00010555/2025-81: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[12:48:21] [090/179] [i] Processo 137.00013810/2025-47: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[12:48:21] [091/179] [i] Processo 137.00000691/2025-28: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[12:48:21] [092/179] [i] Processo 137.00012972/2025-68: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[12:48:21] [093/179] [i] Processo 137.00003244/2025-65: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[12:48:21] [094/179] [i] Processo 137.00014963/2025-10: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[12:48:21] [095/179] [i] Processo 137.00015862/2025-58: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[12:48:21] [096/179] [i] Processo 137.00016374/2025-68: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[12:48:21] [097/179] [i] Processo 137.00015193/2025-14: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[12:48:21] [098/179] [i] Processo 137.00000340/2026-32: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[12:48:21] [099/179] [i] Processo 137.00002402/2026-41: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[12:48:21] [100/179] [i] Processo 137.00008529/2026-73: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[12:48:21] [101/179] [i] Processo 137.00015487/2025-46: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[12:48:21] [102/179] [i] Processo 137.00008971/2025-19: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[12:48:21] [103/179] [i] Processo 137.00012934/2026-96: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[12:48:21] [104/179] [i] Processo 137.00014265/2026-97: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[12:48:21] [105/179] [i] Processo 137.00007806/2026-21: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[12:48:21] [106/179] [i] Processo 137.00016135/2025-16: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[12:48:21] [107/179] [i] Processo 137.00000270/2023-70: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[12:48:21] [108/179] [i] Processo 359.00002923/2025-01: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[12:48:21] [109/179] [i] Processo 359.00005918/2025-42: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[12:48:21] [110/179] [i] Processo 359.00010545/2025-21: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[12:48:21] [111/179] [i] Processo 359.00001841/2026-12: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[12:48:21] [112/179] [i] Processo 359.00001837/2026-54: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[12:48:21] [113/179] [i] Processo 359.00001838/2026-07: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[12:48:21] [114/179] [i] Processo 359.00002654/2026-56: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[12:48:21] [115/179] [i] Processo 359.00002657/2026-90: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[12:48:21] [116/179] [i] Processo 359.00002655/2026-38: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[12:48:21] [117/179] [i] Processo 359.00002924/2026-29: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[12:48:21] [118/179] [i] Processo 359.00003717/2026-91: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[12:48:21] [119/179] [i] Processo 359.00003715/2026-01: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[12:48:21] [120/179] [i] Processo 359.00003716/2026-47: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[12:48:21] [121/179] [i] Processo 359.00003719/2026-81: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[12:48:21] [122/179] [i] Processo 359.00004822/2026-48: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[12:48:21] [123/179] [i] Processo 359.00004840/2026-20: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[12:48:21] [124/179] [i] Processo 359.00010641/2025-70: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[12:48:22] [125/179] [i] Processo 359.00004843/2026-63: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[12:48:22] [126/179] [i] Processo 359.00006134/2026-12: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[12:48:22] [127/179] [i] Processo 359.00006136/2026-10: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[12:48:22] [128/179] [i] Processo 359.00006133/2026-78: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[12:48:22] [129/179] [i] Processo 359.00006135/2026-67: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[12:48:22] [130/179] [i] Processo 137.00000031/2023-10: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[12:48:22] [131/179] [i] Processo 137.00009440/2023-81: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[12:48:22] [132/179] [i] Processo 359.00007321/2026-13: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[12:48:22] [133/179] [i] Processo 359.00007320/2026-79: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[12:48:22] [134/179] [i] Processo 359.00007322/2026-68: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[12:48:22] [135/179] [i] Processo 359.00007323/2026-11: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[12:48:22] [136/179] [i] Processo 137.00000212/2023-46: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[12:48:22] [137/179] [i] Processo 137.00000037/2023-97: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[12:48:22] [138/179] [i] Processo 137.00000174/2023-21: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[12:48:22] [139/179] [i] Processo 137.00009279/2026-99: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[12:48:22] [140/179] [i] Processo 359.00008263/2026-16: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[12:48:22] [141/179] [i] Processo 359.00008285/2026-13: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[12:48:22] [142/179] [i] Processo 359.00008281/2026-27: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[12:48:22] [143/179] [i] Processo 359.00008284/2026-61: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[12:48:22] [144/179] [i] Processo 359.00007224/2025-40: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[12:48:22] [145/179] [i] Processo 137.00001852/2023-11: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[12:48:22] [146/179] [i] Processo 137.00015391/2024-05: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[12:48:22] [147/179] [i] Processo 137.00006149/2024-32: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[12:48:22] [148/179] [i] Processo 137.00005364/2025-05: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[12:48:22] [149/179] [i] Processo 137.00007443/2025-42: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[12:48:22] [150/179] [i] Processo 137.00000008/2024-71: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[12:48:22] [151/179] [i] Processo 137.00004201/2025-05: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[12:48:22] [152/179] [i] Processo 137.00013847/2024-94: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[12:48:22] [153/179] [i] Processo 137.00014627/2025-17: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[12:48:22] [154/179] [i] Processo 137.00000087/2023-74: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[12:48:22] [155/179] [i] Processo 137.00013943/2025-13: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[12:48:22] [156/179] [i] Processo 137.00001418/2023-93: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[12:48:22] [157/179] [i] Processo 359.00009776/2023-21: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[12:48:22] [158/179] [i] Processo 137.00000400/2023-74: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[12:48:22] [159/179] [i] Processo 137.00016377/2025-00: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[12:48:22] [160/179] [i] Processo 137.00016379/2025-01: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[12:48:22] [161/179] [i] Processo 137.00016467/2025-22: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[12:48:22] [162/179] [i] Processo 137.00016517/2025-31: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[12:48:22] [163/179] [i] Processo 137.00012360/2025-75: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[12:48:22] [164/179] [i] Processo 137.00014834/2025-13: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[12:48:22] [165/179] [i] Processo 137.00000683/2025-16: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[12:48:22] [166/179] [i] Processo 137.00001272/2023-86: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[12:48:22] [167/179] [i] Processo 137.00000106/2023-62: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[12:48:22] [168/179] [i] Processo 137.00003321/2026-68: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[12:48:22] [169/179] [i] Processo 137.00017207/2024-53: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[12:48:22] [170/179] [i] Processo 137.00012207/2025-48: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[12:48:22] [171/179] [i] Processo 137.00014822/2025-99: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[12:48:22] [172/179] [i] Processo 137.00016376/2025-57: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[12:48:23] [173/179] [i] Processo 137.00006198/2026-37: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[12:48:23] [174/179] [i] Processo 137.00009838/2026-61: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[12:48:23] [175/179] [i] Processo 137.00003765/2023-51: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[12:48:23] [176/179] [i] Processo 137.00008662/2023-87: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[12:48:23] [177/179] [i] Processo 137.00015488/2025-91: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[12:48:23] [178/179] [i] Processo 137.00004037/2025-28: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[12:48:23] [179/179] [i] Processo 137.00004486/2026-57: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[12:48:23] [CONCLUÍDO] Orquestração Finalizada com Sucesso!
+[12:48:23]  • Modo: Cards Mapeados no OpenProject
+[12:48:23]  • Cards Processados: 179
+[12:48:23]  • Cards Gravados no OpenProject: 0
+[12:48:23]  • Auditoria registrada em: C:\Cockpit_GTI\laudo_sincronizacao_automatica.txt
+[12:48:23]  • Comprovante de agendamento registrado em: C:\Cockpit_GTI\registro_execucao_agendada.json
+[13:48:15] [✓] Motor de Inteligência Artificial Ativo para os Cards:
+[13:48:15]     • Agente Selecionado: IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b)
+[13:48:15]     • Endpoint de Acesso: http://100.103.100.98:3001/v1 (New API :3001 / Ollama)
+[13:48:15]     • Capacidade de Resposta: 350 tokens (Diagnóstico & Parecer Aprofundado)
+[13:48:15] [✓] Banco de Dados do Cockpit GTI carregado: 179 cards/processos no acervo.
+[13:48:15] [!] API Token OpenProject não localizado em openproject_token.txt.
+[13:48:15] [✓] Mapeamento OpenProject ativo: 2 cards identificados no servidor oficial:
+[13:48:15]     • Card #1497 <-> Processo 137.00013132/2026-01
+[13:48:15]     • Card #1498 <-> Processo 137.00010608/2025-63
+[13:48:15]   [*] [IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b)] Analisando 137.00013132/2026-01 (#1497) via LLM...
+[13:48:17]   [*] [IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b)] Analisando 137.00010608/2025-63 (#1498) via LLM...
+[13:48:19] [✓] Fase 1 Concluída: 179 cards gravados no banco do Cockpit (processos.json)!
+[13:48:19] [001/179] [!] Card #1497 (137.00013132/2026-01): HTTP 401 ao espelhar no OpenProject.
+[13:48:19] [002/179] [!] Card #1498 (137.00010608/2025-63): HTTP 401 ao espelhar no OpenProject.
+[13:48:19] [003/179] [i] Processo 137.00012783/2025-95: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[13:48:19] [004/179] [i] Processo 137.00000119/2026-84: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[13:48:19] [005/179] [i] Processo 137.00011105/2025-13: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[13:48:19] [006/179] [i] Processo 137.00009512/2026-33: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[13:48:19] [007/179] [i] Processo 137.00010436/2025-28: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[13:48:19] [008/179] [i] Processo 137.00011338/2026-90: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[13:48:19] [009/179] [i] Processo 137.00004821/2026-17: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[13:48:19] [010/179] [i] Processo 137.00007527/2026-67: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[13:48:19] [011/179] [i] Processo 137.00003191/2026-63: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[13:48:19] [012/179] [i] Processo 018.00004147/2026-63: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[13:48:19] [013/179] [i] Processo 137.00006935/2026-00: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[13:48:19] [014/179] [i] Processo 018.00002165/2026-19: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[13:48:19] [015/179] [i] Processo 137.00004844/2026-21: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[13:48:19] [016/179] [i] Processo 137.00011132/2026-60: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[13:48:19] [017/179] [i] Processo 137.00001716/2024-64: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[13:48:19] [018/179] [i] Processo 137.00009067/2026-10: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[13:48:19] [019/179] [i] Processo 137.00011971/2026-87: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[13:48:19] [020/179] [i] Processo 137.00013086/2026-32: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[13:48:19] [021/179] [i] Processo 137.00013483/2026-12: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[13:48:19] [022/179] [i] Processo 137.00011685/2025-31: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[13:48:19] [023/179] [i] Processo 137.00000117/2023-42: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[13:48:19] [024/179] [i] Processo 137.00019295/2024-28: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[13:48:19] [025/179] [i] Processo 137.00012392/2026-51: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[13:48:19] [026/179] [i] Processo 137.00012379/2026-01: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[13:48:19] [027/179] [i] Processo 137.00012396/2026-30: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[13:48:20] [028/179] [i] Processo 137.00012393/2026-04: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[13:48:20] [029/179] [i] Processo 137.00012389/2026-38: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[13:48:20] [030/179] [i] Processo 137.00012372/2026-81: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[13:48:20] [031/179] [i] Processo 137.00012362/2026-45: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[13:48:20] [032/179] [i] Processo 137.00000057/2023-68: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[13:48:20] [033/179] [i] Processo 137.00009121/2024-57: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[13:48:20] [034/179] [i] Processo 137.00016283/2025-22: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[13:48:20] [035/179] [i] Processo 137.00004823/2026-14: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[13:48:20] [036/179] [i] Processo 137.00008901/2026-71: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[13:48:20] [037/179] [i] Processo 137.00010805/2025-82: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[13:48:20] [038/179] [i] Processo 137.00000001/2026-56: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[13:48:20] [039/179] [i] Processo 137.00012407/2026-81: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[13:48:20] [040/179] [i] Processo 137.00012420/2026-31: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[13:48:20] [041/179] [i] Processo 137.00012403/2026-01: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[13:48:20] [042/179] [i] Processo 137.00012397/2026-84: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[13:48:20] [043/179] [i] Processo 137.00012395/2026-95: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[13:48:20] [044/179] [i] Processo 137.00012390/2026-62: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[13:48:20] [045/179] [i] Processo 137.00012387/2026-49: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[13:48:20] [046/179] [i] Processo 137.00012361/2026-00: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[13:48:20] [047/179] [i] Processo 137.00012405/2026-92: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[13:48:20] [048/179] [i] Processo 137.00012402/2026-59: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[13:48:20] [049/179] [i] Processo 137.00012400/2026-60: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[13:48:20] [050/179] [i] Processo 137.00012399/2026-73: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[13:48:20] [051/179] [i] Processo 137.00012388/2026-93: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[13:48:20] [052/179] [i] Processo 137.00012382/2026-18: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[13:48:20] [053/179] [i] Processo 137.00012381/2026-71: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[13:48:20] [054/179] [i] Processo 137.00012371/2026-36: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[13:48:20] [055/179] [i] Processo 137.00012364/2026-34: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[13:48:20] [056/179] [i] Processo 137.00012363/2026-90: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[13:48:20] [057/179] [i] Processo 137.00012421/2026-85: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[13:48:20] [058/179] [i] Processo 137.00012698/2026-16: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[13:48:20] [059/179] [i] Processo 137.00010899/2025-90: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[13:48:20] [060/179] [i] Processo 137.00012904/2025-07: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[13:48:20] [061/179] [i] Processo 137.00010806/2025-27: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[13:48:20] [062/179] [i] Processo 137.00000018/2025-35: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[13:48:20] [063/179] [i] Processo 137.00013843/2025-07: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[13:48:20] [064/179] [i] Processo 137.00013840/2025-53: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[13:48:20] [065/179] [i] Processo 137.00014541/2025-36: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[13:48:20] [066/179] [i] Processo 137.00006431/2025-09: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[13:48:20] [067/179] [i] Processo 137.00004933/2025-97: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[13:48:20] [068/179] [i] Processo 137.00003431/2023-87: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[13:48:20] [069/179] [i] Processo 137.00000333/2025-50: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[13:48:20] [070/179] [i] Processo 137.00009729/2025-62: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[13:48:20] [071/179] [i] Processo 137.00029841/2026-14: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[13:48:20] [072/179] [i] Processo 137.00011106/2025-50: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[13:48:20] [073/179] [i] Processo 137.00010802/2025-49: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[13:48:20] [074/179] [i] Processo 137.00001873/2025-51: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[13:48:20] [075/179] [i] Processo 137.00012690/2025-61: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[13:48:21] [076/179] [i] Processo 137.00008615/2025-03: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[13:48:21] [077/179] [i] Processo 137.00000885/2025-23: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[13:48:21] [078/179] [i] Processo 137.00015219/2024-43: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[13:48:21] [079/179] [i] Processo 137.00010619/2025-43: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[13:48:21] [080/179] [i] Processo 137.00014339/2025-12: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[13:48:21] [081/179] [i] Processo 137.00000015/2025-00: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[13:48:21] [082/179] [i] Processo 137.00015243/2025-63: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[13:48:21] [083/179] [i] Processo 137.00009538/2024-10: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[13:48:21] [084/179] [i] Processo 137.00015254/2025-43: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[13:48:21] [085/179] [i] Processo 137.00003963/2026-67: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[13:48:21] [086/179] [i] Processo 137.00015266/2025-31: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[13:48:21] [087/179] [i] Processo 137.00018396/2024-81: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[13:48:21] [088/179] [i] Processo 137.00010210/2024-46: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[13:48:21] [089/179] [i] Processo 137.00010555/2025-81: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[13:48:21] [090/179] [i] Processo 137.00013810/2025-47: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[13:48:21] [091/179] [i] Processo 137.00000691/2025-28: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[13:48:21] [092/179] [i] Processo 137.00012972/2025-68: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[13:48:21] [093/179] [i] Processo 137.00003244/2025-65: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[13:48:21] [094/179] [i] Processo 137.00014963/2025-10: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[13:48:21] [095/179] [i] Processo 137.00015862/2025-58: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[13:48:21] [096/179] [i] Processo 137.00016374/2025-68: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[13:48:21] [097/179] [i] Processo 137.00015193/2025-14: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[13:48:21] [098/179] [i] Processo 137.00000340/2026-32: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[13:48:21] [099/179] [i] Processo 137.00002402/2026-41: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[13:48:21] [100/179] [i] Processo 137.00008529/2026-73: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[13:48:21] [101/179] [i] Processo 137.00015487/2025-46: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[13:48:21] [102/179] [i] Processo 137.00008971/2025-19: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[13:48:21] [103/179] [i] Processo 137.00012934/2026-96: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[13:48:21] [104/179] [i] Processo 137.00014265/2026-97: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[13:48:21] [105/179] [i] Processo 137.00007806/2026-21: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[13:48:21] [106/179] [i] Processo 137.00016135/2025-16: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[13:48:21] [107/179] [i] Processo 137.00000270/2023-70: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[13:48:21] [108/179] [i] Processo 359.00002923/2025-01: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[13:48:21] [109/179] [i] Processo 359.00005918/2025-42: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[13:48:21] [110/179] [i] Processo 359.00010545/2025-21: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[13:48:21] [111/179] [i] Processo 359.00001841/2026-12: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[13:48:21] [112/179] [i] Processo 359.00001837/2026-54: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[13:48:21] [113/179] [i] Processo 359.00001838/2026-07: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[13:48:21] [114/179] [i] Processo 359.00002654/2026-56: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[13:48:21] [115/179] [i] Processo 359.00002657/2026-90: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[13:48:21] [116/179] [i] Processo 359.00002655/2026-38: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[13:48:21] [117/179] [i] Processo 359.00002924/2026-29: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[13:48:21] [118/179] [i] Processo 359.00003717/2026-91: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[13:48:21] [119/179] [i] Processo 359.00003715/2026-01: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[13:48:21] [120/179] [i] Processo 359.00003716/2026-47: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[13:48:21] [121/179] [i] Processo 359.00003719/2026-81: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[13:48:21] [122/179] [i] Processo 359.00004822/2026-48: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[13:48:21] [123/179] [i] Processo 359.00004840/2026-20: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[13:48:22] [124/179] [i] Processo 359.00010641/2025-70: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[13:48:22] [125/179] [i] Processo 359.00004843/2026-63: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[13:48:22] [126/179] [i] Processo 359.00006134/2026-12: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[13:48:22] [127/179] [i] Processo 359.00006136/2026-10: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[13:48:22] [128/179] [i] Processo 359.00006133/2026-78: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[13:48:22] [129/179] [i] Processo 359.00006135/2026-67: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[13:48:22] [130/179] [i] Processo 137.00000031/2023-10: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[13:48:22] [131/179] [i] Processo 137.00009440/2023-81: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[13:48:22] [132/179] [i] Processo 359.00007321/2026-13: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[13:48:22] [133/179] [i] Processo 359.00007320/2026-79: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[13:48:22] [134/179] [i] Processo 359.00007322/2026-68: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[13:48:22] [135/179] [i] Processo 359.00007323/2026-11: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[13:48:22] [136/179] [i] Processo 137.00000212/2023-46: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[13:48:22] [137/179] [i] Processo 137.00000037/2023-97: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[13:48:22] [138/179] [i] Processo 137.00000174/2023-21: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[13:48:22] [139/179] [i] Processo 137.00009279/2026-99: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[13:48:22] [140/179] [i] Processo 359.00008263/2026-16: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[13:48:22] [141/179] [i] Processo 359.00008285/2026-13: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[13:48:22] [142/179] [i] Processo 359.00008281/2026-27: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[13:48:22] [143/179] [i] Processo 359.00008284/2026-61: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[13:48:22] [144/179] [i] Processo 359.00007224/2025-40: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[13:48:22] [145/179] [i] Processo 137.00001852/2023-11: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[13:48:22] [146/179] [i] Processo 137.00015391/2024-05: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[13:48:22] [147/179] [i] Processo 137.00006149/2024-32: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[13:48:22] [148/179] [i] Processo 137.00005364/2025-05: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[13:48:22] [149/179] [i] Processo 137.00007443/2025-42: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[13:48:22] [150/179] [i] Processo 137.00000008/2024-71: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[13:48:22] [151/179] [i] Processo 137.00004201/2025-05: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[13:48:22] [152/179] [i] Processo 137.00013847/2024-94: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[13:48:22] [153/179] [i] Processo 137.00014627/2025-17: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[13:48:22] [154/179] [i] Processo 137.00000087/2023-74: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[13:48:22] [155/179] [i] Processo 137.00013943/2025-13: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[13:48:22] [156/179] [i] Processo 137.00001418/2023-93: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[13:48:22] [157/179] [i] Processo 359.00009776/2023-21: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[13:48:22] [158/179] [i] Processo 137.00000400/2023-74: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[13:48:22] [159/179] [i] Processo 137.00016377/2025-00: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[13:48:22] [160/179] [i] Processo 137.00016379/2025-01: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[13:48:22] [161/179] [i] Processo 137.00016467/2025-22: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[13:48:22] [162/179] [i] Processo 137.00016517/2025-31: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[13:48:22] [163/179] [i] Processo 137.00012360/2025-75: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[13:48:22] [164/179] [i] Processo 137.00014834/2025-13: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[13:48:22] [165/179] [i] Processo 137.00000683/2025-16: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[13:48:22] [166/179] [i] Processo 137.00001272/2023-86: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[13:48:22] [167/179] [i] Processo 137.00000106/2023-62: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[13:48:22] [168/179] [i] Processo 137.00003321/2026-68: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[13:48:22] [169/179] [i] Processo 137.00017207/2024-53: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[13:48:22] [170/179] [i] Processo 137.00012207/2025-48: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[13:48:22] [171/179] [i] Processo 137.00014822/2025-99: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[13:48:23] [172/179] [i] Processo 137.00016376/2025-57: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[13:48:23] [173/179] [i] Processo 137.00006198/2026-37: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[13:48:23] [174/179] [i] Processo 137.00009838/2026-61: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[13:48:23] [175/179] [i] Processo 137.00003765/2023-51: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[13:48:23] [176/179] [i] Processo 137.00008662/2023-87: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[13:48:23] [177/179] [i] Processo 137.00015488/2025-91: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[13:48:23] [178/179] [i] Processo 137.00004037/2025-28: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[13:48:23] [179/179] [i] Processo 137.00004486/2026-57: Homologado no Banco do Cockpit por IA 1 — Principal (Interação, Copiloto 360° & Atendimento) (qwen2.5:7b (Motor Local de Governança)).
+[13:48:23] [CONCLUÍDO] Orquestração Finalizada com Sucesso!
+[13:48:23]  • Modo: Cards Mapeados no OpenProject
+[13:48:23]  • Cards Processados: 179
+[13:48:23]  • Cards Gravados no OpenProject: 0
+[13:48:23]  • Auditoria registrada em: C:\Cockpit_GTI\laudo_sincronizacao_automatica.txt
+[13:48:23]  • Comprovante de agendamento registrado em: C:\Cockpit_GTI\registro_execucao_agendada.json

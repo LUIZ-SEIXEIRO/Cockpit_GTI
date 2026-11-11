@@ -22,7 +22,7 @@
 
     async function atualizarTelemetria() {
         const sMariaDB = await checarStatusServico('/api/v1/mariadb/status');
-        const sOllama = await checarStatusServico('/api/v1/ia/status');
+        const sOllama = await checarStatusServico('/api/v1/ollama/status');
         const sGlpi = await checarStatusServico('/api/v1/glpi/status');
         const sOpenProject = await checarStatusServico('/api/v1/openproject/status');
         const sNewApi = await checarStatusServico('/api/v1/newapi/status');
