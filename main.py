@@ -286,34 +286,26 @@ def resolver_chave_real(modelo=None, slot=None):
                 dados = json.load(f)
 
             slots_dict = dados.get('ias', {})
-            if isinstance(slots_dict, dict):
-                # 1. Se informou o slot e ele existe como chave no dict (ex: 'principal', 'orquestracao')
-                if slot and str(slot) in slots_dict and isinstance(slots_dict[str(slot)], dict):
-                    it = slots_dict[str(slot)]
-                    for k in ('apiKey', 'api_key', 'chave', 'token', 'secret'):
-                        if it.get(k) and it[k] != '***':
-                            return it[k]
-                itens = list(slots_dict.values())
-            elif isinstance(slots_dict, list):
-                itens = slots_dict
-            elif isinstance(dados, list):
-                itens = dados
-            else:
-                itens = [dados]
+            itens = list(slots_dict.values()) if isinstance(slots_dict, dict) else (slots_dict if isinstance(slots_dict, list) else (dados if isinstance(dados, list) else [dados]))
 
-            # 2. Busca por modelo/agent
+            # 1. PRIORIDADE MÁXIMA: Busca pelo modelo/agent específico
             if modelo:
                 alvo_m = str(modelo).strip().lower()
                 for it in itens:
                     if isinstance(it, dict):
-                        for campo in ('agent', 'modelo', 'model', 'id', 'slot', 'nome'):
+                        for campo in ('agent', 'modelo', 'model', 'nome'):
                             if str(it.get(campo) or '').strip().lower() == alvo_m:
                                 for k in ('apiKey', 'api_key', 'chave', 'token', 'secret'):
                                     if it.get(k) and it[k] != '***':
                                         return it[k]
 
-            # 3. Busca por slot/id
+            # 2. Se não achou pelo modelo (ou modelo não informado), busca pelo slot específico
             if slot:
+                if isinstance(slots_dict, dict) and str(slot) in slots_dict and isinstance(slots_dict[str(slot)], dict):
+                    it = slots_dict[str(slot)]
+                    for k in ('apiKey', 'api_key', 'chave', 'token', 'secret'):
+                        if it.get(k) and it[k] != '***':
+                            return it[k]
                 alvo_s = str(slot).strip().lower()
                 for it in itens:
                     if isinstance(it, dict):
@@ -345,8 +337,7 @@ def mesclar_preservando_segredos(novos, originais):
         nov_ias = novos.get('ias')
 
         if orig_ias and nov_ias and isinstance(orig_ias, dict) and isinstance(nov_ias, dict):
-            # Pareamento com rastreamento de chaves consumidas para evitar duplicidade
-            orig_disponiveis = [dict(v) for v in orig_ias.values() if isinstance(v, dict)]
+            consumidos_originais = set()
             ias_mescladas = {}
 
             for s_key, s_val in nov_ias.items():
@@ -355,28 +346,36 @@ def mesclar_preservando_segredos(novos, originais):
                     chave_env = item_novo.get('apiKey') or item_novo.get('api_key')
                     if chave_env == '***' or (isinstance(chave_env, str) and chave_env.startswith('***')):
                         m_novo = item_novo.get('agent') or item_novo.get('modelo') or item_novo.get('model') or ''
-                        match = None
+                        id_novo = item_novo.get('id')
+                        match_key = None
 
-                        # Match exato no mesmo slot se o modelo for idêntico
-                        if s_key in orig_ias and isinstance(orig_ias[s_key], dict):
+                        # 1. Match no mesmo slot se o modelo for idêntico e o slot original não foi consumido
+                        if s_key in orig_ias and s_key not in consumidos_originais and isinstance(orig_ias[s_key], dict):
                             orig_slot = orig_ias[s_key]
                             m_orig = orig_slot.get('agent') or orig_slot.get('modelo') or orig_slot.get('model') or ''
                             if m_orig == m_novo and m_novo:
-                                match = orig_slot
-                                if orig_slot in orig_disponiveis:
-                                    orig_disponiveis.remove(orig_slot)
+                                match_key = s_key
 
-                        # Se mudou de slot, busca pelo modelo nos disponíveis e consome para não duplicar
-                        if not match and m_novo:
-                            for cand in orig_disponiveis:
-                                m_cand = cand.get('agent') or cand.get('modelo') or cand.get('model') or ''
-                                if m_cand == m_novo:
-                                    match = cand
-                                    orig_disponiveis.remove(cand)
+                        # 2. Match pelo mesmo ID se não consumido
+                        if not match_key and id_novo:
+                            for orig_k, orig_v in orig_ias.items():
+                                if orig_k not in consumidos_originais and isinstance(orig_v, dict) and orig_v.get('id') == id_novo:
+                                    match_key = orig_k
                                     break
 
-                        if match:
-                            k_orig = match.get('apiKey') or match.get('api_key')
+                        # 3. Match pelo mesmo modelo se foi movido entre slots e não consumido
+                        if not match_key and m_novo:
+                            for orig_k, orig_v in orig_ias.items():
+                                if orig_k not in consumidos_originais and isinstance(orig_v, dict):
+                                    m_orig = orig_v.get('agent') or orig_v.get('modelo') or orig_v.get('model') or ''
+                                    if m_orig == m_novo:
+                                        match_key = orig_k
+                                        break
+
+                        if match_key:
+                            consumidos_originais.add(match_key)
+                            orig_item = orig_ias[match_key]
+                            k_orig = orig_item.get('apiKey') or orig_item.get('api_key')
                             if k_orig and k_orig != '***':
                                 if 'apiKey' in item_novo: item_novo['apiKey'] = k_orig
                                 if 'api_key' in item_novo: item_novo['api_key'] = k_orig
@@ -404,10 +403,8 @@ def mesclar_preservando_segredos(novos, originais):
         return resultado
 
     elif isinstance(novos, list) and isinstance(originais, list):
-        # Pareamento de listas na raiz: prioridade absoluta por ID com rastreamento por índice
         usados = set()
         resultado = []
-
         for novo in novos:
             if isinstance(novo, dict):
                 it = dict(novo)
@@ -416,16 +413,12 @@ def mesclar_preservando_segredos(novos, originais):
                     novo_id = str(it['id']).strip().lower() if it.get('id') else None
                     novo_mod = str(it.get('agent') or it.get('modelo') or it.get('model') or '').strip().lower()
                     match = None
-
-                    # 1. Match prioritário por ID
                     if novo_id:
                         for idx, orig in enumerate(originais):
                             if idx not in usados and isinstance(orig, dict) and str(orig.get('id') or '').strip().lower() == novo_id:
                                 match = orig
                                 usados.add(idx)
                                 break
-
-                    # 2. Match por agent/modelo se não achou por ID
                     if not match and novo_mod:
                         for idx, orig in enumerate(originais):
                             if idx not in usados and isinstance(orig, dict):
@@ -434,7 +427,6 @@ def mesclar_preservando_segredos(novos, originais):
                                     match = orig
                                     usados.add(idx)
                                     break
-
                     if match:
                         k_orig = match.get('apiKey') or match.get('api_key')
                         if k_orig and k_orig != '***':
