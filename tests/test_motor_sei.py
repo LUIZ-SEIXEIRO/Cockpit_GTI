@@ -550,6 +550,17 @@ except TimeoutError:
         self.assertTrue(motor_v10.salvar_sessao({"PHPSESSID": "sessao_v10_sucesso"}, timeout=1.0))
         self.assertTrue(os.path.exists(self.caminho_sessao + ".flock"))
 
+    def test_30_falha_aquisicao_libera_descritor_e_lock_kernel(self):
+        lock_a = LockProcessosSEI(self.caminho_sessao, timeout=1.0)
+        with patch("os.mkdir", side_effect=PermissionError("Acesso negado simulado")):
+            with self.assertRaises(PermissionError):
+                with lock_a:
+                    pass
+
+        lock_b = LockProcessosSEI(self.caminho_sessao, timeout=0.5)
+        with lock_b:
+            self.assertTrue(lock_b._adquirido)
+
 
 if __name__ == "__main__":
     unittest.main()

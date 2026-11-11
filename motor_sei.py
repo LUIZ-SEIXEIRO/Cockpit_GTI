@@ -378,87 +378,95 @@ class LockProcessosSEI:
         # 1. Abre o descritor de arquivo de lock do SO (NUNCA deletado)
         self._fd = os.open(self.lock_file, os.O_CREAT | os.O_RDWR, 0o600)
 
-        # 2. Adquire exclusão mútua no kernel do SO
-        while True:
-            try:
-                if os.name == "nt":
-                    import msvcrt
-                    if os.fstat(self._fd).st_size == 0:
-                        try:
-                            os.write(self._fd, b"0")
-                            os.fsync(self._fd)
-                        except OSError:
-                            pass
-                    os.lseek(self._fd, 0, os.SEEK_SET)
-                    msvcrt.locking(self._fd, msvcrt.LK_NBLCK, 1)
-                else:
-                    import fcntl
-                    fcntl.flock(self._fd, fcntl.LOCK_EX | fcntl.LOCK_NB)
-
-                self._adquirido = True
-                break
-
-            except (BlockingIOError, OSError, PermissionError):
-                if (time.monotonic() - inicio) >= self.timeout:
-                    if self._fd is not None:
-                        try:
-                            os.close(self._fd)
-                        except OSError:
-                            pass
-                        self._fd = None
-                    raise TimeoutError(
-                        f"Timeout ({self.timeout}s) ao aguardar exclusão mútua no armazenamento: {self.lock_file}"
-                    )
-                time.sleep(self.poll_interval)
-
-        # 3. Adquire lock de diretório legado para compatibilidade com versões v9
-        while True:
-            try:
-                os.mkdir(self.lock_dir)
-                self._dir_adquirido = True
-                break
-            except FileExistsError:
-                if (time.monotonic() - inicio) >= self.timeout:
-                    self._liberar_kernel_lock()
-                    raise TimeoutError(
-                        f"Timeout ({self.timeout}s) ao aguardar liberação de lock de diretório legado: {self.lock_dir}"
-                    )
-                # Verifica se lock legado está morto ou órfão
-                if not os.path.exists(self.info_file):
-                    try:
-                        os.rmdir(self.lock_dir)
-                        continue
-                    except OSError:
-                        pass
-                else:
-                    try:
-                        with open(self.info_file, "r", encoding="utf-8") as f:
-                            info = json.load(f)
-                        pid = info.get("pid")
-                        ts = info.get("timestamp", 0)
-                        idade = time.time() - ts
-                        if not processo_esta_vivo(pid) or idade > self.max_lock_age:
+        try:
+            # 2. Adquire exclusão mútua no kernel do SO
+            while True:
+                try:
+                    if os.name == "nt":
+                        import msvcrt
+                        if os.fstat(self._fd).st_size == 0:
                             try:
-                                os.unlink(self.info_file)
-                                os.rmdir(self.lock_dir)
-                                continue
+                                os.write(self._fd, b"0")
+                                os.fsync(self._fd)
                             except OSError:
                                 pass
-                    except Exception:
-                        pass
-                time.sleep(self.poll_interval)
+                        os.lseek(self._fd, 0, os.SEEK_SET)
+                        msvcrt.locking(self._fd, msvcrt.LK_NBLCK, 1)
+                    else:
+                        import fcntl
+                        fcntl.flock(self._fd, fcntl.LOCK_EX | fcntl.LOCK_NB)
 
-        # 4. Registra metadados informativos no diretório de lock
-        self._gravar_heartbeat()
+                    self._adquirido = True
+                    break
 
-        self._stop_heartbeat.clear()
-        self._heartbeat_thread = threading.Thread(
-            target=self._loop_heartbeat,
-            daemon=True,
-            name="LockSEI-Heartbeat"
-        )
-        self._heartbeat_thread.start()
-        return self
+                except (BlockingIOError, OSError, PermissionError):
+                    if (time.monotonic() - inicio) >= self.timeout:
+                        raise TimeoutError(
+                            f"Timeout ({self.timeout}s) ao aguardar exclusão mútua no armazenamento: {self.lock_file}"
+                        )
+                    time.sleep(self.poll_interval)
+
+            # 3. Adquire lock de diretório legado para compatibilidade com versões v9
+            while True:
+                try:
+                    os.mkdir(self.lock_dir)
+                    self._dir_adquirido = True
+                    break
+                except FileExistsError:
+                    if (time.monotonic() - inicio) >= self.timeout:
+                        raise TimeoutError(
+                            f"Timeout ({self.timeout}s) ao aguardar liberação de lock de diretório legado: {self.lock_dir}"
+                        )
+                    # Verifica se lock legado pertence a um processo morto
+                    if not os.path.exists(self.info_file):
+                        try:
+                            os.rmdir(self.lock_dir)
+                            continue
+                        except OSError:
+                            pass
+                    else:
+                        try:
+                            with open(self.info_file, "r", encoding="utf-8") as f:
+                                info = json.load(f)
+                            pid = info.get("pid")
+                            host = info.get("hostname")
+                            # Só remove se o processo estiver comprovadamente MORTO no mesmo host local
+                            # NUNCA remove por idade de lease para não roubar lock de processo suspenso!
+                            if host == self.hostname and pid and not processo_esta_vivo(pid):
+                                try:
+                                    os.unlink(self.info_file)
+                                    os.rmdir(self.lock_dir)
+                                    continue
+                                except OSError:
+                                    pass
+                        except Exception:
+                            pass
+                    time.sleep(self.poll_interval)
+
+            # 4. Registra metadados informativos no diretório de lock
+            self._gravar_heartbeat()
+
+            self._stop_heartbeat.clear()
+            self._heartbeat_thread = threading.Thread(
+                target=self._loop_heartbeat,
+                daemon=True,
+                name="LockSEI-Heartbeat"
+            )
+            self._heartbeat_thread.start()
+            return self
+
+        except Exception:
+            # Liberação compulsória e imediata de todos os descritores e locks em QUALQUER falha
+            self._liberar_kernel_lock()
+            if self._dir_adquirido and os.path.exists(self.lock_dir):
+                try:
+                    if os.path.exists(self.info_file):
+                        os.unlink(self.info_file)
+                    os.rmdir(self.lock_dir)
+                except OSError:
+                    pass
+                self._dir_adquirido = False
+            raise
 
     def __exit__(self, exc_type, exc_val, exc_tb):
         if self._adquirido:
