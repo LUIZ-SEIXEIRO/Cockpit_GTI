@@ -844,8 +844,9 @@ def api_v1_sei_processos():
     resultado = motor_sei_instance.listar_caixa_unidade()
     if resultado.get('sucesso'):
         return jsonify(resultado), 200
+    cod = resultado.get('codigo')
     erro = str(resultado.get('erro', '')).lower()
-    if 'conexão' in erro or 'timeout' in erro or 'falha de conexão' in erro:
+    if cod == 500 or cod == 502 or 'conexão' in erro or 'timeout' in erro or '500' in erro:
         return jsonify(resultado), 502
     return jsonify(resultado), 401
 
@@ -857,8 +858,9 @@ def api_v1_sei_buscar():
     resultado = motor_sei_instance.buscar_processos(termo=termo)
     if resultado.get('sucesso'):
         return jsonify(resultado), 200
+    cod = resultado.get('codigo')
     erro = str(resultado.get('erro', '')).lower()
-    if 'conexão' in erro or 'timeout' in erro or 'falha de conexão' in erro:
+    if cod == 500 or cod == 502 or 'conexão' in erro or 'timeout' in erro or '500' in erro:
         return jsonify(resultado), 502
     return jsonify(resultado), 401
 

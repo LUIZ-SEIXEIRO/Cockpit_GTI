@@ -1,12 +1,12 @@
-import os, json, re, time, requests
+import os, json, re, time, requests, urllib.parse
 
 class MotorSEI:
     """Motor de Scraping, Busca e Classificação do SEI SP (v4.1.5 Oficial) para a SA-GTI."""
     
     BASE_URL = "https://sei.sp.gov.br/sei"
+    HOST_PERMITIDO = "sei.sp.gov.br"
     UNIDADE_SAGTI = "110050725"
     SISTEMA_ID = "100000100"
-    DOMINIO_COOKIE = "sei.sp.gov.br"
     
     TERMOS_ERRO = [
         "infraexception", "acesso negado", "sessão inválida", "sessao invalida",
@@ -26,8 +26,14 @@ class MotorSEI:
         self.carregar_sessao()
 
     def salvar_sessao(self, cookies_dict):
-        """Grava a sessão estritamente com permissão 0600 em nível de syscall (sem fallback permissivo)."""
+        """Remove arquivo preexistente e cria arquivo atômico com permissão 0600."""
         os.makedirs(os.path.dirname(self.caminho_sessao), exist_ok=True)
+        if os.path.exists(self.caminho_sessao):
+            try:
+                os.remove(self.caminho_sessao)
+            except Exception:
+                pass
+
         conteudo = json.dumps({
             "atualizado_em": time.strftime("%Y-%m-%dT%H:%M:%SZ"),
             "cookies": cookies_dict
@@ -42,10 +48,11 @@ class MotorSEI:
             os.chmod(self.caminho_sessao, 0o600)
         except Exception:
             pass
+            
         self.carregar_sessao()
 
     def carregar_sessao(self):
-        """Carrega cookies vinculando-os com secure=True, domínio e path estritos."""
+        """Carrega cookies estritamente para https://sei.sp.gov.br/sei."""
         if os.path.exists(self.caminho_sessao):
             try:
                 with open(self.caminho_sessao, "r", encoding="utf-8") as f:
@@ -53,45 +60,52 @@ class MotorSEI:
                 cookies = dados.get("cookies", {})
                 self.session.cookies.clear()
                 for k, v in cookies.items():
-                    # Restringe o cookie com secure=True para HTTPS estrito
-                    self.session.cookies.set(k, v, domain=self.DOMINIO_COOKIE, path="/sei", secure=True)
+                    self.session.cookies.set(k, v, domain=self.HOST_PERMITIDO, path="/sei", secure=True)
                 return True
             except Exception:
                 pass
         return False
 
+    def _executar_requisicao_segura(self, metodo, url, **kwargs):
+        """Garante que a requisição siga estritamente para HTTPS e host permitido."""
+        parsed = urllib.parse.urlparse(url)
+        if parsed.scheme != "https" or parsed.hostname != self.HOST_PERMITIDO:
+            raise ValueError(f"Destino não autorizado: {url}")
+        return self.session.request(metodo, url, **kwargs)
+
     def _pagina_caixa_valida(self, resp):
-        """Validação positiva da tela de controle de processos."""
+        """Validação positiva rigorosa exigindo host HTTPS exato e marcadores estruturais do SEI."""
         if resp.status_code != 200:
             return False
-        url_lower = resp.url.lower()
-        if any(d in url_lower for d in ['plataforma.sp.gov.br', 'minhaarea.sp.gov.br', 'acesso.gov.br']):
+        parsed = urllib.parse.urlparse(resp.url)
+        if parsed.scheme != "https" or parsed.hostname != self.HOST_PERMITIDO:
             return False
         texto = resp.text.lower()
         if any(t in texto for t in self.TERMOS_ERRO):
             return False
-        # Exige elementos característicos positivos do SEI
-        elementos_positivos = ['procedimento_controlar', 'controle de processos', 'infratabela', 'infraareadados', 'id_procedimento']
-        return any(el in texto for el in elementos_positivos)
+        # Exige múltiplos marcadores estruturais simultâneos
+        tem_controlar = "procedimento_controlar" in texto or "controle de processos" in texto
+        tem_tabela = "infratabela" in texto or "infraareadados" in texto or "id_procedimento" in texto
+        return tem_controlar and tem_tabela
 
     def _pagina_busca_valida(self, resp):
-        """Validação positiva da tela de pesquisa de processos."""
+        """Validação positiva da tela de pesquisa."""
         if resp.status_code != 200:
             return False
-        url_lower = resp.url.lower()
-        if any(d in url_lower for d in ['plataforma.sp.gov.br', 'minhaarea.sp.gov.br', 'acesso.gov.br']):
+        parsed = urllib.parse.urlparse(resp.url)
+        if parsed.scheme != "https" or parsed.hostname != self.HOST_PERMITIDO:
             return False
         texto = resp.text.lower()
         if any(t in texto for t in self.TERMOS_ERRO):
             return False
-        elementos_positivos = ['pesquisa_processo', 'resultado da pesquisa', 'infratabela', 'procedimento_trabalhar', 'nenhum registro encontrado', 'nenhum processo encontrado']
-        return any(el in texto for el in elementos_positivos)
+        tem_busca = "pesquisa_processo" in texto or "resultado da pesquisa" in texto
+        tem_resultado = "infratabela" in texto or "procedimento_trabalhar" in texto or "nenhum" in texto
+        return tem_busca and tem_resultado
 
     def validar_sessao(self):
-        """Valida sessão exigindo confirmação positiva dos elementos de controle do SEI."""
         try:
             url = f"{self.BASE_URL}/controlador.php?acao=procedimento_controlar&infra_sistema={self.SISTEMA_ID}&infra_unidade_atual={self.UNIDADE_SAGTI}"
-            resp = self.session.get(url, timeout=6, allow_redirects=True)
+            resp = self._executar_requisicao_segura("GET", url, timeout=6, allow_redirects=True)
             if not self._pagina_caixa_valida(resp):
                 return {"autenticado": False, "codigo": resp.status_code, "mensagem": "Sessão expirada ou página de login/erro reportada pelo SEI."}
             return {"autenticado": True, "unidade": self.UNIDADE_SAGTI, "mensagem": "Sessão ativa na SA-GTI"}
@@ -99,7 +113,6 @@ class MotorSEI:
             return {"autenticado": False, "erro": str(e), "mensagem": "Falha de conexão com o SEI"}
 
     def buscar_processos(self, termo="", unidade=None):
-        """Busca processos exigindo validação positiva da tela de pesquisa."""
         unidade = unidade or self.UNIDADE_SAGTI
         url = f"{self.BASE_URL}/controlador.php?acao=pesquisa_processo_pesquisar&infra_sistema={self.SISTEMA_ID}&infra_unidade_atual={unidade}"
         payload = {
@@ -109,40 +122,46 @@ class MotorSEI:
             "btnPesquisar": "Pesquisar"
         }
         try:
-            resp = self.session.post(url, data=payload, timeout=10)
+            resp = self._executar_requisicao_segura("POST", url, data=payload, timeout=10)
             if not self._pagina_busca_valida(resp):
-                return {"sucesso": False, "erro": "Sessão expirada ou resposta inválida na pesquisa.", "processos": []}
+                return {"sucesso": False, "codigo": resp.status_code, "erro": "Sessão expirada ou erro na busca.", "processos": []}
             return self.parsear_tabela_processos(resp.text)
         except Exception as e:
-            return {"sucesso": False, "erro": f"Falha de conexão: {str(e)}", "processos": []}
+            return {"sucesso": False, "codigo": 502, "erro": f"Falha de conexão: {str(e)}", "processos": []}
 
     def listar_caixa_unidade(self, unidade=None):
-        """Lista processos da caixa exigindo validação positiva da tela."""
         unidade = unidade or self.UNIDADE_SAGTI
         url = f"{self.BASE_URL}/controlador.php?acao=procedimento_controlar&infra_sistema={self.SISTEMA_ID}&infra_unidade_atual={unidade}"
         try:
-            resp = self.session.get(url, timeout=10)
+            resp = self._executar_requisicao_segura("GET", url, timeout=10)
             if not self._pagina_caixa_valida(resp):
-                return {"sucesso": False, "erro": "Sessão expirada ou resposta inválida na caixa de entrada.", "processos": []}
+                return {"sucesso": False, "codigo": resp.status_code, "erro": "Sessão expirada ou acesso negado.", "processos": []}
             return self.parsear_tabela_processos(resp.text)
         except Exception as e:
-            return {"sucesso": False, "erro": f"Falha de conexão: {str(e)}", "processos": []}
+            return {"sucesso": False, "codigo": 502, "erro": f"Falha de conexão: {str(e)}", "processos": []}
 
     def parsear_tabela_processos(self, html):
-        """Parser preciso: suporta aspas simples/duplas e filtra exclusivamente acao=procedimento_trabalhar."""
+        """Parser preciso: suporta aspas simples/duplas, parâmetros em qualquer ordem e acao estrita."""
         processos = []
-        # Captura links <a> com href em aspas simples ou duplas contendo explicitamente procedimento_trabalhar
-        padrao = r'<a\s+[^>]*href=['"][^'"]*acao=procedimento_trabalhar[^'"]*id_procedimento=(\d+)[^'"]*['"][^>]*>(.*?)</a>'
-        matches = re.findall(padrao, html, flags=re.DOTALL | re.IGNORECASE)
-        
-        # Também verifica caso id_procedimento venha antes de acao=procedimento_trabalhar
-        if not matches:
-            padrao_alt = r'<a\s+[^>]*href=['"][^'"]*id_procedimento=(\d+)[^'"]*acao=procedimento_trabalhar[^'"]*['"][^>]*>(.*?)</a>'
-            matches = re.findall(padrao_alt, html, flags=re.DOTALL | re.IGNORECASE)
+        tags_a = re.findall(r'<a\s+([^>]+)>(.*?)</a>', html, flags=re.DOTALL | re.IGNORECASE)
+        for attrs, texto_bruto in tags_a:
+            m_href = re.search(r'href=['"]([^'"]+)['"]', attrs, flags=re.IGNORECASE)
+            if not m_href:
+                continue
+            href = m_href.group(1)
 
-        for id_proc, texto_bruto in matches:
+            # Valida que acao é ESTRITAMENTE procedimento_trabalhar (não aceita prefixos derivados)
+            if not re.search(r'(?:^|[?&])acao=procedimento_trabalhar(?:&|$)', href):
+                continue
+
+            # Extrai id_procedimento em qualquer posição da query string
+            m_id = re.search(r'(?:^|[?&])id_procedimento=(\d+)(?:&|$)', href)
+            if not m_id:
+                continue
+            id_proc = m_id.group(1)
+
             num_proc = re.sub(r'<[^>]+>', '', texto_bruto).strip()
-            if num_proc and not any(ign in num_proc.lower() for ign in ['excluir', 'visualizar', 'anotação', 'post-it']):
+            if num_proc and not any(ign in num_proc.lower() for ign in ['excluir', 'anotação', 'post-it']):
                 processos.append({
                     "id_procedimento": id_proc,
                     "ID_Processo": num_proc,
