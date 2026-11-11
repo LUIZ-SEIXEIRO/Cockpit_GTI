@@ -842,7 +842,12 @@ def api_v1_sei_salvar_sessao():
 @requer_autenticacao
 def api_v1_sei_processos():
     resultado = motor_sei_instance.listar_caixa_unidade()
-    return jsonify(resultado), (200 if resultado.get('sucesso') else 401)
+    if resultado.get('sucesso'):
+        return jsonify(resultado), 200
+    erro = str(resultado.get('erro', '')).lower()
+    if 'conexão' in erro or 'timeout' in erro or 'falha de conexão' in erro:
+        return jsonify(resultado), 502
+    return jsonify(resultado), 401
 
 @app.route('/api/v1/sei/buscar', methods=['POST'])
 @requer_autenticacao
@@ -850,7 +855,12 @@ def api_v1_sei_buscar():
     dados = request.get_json(force=True) or {}
     termo = dados.get('termo') or dados.get('query') or ''
     resultado = motor_sei_instance.buscar_processos(termo=termo)
-    return jsonify(resultado), (200 if resultado.get('sucesso') else 401)
+    if resultado.get('sucesso'):
+        return jsonify(resultado), 200
+    erro = str(resultado.get('erro', '')).lower()
+    if 'conexão' in erro or 'timeout' in erro or 'falha de conexão' in erro:
+        return jsonify(resultado), 502
+    return jsonify(resultado), 401
 
 if __name__ == '__main__':
     porta = int(os.environ.get('PORT', 5000))
