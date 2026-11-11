@@ -16,3 +16,5 @@ __pycache__/
 # Armazenamento local de IA
 ollama_data/
 new-api-data/
+
+volumes_docker/

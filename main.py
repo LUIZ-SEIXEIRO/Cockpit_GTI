@@ -14,6 +14,43 @@ from flask import Flask, request, jsonify, send_from_directory
 
 app = Flask(__name__)
 
+ALLOWED_HOSTS = {"localhost", "127.0.0.1", "::1", "cockpit.spaguas.gov.br"}
+ALLOWED_ORIGINS = {
+    "http://localhost:5000", "http://127.0.0.1:5000",
+    "http://localhost:3000", "http://127.0.0.1:3000",
+    "https://cockpit.spaguas.gov.br"
+}
+
+def validar_origem_estrita(origem):
+    if not origem:
+        return False
+    try:
+        parsed = urlparse(origem)
+        return (parsed.hostname in ALLOWED_HOSTS) or (origem.rstrip("/") in ALLOWED_ORIGINS)
+    except Exception:
+        return False
+
+def requer_autenticacao(f):
+    @wraps(f)
+    def decorado(*args, **kwargs):
+        token_esperado = os.getenv("COCKPIT_API_TOKEN") or os.getenv("API_TOKEN")
+        auth_header = request.headers.get("Authorization", "")
+        token_fornecido = auth_header.replace("Bearer ", "").strip() if auth_header else request.headers.get("X-API-Key", "")
+        
+        if token_esperado:
+            if token_fornecido and token_fornecido == token_esperado:
+                return f(*args, **kwargs)
+            return jsonify({"erro": "Acesso não autorizado: token inválido ou ausente"}), 401
+            
+        # Se não há token configurado, rejeita qualquer origem externa ou forjada
+        origem = request.headers.get("Origin") or request.headers.get("Referer")
+        if validar_origem_estrita(origem) or request.remote_addr in ("127.0.0.1", "::1"):
+            return f(*args, **kwargs)
+            
+        return jsonify({"erro": "Acesso não autorizado: autenticação requerida"}), 401
+    return decorado
+
+
 # ==========================================
 # SEGURANÇA E AUTENTICAÇÃO INSTITUCIONAL
 # ==========================================
@@ -32,14 +69,7 @@ ALLOWED_ORIGINS = {
     "https://cockpit.spaguas.gov.br"
 }
 
-def validar_origem_estrita(origem):
-    if not origem:
-        return False
-    try:
-        parsed = urlparse(origem)
-        return (parsed.hostname in ALLOWED_HOSTS) or (origem.rstrip("/") in ALLOWED_ORIGINS)
-    except Exception:
-        return False
+# [Função legada de startswith expurgada]
 
 def requer_autenticacao(f):
     @wraps(f)

@@ -35,7 +35,7 @@ pool_config = {
             "id": "principal",
             "nome": "IA 1 — Principal (Interação, Copiloto 360° & Atendimento)",
             "endpoint": "http://100.103.100.98:3001/v1",
-            "apiKey": "sk-RAZNLjgeaKLVgufkyiemxilJb2HZU6ilvkmTpvLXoOwyIaUL",
+            "apiKey": "sk-CHAVE-SANITIZADA-INSTITUCIONAL",
             "agent": "qwen2.5-coder:1.5b",
             "reserva": "deepseek-r1:14b",
             "promptCustom": "Você é a IA pessoal e parceiro executivo do Luiz Antonio Seixeiro na SA-GTI da SP-Águas. Responda SEMPRE de forma DIRETA, CLARA, OBJETIVA e CONVERSACIONAL em português, indo direto ao ponto da dúvida dele. Se ele perguntar sobre uma tarefa ou se nela existe dossiê, responda DIRETAMENTE com fatos reais. NUNCA use frases evasivas como 'Dei uma olhada na nossa base', NUNCA mencione pacotes não solicitados e NUNCA responda genericamente.",
@@ -51,7 +51,7 @@ pool_config = {
             "id": "orquestracao",
             "nome": "IA 2 — Orquestração (Governança & Escrita OpenProject)",
             "endpoint": "http://100.103.100.98:3001/v1",
-            "apiKey": "sk-GxdEHwXjAPXW50uuBVeDLAEeSXdt6kJfcduffPsjBnmsRs3H",
+            "apiKey": "sk-CHAVE-SANITIZADA-INSTITUCIONAL",
             "agent": "llama3.2:1b",
             "reserva": "deepseek-r1:14b",
             "promptCustom": "Você é a IA 2 de Governança e Escrita no OpenProject da SA-GTI (SP-Águas). Atua na elaboração e homologação de Dossiês Técnicos de Governança, Contratação & Orquestração em conformidade com a Lei 14.133/2021, Súmula 269 TCU e PDTIC 2027-2030, gravando pareceres objetivos e estruturados.",
@@ -67,7 +67,7 @@ pool_config = {
             "id": "microservicos",
             "nome": "IA 3 — Microsserviços (Triagem Ágil & Suporte Rápido)",
             "endpoint": "http://100.103.100.98:3001/v1",
-            "apiKey": "sk-RAZNLjgeaKLVgufkyiemxilJb2HZU6ilvkmTpvLXoOwyIaUL",
+            "apiKey": "sk-CHAVE-SANITIZADA-INSTITUCIONAL",
             "agent": "qwen2.5-coder:1.5b",
             "reserva": "deepseek-r1:14b",
             "promptCustom": "Você é o Agente de Microsserviços e Triagem Ágil da SA-GTI. Diagnostica chamados GLPI e apoia na dinâmica da Daily Scrum com máxima concisão e precisão.",
@@ -162,7 +162,7 @@ def api_v1_ia_chat_proxy_handler():
     try:
         data = request.get_json(force=True) or {}
         endpoint = data.get('endpoint', 'http://100.103.100.98:3001/v1').rstrip('/')
-        api_key = data.get('apiKey', 'sk-RAZNLjgeaKLVgufkyiemxilJb2HZU6ilvkmTpvLXoOwyIaUL')
+        api_key = data.get('apiKey', 'sk-CHAVE-SANITIZADA-INSTITUCIONAL')
         model = data.get('model', 'qwen2.5-coder:1.5b')
         messages = data.get('messages', [])
         temperature = data.get('temperature', 0.0)
@@ -227,7 +227,7 @@ def api_v1_ia_revisar_processo_proxy():
         )
 
         url_ia = "http://100.103.100.98:3001/v1/chat/completions"
-        api_key_ia = "sk-GxdEHwXjAPXW50uuBVeDLAEeSXdt6kJfcduffPsjBnmsRs3H"
+        api_key_ia = "sk-CHAVE-SANITIZADA-INSTITUCIONAL"
         payload_ia = {
             "model": "llama3.2:1b",
             "messages": [
