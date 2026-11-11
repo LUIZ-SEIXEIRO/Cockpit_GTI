@@ -115,17 +115,13 @@ class MotorSEI:
             os.replace(tmp_path, self.caminho_sessao)
             sucesso_replace = True
             tmp_path = None
-
-            # fsync no diretório pai em POSIX para durabilidade física completa da renomeação
+            # fsync obrigatório no diretório pai em POSIX para durabilidade física completa da renomeação
             if hasattr(os, "O_DIRECTORY"):
+                dir_fd = os.open(dir_sessao, os.O_RDONLY | os.O_DIRECTORY)
                 try:
-                    dir_fd = os.open(dir_sessao, os.O_RDONLY | os.O_DIRECTORY)
-                    try:
-                        os.fsync(dir_fd)
-                    finally:
-                        os.close(dir_fd)
-                except Exception:
-                    pass
+                    os.fsync(dir_fd)
+                finally:
+                    os.close(dir_fd)
 
         finally:
             if tmp_fd is not None:

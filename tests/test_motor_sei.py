@@ -66,7 +66,7 @@ class TestMotorSEI(unittest.TestCase):
         self.assertEqual(res["processos"][0]["ID_Processo"], "137.00001111/2026-10")
 
     def test_06_falha_fsync_aborta_substituicao_e_limpa(self):
-        """Valida que erro de fsync aborta os.replace e preserva sessão anterior."""
+        """Valida que erro de fsync aborta os.replace, preserva a sessão e remove temporários."""
         cookies_iniciais = {"PHPSESSID": "sessao_original"}
         self.motor.salvar_sessao(cookies_iniciais)
         self.assertEqual(self.motor.session.cookies.get("PHPSESSID", domain="sei.sp.gov.br"), "sessao_original")
@@ -75,9 +75,13 @@ class TestMotorSEI(unittest.TestCase):
             with self.assertRaises(OSError):
                 self.motor.salvar_sessao({"PHPSESSID": "sessao_nova_corrompida"})
 
-        # Garante que a sessão original permaneceu intacta
+        # 1. Garante que a sessão original permaneceu intacta
         self.motor.carregar_sessao()
         self.assertEqual(self.motor.session.cookies.get("PHPSESSID", domain="sei.sp.gov.br"), "sessao_original")
+
+        # 2. Comprova formalmente que nenhum arquivo temporário .tmp sobrou no diretório
+        arquivos_tmp = [f for f in os.listdir(self.temp_dir.name) if f.endswith('.tmp')]
+        self.assertEqual(arquivos_tmp, [], f"Resíduos temporários não foram limpos: {arquivos_tmp}")
 
 if __name__ == '__main__':
     unittest.main()
