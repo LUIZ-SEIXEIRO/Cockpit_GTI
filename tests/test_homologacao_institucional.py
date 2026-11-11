@@ -14,6 +14,7 @@ class TestHomologacaoInstitucional(unittest.TestCase):
             self.assertEqual(res.status_code, 200)
             data = res.get_json()
             self.assertIn('status', data)
+        mock_porta.assert_called()
 
     def test_02_autorizacao_estrita_mutacao(self):
         """Valida que rotas mutáveis sem token recebem HTTP 401."""
@@ -64,23 +65,25 @@ class TestHomologacaoInstitucional(unittest.TestCase):
 
     @patch('urllib.request.urlopen')
     def test_05_sync_batch_falha_rede_isolada(self, mock_urlopen):
-        """Simula falha de rede isolada no OpenProject e comprova resposta HTTP 502."""
+        """Simula falha de rede no OpenProject e comprova que urlopen foi invocado e retornou 502."""
         mock_urlopen.side_effect = urllib.error.URLError('Falha simulada de conexao em sandbox')
-        with patch.dict(os.environ, {'COCKPIT_API_TOKEN': 'token_teste_hermetico'}):
+        with patch.dict(os.environ, {'COCKPIT_API_TOKEN': 'token_teste_hermetico', 'OPENPROJECT_URL': 'https://openproject.spaguas.sp.gov.br'}):
             headers = {'Authorization': 'Bearer token_teste_hermetico'}
             res = self.client.post('/api/v1/openproject/sync_batch', headers=headers, json={'itens': [{'id': 99999, 'descricao': 'Teste'}]})
             self.assertEqual(res.status_code, 502)
             data = res.get_json()
             self.assertFalse(data.get('sucesso'))
+            mock_urlopen.assert_called()
 
     @patch('urllib.request.urlopen')
     def test_06_glpi_falha_rede_isolada(self, mock_urlopen):
-        """Simula falha de rede no GLPI com tokens próprios configurados e sem cache."""
+        """Simula falha de rede no GLPI com tokens configurados e comprova chamada de urlopen e retorno 502."""
         mock_urlopen.side_effect = urllib.error.URLError('Falha simulada GLPI')
         with patch('os.path.exists', return_value=False), \
              patch.dict(os.environ, {'GLPI_URL': 'https://glpi.fake.spaguas.sp.gov.br', 'GLPI_APP_TOKEN': 'token_app_fake', 'GLPI_USER_TOKEN': 'token_user_fake'}):
             res = self.client.get('/api/v1/glpi/tickets')
             self.assertEqual(res.status_code, 502)
+            mock_urlopen.assert_called()
 
 if __name__ == '__main__':
     unittest.main()
