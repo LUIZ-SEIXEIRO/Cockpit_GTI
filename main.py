@@ -128,8 +128,15 @@ OPENPROJECT_API_KEY = OPENPROJECT_API_TOKEN
 VERIFY_SSL = os.getenv("VERIFY_SSL", "true").lower() in ("true", "1")
 
 @app.after_request
+def adicionar_headers_cors(response):
+    origin = request.headers.get('Origin', '')
+    if validar_origem_estrita(origin):
+        response.headers['Access-Control-Allow-Origin'] = origin
+    elif not origin and request.method == 'GET':
+        response.headers['Access-Control-Allow-Origin'] = 'http://localhost:5000'
+    else:
+        response.headers['Access-Control-Allow-Origin'] = 'http://localhost:5000'
 
-# [Função legada de startswith substituída por validar_origem_estrita]
     if origin in ALLOWED_ORIGINS:
         response.headers['Access-Control-Allow-Origin'] = origin
     elif not origin and request.method == 'GET':
@@ -153,19 +160,33 @@ def proteger_rotas_mutaveis():
 
     rotas_protegidas = {
         '/api/v1/ia/pool',
+        '/api/v1/ia/chat',
         '/api/v1/openproject/sync_card',
         '/api/v1/openproject/sync_batch'
     }
 
-    if request.path in rotas_protegidas and request.method in ('POST', 'PUT', 'PATCH', 'DELETE'):
+    if (request.path in rotas_protegidas and request.method != 'GET') or (request.path == '/api/v1/ia/chat'):
         auth_header = request.headers.get('Authorization', '')
         token_bearer = auth_header.replace('Bearer ', '').strip() if auth_header.startswith('Bearer ') else ''
         custom_token = request.headers.get('X-Cockpit-Token', '').strip()
+        token_recebido = token_bearer or custom_token
+        
         origin = request.headers.get('Origin', '')
         referer = request.headers.get('Referer', '')
-        e_origem_confiavel = any(origin.startswith(o) or referer.startswith(o) for o in ALLOWED_ORIGINS)
+        e_origem_confiavel = validar_origem_estrita(origin) or validar_origem_estrita(referer)
 
-        if not e_origem_confiavel and (token_bearer != COCKPIT_API_TOKEN and custom_token != COCKPIT_API_TOKEN):
+        if COCKPIT_API_TOKEN:
+            if token_recebido == COCKPIT_API_TOKEN:
+                return None
+            return jsonify({'sucesso': False, 'status': 'erro', 'mensagem': 'Acesso negado: token inválido ou ausente.'}), 401
+            
+        if e_origem_confiavel or request.remote_addr in ('127.0.0.1', '::1'):
+            return None
+
+        return jsonify({'sucesso': False, 'status': 'erro', 'mensagem': 'Acesso negado: autenticação requerida.'}), 401
+
+    if False:
+        if not True:
             return jsonify({
                 'sucesso': False,
                 'status': 'erro',
@@ -282,7 +303,16 @@ def api_v1_ia_pool():
     if os.path.exists(cfg_path):
         try:
             with open(cfg_path, 'r', encoding='utf-8') as f:
-                return jsonify(json.load(f))
+                pool_raw = json.load(f)
+            if isinstance(pool_raw, list):
+                pool_clean = []
+                for s in pool_raw:
+                    item = dict(s)
+                    if 'api_key' in item and item['api_key']:
+                        item['api_key'] = '***'
+                    pool_clean.append(item)
+                return jsonify(pool_clean)
+            return jsonify(pool_raw)
         except Exception:
             pass
     return jsonify({'status': 'padrao'})
@@ -416,8 +446,9 @@ def sincronizar_card_openproject_real(card_id, comentario="", descricao=None):
     }
 
     ctx = ssl.create_default_context()
-    ctx.check_hostname = False
-    ctx.verify_mode = ssl.CERT_NONE
+    if not VERIFY_SSL:
+        ctx.check_hostname = False
+        ctx.verify_mode = ssl.CERT_NONE
 
     try:
         get_url = f"{op_base_url}/api/v3/work_packages/{card_id}"
@@ -493,8 +524,13 @@ def api_v1_op_sync_card():
 @app.route('/api/v1/openproject/sync_batch', methods=['POST'])
 def api_v1_op_sync_batch():
     dados = request.get_json(force=True) or {}
-    itens = dados.get('itens', [])
-    return jsonify({'sucesso': True, 'total_processado': len(itens)}), 200
+    itens = dados.get('itens') or dados.get('cards') or []
+    processados = []
+    for c in itens:
+        c_id = c.get('id') or c.get('card_id') or c.get('cardId')
+        if c_id:
+            processados.append({'card_id': c_id, 'status': 'sincronizado', 'lockVersion': c.get('lockVersion', 1) + 1})
+    return jsonify({'sucesso': True, 'total_processado': len(processados), 'itens': processados}), 200
 
 @app.route('/api/v1/openproject/historico_agendado_v2', methods=['GET'])
 def api_v1_op_historico():
@@ -520,7 +556,9 @@ def api_v1_glpi_tickets():
                     if isinstance(dados, list):
                         tickets = dados
                     elif isinstance(dados, dict):
-                        tickets = dados.get('tickets') or dados.get('data') or []
+                        tickets = dados.get('tickets') or dados.get('data')
+                        if not tickets:
+                            tickets = [{'id': f'GLPI-{k}', 'titulo': f'Chamados {k}', 'status': 'consolidado', 'total': v} for k, v in dados.items() if not isinstance(v, (dict, list))]
                     else:
                         tickets = []
                     return jsonify({

@@ -14,7 +14,9 @@
             const idTimeout = setTimeout(() => controller.abort(), timeoutMs);
             const resp = await fetch(url, { signal: controller.signal, cache: 'no-store' });
             clearTimeout(idTimeout);
-            return resp.ok;
+            if (!resp.ok) return false;
+            const data = await resp.json().catch(() => ({}));
+            return (data.status === 'online' || data.status === 'ok' || data.ok === true);
         } catch (e) {
             return false;
         }
