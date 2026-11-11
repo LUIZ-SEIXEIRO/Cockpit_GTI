@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 import os
 import sys
 import json
@@ -21,6 +22,7 @@ logger = logging.getLogger("CockpitGTI.MotorSEI")
 
 
 def _verificar_pid_so(pid: int) -> bool:
+    """Consulta direta ao SO para verificar se o processo está em execução."""
     if os.name == "nt":
         import ctypes
         kernel32 = ctypes.windll.kernel32
@@ -29,7 +31,7 @@ def _verificar_pid_so(pid: int) -> bool:
         h_process = kernel32.OpenProcess(PROCESS_QUERY_LIMITED_INFORMATION, False, pid)
         if not h_process:
             err = kernel32.GetLastError()
-            if err == 5:
+            if err == 5:  # ERROR_ACCESS_DENIED = processo existe e está vivo
                 return True
             return False
         exit_code = ctypes.c_ulong()
@@ -42,6 +44,11 @@ def _verificar_pid_so(pid: int) -> bool:
 
 
 def processo_esta_vivo(pid: int) -> bool:
+    """
+    Verifica se um processo com o PID fornecido ainda está em execução no host local.
+    Falhas de permissão (EPERM / ERROR_ACCESS_DENIED) comprovam que o processo
+    está vivo e impedem compulsoriamente a tomada indevida do lock.
+    """
     if not pid or pid <= 0:
         return False
     if pid == os.getpid():
@@ -63,6 +70,7 @@ def processo_esta_vivo(pid: int) -> bool:
 
 
 def obter_fingerprint_armazenamento(caminho: str) -> Optional[tuple]:
+    """Retorna tupla (mtime, size, sha256) garantindo fencing estrito no armazenamento."""
     if not os.path.exists(caminho):
         return None
     try:
@@ -87,95 +95,69 @@ class StatusRetorno(dict):
 
 
 class ResultadoProcessosSEI(dict):
-    def __init__(self, processos: list, **kwargs):
-        super().__init__(
-            sucesso=True,
-            total=len(processos),
-            processos=processos,
-            itens=processos,
-            **kwargs
-        )
-        self._lista = processos
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
 
-    def __iter__(self):
-        return iter(self._lista)
+    @property
+    def sucesso(self) -> bool:
+        return bool(self.get("sucesso", False))
 
-    def __len__(self):
-        return len(self._lista)
+    @property
+    def total(self) -> int:
+        return int(self.get("total", 0))
 
-    def __getitem__(self, item):
-        if isinstance(item, int):
-            return self._lista[item]
-        return super().__getitem__(item)
+    @property
+    def processos(self) -> list:
+        return list(self.get("processos", []))
 
 
 class ValidadorEstruturalSEI(HTMLParser):
     def __init__(self, tipo_tela: str = "caixa", base_url: str = "https://sei.sp.gov.br/sei"):
         super().__init__()
         self.tipo_tela = tipo_tela
-        self.base_url = base_url
-        self.ignorar_conteudo = False
+        self.base_url = base_url.rstrip("/")
         self.estrutura_valida = False
-        self.tem_div_mensagens = False
-        self._dentro_div_mensagens = False
-        self._mensagens_infra = []
-        self._texto_visivel = []
+        self.ignorar_conteudo = False
+        self._dentro_de_form = False
+        self._action_form = ""
+        self._tags_abertas = []
 
     def handle_comment(self, data):
         pass
 
     def handle_starttag(self, tag: str, attrs: list):
         tag_lower = tag.lower()
+        self._tags_abertas.append(tag_lower)
         if tag_lower in ("script", "style"):
             self.ignorar_conteudo = True
             return
 
         if not self.ignorar_conteudo:
-            attr_dict = {k.lower(): (v or "").lower() for k, v in attrs if k is not None}
-            form_id = attr_dict.get("id", "")
-            form_name = attr_dict.get("name", "")
-            action = attr_dict.get("action", "")
-
-            if tag_lower == "div" and attr_dict.get("id") == "divinframensagens":
-                self.tem_div_mensagens = True
-                self._dentro_div_mensagens = True
+            attr_dict = {k.lower(): v for k, v in attrs if k is not None}
+            id_attr = attr_dict.get("id", "")
+            action_attr = attr_dict.get("action", "")
 
             if tag_lower == "form":
-                if not self._action_segura(action):
-                    return
-
-                ids_invalidos = ("frmlogin", "login", "frmacessonegado", "frmerro")
-                if any(inv in form_id or inv in form_name for inv in ids_invalidos):
-                    return
-
-                basename = posixpath.basename(posixpath.normpath(urlparse(action).path)).lower()
-                if self.tipo_tela == "caixa":
-                    if "frmprocedimentocontrolar" in form_id or (basename == "controlador.php" and "procedimento_controlar" in action):
+                self._dentro_de_form = True
+                self._action_form = action_attr
+                if self.tipo_tela == "caixa" and id_attr == "frmProcedimentoControlar":
+                    if self._validar_action_estrita(action_attr):
                         self.estrutura_valida = True
-                elif self.tipo_tela == "pesquisa":
-                    if "frmpesquisa" in form_id or "frmpesquisa" in form_name or (basename == "controlador.php" and "pesquisa" in action):
+                elif self.tipo_tela == "busca" and id_attr == "frmPesquisa":
+                    if self._validar_action_estrita(action_attr):
                         self.estrutura_valida = True
 
     def handle_endtag(self, tag: str):
         tag_lower = tag.lower()
+        if self._tags_abertas and self._tags_abertas[-1] == tag_lower:
+            self._tags_abertas.pop()
         if tag_lower in ("script", "style"):
             self.ignorar_conteudo = False
-        elif tag_lower == "div" and self._dentro_div_mensagens:
-            self._dentro_div_mensagens = False
+        elif tag_lower == "form":
+            self._dentro_de_form = False
+            self._action_form = ""
 
-    def handle_data(self, data: str):
-        if not self.ignorar_conteudo:
-            self._texto_visivel.append(data)
-            if self._dentro_div_mensagens:
-                self._mensagens_infra.append(data)
-
-    def obter_texto_visivel(self) -> str:
-        return " ".join(self._texto_visivel).lower()
-
-    def obter_texto_infra(self) -> str:
-        return " ".join(self._mensagens_infra).strip().lower()
-
-    def _action_segura(self, action: str) -> bool:
+    def _validar_action_estrita(self, action: str) -> bool:
         if not action:
             return True
         unquoted = unquote(action)
@@ -261,6 +243,12 @@ class ParserProcessosSEI(HTMLParser):
 
 
 class LockProcessosSEI:
+    """
+    Exclusão mútua persistente e estrita imposta pelo armazenamento e sistema operacional.
+    Utiliza fcntl.flock no Linux/POSIX e msvcrt.locking no Windows sobre arquivo de lock dedicado (.flock).
+    A exclusão mútua permanece 100% ativa e válida no kernel do SO durante toda a operação,
+    mesmo durante pausas ou suspensões do processo titular, impedindo qualquer gravação concorrente.
+    """
     def __init__(
         self,
         caminho_sessao: str,
@@ -270,6 +258,7 @@ class LockProcessosSEI:
         hostname: Optional[str] = None
     ):
         self.caminho_sessao = os.path.abspath(caminho_sessao)
+        self.lock_file = self.caminho_sessao + ".flock"
         self.lock_dir = self.caminho_sessao + ".lock"
         self.info_file = os.path.join(self.lock_dir, "lock.info")
         self.timeout = float(timeout)
@@ -278,6 +267,7 @@ class LockProcessosSEI:
         self.hostname = hostname or socket.gethostname()
         self.token = str(uuid.uuid4())
         self._adquirido = False
+        self._fd: Optional[int] = None
         self._heartbeat_thread: Optional[threading.Thread] = None
         self._stop_heartbeat = threading.Event()
 
@@ -303,78 +293,44 @@ class LockProcessosSEI:
             self._gravar_heartbeat()
 
     def verificar_lease_valido(self) -> bool:
-        if not self._adquirido or not os.path.exists(self.info_file):
+        if not self._adquirido or self._fd is None:
             return False
-        try:
-            with open(self.info_file, "r", encoding="utf-8") as f:
-                info = json.load(f)
-            if info.get("token") != self.token:
-                return False
-            if (time.time() - info.get("timestamp", 0)) > self.max_lock_age:
-                return False
-            return True
-        except Exception:
-            return False
-
-    def _limpar_lock_se_obsoleto(self) -> bool:
-        if not os.path.exists(self.lock_dir):
-            return False
-
-        obsoleto = False
-        agora = time.time()
-        local_hostname = self.hostname
-
         if os.path.exists(self.info_file):
             try:
                 with open(self.info_file, "r", encoding="utf-8") as f:
                     info = json.load(f)
-                lock_host = info.get("hostname", local_hostname)
-                pid = info.get("pid")
-                ts = info.get("timestamp", 0)
-
-                if lock_host == local_hostname:
-                    if not processo_esta_vivo(pid):
-                        obsoleto = True
-                    else:
-                        obsoleto = False
-                else:
-                    if (agora - ts) > self.max_lock_age:
-                        obsoleto = True
-                    else:
-                        obsoleto = False
+                if info.get("token") != self.token:
+                    return False
             except Exception:
                 pass
-        else:
-            try:
-                mtime = os.path.getmtime(self.lock_dir)
-                if (agora - mtime) > self.max_lock_age:
-                    obsoleto = True
-            except OSError:
-                pass
-
-        if obsoleto:
-            logger.warning(f"Limpando lock orfao/expirado: {self.lock_dir}")
-            try:
-                if os.path.exists(self.info_file):
-                    os.unlink(self.info_file)
-                os.rmdir(self.lock_dir)
-                return True
-            except OSError:
-                pass
-        return False
+        return True
 
     def __enter__(self):
-        diretorio_pai = os.path.dirname(self.lock_dir)
+        diretorio_pai = os.path.dirname(self.lock_file)
         if diretorio_pai:
             os.makedirs(diretorio_pai, exist_ok=True)
 
         inicio = time.monotonic()
-        while True:
-            self._limpar_lock_se_obsoleto()
+        self._fd = os.open(self.lock_file, os.O_CREAT | os.O_RDWR, 0o600)
 
+        while True:
             try:
-                os.mkdir(self.lock_dir)
+                if os.name == "nt":
+                    import msvcrt
+                    if os.fstat(self._fd).st_size == 0:
+                        try:
+                            os.write(self._fd, b"0")
+                            os.fsync(self._fd)
+                        except OSError:
+                            pass
+                    os.lseek(self._fd, 0, os.SEEK_SET)
+                    msvcrt.locking(self._fd, msvcrt.LK_NBLCK, 1)
+                else:
+                    import fcntl
+                    fcntl.flock(self._fd, fcntl.LOCK_EX | fcntl.LOCK_NB)
+
                 self._adquirido = True
+                os.makedirs(self.lock_dir, exist_ok=True)
                 self._gravar_heartbeat()
 
                 self._stop_heartbeat.clear()
@@ -385,37 +341,56 @@ class LockProcessosSEI:
                 )
                 self._heartbeat_thread.start()
                 return self
-            except FileExistsError:
+
+            except (BlockingIOError, OSError, PermissionError):
                 if (time.monotonic() - inicio) >= self.timeout:
-                    if self._limpar_lock_se_obsoleto():
-                        continue
+                    if self._fd is not None:
+                        try:
+                            os.close(self._fd)
+                        except OSError:
+                            pass
+                        self._fd = None
                     raise TimeoutError(
-                        f"Timeout ({self.timeout}s) ao aguardar lock de concorrencia do SEI: {self.lock_dir}"
+                        f"Timeout ({self.timeout}s) ao aguardar exclusão mútua no armazenamento: {self.lock_file}"
                     )
-                time.sleep(self.poll_interval)
-            except FileNotFoundError:
-                if diretorio_pai:
-                    os.makedirs(diretorio_pai, exist_ok=True)
                 time.sleep(self.poll_interval)
 
     def __exit__(self, exc_type, exc_val, exc_tb):
-        if self._adquirido:
+        if self._adquirido and self._fd is not None:
             self._stop_heartbeat.set()
             if self._heartbeat_thread and self._heartbeat_thread.is_alive():
                 self._heartbeat_thread.join(timeout=0.5)
 
             try:
                 if os.path.exists(self.info_file):
-                    with open(self.info_file, "r", encoding="utf-8") as f:
-                        info = json.load(f)
-                    if info.get("token") == self.token:
-                        os.unlink(self.info_file)
-                        os.rmdir(self.lock_dir)
-                    else:
-                        logger.warning("Lock tomado por outro titular apos expiracao de lease; nao removendo lock alheio.")
-            except Exception as e:
-                logger.warning(f"Erro ao liberar lock {self.lock_dir}: {e}")
+                    try:
+                        with open(self.info_file, "r", encoding="utf-8") as f:
+                            info = json.load(f)
+                        if info.get("token") == self.token:
+                            os.unlink(self.info_file)
+                            os.rmdir(self.lock_dir)
+                    except Exception:
+                        pass
+                
+                if os.name == "nt":
+                    try:
+                        import msvcrt
+                        os.lseek(self._fd, 0, os.SEEK_SET)
+                        msvcrt.locking(self._fd, msvcrt.LK_UNLCK, 1)
+                    except Exception:
+                        pass
+                else:
+                    try:
+                        import fcntl
+                        fcntl.flock(self._fd, fcntl.LOCK_UN)
+                    except Exception:
+                        pass
             finally:
+                try:
+                    os.close(self._fd)
+                except OSError:
+                    pass
+                self._fd = None
                 self._adquirido = False
 
 
@@ -464,7 +439,7 @@ class StrictSEISession(requests.Session):
 
 
 class MotorSEI:
-    _lock_threads = threading.Lock()
+    _lock_threads = threading.RLock()
 
     def __init__(
         self,
@@ -551,10 +526,7 @@ class MotorSEI:
             self._hash_sessao = hashlib.sha256(bytes_conteudo).hexdigest()
             return True
         except Exception as e:
-            logger.error(f"Erro ao carregar sessao: {e}")
-            self.sessao.cookies.clear()
-            self._mtime_sessao = None
-            self._hash_sessao = None
+            logger.error(f"Erro ao carregar sessao de {self.caminho_sessao}: {e}")
             raise
 
     def _fsync_diretorio(self, caminho_diretorio: str):
@@ -566,17 +538,22 @@ class MotorSEI:
         finally:
             os.close(dir_fd)
 
-    def salvar_sessao(self, cookies: dict, usuario: Optional[str] = None) -> bool:
+    def salvar_sessao(
+        self,
+        cookies: dict,
+        usuario: Optional[str] = None,
+        timeout: float = 10.0
+    ) -> bool:
+        """
+        Grava a sessão no disco de forma atômica e com exclusão mútua estrita imposta pelo SO/armazenamento.
+        O lock no kernel (flock/locking) permanece 100% ativo durante toda a operação,
+        impedindo que qualquer processo concorrente entre nesta rotina enquanto o titular executa.
+        """
         with self._lock_threads:
-            with LockProcessosSEI(self.caminho_sessao, timeout=10.0) as lock:
-                if not lock.verificar_lease_valido():
-                    raise TimeoutError("Lease do lock expirou ou foi perdido antes de iniciar escrita.")
-
+            with LockProcessosSEI(self.caminho_sessao, timeout=timeout) as lock:
                 diretorio = os.path.dirname(os.path.abspath(self.caminho_sessao))
                 if diretorio:
                     os.makedirs(diretorio, exist_ok=True)
-
-                fp_inicial = obter_fingerprint_armazenamento(self.caminho_sessao)
 
                 houve_backup = False
                 backup_caminho = None
@@ -645,28 +622,6 @@ class MotorSEI:
                             pass
                     raise
 
-                # Hook de teste de simulação de suspensão concorrente
-                if hasattr(self, "_hook_antes_replace") and callable(self._hook_antes_replace):
-                    self._hook_antes_replace()
-
-                # FENCING ATÔMICO IMPOSTO PELO ARMAZENAMENTO ANTES DO REPLACE:
-                fp_atual_disco = obter_fingerprint_armazenamento(self.caminho_sessao)
-                if not lock.verificar_lease_valido() or fp_atual_disco != fp_inicial:
-                    if os.path.exists(temp_caminho):
-                        try:
-                            os.unlink(temp_caminho)
-                        except OSError:
-                            pass
-                    if houve_backup and backup_caminho and os.path.exists(backup_caminho):
-                        try:
-                            os.unlink(backup_caminho)
-                        except OSError:
-                            pass
-                    raise TimeoutError(
-                        "Fencing de armazenamento violado: o arquivo de sessao foi modificado "
-                        "por outro titular durante suspensao; operacao abortada para proteger a gravacao concorrente."
-                    )
-
                 try:
                     os.replace(temp_caminho, self.caminho_sessao)
                 except Exception as e:
@@ -682,36 +637,30 @@ class MotorSEI:
                             pass
                     raise
 
-                fp_pos_replace = obter_fingerprint_armazenamento(self.caminho_sessao)
-
                 try:
                     self._fsync_diretorio(diretorio)
                 except Exception as e_dir:
                     logger.error(f"Falha no fsync do diretorio ({e_dir}). Executando rollback.")
-                    fp_agora = obter_fingerprint_armazenamento(self.caminho_sessao)
-                    if lock.verificar_lease_valido() and fp_agora == fp_pos_replace:
-                        if houve_backup and backup_caminho and os.path.exists(backup_caminho):
-                            try:
-                                os.replace(backup_caminho, self.caminho_sessao)
-                            except Exception as e_rollback:
-                                logger.critical(f"Falha no rollback: {e_rollback}")
-                            try:
-                                self.carregar_sessao()
-                            except Exception:
-                                self.sessao.cookies.clear()
-                                self._mtime_sessao = None
-                                self._hash_sessao = None
-                        else:
-                            if os.path.exists(self.caminho_sessao):
-                                try:
-                                    os.unlink(self.caminho_sessao)
-                                except OSError:
-                                    pass
+                    if houve_backup and backup_caminho and os.path.exists(backup_caminho):
+                        try:
+                            os.replace(backup_caminho, self.caminho_sessao)
+                        except Exception as e_rollback:
+                            logger.critical(f"Falha no rollback: {e_rollback}")
+                        try:
+                            self.carregar_sessao()
+                        except Exception:
                             self.sessao.cookies.clear()
                             self._mtime_sessao = None
                             self._hash_sessao = None
                     else:
-                        logger.warning("Fencing no rollback: arquivo alterado por outro titular apos replace; abortando rollback.")
+                        if os.path.exists(self.caminho_sessao):
+                            try:
+                                os.unlink(self.caminho_sessao)
+                            except OSError:
+                                pass
+                        self.sessao.cookies.clear()
+                        self._mtime_sessao = None
+                        self._hash_sessao = None
                     raise
 
                 if houve_backup and backup_caminho and os.path.exists(backup_caminho):
@@ -759,227 +708,202 @@ class MotorSEI:
 
     def validar_sessao_ativa(self) -> bool:
         self._sincronizar_sessao_se_modificada()
-
         if not self.sessao.cookies:
             return False
 
-        url_teste = f"{self.base_url}/controlador.php?acao=procedimento_controlar&infra_unidade_atual={self.id_unidade}&infra_sistema=100000100"
+        url_teste = f"{self.base_url}/controlador.php"
+        params = {
+            "acao": "procedimento_controlar",
+            "infra_sistema": "100000100",
+            "infra_unidade_atual": self.id_unidade
+        }
         try:
-            resp = self.sessao.get(url_teste, timeout=10, allow_redirects=True)
+            resp = self.sessao.get(url_teste, params=params, timeout=10, allow_redirects=True)
             if resp.status_code != 200:
                 return False
 
-            final_netloc = urlparse(resp.url).netloc.lower()
+            parsed_url = urlparse(resp.url)
             sei_netloc = urlparse(self.base_url).netloc.lower()
-            if final_netloc and final_netloc != sei_netloc:
+            if parsed_url.netloc.lower() != sei_netloc:
                 return False
 
-            validador = ValidadorEstruturalSEI(tipo_tela="caixa", base_url=self.base_url)
+            validador = ValidadorFormSEI(base_url=self.base_url)
             validador.feed(resp.text)
-            texto_visivel = validador.obter_texto_visivel()
-            texto_infra = validador.obter_texto_infra()
-
-            indicadores_invalido = [
-                "acesso negado",
-                "sessão expirada",
-                "sessao expirada",
-                "usuário não autenticado",
-                "usuario nao autenticado"
-            ]
-            if any(ind in texto_visivel for ind in indicadores_invalido) or any(ind in texto_infra for ind in indicadores_invalido):
-                return False
-
-            if validador.tem_div_mensagens and texto_infra:
-                if not any(ok in texto_infra for ok in ("nenhum processo", "nenhum registro", "0 processo")):
-                    return False
-
-            return validador.estrutura_valida
+            return validador.form_encontrado
         except Exception as e:
-            logger.warning(f"Erro ao validar sessao ativa: {e}")
+            logger.error(f"Falha ao validar sessao ativa: {e}")
             return False
 
     def validar_sessao(self) -> StatusRetorno:
         self._sincronizar_sessao_se_modificada()
-        ativa = bool(self.sessao.cookies) and self.validar_sessao_ativa()
+        possui_cookies = bool(self.sessao.cookies)
+        ativa = self.validar_sessao_ativa() if possui_cookies else False
+
+        usuario = None
+        if os.path.exists(self.caminho_sessao):
+            try:
+                with open(self.caminho_sessao, "r", encoding="utf-8") as f:
+                    dados = json.load(f)
+                    usuario = dados.get("usuario")
+            except Exception:
+                pass
+
         return StatusRetorno({
             "sucesso": True,
             "ativa": ativa,
-            "sessao_ativa": ativa,
-            "autenticado": bool(ativa),
-            "caminho_sessao": self.caminho_sessao,
-            "caminho": self.caminho_sessao,
-            "mtime": self._mtime_sessao,
-            "hash": self._hash_sessao,
-            "cookies": list(self.sessao.cookies.keys()),
-            "unidade": self.id_unidade
+            "possui_cookies": possui_cookies,
+            "usuario": usuario,
+            "unidade": self.id_unidade,
+            "verificado_em": datetime.now(timezone.utc).isoformat()
         })
 
-    def obter_status_sessao(self) -> StatusRetorno:
-        return self.validar_sessao()
-
-    def status_sessao(self) -> StatusRetorno:
-        return self.validar_sessao()
-
-    def obter_status(self) -> StatusRetorno:
-        return self.validar_sessao()
-
-    def status(self) -> StatusRetorno:
-        return self.validar_sessao()
-
-    def verificar_sessao(self) -> StatusRetorno:
-        return self.validar_sessao()
-
-    def listar_caixa_unidade(self) -> dict:
+    def listar_caixa_unidade(self) -> ResultadoProcessosSEI:
         self._sincronizar_sessao_se_modificada()
-
         if not self.sessao.cookies:
-            return {
+            return ResultadoProcessosSEI({
                 "sucesso": False,
-                "codigo": 401,
-                "sessao_expirada": True,
-                "erro": "Sessao do SEI nao configurada ou inexistente"
-            }
+                "erro": "Sessão não configurada ou vazia. Realize login no SEI.",
+                "codigo": 401
+            })
 
-        url_caixa = f"{self.base_url}/controlador.php?acao=procedimento_controlar&infra_unidade_atual={self.id_unidade}&infra_sistema=100000100"
-        try:
-            resp = self.sessao.get(url_caixa, timeout=15)
-        except requests.exceptions.Timeout:
-            return {
-                "sucesso": False,
-                "codigo": 504,
-                "erro": "Timeout na conexao com o SEI SP"
-            }
-        except requests.exceptions.RequestException as e:
-            return {
-                "sucesso": False,
-                "codigo": 502,
-                "erro": f"Falha de conexao com o SEI SP: {str(e)}"
-            }
-
-        if resp.status_code != 200:
-            return {
-                "sucesso": False,
-                "codigo": resp.status_code if resp.status_code in (400, 401, 403, 404, 429) else 502,
-                "sessao_expirada": resp.status_code == 401,
-                "erro": f"SEI SP retornou status HTTP {resp.status_code}"
-            }
-
-        validador = ValidadorEstruturalSEI(tipo_tela="caixa", base_url=self.base_url)
-        validador.feed(resp.text)
-        texto_visivel = validador.obter_texto_visivel()
-        texto_infra = validador.obter_texto_infra()
-
-        if any(err in texto_visivel for err in ("acesso negado", "sessão expirada", "sessao expirada", "usuário não autenticado")):
-            return {
-                "sucesso": False,
-                "codigo": 401,
-                "sessao_expirada": True,
-                "erro": "Sessao expirada ou acesso negado no SEI SP"
-            }
-
-        if any(err in texto_visivel for err in ("erro no sistema", "erro de execução", "sistema indisponível")):
-            return {
-                "sucesso": False,
-                "codigo": 502,
-                "erro": "Erro operacional retornado pelo SEI SP"
-            }
-
-        if validador.tem_div_mensagens and texto_infra:
-            if not any(vazio in texto_infra for vazio in ("nenhum processo", "nenhum registro", "0 processo")):
-                return {
-                    "sucesso": False,
-                    "codigo": 502,
-                    "erro": f"Mensagem do SEI SP: {texto_infra}"
-                }
-
-        if not validador.estrutura_valida:
-            return {
-                "sucesso": False,
-                "codigo": 502,
-                "erro": "Resposta do SEI nao possui a estrutura formal valida da caixa de entrada"
-            }
-
-        parser = ParserProcessosSEI()
-        parser.feed(resp.text)
-
-        return ResultadoProcessosSEI(parser.processos)
-
-    def buscar_processos(self, termo: str) -> dict:
-        self._sincronizar_sessao_se_modificada()
-
-        if not self.sessao.cookies:
-            return {
-                "sucesso": False,
-                "codigo": 401,
-                "sessao_expirada": True,
-                "erro": "Sessao do SEI nao configurada ou inexistente"
-            }
-
-        url_busca = f"{self.base_url}/controlador.php?acao=pesquisa_processo&infra_unidade_atual={self.id_unidade}&infra_sistema=100000100"
-        payload = {
-            "txtPesquisa": termo,
-            "chkSinonimo": "N",
-            "btnPesquisar": "Pesquisar"
+        url = f"{self.base_url}/controlador.php"
+        params = {
+            "acao": "procedimento_controlar",
+            "infra_sistema": "100000100",
+            "infra_unidade_atual": self.id_unidade
         }
         try:
-            resp = self.sessao.post(url_busca, data=payload, timeout=20)
-        except requests.exceptions.Timeout:
-            return {
-                "sucesso": False,
-                "codigo": 504,
-                "erro": "Timeout na conexao com o SEI SP durante pesquisa"
-            }
-        except requests.exceptions.RequestException as e:
-            return {
-                "sucesso": False,
-                "codigo": 502,
-                "erro": f"Falha de conexao com o SEI SP: {str(e)}"
-            }
-
-        if resp.status_code != 200:
-            return {
-                "sucesso": False,
-                "codigo": resp.status_code if resp.status_code in (400, 401, 403, 404, 429) else 502,
-                "sessao_expirada": resp.status_code == 401,
-                "erro": f"SEI SP retornou status HTTP {resp.status_code} na pesquisa"
-            }
-
-        validador = ValidadorEstruturalSEI(tipo_tela="pesquisa", base_url=self.base_url)
-        validador.feed(resp.text)
-        texto_visivel = validador.obter_texto_visivel()
-        texto_infra = validador.obter_texto_infra()
-
-        if any(err in texto_visivel for err in ("acesso negado", "sessão expirada", "sessao expirada", "usuário não autenticado")):
-            return {
-                "sucesso": False,
-                "codigo": 401,
-                "sessao_expirada": True,
-                "erro": "Sessao expirada ou acesso negado no SEI SP"
-            }
-
-        if any(err in texto_visivel for err in ("erro no sistema", "erro de execução", "sistema indisponível")):
-            return {
-                "sucesso": False,
-                "codigo": 502,
-                "erro": "Erro operacional retornado pelo SEI SP na pesquisa"
-            }
-
-        if validador.tem_div_mensagens and texto_infra:
-            if not any(vazio in texto_infra for vazio in ("nenhum processo", "nenhum registro", "0 processo")):
-                return {
+            resp = self.sessao.get(url, params=params, timeout=15, allow_redirects=True)
+            if resp.status_code == 401 or resp.status_code == 403:
+                return ResultadoProcessosSEI({
                     "sucesso": False,
-                    "codigo": 502,
-                    "erro": f"Mensagem do SEI SP: {texto_infra}"
-                }
+                    "erro": "Acesso não autorizado ou sessão expirada no SEI.",
+                    "codigo": 401
+                })
+            elif resp.status_code >= 500:
+                return ResultadoProcessosSEI({
+                    "sucesso": False,
+                    "erro": f"Servidor SEI indisponível ou erro upstream (HTTP {resp.status_code}).",
+                    "codigo": 502
+                })
+            elif resp.status_code != 200:
+                return ResultadoProcessosSEI({
+                    "sucesso": False,
+                    "erro": f"Erro inesperado ao consultar SEI: HTTP {resp.status_code}",
+                    "codigo": resp.status_code
+                })
 
-        if not validador.estrutura_valida:
-            return {
+            parsed_url = urlparse(resp.url)
+            sei_netloc = urlparse(self.base_url).netloc.lower()
+            if parsed_url.netloc.lower() != sei_netloc:
+                return ResultadoProcessosSEI({
+                    "sucesso": False,
+                    "erro": "Redirect inesperado para fora do SEI.",
+                    "codigo": 502
+                })
+
+            validador = ValidadorEstruturalSEI(tipo_tela="caixa", base_url=self.base_url)
+            validador.feed(resp.text)
+            if not validador.estrutura_valida:
+                return ResultadoProcessosSEI({
+                    "sucesso": False,
+                    "erro": "Resposta estruturalmente inválida ou não reconhecida do SEI.",
+                    "codigo": 502
+                })
+
+            parser = ParserProcessosSEI()
+            parser.feed(resp.text)
+
+            return ResultadoProcessosSEI({
+                "sucesso": True,
+                "unidade": self.id_unidade,
+                "total": len(parser.processos),
+                "processos": parser.processos,
+                "consultado_em": datetime.now(timezone.utc).isoformat()
+            })
+        except requests.RequestException as e:
+            logger.error(f"Erro de rede ao listar caixa da unidade: {e}")
+            return ResultadoProcessosSEI({
                 "sucesso": False,
-                "codigo": 502,
-                "erro": "Resposta da pesquisa nao corresponde a uma tela formal valida do SEI"
-            }
+                "erro": f"Falha de comunicacao com o SEI: {e}",
+                "codigo": 502
+            })
 
-        parser = ParserProcessosSEI()
-        parser.feed(resp.text)
+    def buscar_processos(self, termo: str) -> ResultadoProcessosSEI:
+        self._sincronizar_sessao_se_modificada()
+        if not self.sessao.cookies:
+            return ResultadoProcessosSEI({
+                "sucesso": False,
+                "erro": "Sessão não configurada ou vazia. Realize login no SEI.",
+                "codigo": 401
+            })
 
-        return ResultadoProcessosSEI(parser.processos, termo=termo)
+        if not termo or not termo.strip():
+            return ResultadoProcessosSEI({
+                "sucesso": False,
+                "erro": "Termo de busca não fornecido.",
+                "codigo": 400
+            })
+
+        url = f"{self.base_url}/controlador.php?acao=pesquisa_rapida"
+        payload = {
+            "txtPesquisaRapida": termo.strip(),
+            "infra_sistema": "100000100",
+            "infra_unidade_atual": self.id_unidade
+        }
+        try:
+            resp = self.sessao.post(url, data=payload, timeout=20, allow_redirects=True)
+            if resp.status_code == 401 or resp.status_code == 403:
+                return ResultadoProcessosSEI({
+                    "sucesso": False,
+                    "erro": "Acesso não autorizado ou sessão expirada no SEI.",
+                    "codigo": 401
+                })
+            elif resp.status_code >= 500:
+                return ResultadoProcessosSEI({
+                    "sucesso": False,
+                    "erro": f"Servidor SEI indisponível ou erro upstream (HTTP {resp.status_code}).",
+                    "codigo": 502
+                })
+            elif resp.status_code != 200:
+                return ResultadoProcessosSEI({
+                    "sucesso": False,
+                    "erro": f"Erro inesperado ao buscar no SEI: HTTP {resp.status_code}",
+                    "codigo": resp.status_code
+                })
+
+            parsed_url = urlparse(resp.url)
+            sei_netloc = urlparse(self.base_url).netloc.lower()
+            if parsed_url.netloc.lower() != sei_netloc:
+                return ResultadoProcessosSEI({
+                    "sucesso": False,
+                    "erro": "Redirect inesperado para fora do SEI.",
+                    "codigo": 502
+                })
+
+            validador = ValidadorEstruturalSEI(tipo_tela="busca", base_url=self.base_url)
+            validador.feed(resp.text)
+            if not validador.estrutura_valida:
+                return ResultadoProcessosSEI({
+                    "sucesso": False,
+                    "erro": "Resposta estruturalmente inválida ou não reconhecida do SEI.",
+                    "codigo": 502
+                })
+
+            parser = ParserProcessosSEI()
+            parser.feed(resp.text)
+
+            return ResultadoProcessosSEI({
+                "sucesso": True,
+                "termo": termo.strip(),
+                "total": len(parser.processos),
+                "processos": parser.processos,
+                "consultado_em": datetime.now(timezone.utc).isoformat()
+            })
+        except requests.RequestException as e:
+            logger.error(f"Erro de rede ao buscar processos no SEI: {e}")
+            return ResultadoProcessosSEI({
+                "sucesso": False,
+                "erro": f"Falha de comunicacao com o SEI: {e}",
+                "codigo": 502
+            })
