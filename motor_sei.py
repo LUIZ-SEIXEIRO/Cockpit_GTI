@@ -2,11 +2,10 @@ import os, json, re, time, requests, urllib.parse, posixpath, tempfile, html as 
 from html.parser import HTMLParser
 
 class ValidadorFormSEI(HTMLParser):
-    """Parser HTML que valida exclusivamente tags <form> ativas fora de <script>/<style>."""
-    def __init__(self, ids_alvo=None, actions_alvo=None):
+    """Parser HTML que valida exclusivamente tags <form> ativas com action e host autorizados."""
+    def __init__(self, ids_alvo=None):
         super().__init__()
         self.ids_alvo = [i.lower() for i in (ids_alvo or [])]
-        self.actions_alvo = actions_alvo or []
         self.encontrou = False
         self.em_script = False
 
@@ -27,9 +26,11 @@ class ValidadorFormSEI(HTMLParser):
                     self.encontrou = True
                     return
 
-            # Valida por Action estrita (deve ser exatamente controlador.php)
+            # Valida por Action: se houver hostname, deve ser obrigatoriamente sei.sp.gov.br
             if f_act:
                 p_act = urllib.parse.urlparse(f_act)
+                if p_act.hostname and p_act.hostname.lower() != 'sei.sp.gov.br':
+                    return
                 caminho_act = posixpath.normpath(urllib.parse.unquote(p_act.path))
                 if caminho_act in ('controlador.php', '/sei/controlador.php') or re.search(r'^(?:/sei/)?controlador\.php(?:\?|$)', f_act):
                     self.encontrou = True
@@ -66,7 +67,7 @@ class MotorSEI:
         self.carregar_sessao()
 
     def salvar_sessao(self, cookies_dict):
-        """Gravação atômica via mkstemp com 0600 em nível de kernel e fsync."""
+        """Gravação atômica via mkstemp com loop de escrita total e zero-shredding no fd aberto."""
         dir_sessao = os.path.dirname(self.caminho_sessao)
         os.makedirs(dir_sessao, exist_ok=True)
         
@@ -77,6 +78,7 @@ class MotorSEI:
         
         tmp_fd = None
         tmp_path = None
+        sucesso_replace = False
         try:
             tmp_fd, tmp_path = tempfile.mkstemp(dir=dir_sessao, prefix="sessao_sei_", suffix=".tmp")
             try:
@@ -92,31 +94,43 @@ class MotorSEI:
                 if (st.st_mode & 0o077) != 0:
                     raise PermissionError("Insegurança: permissão não restrita para 0600.")
 
-            os.write(tmp_fd, conteudo)
+            # Escrita em loop garantindo 100% dos bytes gravados
+            escritos = 0
+            while escritos < len(conteudo):
+                n = os.write(tmp_fd, conteudo[escritos:])
+                escritos += n
+                
             os.fsync(tmp_fd)
             os.close(tmp_fd)
             tmp_fd = None
 
             os.replace(tmp_path, self.caminho_sessao)
+            sucesso_replace = True
             tmp_path = None
         finally:
-            if tmp_fd is not None:
-                try:
-                    os.close(tmp_fd)
-                except Exception:
-                    pass
-            if tmp_path and os.path.exists(tmp_path):
-                try:
-                    with open(tmp_path, "wb") as f_del:
-                        f_del.write(b"\x00" * len(conteudo))
-                        f_del.flush()
-                        os.fsync(f_del.fileno())
-                    os.remove(tmp_path)
-                except Exception:
+            if not sucesso_replace:
+                # Se tmp_fd ainda estiver aberto, executa o shredding direto no descritor
+                if tmp_fd is not None:
                     try:
-                        os.remove(tmp_path)
+                        os.lseek(tmp_fd, 0, os.SEEK_SET)
+                        os.write(tmp_fd, b"\x00" * len(conteudo))
+                        os.ftruncate(tmp_fd, 0)
+                        os.fsync(tmp_fd)
+                        os.close(tmp_fd)
                     except Exception:
                         pass
+                if tmp_path and os.path.exists(tmp_path):
+                    try:
+                        with open(tmp_path, "wb") as f_del:
+                            f_del.write(b"\x00" * len(conteudo))
+                            f_del.flush()
+                            os.fsync(f_del.fileno())
+                        os.remove(tmp_path)
+                    except Exception:
+                        try:
+                            os.remove(tmp_path)
+                        except Exception:
+                            pass
                         
         self.carregar_sessao()
 
@@ -136,7 +150,6 @@ class MotorSEI:
         return False
 
     def _executar_requisicao_segura(self, metodo, url, **kwargs):
-        """Valida destino normalizado com unquote e bloqueia vazamento em redirects."""
         parsed = urllib.parse.urlparse(url)
         path_decodificado = urllib.parse.unquote(parsed.path)
         norm_path = posixpath.normpath(path_decodificado)
@@ -156,7 +169,6 @@ class MotorSEI:
         return resp
 
     def _pagina_caixa_valida(self, resp):
-        """Validação positiva com descarte de comentários e action estrita."""
         if resp.status_code != 200:
             return False
         parsed = urllib.parse.urlparse(resp.url)
@@ -164,18 +176,22 @@ class MotorSEI:
         if parsed.scheme != "https" or parsed.hostname != self.HOST_PERMITIDO or (not norm_path.startswith("/sei/") and norm_path != "/sei"):
             return False
             
+        # 1. Remove comentários HTML
         texto_limpo = re.sub(r"<!--.*?-->", "", resp.text, flags=re.DOTALL)
         texto_lower = texto_limpo.lower()
         if any(t in texto_lower for t in self.TERMOS_ERRO):
             return False
             
+        # 2. Valida form via HTMLParser
         parser = ValidadorFormSEI(ids_alvo=["frmprocedimentocontrolar"])
         try:
             parser.feed(texto_limpo)
         except Exception:
             return False
             
-        tem_tabela = "infratabela" in texto_lower or "infraareadados" in texto_lower or "id_procedimento" in texto_lower
+        # 3. Expuga <script> e <style> antes de checar marcadores da tabela
+        texto_sem_script = re.sub(r"<(script|style)[^>]*>.*?</>", "", texto_limpo, flags=re.DOTALL | re.IGNORECASE).lower()
+        tem_tabela = "infratabela" in texto_sem_script or "infraareadados" in texto_sem_script or "id_procedimento" in texto_sem_script
         return parser.encontrou and tem_tabela
 
     def _pagina_busca_valida(self, resp):
@@ -197,15 +213,24 @@ class MotorSEI:
         except Exception:
             return False
             
-        tem_resultado = "infratabela" in texto_lower or "procedimento_trabalhar" in texto_lower or "nenhum" in texto_lower
+        texto_sem_script = re.sub(r"<(script|style)[^>]*>.*?</>", "", texto_limpo, flags=re.DOTALL | re.IGNORECASE).lower()
+        tem_resultado = "infratabela" in texto_sem_script or "procedimento_trabalhar" in texto_sem_script or "nenhum" in texto_sem_script
         return parser.encontrou and tem_resultado
+
+    def _detectar_expiracao(self, resp):
+        """Identifica expiração de sessão inspecionando corpo, URL e cabeçalho Location de redirects."""
+        loc = resp.headers.get("Location", "").lower()
+        url = resp.url.lower()
+        texto = resp.text.lower()
+        termos_login = ["txtusuario", "plataforma.sp.gov.br", "minhaarea.sp.gov.br", "acesso.gov.br", "/login"]
+        return any(t in texto or t in loc or t in url for t in termos_login)
 
     def validar_sessao(self):
         try:
             url = f"{self.BASE_URL}/controlador.php?acao=procedimento_controlar&infra_sistema={self.SISTEMA_ID}&infra_unidade_atual={self.UNIDADE_SAGTI}"
             resp = self._executar_requisicao_segura("GET", url, timeout=6)
             if not self._pagina_caixa_valida(resp):
-                is_expired = any(t in resp.text.lower() for t in ["txtusuario", "plataforma.sp.gov.br", "minhaarea.sp.gov.br", "acesso.gov.br"])
+                is_expired = self._detectar_expiracao(resp)
                 return {"autenticado": False, "codigo": resp.status_code, "sessao_expirada": is_expired, "mensagem": "Sessão expirada ou resposta não autorizada."}
             return {"autenticado": True, "unidade": self.UNIDADE_SAGTI, "mensagem": "Sessão ativa na SA-GTI"}
         except Exception as e:
@@ -223,7 +248,7 @@ class MotorSEI:
         try:
             resp = self._executar_requisicao_segura("POST", url, data=payload, timeout=10)
             if not self._pagina_busca_valida(resp):
-                is_expired = any(t in resp.text.lower() for t in ["txtusuario", "plataforma.sp.gov.br", "minhaarea.sp.gov.br", "acesso.gov.br"])
+                is_expired = self._detectar_expiracao(resp)
                 return {"sucesso": False, "codigo": resp.status_code, "sessao_expirada": is_expired, "erro": "Sessão expirada ou erro na busca.", "processos": []}
             return self.parsear_tabela_processos(resp.text)
         except Exception as e:
@@ -235,14 +260,13 @@ class MotorSEI:
         try:
             resp = self._executar_requisicao_segura("GET", url, timeout=10)
             if not self._pagina_caixa_valida(resp):
-                is_expired = any(t in resp.text.lower() for t in ["txtusuario", "plataforma.sp.gov.br", "minhaarea.sp.gov.br", "acesso.gov.br"])
+                is_expired = self._detectar_expiracao(resp)
                 return {"sucesso": False, "codigo": resp.status_code, "sessao_expirada": is_expired, "erro": "Sessão expirada ou acesso negado.", "processos": []}
             return self.parsear_tabela_processos(resp.text)
         except Exception as e:
             return {"sucesso": False, "codigo": 502, "erro": f"Falha de conexão: {str(e)}", "processos": []}
 
     def parsear_tabela_processos(self, html):
-        """Parser preciso sem SyntaxError: trata &amp;, aspas simples/duplas e acao estrita."""
         processos = []
         tags_a = re.findall(r"<a\s+([^>]+)>(.*?)</a>", html, flags=re.DOTALL | re.IGNORECASE)
         for attrs, texto_bruto in tags_a:

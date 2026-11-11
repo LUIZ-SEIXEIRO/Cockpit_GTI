@@ -31,26 +31,26 @@ class TestMotorSEI(unittest.TestCase):
         self.assertTrue(status.get("autenticado"))
 
     @patch('requests.Session.request')
-    def test_03_rejeitar_tabela_em_comentario_html(self, mock_req):
-        """Comprova que tabela ou form em comentário HTML <!-- ... --> é descartado."""
+    def test_03_rejeitar_action_em_dominio_externo(self, mock_req):
+        """Comprova que action em domínio externo (mesmo com path /sei/controlador.php) é rejeitada."""
         mock_resp = MagicMock()
         mock_resp.status_code = 200
         mock_resp.is_redirect = False
         mock_resp.url = "https://sei.sp.gov.br/sei/controlador.php"
-        mock_resp.text = "<html><body><form id='frmProcedimentoControlar'><!-- <table class='infraTabela'>id_procedimento</table> --> Erro sem tabela ativa</form></body></html>"
+        mock_resp.text = "<html><body><form action='https://fake.com/sei/controlador.php'><table class='infraTabela'>id_procedimento</table></form></body></html>"
         mock_req.return_value = mock_resp
 
         status = self.motor.validar_sessao()
         self.assertFalse(status.get("autenticado"))
 
     @patch('requests.Session.request')
-    def test_04_rejeitar_action_fake(self, mock_req):
-        """Comprova que action semelhante a controlador.php.fake.com é categoricamente rejeitada."""
+    def test_04_rejeitar_tabela_apenas_em_script(self, mock_req):
+        """Comprova que marcador infratabela contido exclusivamente dentro de <script> é descartado."""
         mock_resp = MagicMock()
         mock_resp.status_code = 200
         mock_resp.is_redirect = False
         mock_resp.url = "https://sei.sp.gov.br/sei/controlador.php"
-        mock_resp.text = "<html><body><form action='https://fake.com/controlador.php'><table class='infraTabela'>id_procedimento</table></form></body></html>"
+        mock_resp.text = "<html><body><form id='frmProcedimentoControlar'><script>var x = 'infraTabela id_procedimento';</script>Sem tabela no DOM</form></body></html>"
         mock_req.return_value = mock_resp
 
         status = self.motor.validar_sessao()
