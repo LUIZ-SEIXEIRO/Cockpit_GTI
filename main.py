@@ -54,7 +54,7 @@ def requer_autenticacao(f):
 # ==========================================
 # SEGURANÇA E AUTENTICAÇÃO INSTITUCIONAL
 # ==========================================
-COCKPIT_API_TOKEN = os.getenv("COCKPIT_API_TOKEN") or os.getenv("API_TOKEN") or ""
+COCKPIT_API_TOKEN = os.getenv("COCKPIT_API_TOKEN") or os.getenv("API_TOKEN") or "spaguas_cockpit_auth_token_padrao"
 API_TOKEN = COCKPIT_API_TOKEN
 OPENPROJECT_API_TOKEN = os.getenv("OPENPROJECT_API_TOKEN") or os.getenv("OPENPROJECT_API_KEY") or ""
 OPENPROJECT_API_KEY = OPENPROJECT_API_TOKEN
@@ -166,20 +166,17 @@ def proteger_rotas_mutaveis():
         '/api/v1/openproject/sync_batch'
     }
 
-    # Qualquer mutação nas rotas protegidas ou chamadas a chat/testar_slot
     if (request.path in rotas_protegidas and request.method in ('POST', 'PUT', 'PATCH', 'DELETE')) or request.path in ('/api/v1/ia/chat', '/api/v1/ia/testar_slot'):
         auth_header = request.headers.get('Authorization', '')
         token_bearer = auth_header.replace('Bearer ', '').strip() if auth_header.startswith('Bearer ') else ''
         custom_token = request.headers.get('X-Cockpit-Token', '').strip()
         token_recebido = token_bearer or custom_token
 
-        # 1. Token é estritamente obrigatório (token vazio = 401 sempre)
-        if not token_recebido:
-            return jsonify({'sucesso': False, 'status': 'erro', 'mensagem': 'Acesso negado: token obrigatório.'}), 401
+        token_esperado = os.getenv("COCKPIT_API_TOKEN") or os.getenv("API_TOKEN") or "spaguas_cockpit_auth_token_padrao"
 
-        # 2. Se COCKPIT_API_TOKEN estiver configurado, valida correspondência exata
-        if COCKPIT_API_TOKEN and token_recebido != COCKPIT_API_TOKEN:
-            return jsonify({'sucesso': False, 'status': 'erro', 'mensagem': 'Acesso negado: token inválido.'}), 401
+        # Rejeita token vazio ou token divergente do esperado
+        if not token_recebido or token_recebido != token_esperado:
+            return jsonify({'sucesso': False, 'status': 'erro', 'mensagem': 'Acesso negado: token inválido ou ausente.'}), 401
 
 
 def encontrar_arquivo_painel():
@@ -291,12 +288,46 @@ def mascarar_chaves_recursivo(obj):
         return [mascarar_chaves_recursivo(item) for item in obj]
     return obj
 
+def mascarar_chaves_recursivo(obj):
+    if isinstance(obj, dict):
+        novo = {}
+        for k, v in obj.items():
+            if any(termo in k.lower() for termo in ('apikey', 'api_key', 'chave', 'secret', 'token')) and isinstance(v, str):
+                novo[k] = '***' if v else ''
+            else:
+                novo[k] = mascarar_chaves_recursivo(v)
+        return novo
+    elif isinstance(obj, list):
+        return [mascarar_chaves_recursivo(item) for item in obj]
+    return obj
+
+def mesclar_preservando_segredos(novos, originais):
+    if isinstance(novos, dict) and isinstance(originais, dict):
+        for k, v in novos.items():
+            if k in originais:
+                if v == '***' or (isinstance(v, str) and v.startswith('***')):
+                    novos[k] = originais[k]
+                else:
+                    novos[k] = mesclar_preservando_segredos(v, originais[k])
+    elif isinstance(novos, list) and isinstance(originais, list):
+        for i, item in enumerate(novos):
+            if i < len(originais):
+                novos[i] = mesclar_preservando_segredos(item, originais[i])
+    return novos
+
 @app.route('/api/v1/ia/pool', methods=['GET', 'POST'])
 def api_v1_ia_pool():
     cfg_path = localizar_config_pool()
     if request.method == 'POST':
         try:
             dados = request.get_json(force=True) or {}
+            if os.path.exists(cfg_path):
+                try:
+                    with open(cfg_path, 'r', encoding='utf-8') as f_orig:
+                        config_original = json.load(f_orig)
+                    dados = mesclar_preservando_segredos(dados, config_original)
+                except Exception:
+                    pass
             with open(cfg_path, 'w', encoding='utf-8') as f:
                 json.dump(dados, f, indent=2, ensure_ascii=False)
             return jsonify({'sucesso': True, 'status': 'sucesso', 'mensagem': 'Pool salvo com sucesso!'})
@@ -541,12 +572,18 @@ def api_v1_op_sync_batch():
                 req = urllib.request.Request(get_url, headers=headers, method='GET')
                 with urllib.request.urlopen(req, timeout=5, context=ctx) as resp:
                     wp_data = json.loads(resp.read().decode())
-                processados.append({'card_id': c_id, 'status': 'sincronizado', 'lockVersion': wp_data.get('lockVersion', 1)})
-            except Exception:
-                # Registra a tentativa de sincronização com o OpenProject
-                processados.append({'card_id': c_id, 'status': 'sincronizado', 'lockVersion': c.get('lockVersion', 1) + 1})
+                processados.append({'card_id': c_id, 'sucesso': True, 'status': 'sincronizado', 'lockVersion': wp_data.get('lockVersion', 1)})
+            except Exception as e:
+                # Falha real reportada com sucesso: False
+                processados.append({'card_id': c_id, 'sucesso': False, 'status': 'erro_conexao', 'mensagem': str(e)})
 
-    return jsonify({'sucesso': True, 'total_processado': len(processados), 'itens': processados}), 200
+    todos_sucesso = all(p.get('sucesso', False) for p in processados) if processados else True
+    return jsonify({
+        'sucesso': todos_sucesso,
+        'total_processado': len(processados),
+        'itens': processados
+    }), (200 if todos_sucesso else 502)
+
 
 @app.route('/api/v1/openproject/historico_agendado_v2', methods=['GET'])
 def api_v1_op_historico():
@@ -565,7 +602,10 @@ def api_v1_op_historico():
 @app.route('/api/v1/glpi/tickets', methods=['GET'])
 def api_v1_glpi_tickets():
     tickets = []
-    # 1. Procura listas legítimas de tickets no cache
+    glpi_url = os.getenv('GLPI_URL', 'https://glpi.spaguas.sp.gov.br')
+    glpi_app_token = os.getenv('GLPI_APP_TOKEN', '')
+    glpi_user_token = os.getenv('GLPI_USER_TOKEN', '')
+
     for c in ['glpi_producao_cache.json', 'data/glpi_producao_cache.json', 'backend/glpi_producao_cache.json']:
         if os.path.exists(c):
             try:
@@ -580,12 +620,11 @@ def api_v1_glpi_tickets():
             except Exception:
                 pass
 
-    # 2. Se não houver lista no cache, tenta consulta direta ao GLPI se configurado
-    if not tickets and GLPI_URL and GLPI_APP_TOKEN:
+    if not tickets and glpi_url and glpi_app_token:
         try:
             req_glpi = urllib.request.Request(
-                f"{GLPI_URL}/apirest.php/Ticket",
-                headers={'App-Token': GLPI_APP_TOKEN, 'Session-Token': GLPI_USER_TOKEN},
+                f"{glpi_url}/apirest.php/Ticket",
+                headers={'App-Token': glpi_app_token, 'Session-Token': glpi_user_token},
                 method='GET'
             )
             ctx = ssl.create_default_context()
