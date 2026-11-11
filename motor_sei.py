@@ -1,4 +1,4 @@
-import os, json, re, time, requests, urllib.parse, posixpath, html as html_lib
+import os, json, re, time, requests, urllib.parse, posixpath, tempfile, html as html_lib
 
 class MotorSEI:
     """Motor de Scraping, Busca e Classificação do SEI SP (v4.1.5 Oficial) para a SA-GTI."""
@@ -27,45 +27,43 @@ class MotorSEI:
         self.carregar_sessao()
 
     def salvar_sessao(self, cookies_dict):
-        """Gravação atômica via .tmp com 0600 validado antes de substituir o arquivo original."""
-        os.makedirs(os.path.dirname(self.caminho_sessao), exist_ok=True)
-        caminho_tmp = self.caminho_sessao + ".tmp"
+        """Gravação atômica com arquivo temporário aleatório anti-symlink e permissão 0600."""
+        dir_sessao = os.path.dirname(self.caminho_sessao)
+        os.makedirs(dir_sessao, exist_ok=True)
         
         conteudo = json.dumps({
             "atualizado_em": time.strftime("%Y-%m-%dT%H:%M:%SZ"),
             "cookies": cookies_dict
         }, indent=2).encode("utf-8")
         
-        flags = os.O_WRONLY | os.O_CREAT | os.O_TRUNC
-        mode = 0o600
-        fd = os.open(caminho_tmp, flags, mode)
-        
-        if hasattr(os, "fchmod"):
+        tmp_path = None
+        try:
+            # Cria arquivo temporário com nome aleatório no mesmo diretório (anti-symlink)
+            with tempfile.NamedTemporaryFile(dir=dir_sessao, delete=False, mode="wb") as f_tmp:
+                tmp_path = f_tmp.name
+                f_tmp.write(conteudo)
+                
             try:
-                os.fchmod(fd, 0o600)
+                os.chmod(tmp_path, 0o600)
             except Exception:
                 pass
                 
-        if hasattr(os, "fstat") and hasattr(os, "getuid"):
-            st = os.fstat(fd)
-            if (st.st_mode & 0o077) != 0:
-                os.close(fd)
+            if hasattr(os, "stat") and hasattr(os, "getuid"):
+                st = os.stat(tmp_path)
+                if (st.st_mode & 0o077) != 0:
+                    raise PermissionError("Insegurança: impossível garantir permissão 0600.")
+
+            # Substituição atômica
+            os.replace(tmp_path, self.caminho_sessao)
+            tmp_path = None
+        finally:
+            # Se falhou antes de substituir, elimina resíduos do arquivo temporário
+            if tmp_path and os.path.exists(tmp_path):
                 try:
-                    os.remove(caminho_tmp)
+                    os.remove(tmp_path)
                 except Exception:
                     pass
-                raise PermissionError("Insegurança: impossível garantir permissão 0600.")
-
-        with os.fdopen(fd, "wb") as f:
-            f.write(conteudo)
-            
-        try:
-            os.chmod(caminho_tmp, 0o600)
-        except Exception:
-            pass
-
-        # Substituição atômica: arquivo original nunca fica truncado ou corrompido
-        os.replace(caminho_tmp, self.caminho_sessao)
+                    
         self.carregar_sessao()
 
     def carregar_sessao(self):
@@ -84,14 +82,13 @@ class MotorSEI:
         return False
 
     def _executar_requisicao_segura(self, metodo, url, **kwargs):
-        """Valida destino decodificando percent-encoding (%2e%2e) e bloqueia vazamento em redirects."""
+        """Valida destino normalizado com unquote e bloqueia vazamento em redirects."""
         parsed = urllib.parse.urlparse(url)
-        # Decodifica qualquer percent-encoding (%2e%2e -> ..) antes de normalizar
         path_decodificado = urllib.parse.unquote(parsed.path)
         norm_path = posixpath.normpath(path_decodificado)
         
         if parsed.scheme != "https" or parsed.hostname != self.HOST_PERMITIDO or (not norm_path.startswith("/sei/") and norm_path != "/sei"):
-            raise ValueError(f"Destino não autorizado ou path traversal detectado: {url}")
+            raise ValueError(f"Destino não autorizado: {url}")
             
         resp = self.session.request(metodo, url, allow_redirects=False, **kwargs)
         if resp.is_redirect:
@@ -105,19 +102,24 @@ class MotorSEI:
         return resp
 
     def _pagina_caixa_valida(self, resp):
-        """Validação positiva exigindo formulário HTML real (<form>), tabela e ausência de erros."""
+        """Validação positiva com descarte prévio de comentários HTML."""
         if resp.status_code != 200:
             return False
         parsed = urllib.parse.urlparse(resp.url)
         norm_path = posixpath.normpath(urllib.parse.unquote(parsed.path))
         if parsed.scheme != "https" or parsed.hostname != self.HOST_PERMITIDO or (not norm_path.startswith("/sei/") and norm_path != "/sei"):
             return False
-        texto = resp.text.lower()
-        if any(t in texto for t in self.TERMOS_ERRO):
+            
+        # Remove comentários HTML antes da verificação
+        texto_limpo = re.sub(r"<!--.*?-->", "", resp.text, flags=re.DOTALL).lower()
+        if any(t in texto_limpo for t in self.TERMOS_ERRO):
             return False
-        # Exige tag <form> real do SEI
-        tem_form = bool(re.search(r"<form\s+[^>]*(?:id|name)=["']frmprocedimentocontrolar["']", texto) or re.search(r"<form\s+[^>]*action=["'][^"']*controlador\.php", texto))
-        tem_tabela = "infratabela" in texto or "infraareadados" in texto or "id_procedimento" in texto
+            
+        tem_form = bool(
+            re.search(r"<form[^>]*(?:id|name)=["']?frmprocedimentocontrolar", texto_limpo)
+            or re.search(r"<form[^>]*action=["'][^"']*controlador\.php", texto_limpo)
+        )
+        tem_tabela = "infratabela" in texto_limpo or "infraareadados" in texto_limpo or "id_procedimento" in texto_limpo
         return tem_form and tem_tabela
 
     def _pagina_busca_valida(self, resp):
@@ -127,11 +129,16 @@ class MotorSEI:
         norm_path = posixpath.normpath(urllib.parse.unquote(parsed.path))
         if parsed.scheme != "https" or parsed.hostname != self.HOST_PERMITIDO or (not norm_path.startswith("/sei/") and norm_path != "/sei"):
             return False
-        texto = resp.text.lower()
-        if any(t in texto for t in self.TERMOS_ERRO):
+            
+        texto_limpo = re.sub(r"<!--.*?-->", "", resp.text, flags=re.DOTALL).lower()
+        if any(t in texto_limpo for t in self.TERMOS_ERRO):
             return False
-        tem_form = bool(re.search(r"<form\s+[^>]*action=["'][^"']*controlador\.php", texto) or "frmpesquisa" in texto)
-        tem_resultado = "infratabela" in texto or "procedimento_trabalhar" in texto or "nenhum" in texto
+            
+        tem_form = bool(
+            re.search(r"<form[^>]*(?:id|name)=["']?frmpesquisa", texto_limpo)
+            or re.search(r"<form[^>]*action=["'][^"']*controlador\.php", texto_limpo)
+        )
+        tem_resultado = "infratabela" in texto_limpo or "procedimento_trabalhar" in texto_limpo or "nenhum" in texto_limpo
         return tem_form and tem_resultado
 
     def validar_sessao(self):
@@ -177,11 +184,13 @@ class MotorSEI:
         processos = []
         tags_a = re.findall(r"<a\s+([^>]+)>(.*?)</a>", html, flags=re.DOTALL | re.IGNORECASE)
         for attrs, texto_bruto in tags_a:
+            # Captura href com aspas simples ou duplas
             m_href = re.search(r'href=["\']([^"\']+)["\']', attrs, flags=re.IGNORECASE)
             if not m_href:
                 continue
             href = html_lib.unescape(m_href.group(1))
 
+            # Valida estritamente acao=procedimento_trabalhar (rejeita acoes derivadas)
             if not re.search(r"(?:^|[?&])acao=procedimento_trabalhar(?:&|$)", href):
                 continue
 
