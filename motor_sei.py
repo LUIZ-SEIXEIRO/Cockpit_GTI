@@ -142,11 +142,6 @@ class ValidadorEstruturalSEI(HTMLParser):
                     if "frmpesquisa" in form_id or "frmpesquisa" in form_name or (basename == "controlador.php" and "pesquisa" in action):
                         self.estrutura_valida = True
 
-            elif tag_lower == "input":
-                nome = attr_dict.get("name", "")
-                if self.tipo_tela == "pesquisa" and nome in ("txtpesquisa", "btnpesquisar"):
-                    self.estrutura_valida = True
-
     def handle_endtag(self, tag: str):
         tag_lower = tag.lower()
         if tag_lower in ("script", "style"):
@@ -266,6 +261,26 @@ class LockProcessosSEI:
         self.poll_interval = float(poll_interval)
         self.max_lock_age = float(max_lock_age)
         self._adquirido = False
+        self._heartbeat_thread: Optional[threading.Thread] = None
+        self._stop_heartbeat = threading.Event()
+
+    def _gravar_heartbeat(self):
+        try:
+            with open(self.info_file, "w", encoding="utf-8") as f:
+                json.dump({
+                    "hostname": socket.gethostname(),
+                    "pid": os.getpid(),
+                    "timestamp": time.time()
+                }, f)
+        except Exception:
+            pass
+
+    def _loop_heartbeat(self):
+        intervalo = max(0.01, min(1.0, self.max_lock_age / 3.0))
+        while not self._stop_heartbeat.wait(intervalo):
+            if not self._adquirido or not os.path.exists(self.lock_dir):
+                break
+            self._gravar_heartbeat()
 
     def _limpar_lock_se_obsoleto(self) -> bool:
         if not os.path.exists(self.lock_dir):
@@ -325,16 +340,16 @@ class LockProcessosSEI:
 
             try:
                 os.mkdir(self.lock_dir)
-                try:
-                    with open(self.info_file, "w", encoding="utf-8") as f:
-                        json.dump({
-                            "hostname": socket.gethostname(),
-                            "pid": os.getpid(),
-                            "timestamp": time.time()
-                        }, f)
-                except Exception:
-                    pass
                 self._adquirido = True
+                self._gravar_heartbeat()
+
+                self._stop_heartbeat.clear()
+                self._heartbeat_thread = threading.Thread(
+                    target=self._loop_heartbeat,
+                    daemon=True,
+                    name="LockSEI-Heartbeat"
+                )
+                self._heartbeat_thread.start()
                 return self
             except FileExistsError:
                 if (time.monotonic() - inicio) >= self.timeout:
@@ -351,6 +366,9 @@ class LockProcessosSEI:
 
     def __exit__(self, exc_type, exc_val, exc_tb):
         if self._adquirido:
+            self._stop_heartbeat.set()
+            if self._heartbeat_thread and self._heartbeat_thread.is_alive():
+                self._heartbeat_thread.join(timeout=0.5)
             try:
                 if os.path.exists(self.info_file):
                     os.unlink(self.info_file)
@@ -814,15 +832,15 @@ class MotorSEI:
                     "erro": f"Mensagem do SEI SP: {texto_infra}"
                 }
 
-        parser = ParserProcessosSEI()
-        parser.feed(resp.text)
-
-        if len(parser.processos) == 0 and not validador.estrutura_valida:
+        if not validador.estrutura_valida:
             return {
                 "sucesso": False,
                 "codigo": 502,
-                "erro": "Resposta invalida ou erro estrutural retornado pelo SEI SP"
+                "erro": "Resposta do SEI nao possui a estrutura formal valida da caixa de entrada"
             }
+
+        parser = ParserProcessosSEI()
+        parser.feed(resp.text)
 
         return ResultadoProcessosSEI(parser.processos)
 
@@ -894,14 +912,14 @@ class MotorSEI:
                     "erro": f"Mensagem do SEI SP: {texto_infra}"
                 }
 
-        parser = ParserProcessosSEI()
-        parser.feed(resp.text)
-
-        if len(parser.processos) == 0 and not validador.estrutura_valida:
+        if not validador.estrutura_valida:
             return {
                 "sucesso": False,
                 "codigo": 502,
-                "erro": "Resposta da pesquisa nao corresponde a uma tela valida do SEI"
+                "erro": "Resposta da pesquisa nao corresponde a uma tela formal valida do SEI"
             }
+
+        parser = ParserProcessosSEI()
+        parser.feed(resp.text)
 
         return ResultadoProcessosSEI(parser.processos, termo=termo)

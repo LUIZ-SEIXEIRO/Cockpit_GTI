@@ -453,6 +453,51 @@ class TestMotorSEI(unittest.TestCase):
             self.assertFalse(res.get("sucesso"))
             self.assertEqual(res.get("codigo"), 502)
 
+    def test_24_lock_heartbeat_mantem_lease_ativo_com_idade_reduzida(self):
+        # Valida que o heartbeat contínuo renova o timestamp do lock mesmo com max_lock_age=0.1s
+        lock1 = LockProcessosSEI(self.caminho_sessao, timeout=2.0, max_lock_age=0.1)
+        with lock1:
+            time.sleep(0.25)
+            # Processo 2 com hostname simulado diferente tenta tomar o lock com timeout 0.05
+            lock2 = LockProcessosSEI(self.caminho_sessao, timeout=0.05, max_lock_age=0.1)
+            with self.assertRaises(TimeoutError):
+                with lock2:
+                    pass
+            self.assertTrue(os.path.exists(lock1.lock_dir))
+
+    def test_25_rejeitar_pagina_erro_com_input_solto_ou_link_solto(self):
+        self.motor.salvar_sessao({"PHPSESSID": "sessao_ativa"})
+
+        # Cenário 1: Página com apenas <input name="txtPesquisa"> solto sem <form id="frmPesquisa">
+        html_input_solto = """
+        <html>
+            <body>
+                <input type="text" name="txtPesquisa" value="termo" />
+                <h1>Erro 500 Interno</h1>
+            </body>
+        </html>
+        """
+        mock_resp1 = MagicMock(status_code=200, text=html_input_solto)
+        with patch.object(self.motor.sessao, "post", return_value=mock_resp1):
+            res1 = self.motor.buscar_processos("qualquer")
+            self.assertFalse(res1.get("sucesso"))
+            self.assertEqual(res1.get("codigo"), 502)
+
+        # Cenário 2: Página com link solto de processo sem <form id="frmProcedimentoControlar">
+        html_link_solto = """
+        <html>
+            <body>
+                <a href="controlador.php?acao=procedimento_trabalhar&id_procedimento=123">Processo SP-123</a>
+                <div class="erro">Falha de renderização de tela</div>
+            </body>
+        </html>
+        """
+        mock_resp2 = MagicMock(status_code=200, text=html_link_solto)
+        with patch.object(self.motor.sessao, "get", return_value=mock_resp2):
+            res2 = self.motor.listar_caixa_unidade()
+            self.assertFalse(res2.get("sucesso"))
+            self.assertEqual(res2.get("codigo"), 502)
+
 
 if __name__ == "__main__":
     unittest.main()
