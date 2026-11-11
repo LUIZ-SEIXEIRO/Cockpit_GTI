@@ -71,7 +71,7 @@ class MotorSEI:
         self.carregar_sessao()
 
     def salvar_sessao(self, cookies_dict):
-        """Gravação atômica transacional: backup em loop, rollback total e sincronismo incondicional."""
+        """Gravação atômica transacional: consistência incondicional entre disco e memória."""
         dir_sessao = os.path.dirname(self.caminho_sessao)
         os.makedirs(dir_sessao, exist_ok=True)
         
@@ -88,7 +88,7 @@ class MotorSEI:
         ja_existia = os.path.exists(self.caminho_sessao)
         
         try:
-            # 1. Se já existe sessão, cria backup com loop de escrita completa garantida
+            # 1. Se já existe sessão, cria backup com loop de escrita completa
             if ja_existia:
                 try:
                     backup_fd, backup_path = tempfile.mkstemp(dir=dir_sessao, prefix="sessao_backup_", suffix=".tmp")
@@ -99,7 +99,6 @@ class MotorSEI:
                     with open(self.caminho_sessao, "rb") as f_src:
                         conteudo_backup = f_src.read()
                     
-                    # Escrita do backup em loop estrito contra escritas parciais
                     escritos_bkp = 0
                     while escritos_bkp < len(conteudo_backup):
                         n = os.write(backup_fd, conteudo_backup[escritos_bkp:])
@@ -141,7 +140,7 @@ class MotorSEI:
             sucesso_replace = True
             tmp_path = None
 
-            # 6. fsync no diretório pai com abertura e execução 100% envelopadas para rollback
+            # 6. fsync no diretório pai com rollback imediato se falhar
             if hasattr(os, "O_DIRECTORY"):
                 try:
                     dir_fd = os.open(dir_sessao, os.O_RDONLY | os.O_DIRECTORY)
@@ -150,25 +149,26 @@ class MotorSEI:
                     finally:
                         os.close(dir_fd)
                 except Exception:
-                    # ROLLBACK IMEDIATO caso abertura ou fsync do diretório falhem:
+                    # ROLLBACK IMEDIATO:
                     if ja_existia and backup_path and os.path.exists(backup_path):
                         try:
                             os.replace(backup_path, self.caminho_sessao)
                             backup_path = None
                         except Exception:
-                            # Se rollback falhar, sincroniza memória com disco incondicionalmente
-                            self.carregar_sessao()
+                            # Se rollback falhar, limpa a memória para não manter sessão divergente
+                            self.session.cookies.clear()
                             raise
                     elif not ja_existia and os.path.exists(self.caminho_sessao):
                         try:
                             os.remove(self.caminho_sessao)
                         except Exception:
-                            self.carregar_sessao()
+                            self.session.cookies.clear()
                             raise
                     raise
 
-            # 7. Atualiza memória apenas após confirmação total
-            self.carregar_sessao()
+            # 7. Recarrega a memória e exige sucesso absoluto (se falhar, levanta exceção e não retorna 200)
+            if not self.carregar_sessao():
+                raise OSError("Falha crítica ao recarregar a sessão na memória após persistência.")
 
         finally:
             if backup_fd is not None:
@@ -190,8 +190,6 @@ class MotorSEI:
                 except Exception: pass
                 try: os.remove(tmp_path)
                 except Exception: pass
-                        
-        self.carregar_sessao()
 
     def carregar_sessao(self):
         """Carrega cookies vinculando-os exclusivamente ao host sei.sp.gov.br e path /sei."""

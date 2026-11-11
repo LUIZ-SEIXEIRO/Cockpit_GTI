@@ -80,7 +80,6 @@ class TestMotorSEI(unittest.TestCase):
         self.assertEqual(arquivos_tmp, [])
 
     def test_07_falha_fsync_diretorio_executa_rollback(self):
-        """Valida rollback completo de disco e memória quando o fsync do diretório pós-replace falha."""
         cookies_iniciais = {"PHPSESSID": "sessao_original_estavel"}
         self.motor.salvar_sessao(cookies_iniciais)
         self.assertEqual(self.motor.session.cookies.get("PHPSESSID", domain="sei.sp.gov.br"), "sessao_original_estavel")
@@ -107,8 +106,7 @@ class TestMotorSEI(unittest.TestCase):
         self.assertEqual(dados_disco["cookies"]["PHPSESSID"], "sessao_original_estavel")
         self.assertEqual(self.motor.session.cookies.get("PHPSESSID", domain="sei.sp.gov.br"), "sessao_original_estavel")
 
-def test_08_falha_abertura_diretorio_executa_rollback(self):
-        """Valida que erro na abertura do diretório pós-replace dispara rollback e preserva consistência."""
+    def test_08_falha_abertura_diretorio_executa_rollback(self):
         cookies_iniciais = {"PHPSESSID": "sessao_inicial_teste08"}
         self.motor.salvar_sessao(cookies_iniciais)
 
@@ -122,7 +120,6 @@ def test_08_falha_abertura_diretorio_executa_rollback(self):
             with self.assertRaises(PermissionError):
                 self.motor.salvar_sessao({"PHPSESSID": "sessao_corrompida"})
 
-        # Comprova consistência de disco e memória após falha no os.open do diretório
         with open(self.caminho_sessao, "r", encoding="utf-8") as f:
             dados = json.load(f)
         self.assertEqual(dados["cookies"]["PHPSESSID"], "sessao_inicial_teste08")
