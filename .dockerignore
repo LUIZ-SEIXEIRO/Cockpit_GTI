@@ -1,0 +1,12 @@
+.git
+.gitignore
+.env
+.env.*
+__pycache__
+*.pyc
+*.pyo
+volumes_docker
+data/usuarios_cockpit.json
+openproject_token.txt
+docs
+*.md

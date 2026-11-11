@@ -91,3 +91,13 @@ desktop.ini
 
 # Aider
 .aider*
+
+
+# Blindagem de Credenciais e Dados Sensíveis (LGPD / TCE-SP)
+.env
+.env.*
+*.env
+openproject_token.txt
+data/usuarios_cockpit.json
+frontend/painel_backup_*.html
+frontend/frontendpainel.html

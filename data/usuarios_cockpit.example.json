@@ -1,0 +1,22 @@
+[
+  {
+    "id": 1,
+    "nome_completo": "Administrador Institucional",
+    "email": "admin@spaguas.sp.gov.br",
+    "matricula": "SP-0001",
+    "nivel_rbac": "SUPER_ADMIN",
+    "diretoria_escopo": "spaguas-sa-gti",
+    "unidade_divisao": "SA-GTI",
+    "ativo": 1
+  },
+  {
+    "id": 2,
+    "nome_completo": "Gestor de TIC Exemplo",
+    "email": "gestor@spaguas.sp.gov.br",
+    "matricula": "SP-0002",
+    "nivel_rbac": "GESTOR",
+    "diretoria_escopo": "spaguas-sa-gti",
+    "unidade_divisao": "SA-GTI",
+    "ativo": 1
+  }
+]
