@@ -848,7 +848,8 @@ def api_v1_sei_processos():
     erro = str(resultado.get('erro', '')).lower()
     if cod in (400, 404, 429):
         return jsonify(resultado), cod
-    if (cod and cod >= 500) or 'conexão' in erro or 'timeout' in erro or 'falha de conexão' in erro:
+    # Falha de rede, erro >= 500 ou resposta 200 inesperada retornam 502
+    if (cod and cod >= 500) or 'conexão' in erro or 'timeout' in erro or 'falha de conexão' in erro or (cod == 200 and not resultado.get('sessao_expirada')):
         return jsonify(resultado), 502
     return jsonify(resultado), 401
 
@@ -864,7 +865,7 @@ def api_v1_sei_buscar():
     erro = str(resultado.get('erro', '')).lower()
     if cod in (400, 404, 429):
         return jsonify(resultado), cod
-    if (cod and cod >= 500) or 'conexão' in erro or 'timeout' in erro or 'falha de conexão' in erro:
+    if (cod and cod >= 500) or 'conexão' in erro or 'timeout' in erro or 'falha de conexão' in erro or (cod == 200 and not resultado.get('sessao_expirada')):
         return jsonify(resultado), 502
     return jsonify(resultado), 401
 

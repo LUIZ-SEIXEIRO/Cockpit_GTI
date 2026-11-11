@@ -1,4 +1,32 @@
 import os, json, re, time, requests, urllib.parse, posixpath, tempfile, html as html_lib
+from html.parser import HTMLParser
+
+class ValidadorFormSEI(HTMLParser):
+    """Parser HTML rigoroso que valida apenas tags <form> reais fora de <script>/<style>."""
+    def __init__(self, alvos):
+        super().__init__()
+        self.alvos = [a.lower() for a in alvos]
+        self.encontrou = False
+        self.em_script = False
+
+    def handle_starttag(self, tag, attrs):
+        t = tag.lower()
+        if t in ('script', 'style'):
+            self.em_script = True
+            return
+        if t == 'form' and not self.em_script:
+            attrs_dict = {k.lower(): (v or '').lower() for k, v in attrs}
+            f_id = attrs_dict.get('id', '')
+            f_name = attrs_dict.get('name', '')
+            f_act = attrs_dict.get('action', '')
+            for a in self.alvos:
+                if a in f_id or a in f_name or a in f_act:
+                    self.encontrou = True
+                    break
+
+    def handle_endtag(self, tag):
+        if tag.lower() in ('script', 'style'):
+            self.em_script = False
 
 class MotorSEI:
     """Motor de Scraping, Busca e Classificação do SEI SP (v4.1.5 Oficial) para a SA-GTI."""
@@ -27,7 +55,7 @@ class MotorSEI:
         self.carregar_sessao()
 
     def salvar_sessao(self, cookies_dict):
-        """Gravação atômica com arquivo temporário terminando compulsoriamente em .tmp."""
+        """Gravação atômica com zero-shredding em caso de falha de substituição."""
         dir_sessao = os.path.dirname(self.caminho_sessao)
         os.makedirs(dir_sessao, exist_ok=True)
         
@@ -38,7 +66,6 @@ class MotorSEI:
         
         tmp_path = None
         try:
-            # Cria temporário com prefixo e sufixo .tmp para cobertura no .dockerignore
             with tempfile.NamedTemporaryFile(dir=dir_sessao, prefix="sessao_sei_", suffix=".tmp", delete=False, mode="wb") as f_tmp:
                 tmp_path = f_tmp.name
                 f_tmp.write(conteudo)
@@ -53,12 +80,15 @@ class MotorSEI:
                 if (st.st_mode & 0o077) != 0:
                     raise PermissionError("Insegurança: impossível garantir permissão 0600.")
 
-            # Substituição atômica
             os.replace(tmp_path, self.caminho_sessao)
             tmp_path = None
         finally:
+            # Sobrescreve com zeros e trunca antes de tentar remover (anti-leak de segredos)
             if tmp_path and os.path.exists(tmp_path):
                 try:
+                    with open(tmp_path, "wb") as f_clean:
+                        f_clean.write(b"\x00" * len(conteudo))
+                        f_clean.truncate(0)
                     os.remove(tmp_path)
                 except Exception:
                     pass
@@ -101,7 +131,7 @@ class MotorSEI:
         return resp
 
     def _pagina_caixa_valida(self, resp):
-        """Validação positiva exigindo form real do SEI (por id, name ou action)."""
+        """Validação positiva via HTMLParser checando form real e tabela."""
         if resp.status_code != 200:
             return False
         parsed = urllib.parse.urlparse(resp.url)
@@ -109,22 +139,18 @@ class MotorSEI:
         if parsed.scheme != "https" or parsed.hostname != self.HOST_PERMITIDO or (not norm_path.startswith("/sei/") and norm_path != "/sei"):
             return False
             
-        # Descarta comentários HTML
-        texto_limpo = re.sub(r"<!--.*?-->", "", resp.text, flags=re.DOTALL)
-        texto_lower = texto_limpo.lower()
+        texto_lower = resp.text.lower()
         if any(t in texto_lower for t in self.TERMOS_ERRO):
             return False
             
-        # Procura form legítimo ativo
-        tem_form = False
-        for tag in re.findall(r"<form[^>]+>", texto_limpo, flags=re.IGNORECASE):
-            t_low = tag.lower()
-            if "frmprocedimentocontrolar" in t_low or "procedimento_controlar" in t_low or "controlador.php" in t_low:
-                tem_form = True
-                break
-                
+        parser = ValidadorFormSEI(["frmprocedimentocontrolar", "procedimento_controlar", "controlador.php"])
+        try:
+            parser.feed(resp.text)
+        except Exception:
+            return False
+            
         tem_tabela = "infratabela" in texto_lower or "infraareadados" in texto_lower or "id_procedimento" in texto_lower
-        return tem_form and tem_tabela
+        return parser.encontrou and tem_tabela
 
     def _pagina_busca_valida(self, resp):
         if resp.status_code != 200:
@@ -134,27 +160,26 @@ class MotorSEI:
         if parsed.scheme != "https" or parsed.hostname != self.HOST_PERMITIDO or (not norm_path.startswith("/sei/") and norm_path != "/sei"):
             return False
             
-        texto_limpo = re.sub(r"<!--.*?-->", "", resp.text, flags=re.DOTALL)
-        texto_lower = texto_limpo.lower()
+        texto_lower = resp.text.lower()
         if any(t in texto_lower for t in self.TERMOS_ERRO):
             return False
             
-        tem_form = False
-        for tag in re.findall(r"<form[^>]+>", texto_limpo, flags=re.IGNORECASE):
-            t_low = tag.lower()
-            if "frmpesquisa" in t_low or "pesquisa_processo" in t_low or "controlador.php" in t_low:
-                tem_form = True
-                break
-                
+        parser = ValidadorFormSEI(["frmpesquisa", "pesquisa_processo", "controlador.php"])
+        try:
+            parser.feed(resp.text)
+        except Exception:
+            return False
+            
         tem_resultado = "infratabela" in texto_lower or "procedimento_trabalhar" in texto_lower or "nenhum" in texto_lower
-        return tem_form and tem_resultado
+        return parser.encontrou and tem_resultado
 
     def validar_sessao(self):
         try:
             url = f"{self.BASE_URL}/controlador.php?acao=procedimento_controlar&infra_sistema={self.SISTEMA_ID}&infra_unidade_atual={self.UNIDADE_SAGTI}"
             resp = self._executar_requisicao_segura("GET", url, timeout=6)
             if not self._pagina_caixa_valida(resp):
-                return {"autenticado": False, "codigo": resp.status_code, "mensagem": "Sessão expirada ou resposta não autorizada."}
+                is_expired = any(t in resp.text.lower() for t in ["txtusuario", "plataforma.sp.gov.br", "minhaarea.sp.gov.br", "acesso.gov.br"])
+                return {"autenticado": False, "codigo": resp.status_code, "sessao_expirada": is_expired, "mensagem": "Sessão expirada ou resposta não autorizada."}
             return {"autenticado": True, "unidade": self.UNIDADE_SAGTI, "mensagem": "Sessão ativa na SA-GTI"}
         except Exception as e:
             return {"autenticado": False, "erro": str(e), "mensagem": "Falha de conexão com o SEI"}
@@ -171,7 +196,8 @@ class MotorSEI:
         try:
             resp = self._executar_requisicao_segura("POST", url, data=payload, timeout=10)
             if not self._pagina_busca_valida(resp):
-                return {"sucesso": False, "codigo": resp.status_code, "erro": "Sessão expirada ou erro na busca.", "processos": []}
+                is_expired = any(t in resp.text.lower() for t in ["txtusuario", "plataforma.sp.gov.br", "minhaarea.sp.gov.br", "acesso.gov.br"])
+                return {"sucesso": False, "codigo": resp.status_code, "sessao_expirada": is_expired, "erro": "Sessão expirada ou erro na busca.", "processos": []}
             return self.parsear_tabela_processos(resp.text)
         except Exception as e:
             return {"sucesso": False, "codigo": 502, "erro": f"Falha de conexão: {str(e)}", "processos": []}
@@ -182,7 +208,8 @@ class MotorSEI:
         try:
             resp = self._executar_requisicao_segura("GET", url, timeout=10)
             if not self._pagina_caixa_valida(resp):
-                return {"sucesso": False, "codigo": resp.status_code, "erro": "Sessão expirada ou acesso negado.", "processos": []}
+                is_expired = any(t in resp.text.lower() for t in ["txtusuario", "plataforma.sp.gov.br", "minhaarea.sp.gov.br", "acesso.gov.br"])
+                return {"sucesso": False, "codigo": resp.status_code, "sessao_expirada": is_expired, "erro": "Sessão expirada ou acesso negado.", "processos": []}
             return self.parsear_tabela_processos(resp.text)
         except Exception as e:
             return {"sucesso": False, "codigo": 502, "erro": f"Falha de conexão: {str(e)}", "processos": []}
@@ -192,7 +219,7 @@ class MotorSEI:
         processos = []
         tags_a = re.findall(r"<a\s+([^>]+)>(.*?)</a>", html, flags=re.DOTALL | re.IGNORECASE)
         for attrs, texto_bruto in tags_a:
-            m_href = re.search(r'''href=["']([^"']+)["']''', attrs, flags=re.IGNORECASE)
+            m_href = re.search(r'href=["\']([^"\']+)["\']', attrs, flags=re.IGNORECASE)
             if not m_href:
                 continue
             href = html_lib.unescape(m_href.group(1))

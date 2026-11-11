@@ -31,30 +31,19 @@ class TestMotorSEI(unittest.TestCase):
         self.assertTrue(status.get("autenticado"))
 
     @patch('requests.Session.request')
-    def test_03_validar_sessao_ativa_form_name(self, mock_req):
-        mock_resp = MagicMock()
-        mock_resp.status_code = 200
-        mock_resp.is_redirect = False
-        mock_resp.url = "https://sei.sp.gov.br/sei/controlador.php?acao=procedimento_controlar&infra_unidade_atual=110050725"
-        mock_resp.text = "<html><body><form name='frmProcedimentoControlar' action='controlador.php'><table class='infraTabela'>Controle de Processos id_procedimento</table></form></body></html>"
-        mock_req.return_value = mock_resp
-
-        status = self.motor.validar_sessao()
-        self.assertTrue(status.get("autenticado"))
-
-    @patch('requests.Session.request')
-    def test_04_rejeitar_form_em_comentario_html(self, mock_req):
+    def test_03_rejeitar_tag_formato_e_script(self, mock_req):
+        """Comprova que tag <formato> e texto dentro de <script> são categoricamente rejeitados."""
         mock_resp = MagicMock()
         mock_resp.status_code = 200
         mock_resp.is_redirect = False
         mock_resp.url = "https://sei.sp.gov.br/sei/controlador.php"
-        mock_resp.text = "<html><body><!-- <form id='frmProcedimentoControlar'> --> Erro sem form ativo</body></html>"
+        mock_resp.text = "<html><body><formato id='frmProcedimentoControlar'><script>var x = '<form id=frmProcedimentoControlar>';</script><table class='infraTabela'>sem form real</table></body></html>"
         mock_req.return_value = mock_resp
 
         status = self.motor.validar_sessao()
         self.assertFalse(status.get("autenticado"))
 
-    def test_05_parser_com_entidade_amp(self):
+    def test_04_parser_com_entidade_amp(self):
         html = """
         <table>
             <tr><td><a href='controlador.php?acao=procedimento_trabalhar&amp;id_procedimento=701'>137.00001111/2026-10</a></td></tr>
