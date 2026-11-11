@@ -43,6 +43,7 @@ services:
     ports:
       - "5000:5000"
     volumes:
+      - ./data:/app/data
       - ./main.py:/app/main.py
       - ./painel.html:/app/painel.html
       - ./config_pool_ias.json:/app/config_pool_ias.json

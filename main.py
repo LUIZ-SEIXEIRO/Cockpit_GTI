@@ -849,10 +849,6 @@ def api_v1_obter_documento(doc_id):
 
     return jsonify({'sucesso': False, 'status': 'erro', 'mensagem': 'Arquivo não localizado em disco'}), 404
 
-if __name__ == '__main__':
-    porta = int(os.environ.get('PORT', 5000))
-    app.run(host='0.0.0.0', port=porta, debug=False)
-
 # -------------------------------------------------------------------------
 # 5. MOTOR DE BUSCA E AUTOMAÇÃO SEI 4.1.5 (SA-GTI 110050725)
 # -------------------------------------------------------------------------
@@ -875,13 +871,19 @@ def api_v1_sei_salvar_sessao():
     return jsonify({'sucesso': False, 'mensagem': 'Formato de cookies inválido.'}), 400
 
 @app.route('/api/v1/sei/processos', methods=['GET'])
+@requer_autenticacao
 def api_v1_sei_processos():
     resultado = motor_sei_instance.listar_caixa_unidade()
-    return jsonify(resultado), 200
+    return jsonify(resultado), (200 if resultado.get('sucesso') else 401)
 
 @app.route('/api/v1/sei/buscar', methods=['POST'])
+@requer_autenticacao
 def api_v1_sei_buscar():
     dados = request.get_json(force=True) or {}
     termo = dados.get('termo') or dados.get('query') or ''
     resultado = motor_sei_instance.buscar_processos(termo=termo)
-    return jsonify(resultado), 200
+    return jsonify(resultado), (200 if resultado.get('sucesso') else 401)
+
+if __name__ == '__main__':
+    porta = int(os.environ.get('PORT', 5000))
+    app.run(host='0.0.0.0', port=porta, debug=False)
