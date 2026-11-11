@@ -15409,6 +15409,8 @@ window.NEWAPI_DETERMINISTIC_LOCK = Object.freeze({
                     body: JSON.stringify({
                         endpoint: cfg.endpoint,
                         apiKey: cfg.apiKey,
+                        slot: (cfg.id || 'principal'),
+                        ia: (cfg.id || 'principal'),
                         model: cfg.agent,
                         temperature: cfg.temperature || 0.0,
                         max_tokens: cfg.maxTokens || 700,
