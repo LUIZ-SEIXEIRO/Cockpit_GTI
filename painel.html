@@ -7095,6 +7095,13 @@ cockpit-gti-spaguas/
     </div>
 
     <script>
+    function obterHeadersComAuth(extras = {}) {
+        const token = window.__COCKPIT_TOKEN__ || localStorage.getItem('cockpit_token') || '';
+        const h = { 'Content-Type': 'application/json', ...extras };
+        if (token) h['Authorization'] = 'Bearer ' + token;
+        return h;
+    }
+
 // >>> MÓDULO: src/data/01_logo_spaguas.js <<<
 // =========================================================================
 // DADOS 01: LOGOTIPO INSTITUCIONAL SP-ÁGUAS (FONTE ÚNICA DESDUPLICADA)
@@ -13538,7 +13545,7 @@ window.STORAGE_KEY_POOL_3_IAS = 'sagti_pool_tres_ias_v96';
             var tid = setTimeout(function() { ctrl.abort(); }, 45000);
             var resp = await fetch('/api/v1/ia/testar_slot', {
                 method: 'POST',
-                headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' },
+                headers: obterHeadersComAuth(),
                 body: JSON.stringify({ slot: slot, endpoint: ep, apiKey: key, model: mod }),
                 signal: ctrl.signal
             });
@@ -13562,7 +13569,7 @@ window.STORAGE_KEY_POOL_3_IAS = 'sagti_pool_tres_ias_v96';
                 var urlDirect = ep.replace(/\/$/, '') + '/chat/completions';
                 var resp2 = await fetch(urlDirect, {
                     method: 'POST',
-                    headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + key },
+                    headers: obterHeadersComAuth(),
                     body: JSON.stringify({ model: mod, messages: [{ role: 'user', content: 'ping' }], max_tokens: 2 }),
                     signal: ctrl2.signal
                 });
@@ -13695,7 +13702,7 @@ window.STORAGE_KEY_POOL_3_IAS = 'sagti_pool_tres_ias_v96';
                 var tid = setTimeout(function() { ctrl.abort(); }, 3000);
                 await fetch('/api/v1/ia/pool', {
                     method: 'POST',
-                    headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' },
+                    headers: obterHeadersComAuth(),
                     body: JSON.stringify(pool),
                     signal: ctrl.signal
                 });
@@ -14409,7 +14416,7 @@ window.NEWAPI_DETERMINISTIC_LOCK = Object.freeze({
                 var tid = setTimeout(function() { ctrl.abort(); }, 2500);
                 var r = await fetch(baseUrl.replace(/\/$/, '') + '/models', {
                     method: 'GET',
-                    headers: { 'Authorization': 'Bearer ' + savedTok },
+                    headers: obterHeadersComAuth(),
                     signal: ctrl.signal
                 });
                 clearTimeout(tid);
@@ -15398,7 +15405,7 @@ window.NEWAPI_DETERMINISTIC_LOCK = Object.freeze({
                 // 1. Tenta via Proxy Flask (:5000/api/v1/ia/chat) - Zero bloqueio de CORS
                 var r = await fetch('/api/v1/ia/chat', {
                     method: 'POST',
-                    headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' },
+                    headers: obterHeadersComAuth(),
                     body: JSON.stringify({
                         endpoint: cfg.endpoint,
                         apiKey: cfg.apiKey,
@@ -15417,7 +15424,7 @@ window.NEWAPI_DETERMINISTIC_LOCK = Object.freeze({
                     var tid2 = setTimeout(function() { ctrl2.abort(); }, 6000);
                     r = await fetch(urlChat, {
                         method: 'POST',
-                        headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + cfg.apiKey },
+                        headers: obterHeadersComAuth(),
                         body: JSON.stringify({
                             model: cfg.agent,
                             temperature: 0.0,
@@ -15466,7 +15473,7 @@ window.NEWAPI_DETERMINISTIC_LOCK = Object.freeze({
             var tidFlask = setTimeout(function() { ctrlFlask.abort(); }, 2000);
             var rFlask = await fetch('/api/chat', {
                 method: 'POST',
-                headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' },
+                headers: obterHeadersComAuth(),
                 body: JSON.stringify({ message: pergunta }),
                 signal: ctrlFlask.signal
             });
@@ -15489,7 +15496,7 @@ window.NEWAPI_DETERMINISTIC_LOCK = Object.freeze({
             var tidPy = setTimeout(function() { ctrlPy.abort(); }, 2000);
             var rPy = await fetch('http://localhost:8000/chat', {
                 method: 'POST',
-                headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' },
+                headers: obterHeadersComAuth(),
                 body: JSON.stringify({ message: pergunta, action: 'chat' }),
                 signal: ctrlPy.signal
             });
@@ -15528,7 +15535,7 @@ window.NEWAPI_DETERMINISTIC_LOCK = Object.freeze({
             try {
                 var rMcp = await fetch('http://localhost:8095/api/v1/mcp/call/' + toolName, {
                     method: 'POST',
-                    headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' },
+                    headers: obterHeadersComAuth(),
                     body: JSON.stringify(toolArgs)
                 });
                 if (rMcp.ok) {
@@ -15561,7 +15568,7 @@ window.NEWAPI_DETERMINISTIC_LOCK = Object.freeze({
                 var tidD = setTimeout(function() { ctrlD.abort(); }, 6000);
                 var rDoc = await fetch('http://localhost:8000/chat', {
                     method: 'POST',
-                    headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' },
+                    headers: obterHeadersComAuth(),
                     body: JSON.stringify({ message: escopoDoc, tipo_doc: tipoArtefato, processo_sei: '137.00029841/2026-14' }),
                     signal: ctrlD.signal
                 });
@@ -17900,7 +17907,7 @@ window.kioskTelas = [
                     'Responda em portugues de forma objetiva, citando os artigos regimentais e pacotes do PCA.';
                 var rApi = await fetch('http://localhost:3001/v1/chat/completions', {
                     method: 'POST',
-                    headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token },
+                    headers: obterHeadersComAuth(),
                     body: JSON.stringify({
                         model: model,
                         messages: [
@@ -17975,7 +17982,7 @@ window.kioskTelas = [
         try {
             var r = await fetch('/api/v1/sei/regras', {
                 method: 'POST',
-                headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' },
+                headers: obterHeadersComAuth(),
                 body: JSON.stringify(payload)
             });
             if (r.ok) {
@@ -18069,7 +18076,7 @@ window.kioskTelas = [
         try {
             var r = await fetch('/api/v1/sei/regras', {
                 method: 'POST',
-                headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' },
+                headers: obterHeadersComAuth(),
                 body: JSON.stringify(payload)
             });
             if (r.ok) {
@@ -18129,6 +18136,13 @@ window.kioskTelas = [
 </script>
 
 <script>
+    function obterHeadersComAuth(extras = {}) {
+        const token = window.__COCKPIT_TOKEN__ || localStorage.getItem('cockpit_token') || '';
+        const h = { 'Content-Type': 'application/json', ...extras };
+        if (token) h['Authorization'] = 'Bearer ' + token;
+        return h;
+    }
+
 function processarArquivosSelecionados(files) {
     if (!files || files.length === 0) return;
     const statusBox = document.getElementById('sei-upload-status');
@@ -18234,6 +18248,13 @@ function abrirModalRegrasSEI() {
 
 
 <script>
+    function obterHeadersComAuth(extras = {}) {
+        const token = window.__COCKPIT_TOKEN__ || localStorage.getItem('cockpit_token') || '';
+        const h = { 'Content-Type': 'application/json', ...extras };
+        if (token) h['Authorization'] = 'Bearer ' + token;
+        return h;
+    }
+
 window.arquivosSEISelecionados = [];
 
 function atualizarStatusArquivosSEI(files) {
@@ -18321,6 +18342,13 @@ function dispararProcessamentoSEI() {
 
 
 <script>
+    function obterHeadersComAuth(extras = {}) {
+        const token = window.__COCKPIT_TOKEN__ || localStorage.getItem('cockpit_token') || '';
+        const h = { 'Content-Type': 'application/json', ...extras };
+        if (token) h['Authorization'] = 'Bearer ' + token;
+        return h;
+    }
+
 // SOBRESCRITA OFICIAL DE ALTERNARSUBOCNFIG COM DISPLAY IMPORTANT E AUTO-SCROLL
 window.alternarSubConfig = function(modo) {
     window.subConfigAtivo = modo;
@@ -18362,6 +18390,13 @@ window.alternarSubConfig = function(modo) {
 
 
 <script>
+    function obterHeadersComAuth(extras = {}) {
+        const token = window.__COCKPIT_TOKEN__ || localStorage.getItem('cockpit_token') || '';
+        const h = { 'Content-Type': 'application/json', ...extras };
+        if (token) h['Authorization'] = 'Bearer ' + token;
+        return h;
+    }
+
 window.alternarSubConfig = function(modo) {
     window.subConfigAtivo = modo;
     
@@ -18721,6 +18756,13 @@ input::placeholder, textarea::placeholder {
 </style>
 
 <script>
+    function obterHeadersComAuth(extras = {}) {
+        const token = window.__COCKPIT_TOKEN__ || localStorage.getItem('cockpit_token') || '';
+        const h = { 'Content-Type': 'application/json', ...extras };
+        if (token) h['Authorization'] = 'Bearer ' + token;
+        return h;
+    }
+
 (function inicializarGlassmorphismV11() {
     // 1. Aplica tema salvo ou Dark Mode como Default conforme especificação
     var temaSalvo = localStorage.getItem('sagti_theme_v11') || 'dark';
@@ -19241,6 +19283,13 @@ input::placeholder, textarea::placeholder {
 </script>
 
 <script>
+    function obterHeadersComAuth(extras = {}) {
+        const token = window.__COCKPIT_TOKEN__ || localStorage.getItem('cockpit_token') || '';
+        const h = { 'Content-Type': 'application/json', ...extras };
+        if (token) h['Authorization'] = 'Bearer ' + token;
+        return h;
+    }
+
 (function() {
     function initGlpiAuto() {
         if (typeof window.renderizarTabelaChamadosReaisGlpi === 'function') {
@@ -19264,6 +19313,13 @@ input::placeholder, textarea::placeholder {
 
 
 <script>
+    function obterHeadersComAuth(extras = {}) {
+        const token = window.__COCKPIT_TOKEN__ || localStorage.getItem('cockpit_token') || '';
+        const h = { 'Content-Type': 'application/json', ...extras };
+        if (token) h['Authorization'] = 'Bearer ' + token;
+        return h;
+    }
+
 (function() {
     function initOP() {
         if (typeof window.inicializarFiltrosPortfolioOP === 'function') window.inicializarFiltrosPortfolioOP();
@@ -19285,6 +19341,13 @@ input::placeholder, textarea::placeholder {
 
 
 <script>
+    function obterHeadersComAuth(extras = {}) {
+        const token = window.__COCKPIT_TOKEN__ || localStorage.getItem('cockpit_token') || '';
+        const h = { 'Content-Type': 'application/json', ...extras };
+        if (token) h['Authorization'] = 'Bearer ' + token;
+        return h;
+    }
+
 (function() {
     window.opModoRapidoAtivo = 'todos';
 
@@ -19417,6 +19480,13 @@ input::placeholder, textarea::placeholder {
 
 
 <script>
+    function obterHeadersComAuth(extras = {}) {
+        const token = window.__COCKPIT_TOKEN__ || localStorage.getItem('cockpit_token') || '';
+        const h = { 'Content-Type': 'application/json', ...extras };
+        if (token) h['Authorization'] = 'Bearer ' + token;
+        return h;
+    }
+
 (function() {
     var _old = window.switchTab;
     window.switchTab = function(t) {
@@ -21568,7 +21638,7 @@ html body #view-gestao_agil .kanban-card-modelo .k-status-sei-critico {
                 var tid = setTimeout(function() { ctrl.abort(); }, 12000);
                 var resBackend = await fetch('/api/v1/ia/revisar_processo', {
                     method: 'POST',
-                    headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' },
+                    headers: obterHeadersComAuth(),
                     body: JSON.stringify({
                         idProcesso: idProc,
                         especificacao: espec,
@@ -21829,7 +21899,7 @@ html body #view-gestao_agil .kanban-card-modelo .k-status-sei-critico {
                 // 1. Tenta via Proxy Backend Python local (:5000) - Sem bloqueio CORS!
                 var resProxy = await fetch('/api/v1/openproject/sync_card', {
                     method: 'POST',
-                    headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' },
+                    headers: obterHeadersComAuth(),
                     body: JSON.stringify({
                         cardId: cardId,
                         idProcesso: idProcesso || '',
@@ -25296,7 +25366,7 @@ window.dispararHomologacaoBackendReal = async function(btn) {
     try {
         var resp = await fetch('/api/v1/openproject/sync_batch', {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' },
+            headers: obterHeadersComAuth(),
             body: JSON.stringify({ comando: 'todos', todos: true })
         });
         var dados = await resp.json();
