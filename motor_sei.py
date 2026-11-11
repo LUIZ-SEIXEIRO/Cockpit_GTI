@@ -71,7 +71,7 @@ class MotorSEI:
         self.carregar_sessao()
 
     def salvar_sessao(self, cookies_dict):
-        """Gravação atômica transacional com rollback e fsync garantindo consistência total."""
+        """Gravação atômica transacional: backup anti-symlink, rollback completo e fsync."""
         dir_sessao = os.path.dirname(self.caminho_sessao)
         os.makedirs(dir_sessao, exist_ok=True)
         
@@ -82,101 +82,109 @@ class MotorSEI:
         
         tmp_fd = None
         tmp_path = None
+        backup_fd = None
+        backup_path = None
         sucesso_replace = False
-        backup_path = self.caminho_sessao + ".bak"
-        tem_backup = False
+        ja_existia = os.path.exists(self.caminho_sessao)
         
         try:
-            # 1. Cria backup prévio da sessão válida existente para viabilizar rollback
-            if os.path.exists(self.caminho_sessao):
+            # 1. Se já existe sessão, cria backup com nome aleatório exclusivo (anti-symlink)
+            if ja_existia:
                 try:
-                    with open(self.caminho_sessao, "rb") as f_src, open(backup_path, "wb") as f_dst:
-                        f_dst.write(f_src.read())
+                    backup_fd, backup_path = tempfile.mkstemp(dir=dir_sessao, prefix="sessao_backup_", suffix=".tmp")
                     try:
-                        os.chmod(backup_path, 0o600)
+                        os.fchmod(backup_fd, 0o600)
                     except Exception:
                         pass
-                    tem_backup = True
-                except Exception:
-                    pass
+                    with open(self.caminho_sessao, "rb") as f_src:
+                        conteudo_backup = f_src.read()
+                    os.write(backup_fd, conteudo_backup)
+                    os.fsync(backup_fd)
+                    os.close(backup_fd)
+                    backup_fd = None
+                except Exception as e:
+                    # Se falhar ao criar backup de segurança, aborta antes de alterar o arquivo ativo
+                    raise OSError(f"Falha de segurança ao criar backup prévio da sessão: {str(e)}")
 
+            # 2. Cria arquivo temporário novo
             tmp_fd, tmp_path = tempfile.mkstemp(dir=dir_sessao, prefix="sessao_sei_", suffix=".tmp")
             try:
                 os.fchmod(tmp_fd, 0o600)
             except Exception:
-                try:
-                    os.chmod(tmp_path, 0o600)
-                except Exception:
-                    pass
+                pass
                     
             if hasattr(os, "fstat") and hasattr(os, "getuid"):
                 st = os.fstat(tmp_fd)
                 if (st.st_mode & 0o077) != 0:
                     raise PermissionError("Insegurança: permissão não restrita para 0600.")
 
-            # 2. Escrita completa em loop
+            # 3. Escrita completa em loop
             escritos = 0
             while escritos < len(conteudo):
                 n = os.write(tmp_fd, conteudo[escritos:])
                 escritos += n
 
-            # 3. fsync obrigatório do arquivo temporário
+            # 4. fsync obrigatório do arquivo temporário
             try:
                 os.fsync(tmp_fd)
             finally:
                 os.close(tmp_fd)
                 tmp_fd = None
 
-            # 4. Substituição atômica no disco
+            # 5. Substituição atômica no disco
             os.replace(tmp_path, self.caminho_sessao)
             sucesso_replace = True
             tmp_path = None
 
-            # 5. fsync obrigatório no diretório pai em POSIX para metadados de renomeação
+            # 6. fsync obrigatório no diretório pai em POSIX para metadados de renomeação
             if hasattr(os, "O_DIRECTORY"):
                 dir_fd = os.open(dir_sessao, os.O_RDONLY | os.O_DIRECTORY)
                 try:
                     os.fsync(dir_fd)
                 except Exception:
-                    # ROLLBACK: Se o fsync do diretório falhar, restaura o arquivo original!
-                    if tem_backup and os.path.exists(backup_path):
+                    # ROLLBACK COMPLETO:
+                    if ja_existia and backup_path and os.path.exists(backup_path):
                         try:
                             os.replace(backup_path, self.caminho_sessao)
+                            backup_path = None
                         except Exception:
-                            # Se até o rollback falhar, sincroniza memória com o disco para nunca divergir
                             self.carregar_sessao()
                             raise
+                    elif not ja_existia and os.path.exists(self.caminho_sessao):
+                        # Primeira sessão: remove arquivo para manter disco e memória vazios
+                        try:
+                            os.remove(self.caminho_sessao)
+                        except Exception:
+                            pass
                     raise
                 finally:
                     os.close(dir_fd)
 
-            # 6. Atualiza a memória somente após confirmação integral de persistência e fsync
+            # 7. Atualiza memória apenas após confirmação total
             self.carregar_sessao()
 
         finally:
+            if backup_fd is not None:
+                try: os.close(backup_fd)
+                except Exception: pass
+            if backup_path and os.path.exists(backup_path):
+                try: os.remove(backup_path)
+                except Exception: pass
             if tmp_fd is not None:
-                try:
-                    os.close(tmp_fd)
-                except Exception:
-                    pass
+                try: os.close(tmp_fd)
+                except Exception: pass
             if not sucesso_replace and tmp_path and os.path.exists(tmp_path):
                 try:
-                    with open(tmp_path, "wb") as f_shred:
-                        f_shred.write(b"\x00" * len(conteudo))
-                        f_shred.truncate(0)
-                        f_shred.flush()
-                        os.fsync(f_shred.fileno())
-                except Exception:
-                    pass
-                try:
-                    os.remove(tmp_path)
-                except Exception:
-                    pass
-            if tem_backup and os.path.exists(backup_path):
-                try:
-                    os.remove(backup_path)
-                except Exception:
-                    pass
+                    with open(tmp_path, "wb") as f_del:
+                        f_del.write(b"\x00" * len(conteudo))
+                        f_del.truncate(0)
+                        f_del.flush()
+                        os.fsync(f_del.fileno())
+                except Exception: pass
+                try: os.remove(tmp_path)
+                except Exception: pass
+                        
+        self.carregar_sessao()
 
     def carregar_sessao(self):
         """Carrega cookies vinculando-os exclusivamente ao host sei.sp.gov.br e path /sei."""

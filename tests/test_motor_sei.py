@@ -66,7 +66,6 @@ class TestMotorSEI(unittest.TestCase):
         self.assertEqual(res["processos"][0]["ID_Processo"], "137.00001111/2026-10")
 
     def test_06_falha_fsync_aborta_substituicao_e_limpa(self):
-        """Valida que erro de fsync aborta os.replace, preserva a sessão e remove temporários."""
         cookies_iniciais = {"PHPSESSID": "sessao_original"}
         self.motor.salvar_sessao(cookies_iniciais)
         self.assertEqual(self.motor.session.cookies.get("PHPSESSID", domain="sei.sp.gov.br"), "sessao_original")
@@ -75,38 +74,37 @@ class TestMotorSEI(unittest.TestCase):
             with self.assertRaises(OSError):
                 self.motor.salvar_sessao({"PHPSESSID": "sessao_nova_corrompida"})
 
-        # 1. Garante que a sessão original permaneceu intacta
         self.motor.carregar_sessao()
         self.assertEqual(self.motor.session.cookies.get("PHPSESSID", domain="sei.sp.gov.br"), "sessao_original")
-
-        # 2. Comprova formalmente que nenhum arquivo temporário .tmp sobrou no diretório
         arquivos_tmp = [f for f in os.listdir(self.temp_dir.name) if f.endswith('.tmp')]
-        self.assertEqual(arquivos_tmp, [], f"Resíduos temporários não foram limpos: {arquivos_tmp}")
+        self.assertEqual(arquivos_tmp, [])
 
-def test_07_falha_fsync_diretorio_executa_rollback(self):
-        """Comprova que falha de fsync do diretório reverte o arquivo para a sessão anterior no disco e na memória."""
+    def test_07_falha_fsync_diretorio_executa_rollback(self):
+        """Valida rollback completo de disco e memória quando o fsync do diretório pós-replace falha."""
         cookies_iniciais = {"PHPSESSID": "sessao_original_estavel"}
         self.motor.salvar_sessao(cookies_iniciais)
         self.assertEqual(self.motor.session.cookies.get("PHPSESSID", domain="sei.sp.gov.br"), "sessao_original_estavel")
 
-        fsync_orig = os.fsync
-        chamadas_fsync = []
+        real_os_open = os.open
+        real_os_fsync = os.fsync
+
+        def fake_open(path, flags, *args):
+            if os.path.isdir(path):
+                return 999
+            return real_os_open(path, flags, *args)
+
         def fake_fsync(fd):
-            chamadas_fsync.append(fd)
-            if len(chamadas_fsync) > 1:
-                raise OSError("Falha simulada no fsync do diretório pós-replace")
-            return fsync_orig(fd)
+            if fd == 999:
+                raise OSError("Falha simulada no fsync do diretorio pos-replace")
+            return real_os_fsync(fd)
 
-        with patch('os.O_DIRECTORY', create=True, new=1), patch('os.fsync', side_effect=fake_fsync):
+        with patch('os.O_DIRECTORY', create=True, new=0),              patch('os.open', side_effect=fake_open),              patch('os.fsync', side_effect=fake_fsync),              patch('os.close'):
             with self.assertRaises(OSError):
-                self.motor.salvar_sessao({"PHPSESSID": "sessao_nova_corrompida"})
+                self.motor.salvar_sessao({"PHPSESSID": "sessao_nova_revertida"})
 
-        # 1. Comprova que o arquivo em disco sofreu rollback para o estado original
         with open(self.caminho_sessao, "r", encoding="utf-8") as f:
             dados_disco = json.load(f)
         self.assertEqual(dados_disco["cookies"]["PHPSESSID"], "sessao_original_estavel")
-
-        # 2. Comprova que a memória da sessão permaneceu estritamente no estado original
         self.assertEqual(self.motor.session.cookies.get("PHPSESSID", domain="sei.sp.gov.br"), "sessao_original_estavel")
 
 if __name__ == '__main__':
