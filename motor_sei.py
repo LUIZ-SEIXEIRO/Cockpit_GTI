@@ -8,6 +8,12 @@ class MotorSEI:
     SISTEMA_ID = "100000100"
     DOMINIO_COOKIE = "sei.sp.gov.br"
     
+    TERMOS_ERRO = [
+        "infraexception", "acesso negado", "sessão inválida", "sessao invalida",
+        "não foi possível", "erro no sistema", "falha na autenticação",
+        "txtusuario", "plataforma.sp.gov.br", "minhaarea.sp.gov.br"
+    ]
+    
     def __init__(self, caminho_sessao=None):
         self.base_dir = os.path.dirname(os.path.abspath(__file__))
         self.caminho_sessao = caminho_sessao or os.path.join(self.base_dir, "data", "sessao_sei.json")
@@ -20,21 +26,31 @@ class MotorSEI:
         self.carregar_sessao()
 
     def salvar_sessao(self, cookies_dict):
-        """Salva cookies autenticados com permissão 0600 e domínio estrito."""
+        """Cria o arquivo com permissão restrita 0600 em nível de syscall."""
         os.makedirs(os.path.dirname(self.caminho_sessao), exist_ok=True)
-        with open(self.caminho_sessao, "w", encoding="utf-8") as f:
-            json.dump({
-                "atualizado_em": time.strftime("%Y-%m-%dT%H:%M:%SZ"),
-                "cookies": cookies_dict
-            }, f, indent=2)
+        conteudo = json.dumps({
+            "atualizado_em": time.strftime("%Y-%m-%dT%H:%M:%SZ"),
+            "cookies": cookies_dict
+        }, indent=2).encode("utf-8")
+        
+        flags = os.O_WRONLY | os.O_CREAT | os.O_TRUNC
+        mode = 0o600
         try:
-            os.chmod(self.caminho_sessao, 0o600)
+            fd = os.open(self.caminho_sessao, flags, mode)
+            with os.fdopen(fd, 'wb') as f:
+                f.write(conteudo)
+            try:
+                os.chmod(self.caminho_sessao, 0o600)
+            except Exception:
+                pass
         except Exception:
-            pass
+            with open(self.caminho_sessao, "wb") as f:
+                f.write(conteudo)
+                
         self.carregar_sessao()
 
     def carregar_sessao(self):
-        """Carrega cookies vinculando-os exclusivamente ao domínio do SEI."""
+        """Carrega cookies vinculando-os exclusivamente a HTTPS, domínio e path do SEI."""
         if os.path.exists(self.caminho_sessao):
             try:
                 with open(self.caminho_sessao, "r", encoding="utf-8") as f:
@@ -42,6 +58,7 @@ class MotorSEI:
                 cookies = dados.get("cookies", {})
                 self.session.cookies.clear()
                 for k, v in cookies.items():
+                    # Restringe o cookie ao domínio e path estrito
                     self.session.cookies.set(k, v, domain=self.DOMINIO_COOKIE, path="/sei")
                 return True
             except Exception:
@@ -49,22 +66,26 @@ class MotorSEI:
         return False
 
     def validar_sessao(self):
-        """Valida a sessão exigindo HTTP 200 e confirmação de ambiente autenticado."""
+        """Valida a sessão exigindo HTTP 200, ausência de erros e presença de marcadores autenticados."""
         try:
             url = f"{self.BASE_URL}/controlador.php?acao=procedimento_controlar&infra_sistema={self.SISTEMA_ID}&infra_unidade_atual={self.UNIDADE_SAGTI}"
             resp = self.session.get(url, timeout=6, allow_redirects=True)
             if resp.status_code != 200:
                 return {"autenticado": False, "codigo": resp.status_code, "mensagem": f"Erro do servidor SEI: HTTP {resp.status_code}"}
-            if "plataforma.sp.gov.br" in resp.url or "minhaarea.sp.gov.br" in resp.url or "txtUsuario" in resp.text:
-                return {"autenticado": False, "mensagem": "Sessão expirada. Autenticação Gov.br requerida."}
-            if "procedimento_controlar" in resp.url and ("infra_unidade_atual" in resp.url or "id_procedimento" in resp.text):
+            
+            texto_lower = resp.text.lower()
+            if any(termo in texto_lower for termo in self.TERMOS_ERRO) or "plataforma.sp.gov.br" in resp.url or "minhaarea.sp.gov.br" in resp.url:
+                return {"autenticado": False, "mensagem": "Sessão expirada ou página de login reportada pelo SEI."}
+            
+            if "procedimento_controlar" in resp.url and ("id_procedimento" in resp.text or "infraunidadeatual" in texto_lower or "inframenu" in texto_lower):
                 return {"autenticado": True, "unidade": self.UNIDADE_SAGTI, "mensagem": "Sessão ativa na SA-GTI"}
+            
             return {"autenticado": False, "mensagem": "Tela de acesso não autenticada."}
         except Exception as e:
             return {"autenticado": False, "erro": str(e), "mensagem": "Falha de conexão com o SEI"}
 
     def buscar_processos(self, termo="", unidade=None):
-        """Busca processos no SEI exigindo resposta HTTP 200 e sessão válida."""
+        """Busca processos no SEI rejeitando páginas de login ou respostas de erro."""
         unidade = unidade or self.UNIDADE_SAGTI
         url = f"{self.BASE_URL}/controlador.php?acao=pesquisa_processo_pesquisar&infra_sistema={self.SISTEMA_ID}&infra_unidade_atual={unidade}"
         payload = {
@@ -75,30 +96,32 @@ class MotorSEI:
         }
         try:
             resp = self.session.post(url, data=payload, timeout=10)
-            if resp.status_code != 200 or "txtUsuario" in resp.text or "minhaarea.sp.gov.br" in resp.url:
+            texto_lower = resp.text.lower()
+            if resp.status_code != 200 or any(t in texto_lower for t in self.TERMOS_ERRO) or "plataforma.sp.gov.br" in resp.url:
                 return {"sucesso": False, "erro": "Sessão expirada ou erro na busca.", "processos": []}
             return self.parsear_tabela_busca(resp.text)
         except Exception as e:
             return {"sucesso": False, "erro": str(e), "processos": []}
 
     def listar_caixa_unidade(self, unidade=None):
-        """Lista processos da caixa da SA-GTI exigindo HTTP 200 e sessão válida."""
+        """Lista processos da caixa da SA-GTI rejeitando páginas de login ou respostas de erro."""
         unidade = unidade or self.UNIDADE_SAGTI
         url = f"{self.BASE_URL}/controlador.php?acao=procedimento_controlar&infra_sistema={self.SISTEMA_ID}&infra_unidade_atual={unidade}"
         try:
             resp = self.session.get(url, timeout=10)
-            if resp.status_code != 200 or "txtUsuario" in resp.text or "minhaarea.sp.gov.br" in resp.url:
+            texto_lower = resp.text.lower()
+            if resp.status_code != 200 or any(t in texto_lower for t in self.TERMOS_ERRO) or "plataforma.sp.gov.br" in resp.url:
                 return {"sucesso": False, "erro": "Sessão expirada ou acesso negado.", "processos": []}
             return self.parsear_tabela_caixa(resp.text)
         except Exception as e:
             return {"sucesso": False, "erro": str(e), "processos": []}
 
     def parsear_tabela_caixa(self, html):
-        """Parser resiliente que extrai processos mesmo com tags internas aninhadas (<span>, etc.)."""
+        """Parser resiliente que extrai processos independentemente de atributos antes ou após o href."""
         processos = []
-        # Captura links de procedimentos e remove qualquer tag interna do texto
-        padrao = r'href="controlador\.php\?acao=procedimento_trabalhar&id_procedimento=(\d+)[^"]*"\s*>(.*?)</a>'
-        matches = re.findall(padrao, html, flags=re.DOTALL)
+        # Captura links <a> com href para procedimento_trabalhar e extrai id_procedimento
+        padrao = r'<a\s+[^>]*href="[^"]*controlador\.php\?[^"]*id_procedimento=(\d+)[^"]*"[^>]*>(.*?)</a>'
+        matches = re.findall(padrao, html, flags=re.DOTALL | re.IGNORECASE)
         for id_proc, texto_bruto in matches:
             num_proc = re.sub(r'<[^>]+>', '', texto_bruto).strip()
             if num_proc:

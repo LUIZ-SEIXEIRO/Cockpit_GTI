@@ -34,65 +34,33 @@ def requer_autenticacao(f):
     @wraps(f)
     def decorado(*args, **kwargs):
         token_esperado = os.getenv("COCKPIT_API_TOKEN") or os.getenv("API_TOKEN")
+        if not token_esperado:
+            return jsonify({"erro": "Acesso não autorizado: API_TOKEN não configurado no servidor."}), 401
+
         auth_header = request.headers.get("Authorization", "")
         token_fornecido = auth_header.replace("Bearer ", "").strip() if auth_header else request.headers.get("X-API-Key", "")
         
-        if token_esperado:
-            if token_fornecido and token_fornecido == token_esperado:
-                return f(*args, **kwargs)
-            return jsonify({"erro": "Acesso não autorizado: token inválido ou ausente"}), 401
-            
-        # Se não há token configurado, rejeita qualquer origem externa ou forjada
-        origem = request.headers.get("Origin") or request.headers.get("Referer")
-        if validar_origem_estrita(origem) or request.remote_addr in ("127.0.0.1", "::1"):
-            return f(*args, **kwargs)
-            
-        return jsonify({"erro": "Acesso não autorizado: autenticação requerida"}), 401
+        if not token_fornecido or token_fornecido != token_esperado:
+            return jsonify({"erro": "Acesso não autorizado: token inválido ou ausente."}), 401
+
+        return f(*args, **kwargs)
     return decorado
-
-
-# ==========================================
-# SEGURANÇA E AUTENTICAÇÃO INSTITUCIONAL
-# ==========================================
-COCKPIT_API_TOKEN = os.getenv("COCKPIT_API_TOKEN") or os.getenv("API_TOKEN") or ""
-API_TOKEN = COCKPIT_API_TOKEN
-OPENPROJECT_API_TOKEN = os.getenv("OPENPROJECT_API_TOKEN") or os.getenv("OPENPROJECT_API_KEY") or ""
-OPENPROJECT_API_KEY = OPENPROJECT_API_TOKEN
-NEWAPI_API_KEY = os.getenv("NEWAPI_API_KEY") or os.getenv("NEW_API_KEY") or ""
-NEW_API_KEY = NEWAPI_API_KEY
-VERIFY_SSL = os.getenv("VERIFY_SSL", "true").lower() in ("true", "1")
-
-ALLOWED_HOSTS = {"localhost", "127.0.0.1", "::1", "cockpit.spaguas.gov.br"}
-ALLOWED_ORIGINS = {
-    "http://localhost:5000", "http://127.0.0.1:5000",
-    "http://localhost:3000", "http://127.0.0.1:3000",
-    "https://cockpit.spaguas.gov.br"
-}
-
-# [Função legada de startswith expurgada]
 
 def requer_autenticacao(f):
     @wraps(f)
     def decorado(*args, **kwargs):
         token_esperado = os.getenv("COCKPIT_API_TOKEN") or os.getenv("API_TOKEN")
+        if not token_esperado:
+            return jsonify({"erro": "Acesso não autorizado: API_TOKEN não configurado no servidor."}), 401
+
         auth_header = request.headers.get("Authorization", "")
         token_fornecido = auth_header.replace("Bearer ", "").strip() if auth_header else request.headers.get("X-API-Key", "")
         
-        # 1. Se houver token configurado, validação estrita do token
-        if token_esperado:
-            if token_fornecido and token_fornecido == token_esperado:
-                return f(*args, **kwargs)
-            return jsonify({"erro": "Acesso não autorizado: token inválido ou ausente"}), 401
-            
-        # 2. Se token_fornecido for enviado sem token no server, rejeita
-        if not token_esperado and not token_fornecido:
-            origem = request.headers.get("Origin") or request.headers.get("Referer")
-            if validar_origem_estrita(origem) or request.remote_addr in ("127.0.0.1", "::1"):
-                return f(*args, **kwargs)
-                
-        return jsonify({"erro": "Acesso não autorizado: autenticação requerida"}), 401
-    return decorado
+        if not token_fornecido or token_fornecido != token_esperado:
+            return jsonify({"erro": "Acesso não autorizado: token inválido ou ausente."}), 401
 
+        return f(*args, **kwargs)
+    return decorado
 
 # -------------------------------------------------------------------------
 # FUNÇÃO GLOBAL DE VERIFICAÇÃO DE PORTAS (DISPONÍVEL PARA TODAS AS ROTAS)

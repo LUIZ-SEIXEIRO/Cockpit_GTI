@@ -10,3 +10,7 @@ data/usuarios_cockpit.json
 openproject_token.txt
 docs
 *.md
+
+data/sessao_sei.json
+*.sessao.json
+sessao_sei.json
