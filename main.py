@@ -39,7 +39,11 @@ for o in os.environ.get('ALLOWED_ORIGINS', '').split(','):
     if o.strip():
         ALLOWED_ORIGINS.add(o.strip())
 
-COCKPIT_API_TOKEN = os.environ.get('COCKPIT_API_TOKEN', 'spaguas-sagti-auth-token-2026')
+COCKPIT_API_TOKEN = os.getenv("COCKPIT_API_TOKEN") or os.getenv("API_TOKEN")
+API_TOKEN = COCKPIT_API_TOKEN
+OPENPROJECT_API_TOKEN = os.getenv("OPENPROJECT_API_TOKEN") or os.getenv("OPENPROJECT_API_KEY")
+OPENPROJECT_API_KEY = OPENPROJECT_API_TOKEN
+VERIFY_SSL = os.getenv("VERIFY_SSL", "true").lower() in ("true", "1")
 
 @app.after_request
 def adicionar_cabecalhos_seguranca_e_cors(response):
@@ -254,6 +258,7 @@ def api_v1_ia_testar_slot():
         }), 200
 
 @app.route('/api/v1/ia/chat', methods=['POST'])
+@requer_autenticacao
 def api_v1_ia_chat():
     try:
         dados = request.get_json(force=True) or {}

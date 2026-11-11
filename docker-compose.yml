@@ -10,11 +10,13 @@ services:
     volumes:
       - H:/spaguas/ia-multiagente/ollama_data:/root/.ollama
     environment:
-      - API_TOKEN=${API_TOKEN:-}
+      - COCKPIT_API_TOKEN=${COCKPIT_API_TOKEN:-${API_TOKEN:-}}
+      - API_TOKEN=${API_TOKEN:-${COCKPIT_API_TOKEN:-}}
       - VERIFY_SSL=${VERIFY_SSL:-true}
-      - OPENPROJECT_URL=${OPENPROJECT_URL:-}
-      - OPENPROJECT_API_KEY=${OPENPROJECT_API_KEY:-}
-      - GLPI_URL=${GLPI_URL:-}
+      - OPENPROJECT_URL=${OPENPROJECT_URL:-https://openproject.spaguas.sp.gov.br}
+      - OPENPROJECT_API_TOKEN=${OPENPROJECT_API_TOKEN:-${OPENPROJECT_API_KEY:-}}
+      - OPENPROJECT_API_KEY=${OPENPROJECT_API_KEY:-${OPENPROJECT_API_TOKEN:-}}
+      - GLPI_URL=${GLPI_URL:-https://glpi.spaguas.sp.gov.br}
       - GLPI_APP_TOKEN=${GLPI_APP_TOKEN:-}
       - GLPI_USER_TOKEN=${GLPI_USER_TOKEN:-}
       - NEW_API_KEY=${NEW_API_KEY:-}
@@ -46,11 +48,13 @@ services:
       - ./docs:/app/docs
       - ./README.md:/app/README.md
     environment:
-      - API_TOKEN=${API_TOKEN:-}
+      - COCKPIT_API_TOKEN=${COCKPIT_API_TOKEN:-${API_TOKEN:-}}
+      - API_TOKEN=${API_TOKEN:-${COCKPIT_API_TOKEN:-}}
       - VERIFY_SSL=${VERIFY_SSL:-true}
-      - OPENPROJECT_URL=${OPENPROJECT_URL:-}
-      - OPENPROJECT_API_KEY=${OPENPROJECT_API_KEY:-}
-      - GLPI_URL=${GLPI_URL:-}
+      - OPENPROJECT_URL=${OPENPROJECT_URL:-https://openproject.spaguas.sp.gov.br}
+      - OPENPROJECT_API_TOKEN=${OPENPROJECT_API_TOKEN:-${OPENPROJECT_API_KEY:-}}
+      - OPENPROJECT_API_KEY=${OPENPROJECT_API_KEY:-${OPENPROJECT_API_TOKEN:-}}
+      - GLPI_URL=${GLPI_URL:-https://glpi.spaguas.sp.gov.br}
       - GLPI_APP_TOKEN=${GLPI_APP_TOKEN:-}
       - GLPI_USER_TOKEN=${GLPI_USER_TOKEN:-}
       - NEW_API_KEY=${NEW_API_KEY:-}

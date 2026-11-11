@@ -3139,7 +3139,7 @@ th.th-sortable-v9:hover {
                                 &#128274; temp: 0.0 | top_p: 0.1 | seed: 42 | <span id="lbl-key-ativa-newapi" style="color:#047857;">Chamadas Isoladas</span>
                             </div>
                             <div style="margin-top: 4px; display: flex; gap: 4px; align-items: center;">
-                                <input type="text" id="chat-token-quick-input" value="sk-GxdEHwXjAPXW50uuBVeDLAEeSXdt6kJfcduffPsjBnmsRs3H" onchange="window.salvarTokenNewApiUsuario(this.value)" autocomplete="off" spellcheck="false" style="display:none;" title="Chave API Key rápida">
+                                <input type="text" id="chat-token-quick-input" value="sk-CHAVE-SANITIZADA-INSTITUCIONAL" onchange="window.salvarTokenNewApiUsuario(this.value)" autocomplete="off" spellcheck="false" style="display:none;" title="Chave API Key rápida">
                                 <button type="button" onclick="window.abrirConfiguracaoTresIas()" class="btn btn-primary" style="flex: 1; padding: 5px 8px; font-size: 10px; font-weight: 700; justify-content: center;">&#9881;&#65039; Configurar 3 Keys &amp; Agentes</button>
                                 <button type="button" onclick="window.testarPoolTresIasIsoladas(this)" class="btn btn-secondary" style="padding: 5px 8px; font-size: 10px; font-weight: 700; background:#fff; border:1px solid #93c5fd; color:#0056d2;" title="Testar conexão isolada das 3 IAs">&#9889; Testar</button>
                             </div>
@@ -6344,7 +6344,7 @@ th.th-sortable-v9:hover {
                                 <div>
                                     <label style="font-size: 10.5px; font-weight: 700; color: #94a3b8; text-transform: uppercase; display: block; margin-bottom: 3px;">API Key Individual:</label>
                                     <div style="position: relative;">
-                                        <input type="password" id="cfg-ia1-apikey" value="sk-RAZNLjgeaKLVgufkyiemxilJb2HZU6ilvkmTpvLXoOwyIaUL" style="width: 100%; box-sizing: border-box; padding: 6px 34px 6px 10px; border-radius: 6px; border: 1px solid rgba(255,255,255,0.14); background: rgba(255,255,255,0.05); color: #ffffff; font-size: 11px; font-family: monospace;">
+                                        <input type="password" id="cfg-ia1-apikey" value="sk-CHAVE-SANITIZADA-INSTITUCIONAL" style="width: 100%; box-sizing: border-box; padding: 6px 34px 6px 10px; border-radius: 6px; border: 1px solid rgba(255,255,255,0.14); background: rgba(255,255,255,0.05); color: #ffffff; font-size: 11px; font-family: monospace;">
                                         <button type="button" onclick="window.toggleVisibilidadeInput('cfg-ia1-apikey')" style="position: absolute; right: 6px; top: 50%; transform: translateY(-50%); background: transparent; border: none; color: #94a3b8; cursor: pointer; font-size: 12px;">👁️</button>
                                     </div>
                                 </div>
@@ -6403,7 +6403,7 @@ th.th-sortable-v9:hover {
                                 <div>
                                     <label style="font-size: 10.5px; font-weight: 700; color: #94a3b8; text-transform: uppercase; display: block; margin-bottom: 3px;">API Key Individual:</label>
                                     <div style="position: relative;">
-                                        <input type="password" id="cfg-ia2-apikey" value="sk-GxdEHwXjAPXW50uuBVeDLAEeSXdt6kJfcduffPsjBnmsRs3H" style="width: 100%; box-sizing: border-box; padding: 6px 34px 6px 10px; border-radius: 6px; border: 1px solid rgba(255,255,255,0.14); background: rgba(255,255,255,0.05); color: #ffffff; font-size: 11px; font-family: monospace;">
+                                        <input type="password" id="cfg-ia2-apikey" value="sk-CHAVE-SANITIZADA-INSTITUCIONAL" style="width: 100%; box-sizing: border-box; padding: 6px 34px 6px 10px; border-radius: 6px; border: 1px solid rgba(255,255,255,0.14); background: rgba(255,255,255,0.05); color: #ffffff; font-size: 11px; font-family: monospace;">
                                         <button type="button" onclick="window.toggleVisibilidadeInput('cfg-ia2-apikey')" style="position: absolute; right: 6px; top: 50%; transform: translateY(-50%); background: transparent; border: none; color: #94a3b8; cursor: pointer; font-size: 12px;">👁️</button>
                                     </div>
                                 </div>
@@ -13351,8 +13351,8 @@ window.STORAGE_KEY_POOL_3_IAS = 'sagti_pool_tres_ias_v96';
     window.agenteForcadoChat = 'auto';
 
     window.obterPoolPadraoTresIas = function() {
-        var keyIa1 = 'sk-RAZNLjgeaKLVgufkyiemxilJb2HZU6ilvkmTpvLXoOwyIaUL';
-        var keyIa2 = 'sk-GxdEHwXjAPXW50uuBVeDLAEeSXdt6kJfcduffPsjBnmsRs3H';
+        var keyIa1 = 'sk-CHAVE-SANITIZADA-INSTITUCIONAL';
+        var keyIa2 = 'sk-CHAVE-SANITIZADA-INSTITUCIONAL';
         var urlPadrao = localStorage.getItem('newapi_base_url') || 'http://100.103.100.98:3001/v1';
 
         return {
@@ -13525,7 +13525,7 @@ window.STORAGE_KEY_POOL_3_IAS = 'sagti_pool_tres_ias_v96';
         var pre = (slot === 'principal') ? 'cfg-ia1' : ((slot === 'orquestracao') ? 'cfg-ia2' : 'cfg-ia3');
 
         var ep = (document.getElementById(pre + '-endpoint') || {}).value || (pool && pool.ias && pool.ias[slot] ? pool.ias[slot].endpoint : 'http://100.103.100.98:3001/v1');
-        var key = (document.getElementById(pre + '-apikey') || {}).value || (pool && pool.ias && pool.ias[slot] ? pool.ias[slot].apiKey : 'sk-GxdEHwXjAPXW50uuBVeDLAEeSXdt6kJfcduffPsjBnmsRs3H');
+        var key = (document.getElementById(pre + '-apikey') || {}).value || (pool && pool.ias && pool.ias[slot] ? pool.ias[slot].apiKey : 'sk-CHAVE-SANITIZADA-INSTITUCIONAL');
         var mod = (document.getElementById(pre + '-agent') || {}).value || (pool && pool.ias && pool.ias[slot] ? pool.ias[slot].agent : 'gemini-2.5-flash');
 
         var t0 = performance.now();
@@ -14382,7 +14382,7 @@ window.NEWAPI_DETERMINISTIC_LOCK = Object.freeze({
     function obterTokenNewApi() {
         return localStorage.getItem('newapi_token') ||
                (window.NEWAPI_AUTO_CFG && window.NEWAPI_AUTO_CFG.token) ||
-               'sk-sagti-spaguas-2026';
+               'sk-CHAVE-SANITIZADA-INSTITUCIONAL';
     }
 
     function obterBaseUrlNewApi() {
@@ -14400,7 +14400,7 @@ window.NEWAPI_DETERMINISTIC_LOCK = Object.freeze({
         var topoBadge = document.getElementById('badge-status-newapi-topo');
         var inpTok = document.getElementById('chat-token-input');
         var savedTok = (localStorage.getItem('newapi_token') || '').trim();
-        if (inpTok && savedTok && savedTok !== 'sk-sagti-spaguas-2026') {
+        if (inpTok && savedTok && savedTok !== 'sk-CHAVE-SANITIZADA-INSTITUCIONAL') {
             inpTok.value = savedTok;
         }
         try {
@@ -16216,7 +16216,7 @@ Base sincronizada com sucesso.`);
 
 window.temTokenNewApiCustomizado = function() {
         var t = (localStorage.getItem('newapi_token') || '').trim();
-        return Boolean(t && t.indexOf('sk-') === 0 && t !== 'sk-sagti-spaguas-2026' && t !== 'sk-cole-sua-chave-aqui');
+        return Boolean(t && t.indexOf('sk-') === 0 && t !== 'sk-CHAVE-SANITIZADA-INSTITUCIONAL' && t !== 'sk-CHAVE-SANITIZADA-INSTITUCIONAL');
     };
 
     window.salvarTokenNewApiUsuario = function(novoToken) {
