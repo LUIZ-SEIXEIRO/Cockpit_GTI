@@ -1,4 +1,4 @@
-import os, json, re, time, requests, urllib.parse
+import os, json, re, time, requests, urllib.parse, html as html_lib
 
 class MotorSEI:
     """Motor de Scraping, Busca e Classificação do SEI SP (v4.1.5 Oficial) para a SA-GTI."""
@@ -11,7 +11,8 @@ class MotorSEI:
     TERMOS_ERRO = [
         "infraexception", "acesso negado", "sessão inválida", "sessao invalida",
         "não foi possível", "erro no sistema", "falha na autenticação",
-        "txtusuario", "plataforma.sp.gov.br", "minhaarea.sp.gov.br", "acesso.gov.br"
+        "txtusuario", "plataforma.sp.gov.br", "minhaarea.sp.gov.br", "acesso.gov.br",
+        "erro no processamento", "sistema indisponível", "erro interno", "falha na execução"
     ]
     
     def __init__(self, caminho_sessao=None):
@@ -26,7 +27,7 @@ class MotorSEI:
         self.carregar_sessao()
 
     def salvar_sessao(self, cookies_dict):
-        """Remove arquivo preexistente e cria arquivo atômico com permissão 0600."""
+        """Grava a sessão com 0600 estrito em nível de syscall."""
         os.makedirs(os.path.dirname(self.caminho_sessao), exist_ok=True)
         if os.path.exists(self.caminho_sessao):
             try:
@@ -44,15 +45,22 @@ class MotorSEI:
         fd = os.open(self.caminho_sessao, flags, mode)
         with os.fdopen(fd, 'wb') as f:
             f.write(conteudo)
+            
         try:
             os.chmod(self.caminho_sessao, 0o600)
         except Exception:
             pass
-            
+
+        # Validação estrita de permissões em sistemas POSIX
+        if hasattr(os, 'stat') and hasattr(os, 'getuid'):
+            st = os.stat(self.caminho_sessao)
+            if (st.st_mode & 0o077) != 0:
+                raise PermissionError("Insegurança: impossível restringir permissões do arquivo para 0600.")
+                
         self.carregar_sessao()
 
     def carregar_sessao(self):
-        """Carrega cookies estritamente para https://sei.sp.gov.br/sei."""
+        """Carrega cookies vinculando-os exclusivamente ao host sei.sp.gov.br e path /sei."""
         if os.path.exists(self.caminho_sessao):
             try:
                 with open(self.caminho_sessao, "r", encoding="utf-8") as f:
@@ -67,33 +75,42 @@ class MotorSEI:
         return False
 
     def _executar_requisicao_segura(self, metodo, url, **kwargs):
-        """Garante que a requisição siga estritamente para HTTPS e host permitido."""
+        """Executa requisição validando host/path e bloqueando vazamento de cookies em redirecionamentos."""
         parsed = urllib.parse.urlparse(url)
-        if parsed.scheme != "https" or parsed.hostname != self.HOST_PERMITIDO:
+        if parsed.scheme != "https" or parsed.hostname != self.HOST_PERMITIDO or not parsed.path.startswith("/sei/"):
             raise ValueError(f"Destino não autorizado: {url}")
-        return self.session.request(metodo, url, **kwargs)
+            
+        # Executa sem seguir redirecionamentos automáticos cegos
+        resp = self.session.request(metodo, url, allow_redirects=False, **kwargs)
+        if resp.is_redirect:
+            loc = resp.headers.get("Location", "")
+            loc_url = urllib.parse.urljoin(url, loc)
+            p_loc = urllib.parse.urlparse(loc_url)
+            # Se redirecionar para fora de https://sei.sp.gov.br/sei/, não envia cookies!
+            if p_loc.scheme != "https" or p_loc.hostname != self.HOST_PERMITIDO or not p_loc.path.startswith("/sei/"):
+                return resp
+            return self.session.request(metodo, loc_url, allow_redirects=False, **kwargs)
+        return resp
 
     def _pagina_caixa_valida(self, resp):
-        """Validação positiva rigorosa exigindo host HTTPS exato e marcadores estruturais do SEI."""
+        """Validação positiva exigindo host HTTPS, path /sei/ e estrutura legítima sem erros."""
         if resp.status_code != 200:
             return False
         parsed = urllib.parse.urlparse(resp.url)
-        if parsed.scheme != "https" or parsed.hostname != self.HOST_PERMITIDO:
+        if parsed.scheme != "https" or parsed.hostname != self.HOST_PERMITIDO or not parsed.path.startswith("/sei/"):
             return False
         texto = resp.text.lower()
         if any(t in texto for t in self.TERMOS_ERRO):
             return False
-        # Exige múltiplos marcadores estruturais simultâneos
         tem_controlar = "procedimento_controlar" in texto or "controle de processos" in texto
         tem_tabela = "infratabela" in texto or "infraareadados" in texto or "id_procedimento" in texto
         return tem_controlar and tem_tabela
 
     def _pagina_busca_valida(self, resp):
-        """Validação positiva da tela de pesquisa."""
         if resp.status_code != 200:
             return False
         parsed = urllib.parse.urlparse(resp.url)
-        if parsed.scheme != "https" or parsed.hostname != self.HOST_PERMITIDO:
+        if parsed.scheme != "https" or parsed.hostname != self.HOST_PERMITIDO or not parsed.path.startswith("/sei/"):
             return False
         texto = resp.text.lower()
         if any(t in texto for t in self.TERMOS_ERRO):
@@ -105,9 +122,9 @@ class MotorSEI:
     def validar_sessao(self):
         try:
             url = f"{self.BASE_URL}/controlador.php?acao=procedimento_controlar&infra_sistema={self.SISTEMA_ID}&infra_unidade_atual={self.UNIDADE_SAGTI}"
-            resp = self._executar_requisicao_segura("GET", url, timeout=6, allow_redirects=True)
+            resp = self._executar_requisicao_segura("GET", url, timeout=6)
             if not self._pagina_caixa_valida(resp):
-                return {"autenticado": False, "codigo": resp.status_code, "mensagem": "Sessão expirada ou página de login/erro reportada pelo SEI."}
+                return {"autenticado": False, "codigo": resp.status_code, "mensagem": "Sessão expirada ou resposta não autorizada."}
             return {"autenticado": True, "unidade": self.UNIDADE_SAGTI, "mensagem": "Sessão ativa na SA-GTI"}
         except Exception as e:
             return {"autenticado": False, "erro": str(e), "mensagem": "Falha de conexão com o SEI"}
@@ -141,20 +158,21 @@ class MotorSEI:
             return {"sucesso": False, "codigo": 502, "erro": f"Falha de conexão: {str(e)}", "processos": []}
 
     def parsear_tabela_processos(self, html):
-        """Parser preciso: suporta aspas simples/duplas, parâmetros em qualquer ordem e acao estrita."""
+        """Parser preciso: decodifica &amp;, aceita aspas simples/duplas e exige acao estrita."""
         processos = []
         tags_a = re.findall(r'<a\s+([^>]+)>(.*?)</a>', html, flags=re.DOTALL | re.IGNORECASE)
         for attrs, texto_bruto in tags_a:
             m_href = re.search(r'href=['"]([^'"]+)['"]', attrs, flags=re.IGNORECASE)
             if not m_href:
                 continue
-            href = m_href.group(1)
+            # Decodifica entidades HTML como &amp;
+            href = html_lib.unescape(m_href.group(1))
 
-            # Valida que acao é ESTRITAMENTE procedimento_trabalhar (não aceita prefixos derivados)
+            # Valida que acao é ESTRITAMENTE procedimento_trabalhar
             if not re.search(r'(?:^|[?&])acao=procedimento_trabalhar(?:&|$)', href):
                 continue
 
-            # Extrai id_procedimento em qualquer posição da query string
+            # Extrai id_procedimento em qualquer posição
             m_id = re.search(r'(?:^|[?&])id_procedimento=(\d+)(?:&|$)', href)
             if not m_id:
                 continue
