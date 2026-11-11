@@ -233,6 +233,37 @@ def api_v1_obter_documento(doc_id):
                 
     return jsonify({'sucesso': False, 'status': 'erro', 'mensagem': 'Arquivo não localizado em disco'}), 404
 
+
+# -------------------------------------------------------------------------
+# 6. ENDPOINTS DE STATUS E TELEMETRIA INDIVIDUAL PARA O FRONTEND
+# -------------------------------------------------------------------------
+@app.route('/api/v1/mariadb/status', methods=['GET'])
+def mariadb_status():
+    ok = checar_porta('127.0.0.1', 3306)
+    return jsonify({'servico': 'mariadb', 'status': 'online' if ok else 'offline', 'ok': ok, 'online': ok}), 200
+
+@app.route('/api/v1/ia/status', methods=['GET'])
+@app.route('/api/v1/newapi/status', methods=['GET'])
+def ia_status():
+    ok = checar_porta('127.0.0.1', 3001) or checar_porta('100.103.100.98', 3001) or checar_porta('new-api', 3000)
+    return jsonify({'servico': 'new-api', 'status': 'online' if ok else 'offline', 'ok': ok, 'online': ok}), 200
+
+@app.route('/api/v1/ollama/status', methods=['GET'])
+def ollama_status():
+    ok = checar_porta('127.0.0.1', 11434) or checar_porta('ollama', 11434)
+    return jsonify({'servico': 'ollama', 'status': 'online' if ok else 'offline', 'ok': ok, 'online': ok}), 200
+
+@app.route('/api/v1/glpi/status', methods=['GET'])
+def glpi_status():
+    ok = checar_porta('10.199.43.26', 443) or checar_porta('127.0.0.1', 8088)
+    return jsonify({'servico': 'glpi', 'status': 'online' if ok else 'offline', 'ok': ok, 'online': ok}), 200
+
+@app.route('/api/v1/openproject/status', methods=['GET'])
+@app.route('/api/v1/openproject/sync_status', methods=['GET'])
+def openproject_status():
+    ok = checar_porta('143.107.108.115', 443) or checar_porta('127.0.0.1', 8090)
+    return jsonify({'servico': 'openproject', 'status': 'online' if ok else 'offline', 'ok': ok, 'online': ok}), 200
+
 if __name__ == '__main__':
     porta = int(os.environ.get('PORT', 5000))
     app.run(host='0.0.0.0', port=porta, debug=False)
