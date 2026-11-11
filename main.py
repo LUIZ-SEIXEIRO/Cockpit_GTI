@@ -4,12 +4,71 @@ from flask import Flask, request, jsonify, send_from_directory
 
 app = Flask(__name__)
 
+
+
+
+# -------------------------------------------------------------------------
+# SEGURANÇA INSTITUCIONAL & HARDENING DE REDE (DEVSECOPS / TCE-SP)
+# -------------------------------------------------------------------------
+ALLOWED_ORIGINS = [
+    o.strip() for o in os.environ.get(
+        'ALLOWED_ORIGINS',
+        'http://localhost:5000,http://127.0.0.1:5000,http://100.103.100.98:5000,http://localhost:3001,http://127.0.0.1:3001'
+    ).split(',') if o.strip()
+]
+
+COCKPIT_API_TOKEN = os.environ.get('COCKPIT_API_TOKEN', 'spaguas-sagti-auth-token-2026')
+
 @app.after_request
-def adicionar_cabecalhos_cors(response):
-    response.headers['Access-Control-Allow-Origin'] = '*'
+def adicionar_cabecalhos_seguranca_e_cors(response):
+    origin = request.headers.get('Origin', '')
+    if origin in ALLOWED_ORIGINS:
+        response.headers['Access-Control-Allow-Origin'] = origin
+    elif not origin:
+        response.headers['Access-Control-Allow-Origin'] = 'http://localhost:5000'
+    else:
+        response.headers['Access-Control-Allow-Origin'] = 'null'
+
     response.headers['Access-Control-Allow-Methods'] = 'GET, POST, OPTIONS, PUT, DELETE'
-    response.headers['Access-Control-Allow-Headers'] = 'Content-Type, Authorization, X-Requested-With'
+    response.headers['Access-Control-Allow-Headers'] = 'Content-Type, Authorization, X-Requested-With, X-Cockpit-Token'
+
+    # Headers de blindagem HTTP para auditoria de segurança (OWASP)
+    response.headers['X-Content-Type-Options'] = 'nosniff'
+    response.headers['X-Frame-Options'] = 'SAMEORIGIN'
+    response.headers['X-XSS-Protection'] = '1; mode=block'
+    response.headers['Referrer-Policy'] = 'strict-origin-when-cross-origin'
+
     return response
+
+@app.before_request
+def proteger_rotas_mutaveis():
+    if request.method == 'OPTIONS':
+        return jsonify({'status': 'ok'}), 200
+
+    rotas_protegidas = {
+        '/api/v1/ia/pool',
+        '/api/v1/openproject/sync_card',
+        '/api/v1/openproject/sync_batch'
+    }
+
+    if request.path in rotas_protegidas and request.method in ('POST', 'PUT', 'PATCH', 'DELETE'):
+        # 1. Permite acesso transparente da própria interface local no navegador
+        referer = request.headers.get('Referer', '')
+        origin = request.headers.get('Origin', '')
+        e_origem_local = any(o in referer or o in origin for o in ['localhost:5000', '127.0.0.1:5000', '100.103.100.98:5000'])
+
+        # 2. Se for requisição externa de API, exige Bearer Token institucional
+        auth_header = request.headers.get('Authorization', '')
+        token_bearer = auth_header.replace('Bearer ', '').strip() if auth_header.startswith('Bearer ') else ''
+        custom_token = request.headers.get('X-Cockpit-Token', '').strip()
+
+        if not e_origem_local and (token_bearer != COCKPIT_API_TOKEN and custom_token != COCKPIT_API_TOKEN):
+            return jsonify({
+                'sucesso': False,
+                'status': 'erro',
+                'mensagem': 'Acesso restrito: token de autenticacao institucional obrigatorio'
+            }), 401
+
 
 def encontrar_arquivo_painel():
     base = os.path.dirname(os.path.abspath(__file__))
