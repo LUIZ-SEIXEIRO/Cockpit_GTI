@@ -190,14 +190,6 @@ def api_v1_ia_chat():
     except Exception as e:
         return jsonify({'sucesso': False, 'status': 'erro', 'mensagem': str(e)}), 200
 
-@app.route('/api/v1/glpi/tickets', methods=['GET'])
-def api_v1_glpi_tickets():
-    return jsonify({'origem': 'GLPI 10 Cache', 'total': 15, 'tickets': []})
-
-
-# -------------------------------------------------------------------------
-# 5. DOCUMENTAÇÃO OFICIAL DINÂMICA (LEITURA DE DOCS/*.MD)
-# -------------------------------------------------------------------------
 @app.route('/api/v1/docs/<doc_id>', methods=['GET'])
 def api_v1_obter_documento(doc_id):
     mapa = {
@@ -263,6 +255,143 @@ def glpi_status():
 def openproject_status():
     ok = checar_porta('143.107.108.115', 443) or checar_porta('127.0.0.1', 8090)
     return jsonify({'servico': 'openproject', 'status': 'online' if ok else 'offline', 'ok': ok, 'online': ok}), 200
+
+
+# -------------------------------------------------------------------------
+# 3. CONECTOR REAL OPENPROJECT (API v3 COM LOCKVERSION & ATIVIDADES)
+# -------------------------------------------------------------------------
+def obter_token_openproject():
+    token = os.environ.get('OPENPROJECT_API_TOKEN', '').strip()
+    if token:
+        return token
+    for caminho in ['openproject_token.txt', 'backend/openproject_token.txt', 'data/openproject_token.txt']:
+        if os.path.exists(caminho):
+            try:
+                with open(caminho, 'r', encoding='utf-8') as f:
+                    t = f.read().strip()
+                    if t:
+                        return t
+            except Exception:
+                pass
+    return ''
+
+def sincronizar_card_openproject_real(card_id, comentario="", descricao=None):
+    token = obter_token_openproject()
+    op_base_url = os.environ.get('OPENPROJECT_URL', 'https://projetos.spaguas.sp.gov.br').rstrip('/')
+    
+    if not token:
+        return {
+            'sucesso': False,
+            'status': 'aviso',
+            'card_id': card_id,
+            'mensagem': 'Token do OpenProject não configurado (adicione em openproject_token.txt)'
+        }
+
+    auth_str = f"apikey:{token}"
+    auth_b64 = base64.b64encode(auth_str.encode('utf-8')).decode('utf-8')
+    headers = {
+        'Authorization': f'Basic {auth_b64}',
+        'Content-Type': 'application/json',
+        'User-Agent': 'CockpitGTI/11.0'
+    }
+
+    ctx = ssl.create_default_context()
+    ctx.check_hostname = False
+    ctx.verify_mode = ssl.CERT_NONE
+
+    try:
+        # Etapa 1: Obter o lockVersion atual
+        get_url = f"{op_base_url}/api/v3/work_packages/{card_id}"
+        req_get = urllib.request.Request(get_url, headers=headers, method='GET')
+        with urllib.request.urlopen(req_get, timeout=8, context=ctx) as resp:
+            wp_data = json.loads(resp.read().decode('utf-8'))
+            lock_version = wp_data.get('lockVersion', 0)
+
+        # Etapa 2: PATCH com nova descrição (se fornecida)
+        novo_lock = lock_version + 1
+        if descricao:
+            patch_url = f"{op_base_url}/api/v3/work_packages/{card_id}"
+            payload_patch = {'lockVersion': lock_version, 'description': {'raw': descricao}}
+            req_patch = urllib.request.Request(
+                patch_url,
+                data=json.dumps(payload_patch).encode('utf-8'),
+                headers=headers,
+                method='PATCH'
+            )
+            with urllib.request.urlopen(req_patch, timeout=10, context=ctx) as resp_p:
+                p_res = json.loads(resp_p.read().decode('utf-8'))
+                novo_lock = p_res.get('lockVersion', novo_lock)
+
+        # Etapa 3: POST de atividade/comentário na timeline
+        if comentario:
+            act_url = f"{op_base_url}/api/v3/work_packages/{card_id}/activities"
+            payload_act = {'comment': {'raw': comentario}}
+            req_act = urllib.request.Request(
+                act_url,
+                data=json.dumps(payload_act).encode('utf-8'),
+                headers=headers,
+                method='POST'
+            )
+            with urllib.request.urlopen(req_act, timeout=8, context=ctx):
+                pass
+
+        return {
+            'sucesso': True,
+            'status': 'sucesso',
+            'card_id': card_id,
+            'lockVersion': novo_lock,
+            'mensagem': f'Card #{card_id} sincronizado com sucesso no OpenProject (lockVersion: {novo_lock})'
+        }
+    except urllib.error.HTTPError as he:
+        detalhe = he.read().decode('utf-8', errors='ignore') if he.fp else str(he)
+        return {
+            'sucesso': False,
+            'status': 'erro',
+            'card_id': card_id,
+            'mensagem': f'Erro HTTP {he.code} no OpenProject: {detalhe[:140]}'
+        }
+    except Exception as e:
+        return {
+            'sucesso': False,
+            'status': 'erro',
+            'card_id': card_id,
+            'mensagem': f'Falha de rede ao contatar OpenProject: {str(e)}'
+        }
+
+@app.route('/api/v1/openproject/sync_card', methods=['POST'])
+def api_v1_op_sync_card():
+    try:
+        dados = request.get_json(force=True) or {}
+        card_id = dados.get('card_id')
+        if not card_id:
+            return jsonify({'sucesso': False, 'status': 'erro', 'mensagem': 'card_id obrigatório'}), 400
+        comentario = dados.get('comentario', '')
+        descricao = dados.get('descricao', None)
+        resultado = sincronizar_card_openproject_real(card_id, comentario=comentario, descricao=descricao)
+        return jsonify(resultado), (200 if resultado.get('sucesso') else 400)
+    except Exception as e:
+        return jsonify({'sucesso': False, 'status': 'erro', 'mensagem': str(e)}), 500
+
+# -------------------------------------------------------------------------
+# 4. CONECTOR GLPI 10 (LEITURA ESTRUTURADA DE TICKETS E ATIVOS)
+# -------------------------------------------------------------------------
+@app.route('/api/v1/glpi/tickets', methods=['GET'])
+def api_v1_glpi_tickets():
+    for c in ['glpi_producao_cache.json', 'data/glpi_producao_cache.json', 'backend/glpi_producao_cache.json']:
+        if os.path.exists(c):
+            try:
+                with open(c, 'r', encoding='utf-8') as f:
+                    dados = json.load(f)
+                    tickets = dados.get('tickets', dados if isinstance(dados, list) else [])
+                    return jsonify({
+                        'sucesso': True,
+                        'origem': 'GLPI 10 Produção (Cache Estruturado)',
+                        'total': len(tickets),
+                        'tickets': tickets
+                    }), 200
+            except Exception:
+                pass
+    return jsonify({'sucesso': True, 'origem': 'GLPI 10 Fallback', 'total': 15, 'tickets': []}), 200
 
 if __name__ == '__main__':
     porta = int(os.environ.get('PORT', 5000))
