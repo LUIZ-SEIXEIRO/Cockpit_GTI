@@ -846,6 +846,8 @@ def api_v1_sei_processos():
         return jsonify(resultado), 200
     cod = resultado.get('codigo')
     erro = str(resultado.get('erro', '')).lower()
+    if cod == 404:
+        return jsonify(resultado), 404
     if (cod and cod >= 500) or 'conexão' in erro or 'timeout' in erro or 'falha de conexão' in erro:
         return jsonify(resultado), 502
     return jsonify(resultado), 401
@@ -860,6 +862,8 @@ def api_v1_sei_buscar():
         return jsonify(resultado), 200
     cod = resultado.get('codigo')
     erro = str(resultado.get('erro', '')).lower()
+    if cod == 404:
+        return jsonify(resultado), 404
     if (cod and cod >= 500) or 'conexão' in erro or 'timeout' in erro or 'falha de conexão' in erro:
         return jsonify(resultado), 502
     return jsonify(resultado), 401

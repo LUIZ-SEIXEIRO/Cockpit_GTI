@@ -1,4 +1,4 @@
-import os, json, re, time, requests, urllib.parse, html as html_lib
+import os, json, re, time, requests, urllib.parse, posixpath, html as html_lib
 
 class MotorSEI:
     """Motor de Scraping, Busca e Classificação do SEI SP (v4.1.5 Oficial) para a SA-GTI."""
@@ -27,7 +27,7 @@ class MotorSEI:
         self.carregar_sessao()
 
     def salvar_sessao(self, cookies_dict):
-        """Grava a sessão com 0600 estrito em nível de syscall."""
+        """Grava a sessão com 0600 em nível de syscall validado antes de gravar dados."""
         os.makedirs(os.path.dirname(self.caminho_sessao), exist_ok=True)
         if os.path.exists(self.caminho_sessao):
             try:
@@ -43,24 +43,36 @@ class MotorSEI:
         flags = os.O_WRONLY | os.O_CREAT | os.O_TRUNC
         mode = 0o600
         fd = os.open(self.caminho_sessao, flags, mode)
-        with os.fdopen(fd, 'wb') as f:
+        
+        # Garante 0600 antes da escrita
+        if hasattr(os, "fchmod"):
+            try:
+                os.fchmod(fd, 0o600)
+            except Exception:
+                pass
+                
+        if hasattr(os, "fstat") and hasattr(os, "getuid"):
+            st = os.fstat(fd)
+            if (st.st_mode & 0o077) != 0:
+                os.close(fd)
+                try:
+                    os.remove(self.caminho_sessao)
+                except Exception:
+                    pass
+                raise PermissionError("Insegurança: impossível garantir permissão 0600 antes da escrita.")
+
+        with os.fdopen(fd, "wb") as f:
             f.write(conteudo)
             
         try:
             os.chmod(self.caminho_sessao, 0o600)
         except Exception:
             pass
-
-        # Validação estrita de permissões em sistemas POSIX
-        if hasattr(os, 'stat') and hasattr(os, 'getuid'):
-            st = os.stat(self.caminho_sessao)
-            if (st.st_mode & 0o077) != 0:
-                raise PermissionError("Insegurança: impossível restringir permissões do arquivo para 0600.")
-                
+            
         self.carregar_sessao()
 
     def carregar_sessao(self):
-        """Carrega cookies vinculando-os exclusivamente ao host sei.sp.gov.br e path /sei."""
+        """Carrega cookies estritamente para o domínio e path autorizados."""
         if os.path.exists(self.caminho_sessao):
             try:
                 with open(self.caminho_sessao, "r", encoding="utf-8") as f:
@@ -75,42 +87,44 @@ class MotorSEI:
         return False
 
     def _executar_requisicao_segura(self, metodo, url, **kwargs):
-        """Executa requisição validando host/path e bloqueando vazamento de cookies em redirecionamentos."""
+        """Valida destino normalizado com posixpath e bloqueia vazamento de cookies em redirecionamentos."""
         parsed = urllib.parse.urlparse(url)
-        if parsed.scheme != "https" or parsed.hostname != self.HOST_PERMITIDO or not parsed.path.startswith("/sei/"):
-            raise ValueError(f"Destino não autorizado: {url}")
+        norm_path = posixpath.normpath(parsed.path)
+        if parsed.scheme != "https" or parsed.hostname != self.HOST_PERMITIDO or (not norm_path.startswith("/sei/") and norm_path != "/sei"):
+            raise ValueError(f"Destino não autorizado ou path inválido: {url}")
             
-        # Executa sem seguir redirecionamentos automáticos cegos
         resp = self.session.request(metodo, url, allow_redirects=False, **kwargs)
         if resp.is_redirect:
             loc = resp.headers.get("Location", "")
             loc_url = urllib.parse.urljoin(url, loc)
             p_loc = urllib.parse.urlparse(loc_url)
-            # Se redirecionar para fora de https://sei.sp.gov.br/sei/, não envia cookies!
-            if p_loc.scheme != "https" or p_loc.hostname != self.HOST_PERMITIDO or not p_loc.path.startswith("/sei/"):
+            norm_loc = posixpath.normpath(p_loc.path)
+            if p_loc.scheme != "https" or p_loc.hostname != self.HOST_PERMITIDO or (not norm_loc.startswith("/sei/") and norm_loc != "/sei"):
                 return resp
             return self.session.request(metodo, loc_url, allow_redirects=False, **kwargs)
         return resp
 
     def _pagina_caixa_valida(self, resp):
-        """Validação positiva exigindo host HTTPS, path /sei/ e estrutura legítima sem erros."""
+        """Validação positiva exigindo estrutura e formulário legítimos do SEI sem mensagens de erro."""
         if resp.status_code != 200:
             return False
         parsed = urllib.parse.urlparse(resp.url)
-        if parsed.scheme != "https" or parsed.hostname != self.HOST_PERMITIDO or not parsed.path.startswith("/sei/"):
+        norm_path = posixpath.normpath(parsed.path)
+        if parsed.scheme != "https" or parsed.hostname != self.HOST_PERMITIDO or (not norm_path.startswith("/sei/") and norm_path != "/sei"):
             return False
         texto = resp.text.lower()
         if any(t in texto for t in self.TERMOS_ERRO):
             return False
-        tem_controlar = "procedimento_controlar" in texto or "controle de processos" in texto
+        tem_form = "frmprocedimentocontrolar" in texto or "procedimento_controlar" in texto
         tem_tabela = "infratabela" in texto or "infraareadados" in texto or "id_procedimento" in texto
-        return tem_controlar and tem_tabela
+        return tem_form and tem_tabela
 
     def _pagina_busca_valida(self, resp):
         if resp.status_code != 200:
             return False
         parsed = urllib.parse.urlparse(resp.url)
-        if parsed.scheme != "https" or parsed.hostname != self.HOST_PERMITIDO or not parsed.path.startswith("/sei/"):
+        norm_path = posixpath.normpath(parsed.path)
+        if parsed.scheme != "https" or parsed.hostname != self.HOST_PERMITIDO or (not norm_path.startswith("/sei/") and norm_path != "/sei"):
             return False
         texto = resp.text.lower()
         if any(t in texto for t in self.TERMOS_ERRO):
@@ -158,28 +172,25 @@ class MotorSEI:
             return {"sucesso": False, "codigo": 502, "erro": f"Falha de conexão: {str(e)}", "processos": []}
 
     def parsear_tabela_processos(self, html):
-        """Parser preciso: decodifica &amp;, aceita aspas simples/duplas e exige acao estrita."""
+        """Parser preciso sem SyntaxError: trata &amp;, aspas simples/duplas e acao estrita."""
         processos = []
-        tags_a = re.findall(r'<a\s+([^>]+)>(.*?)</a>', html, flags=re.DOTALL | re.IGNORECASE)
+        tags_a = re.findall(r"<a\s+([^>]+)>(.*?)</a>", html, flags=re.DOTALL | re.IGNORECASE)
         for attrs, texto_bruto in tags_a:
-            m_href = re.search(r'href=['"]([^'"]+)['"]', attrs, flags=re.IGNORECASE)
+            m_href = re.search(r'href=["\']([^"\']+)["\']', attrs, flags=re.IGNORECASE)
             if not m_href:
                 continue
-            # Decodifica entidades HTML como &amp;
             href = html_lib.unescape(m_href.group(1))
 
-            # Valida que acao é ESTRITAMENTE procedimento_trabalhar
-            if not re.search(r'(?:^|[?&])acao=procedimento_trabalhar(?:&|$)', href):
+            if not re.search(r"(?:^|[?&])acao=procedimento_trabalhar(?:&|$)", href):
                 continue
 
-            # Extrai id_procedimento em qualquer posição
-            m_id = re.search(r'(?:^|[?&])id_procedimento=(\d+)(?:&|$)', href)
+            m_id = re.search(r"(?:^|[?&])id_procedimento=(\d+)(?:&|$)", href)
             if not m_id:
                 continue
             id_proc = m_id.group(1)
 
-            num_proc = re.sub(r'<[^>]+>', '', texto_bruto).strip()
-            if num_proc and not any(ign in num_proc.lower() for ign in ['excluir', 'anotação', 'post-it']):
+            num_proc = re.sub(r"<[^>]+>", "", texto_bruto).strip()
+            if num_proc and not any(ign in num_proc.lower() for ign in ["excluir", "anotação", "post-it"]):
                 processos.append({
                     "id_procedimento": id_proc,
                     "ID_Processo": num_proc,
