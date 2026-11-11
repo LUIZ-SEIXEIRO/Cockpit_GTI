@@ -278,18 +278,52 @@ def openproject_status():
 # -------------------------------------------------------------------------
 # 2. GESTÃO DO POOL MULTI-IA
 # -------------------------------------------------------------------------
-def mascarar_chaves_recursivo(obj):
-    if isinstance(obj, dict):
-        novo = {}
-        for k, v in obj.items():
-            if any(termo in k.lower() for termo in ('apikey', 'api_key', 'chave', 'secret', 'token')) and isinstance(v, str):
-                novo[k] = '***' if v else ''
+def resolver_chave_real(modelo=None, slot=None):
+    cfg_path = localizar_config_pool()
+    if os.path.exists(cfg_path):
+        try:
+            with open(cfg_path, 'r', encoding='utf-8') as f:
+                dados = json.load(f)
+
+            slots_dict = dados.get('ias', {})
+            if isinstance(slots_dict, dict):
+                # 1. Se informou o slot e ele existe como chave no dict (ex: 'principal', 'orquestracao')
+                if slot and str(slot) in slots_dict and isinstance(slots_dict[str(slot)], dict):
+                    it = slots_dict[str(slot)]
+                    for k in ('apiKey', 'api_key', 'chave', 'token', 'secret'):
+                        if it.get(k) and it[k] != '***':
+                            return it[k]
+                itens = list(slots_dict.values())
+            elif isinstance(slots_dict, list):
+                itens = slots_dict
+            elif isinstance(dados, list):
+                itens = dados
             else:
-                novo[k] = mascarar_chaves_recursivo(v)
-        return novo
-    elif isinstance(obj, list):
-        return [mascarar_chaves_recursivo(item) for item in obj]
-    return obj
+                itens = [dados]
+
+            # 2. Busca por modelo/agent
+            if modelo:
+                alvo_m = str(modelo).strip().lower()
+                for it in itens:
+                    if isinstance(it, dict):
+                        for campo in ('agent', 'modelo', 'model', 'id', 'slot', 'nome'):
+                            if str(it.get(campo) or '').strip().lower() == alvo_m:
+                                for k in ('apiKey', 'api_key', 'chave', 'token', 'secret'):
+                                    if it.get(k) and it[k] != '***':
+                                        return it[k]
+
+            # 3. Busca por slot/id
+            if slot:
+                alvo_s = str(slot).strip().lower()
+                for it in itens:
+                    if isinstance(it, dict):
+                        if str(it.get('id') or '').strip().lower() == alvo_s or str(it.get('slot') or '').strip().lower() == alvo_s:
+                            for k in ('apiKey', 'api_key', 'chave', 'token', 'secret'):
+                                if it.get(k) and it[k] != '***':
+                                    return it[k]
+        except Exception:
+            pass
+    return os.getenv('NEWAPI_API_KEY') or os.getenv('NEW_API_KEY') or ''
 
 def mascarar_chaves_recursivo(obj):
     if isinstance(obj, dict):
@@ -311,6 +345,7 @@ def mesclar_preservando_segredos(novos, originais):
         nov_ias = novos.get('ias')
 
         if orig_ias and nov_ias and isinstance(orig_ias, dict) and isinstance(nov_ias, dict):
+            # Pareamento com rastreamento de chaves consumidas para evitar duplicidade
             orig_disponiveis = [dict(v) for v in orig_ias.values() if isinstance(v, dict)]
             ias_mescladas = {}
 
@@ -322,7 +357,7 @@ def mesclar_preservando_segredos(novos, originais):
                         m_novo = item_novo.get('agent') or item_novo.get('modelo') or item_novo.get('model') or ''
                         match = None
 
-                        # 1. Match exato no mesmo slot se o modelo for o mesmo
+                        # Match exato no mesmo slot se o modelo for idêntico
                         if s_key in orig_ias and isinstance(orig_ias[s_key], dict):
                             orig_slot = orig_ias[s_key]
                             m_orig = orig_slot.get('agent') or orig_slot.get('modelo') or orig_slot.get('model') or ''
@@ -331,7 +366,7 @@ def mesclar_preservando_segredos(novos, originais):
                                 if orig_slot in orig_disponiveis:
                                     orig_disponiveis.remove(orig_slot)
 
-                        # 2. Se mudou de slot, busca pelo modelo nos originais disponíveis (evita duplicar chave)
+                        # Se mudou de slot, busca pelo modelo nos disponíveis e consome para não duplicar
                         if not match and m_novo:
                             for cand in orig_disponiveis:
                                 m_cand = cand.get('agent') or cand.get('modelo') or cand.get('model') or ''
@@ -343,16 +378,11 @@ def mesclar_preservando_segredos(novos, originais):
                         if match:
                             k_orig = match.get('apiKey') or match.get('api_key')
                             if k_orig and k_orig != '***':
-                                if 'apiKey' in item_novo:
-                                    item_novo['apiKey'] = k_orig
-                                if 'api_key' in item_novo:
-                                    item_novo['api_key'] = k_orig
+                                if 'apiKey' in item_novo: item_novo['apiKey'] = k_orig
+                                if 'api_key' in item_novo: item_novo['api_key'] = k_orig
                         else:
-                            # Modelo desconhecido sem correspondência prévia: não herda chave indevida
-                            if 'apiKey' in item_novo and item_novo['apiKey'] == '***':
-                                item_novo['apiKey'] = ''
-                            if 'api_key' in item_novo and item_novo['api_key'] == '***':
-                                item_novo['api_key'] = ''
+                            if 'apiKey' in item_novo and item_novo['apiKey'] == '***': item_novo['apiKey'] = ''
+                            if 'api_key' in item_novo and item_novo['api_key'] == '***': item_novo['api_key'] = ''
 
                     ias_mescladas[s_key] = item_novo
                 else:
@@ -360,33 +390,7 @@ def mesclar_preservando_segredos(novos, originais):
             resultado['ias'] = ias_mescladas
 
         elif orig_ias and nov_ias and isinstance(orig_ias, list) and isinstance(nov_ias, list):
-            orig_disp = [dict(x) for x in orig_ias if isinstance(x, dict)]
-            lista_mesclada = []
-            for novo in nov_ias:
-                if isinstance(novo, dict):
-                    it = dict(novo)
-                    chave = it.get('apiKey') or it.get('api_key')
-                    if chave == '***' or (isinstance(chave, str) and chave.startswith('***')):
-                        m_novo = it.get('agent') or it.get('modelo') or it.get('model') or ''
-                        match = None
-                        if m_novo:
-                            for cand in orig_disp:
-                                if cand.get('agent') == m_novo or cand.get('modelo') == m_novo or cand.get('model') == m_novo:
-                                    match = cand
-                                    orig_disp.remove(cand)
-                                    break
-                        if match:
-                            k_orig = match.get('apiKey') or match.get('api_key')
-                            if k_orig and k_orig != '***':
-                                if 'apiKey' in it: it['apiKey'] = k_orig
-                                if 'api_key' in it: it['api_key'] = k_orig
-                        else:
-                            if it.get('apiKey') == '***': it['apiKey'] = ''
-                            if it.get('api_key') == '***': it['api_key'] = ''
-                    lista_mesclada.append(it)
-                else:
-                    lista_mesclada.append(novo)
-            resultado['ias'] = lista_mesclada
+            resultado['ias'] = mesclar_preservando_segredos(nov_ias, orig_ias)
 
         for k, v in novos.items():
             if k != 'ias':
@@ -397,6 +401,51 @@ def mesclar_preservando_segredos(novos, originais):
                         resultado[k] = mesclar_preservando_segredos(v, originais[k])
                 else:
                     resultado[k] = v
+        return resultado
+
+    elif isinstance(novos, list) and isinstance(originais, list):
+        # Pareamento de listas na raiz: prioridade absoluta por ID com rastreamento por índice
+        usados = set()
+        resultado = []
+
+        for novo in novos:
+            if isinstance(novo, dict):
+                it = dict(novo)
+                chave = it.get('apiKey') or it.get('api_key')
+                if chave == '***' or (isinstance(chave, str) and chave.startswith('***')):
+                    novo_id = str(it['id']).strip().lower() if it.get('id') else None
+                    novo_mod = str(it.get('agent') or it.get('modelo') or it.get('model') or '').strip().lower()
+                    match = None
+
+                    # 1. Match prioritário por ID
+                    if novo_id:
+                        for idx, orig in enumerate(originais):
+                            if idx not in usados and isinstance(orig, dict) and str(orig.get('id') or '').strip().lower() == novo_id:
+                                match = orig
+                                usados.add(idx)
+                                break
+
+                    # 2. Match por agent/modelo se não achou por ID
+                    if not match and novo_mod:
+                        for idx, orig in enumerate(originais):
+                            if idx not in usados and isinstance(orig, dict):
+                                orig_mod = str(orig.get('agent') or orig.get('modelo') or orig.get('model') or '').strip().lower()
+                                if orig_mod == novo_mod:
+                                    match = orig
+                                    usados.add(idx)
+                                    break
+
+                    if match:
+                        k_orig = match.get('apiKey') or match.get('api_key')
+                        if k_orig and k_orig != '***':
+                            if 'apiKey' in it: it['apiKey'] = k_orig
+                            if 'api_key' in it: it['api_key'] = k_orig
+                    else:
+                        if it.get('apiKey') == '***': it['apiKey'] = ''
+                        if it.get('api_key') == '***': it['api_key'] = ''
+                resultado.append(it)
+            else:
+                resultado.append(novo)
         return resultado
     return novos
 
