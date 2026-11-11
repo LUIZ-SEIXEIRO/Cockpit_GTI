@@ -20,7 +20,7 @@ class ValidadorFormSEI(HTMLParser):
             f_name = attrs_dict.get('name', '')
             f_act = attrs_dict.get('action', '')
             
-            # PRIORIDADE MÁXIMA: Se houver action com hostname externo, REJEITA IMEDIATAMENTE (mesmo com id válido)
+            # PRIORIDADE MÁXIMA: Se houver action com hostname externo, REJEITA IMEDIATAMENTE
             if f_act:
                 p_act = urllib.parse.urlparse(f_act)
                 if p_act.hostname and p_act.hostname.lower() != 'sei.sp.gov.br':
@@ -71,7 +71,7 @@ class MotorSEI:
         self.carregar_sessao()
 
     def salvar_sessao(self, cookies_dict):
-        """Gravação atômica via mkstemp com fsync obrigatório garantindo durabilidade física."""
+        """Gravação atômica via mkstemp com fsync de arquivo e diretório, e shredding defensivo."""
         dir_sessao = os.path.dirname(self.caminho_sessao)
         os.makedirs(dir_sessao, exist_ok=True)
         
@@ -104,16 +104,29 @@ class MotorSEI:
                 n = os.write(tmp_fd, conteudo[escritos:])
                 escritos += n
 
-            # fsync OBRIGATÓRIO: se falhar, a exceção é propagada e os.replace NÃO é executado!
+            # fsync obrigatório do arquivo
             try:
                 os.fsync(tmp_fd)
             finally:
                 os.close(tmp_fd)
                 tmp_fd = None
 
+            # Substituição atômica
             os.replace(tmp_path, self.caminho_sessao)
             sucesso_replace = True
             tmp_path = None
+
+            # fsync no diretório pai em POSIX para durabilidade física completa da renomeação
+            if hasattr(os, "O_DIRECTORY"):
+                try:
+                    dir_fd = os.open(dir_sessao, os.O_RDONLY | os.O_DIRECTORY)
+                    try:
+                        os.fsync(dir_fd)
+                    finally:
+                        os.close(dir_fd)
+                except Exception:
+                    pass
+
         finally:
             if tmp_fd is not None:
                 try:
@@ -121,6 +134,14 @@ class MotorSEI:
                 except Exception:
                     pass
             if not sucesso_replace and tmp_path and os.path.exists(tmp_path):
+                try:
+                    with open(tmp_path, "wb") as f_shred:
+                        f_shred.write(b"\x00" * len(conteudo))
+                        f_shred.truncate(0)
+                        f_shred.flush()
+                        os.fsync(f_shred.fileno())
+                except Exception:
+                    pass
                 try:
                     os.remove(tmp_path)
                 except Exception:
@@ -170,20 +191,17 @@ class MotorSEI:
         if parsed.scheme != "https" or parsed.hostname != self.HOST_PERMITIDO or (not norm_path.startswith("/sei/") and norm_path != "/sei"):
             return False
             
-        # 1. Remove comentários HTML
         texto_limpo = re.sub(r"<!--.*?-->", "", resp.text, flags=re.DOTALL)
         texto_lower = texto_limpo.lower()
         if any(t in texto_lower for t in self.TERMOS_ERRO):
             return False
             
-        # 2. Valida form via HTMLParser
         parser = ValidadorFormSEI(ids_alvo=["frmprocedimentocontrolar"])
         try:
             parser.feed(texto_limpo)
         except Exception:
             return False
             
-        # 3. Remove blocos de script e style sem regex complexo antes de checar marcadores da tabela
         texto_sem_script = re.sub(r"<script[^>]*>[\s\S]*?</script>", "", texto_limpo, flags=re.IGNORECASE)
         texto_sem_script = re.sub(r"<style[^>]*>[\s\S]*?</style>", "", texto_sem_script, flags=re.IGNORECASE).lower()
         

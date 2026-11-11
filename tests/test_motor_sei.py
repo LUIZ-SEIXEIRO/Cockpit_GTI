@@ -31,8 +31,7 @@ class TestMotorSEI(unittest.TestCase):
         self.assertTrue(status.get("autenticado"))
 
     @patch('requests.Session.request')
-    def test_03_rejeitar_form_com_action_externa_mesmo_com_id_valido(self, mock_req):
-        """Comprova que action externa (fake.com) é rejeitada mesmo com id='frmProcedimentoControlar'."""
+    def test_03_rejeitar_action_em_dominio_externo(self, mock_req):
         mock_resp = MagicMock()
         mock_resp.status_code = 200
         mock_resp.is_redirect = False
@@ -45,7 +44,6 @@ class TestMotorSEI(unittest.TestCase):
 
     @patch('requests.Session.request')
     def test_04_rejeitar_tabela_dentro_de_script(self, mock_req):
-        """Comprova que marcador infraTabela dentro de tag <script> é purgado e descartado."""
         mock_resp = MagicMock()
         mock_resp.status_code = 200
         mock_resp.is_redirect = False
@@ -66,6 +64,20 @@ class TestMotorSEI(unittest.TestCase):
         self.assertTrue(res["sucesso"])
         self.assertEqual(res["total"], 1)
         self.assertEqual(res["processos"][0]["ID_Processo"], "137.00001111/2026-10")
+
+    def test_06_falha_fsync_aborta_substituicao_e_limpa(self):
+        """Valida que erro de fsync aborta os.replace e preserva sessão anterior."""
+        cookies_iniciais = {"PHPSESSID": "sessao_original"}
+        self.motor.salvar_sessao(cookies_iniciais)
+        self.assertEqual(self.motor.session.cookies.get("PHPSESSID", domain="sei.sp.gov.br"), "sessao_original")
+
+        with patch('os.fsync', side_effect=OSError("Falha simulada de fsync")):
+            with self.assertRaises(OSError):
+                self.motor.salvar_sessao({"PHPSESSID": "sessao_nova_corrompida"})
+
+        # Garante que a sessão original permaneceu intacta
+        self.motor.carregar_sessao()
+        self.assertEqual(self.motor.session.cookies.get("PHPSESSID", domain="sei.sp.gov.br"), "sessao_original")
 
 if __name__ == '__main__':
     unittest.main()
