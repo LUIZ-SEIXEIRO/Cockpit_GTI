@@ -167,14 +167,17 @@ def proteger_rotas_mutaveis():
     }
 
     if (request.path in rotas_protegidas and request.method in ('POST', 'PUT', 'PATCH', 'DELETE')) or request.path in ('/api/v1/ia/chat', '/api/v1/ia/testar_slot'):
+        token_esperado = os.getenv("COCKPIT_API_TOKEN") or os.getenv("API_TOKEN")
+        
+        # Se o servidor não possui token configurado no ambiente, bloqueia mutações
+        if not token_esperado:
+            return jsonify({'sucesso': False, 'status': 'erro', 'mensagem': 'Acesso negado: API_TOKEN não configurado no servidor.'}), 401
+
         auth_header = request.headers.get('Authorization', '')
         token_bearer = auth_header.replace('Bearer ', '').strip() if auth_header.startswith('Bearer ') else ''
         custom_token = request.headers.get('X-Cockpit-Token', '').strip()
         token_recebido = token_bearer or custom_token
 
-        token_esperado = os.getenv("COCKPIT_API_TOKEN") or os.getenv("API_TOKEN") or "spaguas_cockpit_auth_token_padrao"
-
-        # Rejeita token vazio ou token divergente do esperado
         if not token_recebido or token_recebido != token_esperado:
             return jsonify({'sucesso': False, 'status': 'erro', 'mensagem': 'Acesso negado: token inválido ou ausente.'}), 401
 
@@ -315,6 +318,53 @@ def mesclar_preservando_segredos(novos, originais):
                 novos[i] = mesclar_preservando_segredos(item, originais[i])
     return novos
 
+def mascarar_chaves_recursivo(obj):
+    if isinstance(obj, dict):
+        novo = {}
+        for k, v in obj.items():
+            if any(termo in k.lower() for termo in ('apikey', 'api_key', 'chave', 'secret', 'token')) and isinstance(v, str):
+                novo[k] = '***' if v else ''
+            else:
+                novo[k] = mascarar_chaves_recursivo(v)
+        return novo
+    elif isinstance(obj, list):
+        return [mascarar_chaves_recursivo(item) for item in obj]
+    return obj
+
+def extrair_id_item(item):
+    if isinstance(item, dict):
+        return str(item.get('id') or item.get('slot') or item.get('modelo') or item.get('nome') or '')
+    return ''
+
+def mesclar_preservando_segredos(novos, originais):
+    if isinstance(novos, list) and isinstance(originais, list):
+        # Mapeia originais por identificador para suportar reordenação
+        mapa_originais = {}
+        for orig in originais:
+            chave_id = extrair_id_item(orig)
+            if chave_id:
+                mapa_originais[chave_id] = orig
+
+        resultado = []
+        for i, novo in enumerate(novos):
+            chave_id = extrair_id_item(novo)
+            orig_match = mapa_originais.get(chave_id) if chave_id else (originais[i] if i < len(originais) else None)
+            if orig_match:
+                resultado.append(mesclar_preservando_segredos(novo, orig_match))
+            else:
+                resultado.append(novo)
+        return resultado
+    elif isinstance(novos, dict) and isinstance(originais, dict):
+        resultado = dict(novos)
+        for k, v in novos.items():
+            if k in originais:
+                if v == '***' or (isinstance(v, str) and v.startswith('***')):
+                    resultado[k] = originais[k]
+                elif isinstance(v, (dict, list)):
+                    resultado[k] = mesclar_preservando_segredos(v, originais[k])
+        return resultado
+    return novos
+
 @app.route('/api/v1/ia/pool', methods=['GET', 'POST'])
 def api_v1_ia_pool():
     cfg_path = localizar_config_pool()
@@ -395,7 +445,6 @@ def api_v1_ia_testar_slot():
         }), 200
 
 @app.route('/api/v1/ia/chat', methods=['POST'])
-@requer_autenticacao
 def api_v1_ia_chat():
     try:
         dados = request.get_json(force=True) or {}
@@ -568,13 +617,13 @@ def api_v1_op_sync_batch():
         c_id = c.get('id') or c.get('card_id') or c.get('cardId')
         if c_id:
             try:
-                get_url = f"{op_base_url}/api/v3/work_packages/{c_id}"
-                req = urllib.request.Request(get_url, headers=headers, method='GET')
+                patch_url = f"{op_base_url}/api/v3/work_packages/{c_id}"
+                body_patch = json.dumps({'lockVersion': c.get('lockVersion', 1)}).encode('utf-8')
+                req = urllib.request.Request(patch_url, data=body_patch, headers=headers, method='PATCH')
                 with urllib.request.urlopen(req, timeout=5, context=ctx) as resp:
                     wp_data = json.loads(resp.read().decode())
                 processados.append({'card_id': c_id, 'sucesso': True, 'status': 'sincronizado', 'lockVersion': wp_data.get('lockVersion', 1)})
             except Exception as e:
-                # Falha real reportada com sucesso: False
                 processados.append({'card_id': c_id, 'sucesso': False, 'status': 'erro_conexao', 'mensagem': str(e)})
 
     todos_sucesso = all(p.get('sucesso', False) for p in processados) if processados else True
@@ -633,8 +682,8 @@ def api_v1_glpi_tickets():
                 ctx.verify_mode = ssl.CERT_NONE
             with urllib.request.urlopen(req_glpi, timeout=5, context=ctx) as r:
                 tickets = json.loads(r.read().decode())
-        except Exception:
-            pass
+        except Exception as e:
+            return jsonify({'sucesso': False, 'status': 'erro_conexao', 'mensagem': f'Falha ao conectar com GLPI: {str(e)}', 'tickets': []}), 502
 
     return jsonify({
         'sucesso': True,
