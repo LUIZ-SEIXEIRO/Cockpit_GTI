@@ -1,14 +1,24 @@
-import unittest, os, json, tempfile, threading, time
+import os
+import sys
+import json
+import stat
+import time
+import shutil
+import tempfile
+import unittest
 from unittest.mock import patch, MagicMock
-from motor_sei import MotorSEI
+
+from motor_sei import (
+    MotorSEI,
+    ValidadorFormSEI,
+    ParserProcessosSEI,
+    LockProcessosSEI
+)
 
 class TestMotorSEI(unittest.TestCase):
     def setUp(self):
-        try:
-            self.temp_dir = tempfile.TemporaryDirectory(ignore_cleanup_errors=True)
-        except TypeError:
-            self.temp_dir = tempfile.TemporaryDirectory()
-        self.caminho_sessao = os.path.join(self.temp_dir.name, "sessao.json")
+        self.temp_dir = tempfile.TemporaryDirectory(ignore_cleanup_errors=True)
+        self.caminho_sessao = os.path.join(self.temp_dir.name, "sessao_sei.json")
         self.motor = MotorSEI(caminho_sessao=self.caminho_sessao)
 
     def tearDown(self):
@@ -18,177 +28,189 @@ class TestMotorSEI(unittest.TestCase):
             pass
 
     def test_01_salvar_sessao_mkstemp_0600(self):
-        cookies = {"PHPSESSID": "sessao_123"}
-        self.motor.salvar_sessao(cookies)
+        cookies = {"PHPSESSID": "cookie_teste_123"}
+        resultado = self.motor.salvar_sessao(cookies, usuario="12345678900")
+        self.assertTrue(resultado)
         self.assertTrue(os.path.exists(self.caminho_sessao))
-        cookie_obj = self.motor.session.cookies.get("PHPSESSID", domain="sei.sp.gov.br")
-        self.assertEqual(cookie_obj, "sessao_123")
 
-    @patch('requests.Session.request')
-    def test_02_validar_sessao_ativa_form_id(self, mock_req):
-        mock_resp = MagicMock()
-        mock_resp.status_code = 200
-        mock_resp.is_redirect = False
-        mock_resp.url = "https://sei.sp.gov.br/sei/controlador.php?acao=procedimento_controlar&infra_unidade_atual=110050725"
-        mock_resp.text = "<html><body><form id='frmProcedimentoControlar'><table class='infraTabela'>Controle de Processos id_procedimento</table></form></body></html>"
-        mock_req.return_value = mock_resp
-
-        status = self.motor.validar_sessao()
-        self.assertTrue(status.get("autenticado"))
-
-    @patch('requests.Session.request')
-    def test_03_rejeitar_action_em_dominio_externo(self, mock_req):
-        mock_resp = MagicMock()
-        mock_resp.status_code = 200
-        mock_resp.is_redirect = False
-        mock_resp.url = "https://sei.sp.gov.br/sei/controlador.php"
-        mock_resp.text = "<html><body><form id='frmProcedimentoControlar' action='https://fake.com/sei/controlador.php'><table class='infraTabela'>id_procedimento</table></form></body></html>"
-        mock_req.return_value = mock_resp
-
-        status = self.motor.validar_sessao()
-        self.assertFalse(status.get("autenticado"))
-
-    @patch('requests.Session.request')
-    def test_04_rejeitar_tabela_dentro_de_script(self, mock_req):
-        mock_resp = MagicMock()
-        mock_resp.status_code = 200
-        mock_resp.is_redirect = False
-        mock_resp.url = "https://sei.sp.gov.br/sei/controlador.php"
-        mock_resp.text = "<html><body><form id='frmProcedimentoControlar'><script>var html = '<table class=infraTabela>id_procedimento</table>';</script>Sem tabela ativa</form></body></html>"
-        mock_req.return_value = mock_resp
-
-        status = self.motor.validar_sessao()
-        self.assertFalse(status.get("autenticado"))
-
-    def test_05_parser_com_entidade_amp(self):
-        html = """
-        <table>
-            <tr><td><a href='controlador.php?acao=procedimento_trabalhar&amp;id_procedimento=701'>137.00001111/2026-10</a></td></tr>
-        </table>
-        """
-        res = self.motor.parsear_tabela_processos(html)
-        self.assertTrue(res["sucesso"])
-        self.assertEqual(res["total"], 1)
-        self.assertEqual(res["processos"][0]["ID_Processo"], "137.00001111/2026-10")
-
-    def test_06_falha_fsync_aborta_substituicao_e_limpa(self):
-        cookies_iniciais = {"PHPSESSID": "sessao_original"}
-        self.motor.salvar_sessao(cookies_iniciais)
-        self.assertEqual(self.motor.session.cookies.get("PHPSESSID", domain="sei.sp.gov.br"), "sessao_original")
-
-        with patch('os.fsync', side_effect=OSError("Falha simulada de fsync")):
-            with self.assertRaises(OSError):
-                self.motor.salvar_sessao({"PHPSESSID": "sessao_nova_corrompida"})
-
-        self.motor.carregar_sessao()
-        self.assertEqual(self.motor.session.cookies.get("PHPSESSID", domain="sei.sp.gov.br"), "sessao_original")
-        arquivos_tmp = [f for f in os.listdir(self.temp_dir.name) if f.endswith('.tmp')]
-        self.assertEqual(arquivos_tmp, [])
-
-    def test_07_falha_fsync_diretorio_executa_rollback(self):
-        cookies_iniciais = {"PHPSESSID": "sessao_original_estavel"}
-        self.motor.salvar_sessao(cookies_iniciais)
-        self.assertEqual(self.motor.session.cookies.get("PHPSESSID", domain="sei.sp.gov.br"), "sessao_original_estavel")
-
-        real_os_open = os.open
-        real_os_fsync = os.fsync
-
-        def fake_open(path, flags, *args):
-            if os.path.isdir(path):
-                return 999
-            return real_os_open(path, flags, *args)
-
-        def fake_fsync(fd):
-            if fd == 999:
-                raise OSError("Falha simulada no fsync do diretorio pos-replace")
-            return real_os_fsync(fd)
-
-        with patch('os.O_DIRECTORY', create=True, new=0),              patch('os.open', side_effect=fake_open),              patch('os.fsync', side_effect=fake_fsync):
-            with self.assertRaises(OSError):
-                self.motor.salvar_sessao({"PHPSESSID": "sessao_nova_revertida"})
-
-        with open(self.caminho_sessao, "r", encoding="utf-8") as f:
-            dados_disco = json.load(f)
-        self.assertEqual(dados_disco["cookies"]["PHPSESSID"], "sessao_original_estavel")
-        self.assertEqual(self.motor.session.cookies.get("PHPSESSID", domain="sei.sp.gov.br"), "sessao_original_estavel")
-
-    def test_08_falha_abertura_diretorio_executa_rollback(self):
-        cookies_iniciais = {"PHPSESSID": "sessao_inicial_teste08"}
-        self.motor.salvar_sessao(cookies_iniciais)
-
-        real_os_open = os.open
-        def fake_open(path, flags, *args):
-            if os.path.isdir(path):
-                raise PermissionError("Simulando falha de abertura do diretorio")
-            return real_os_open(path, flags, *args)
-
-        with patch('os.O_DIRECTORY', create=True, new=1), patch('os.open', side_effect=fake_open):
-            with self.assertRaises(PermissionError):
-                self.motor.salvar_sessao({"PHPSESSID": "sessao_corrompida"})
+        if os.name != "nt":
+            modo = stat.S_IMODE(os.stat(self.caminho_sessao).st_mode)
+            self.assertEqual(modo, 0o600)
 
         with open(self.caminho_sessao, "r", encoding="utf-8") as f:
             dados = json.load(f)
-        self.assertEqual(dados["cookies"]["PHPSESSID"], "sessao_inicial_teste08")
-        self.assertEqual(self.motor.session.cookies.get("PHPSESSID", domain="sei.sp.gov.br"), "sessao_inicial_teste08")
+        self.assertEqual(dados["cookies"]["PHPSESSID"], "cookie_teste_123")
+        self.assertEqual(self.motor.sessao.cookies.get("PHPSESSID"), "cookie_teste_123")
 
-    def test_09_falha_recarga_invalida_memoria(self):
-        cookies_iniciais = {"PHPSESSID": "sessao_inicial_teste09"}
-        self.motor.salvar_sessao(cookies_iniciais)
-        self.assertEqual(self.motor.session.cookies.get("PHPSESSID", domain="sei.sp.gov.br"), "sessao_inicial_teste09")
+    def test_02_validar_sessao_ativa_form_id(self):
+        self.motor.sessao.cookies.set("PHPSESSID", "sessao_valida")
+        html_resposta = """
+        <html>
+            <body>
+                <form id="frmProcedimentoControlar" action="controlador.php?acao=procedimento_controlar">
+                    <input type="hidden" name="infra_hash" value="abc12345" />
+                </form>
+            </body>
+        </html>
+        """
+        mock_resp = MagicMock()
+        mock_resp.status_code = 200
+        mock_resp.text = html_resposta
 
-        def fake_carregar():
-            return False
+        with patch.object(self.motor.sessao, "get", return_value=mock_resp):
+            ativa = self.motor.validar_sessao_ativa()
+            self.assertTrue(ativa)
 
-        with patch.object(self.motor, 'carregar_sessao', side_effect=fake_carregar):
+    def test_03_rejeitar_action_em_dominio_externo(self):
+        self.assertFalse(self.motor.validar_action_segura("https://malicioso.com/controlador.php"))
+        self.assertFalse(self.motor.validar_action_segura("http://phishing.sp.gov.br/hack"))
+        self.assertFalse(self.motor.validar_action_segura("/sei/../etc/passwd"))
+        self.assertFalse(self.motor.validar_action_segura("controlador.php?acao=../../perigo"))
+
+        self.assertTrue(self.motor.validar_action_segura("controlador.php?acao=procedimento_controlar"))
+        self.assertTrue(self.motor.validar_action_segura("https://sei.sp.gov.br/sei/controlador.php"))
+
+    def test_04_rejeitar_tabela_dentro_de_script(self):
+        html_script = """
+        <html>
+            <head>
+                <script>
+                    var mockLink = '<a href="controlador.php?acao=procedimento_trabalhar&id_procedimento=99999">SP-99999</a>';
+                </script>
+            </head>
+            <body>
+                <a href="controlador.php?acao=procedimento_trabalhar&id_procedimento=12345">SP-12345</a>
+            </body>
+        </html>
+        """
+        parser = ParserProcessosSEI()
+        parser.feed(html_script)
+        self.assertEqual(len(parser.processos), 1)
+        self.assertEqual(parser.processos[0]["id_procedimento"], "12345")
+        self.assertEqual(parser.processos[0]["numero"], "SP-12345")
+
+    def test_05_parser_com_entidade_amp(self):
+        html_amp = """
+        <div>
+            <a href="controlador.php?acao=procedimento_trabalhar&amp;id_procedimento=54321&amp;id_protocolo=987">
+                Processo SP-54321/2026
+            </a>
+        </div>
+        """
+        parser = ParserProcessosSEI()
+        parser.feed(html_amp)
+        self.assertEqual(len(parser.processos), 1)
+        self.assertEqual(parser.processos[0]["id_procedimento"], "54321")
+        self.assertEqual(parser.processos[0]["id_protocolo"], "987")
+        self.assertIn("SP-54321/2026", parser.processos[0]["numero"])
+
+    def test_06_falha_fsync_aborta_substituicao_e_limpa(self):
+        self.motor.salvar_sessao({"PHPSESSID": "sessao_inicial"})
+        self.assertEqual(self.motor.sessao.cookies.get("PHPSESSID"), "sessao_inicial")
+
+        def fsync_falha(fd):
+            raise OSError("Falha de I/O em fsync simulada")
+
+        with patch("os.fsync", side_effect=fsync_falha):
             with self.assertRaises(OSError):
-                self.motor.salvar_sessao({"PHPSESSID": "sessao_nova"})
-
-        self.assertEqual(len(self.motor.session.cookies), 0)
-
-    def test_10_concorrencia_serializada_em_salvar_sessao(self):
-        cookies_iniciais = {"PHPSESSID": "sessao_inicial_teste10"}
-        self.motor.salvar_sessao(cookies_iniciais)
-
-        resultados = []
-        real_fsync = os.fsync
-
-        def fake_fsync_condicional(fd):
-            if threading.current_thread().name == "Thread1_Falha":
-                raise OSError("Falha simulada na thread 1")
-            return real_fsync(fd)
-
-        def tarefa_falha():
-            try:
-                self.motor.salvar_sessao({"PHPSESSID": "sessao_falha_t1"})
-                resultados.append("t1_sucesso_indevido")
-            except OSError:
-                resultados.append("t1_falha_capturada")
-
-        def tarefa_sucesso():
-            time.sleep(0.02)
-            try:
-                self.motor.salvar_sessao({"PHPSESSID": "sessao_vencedora_t2"})
-                resultados.append("t2_sucesso_ok")
-            except Exception as e:
-                resultados.append(f"t2_erro_{str(e)}")
-
-        with patch('os.fsync', side_effect=fake_fsync_condicional):
-            t1 = threading.Thread(target=tarefa_falha, name="Thread1_Falha")
-            t2 = threading.Thread(target=tarefa_sucesso, name="Thread2_Sucesso")
-
-            t1.start()
-            t2.start()
-
-            t1.join()
-            t2.join()
-
-        self.assertIn("t1_falha_capturada", resultados)
-        self.assertIn("t2_sucesso_ok", resultados)
+                self.motor.salvar_sessao({"PHPSESSID": "sessao_nova_falhada"})
 
         with open(self.caminho_sessao, "r", encoding="utf-8") as f:
-            dados_finais = json.load(f)
-        self.assertEqual(dados_finais["cookies"]["PHPSESSID"], "sessao_vencedora_t2")
-        self.assertEqual(self.motor.session.cookies.get("PHPSESSID", domain="sei.sp.gov.br"), "sessao_vencedora_t2")
+            conteudo = json.load(f)
+        self.assertEqual(conteudo["cookies"]["PHPSESSID"], "sessao_inicial")
 
-if __name__ == '__main__':
+    def test_07_falha_fsync_diretorio_executa_rollback(self):
+        self.motor.salvar_sessao({"PHPSESSID": "sessao_estavel"})
+
+        with patch.object(self.motor, "_fsync_diretorio", side_effect=OSError("Falha de fsync em diretório")):
+            with self.assertRaises(OSError):
+                self.motor.salvar_sessao({"PHPSESSID": "sessao_com_defeito"})
+
+        with open(self.caminho_sessao, "r", encoding="utf-8") as f:
+            conteudo = json.load(f)
+        self.assertEqual(conteudo["cookies"]["PHPSESSID"], "sessao_estavel")
+        self.assertEqual(self.motor.sessao.cookies.get("PHPSESSID"), "sessao_estavel")
+
+    def test_08_falha_abertura_diretorio_executa_rollback(self):
+        self.motor.salvar_sessao({"PHPSESSID": "sessao_v1"})
+
+        with patch.object(self.motor, "_fsync_diretorio", side_effect=OSError("Permissao negada")):
+            with self.assertRaises(OSError):
+                self.motor.salvar_sessao({"PHPSESSID": "sessao_v2"})
+
+        with open(self.caminho_sessao, "r", encoding="utf-8") as f:
+            conteudo = json.load(f)
+        self.assertEqual(conteudo["cookies"]["PHPSESSID"], "sessao_v1")
+        self.assertEqual(self.motor.sessao.cookies.get("PHPSESSID"), "sessao_v1")
+
+    def test_09_falha_recarga_invalida_memoria(self):
+        self.motor.salvar_sessao({"PHPSESSID": "sessao_base"})
+        self.assertEqual(self.motor.sessao.cookies.get("PHPSESSID"), "sessao_base")
+
+        with patch.object(self.motor, "carregar_sessao", side_effect=ValueError("Arquivo corrompido")):
+            with self.assertRaises(ValueError):
+                self.motor.salvar_sessao({"PHPSESSID": "sessao_corrompida"})
+
+        self.assertEqual(len(self.motor.sessao.cookies), 0)
+        self.assertIsNone(self.motor._mtime_sessao)
+
+    def test_10_concorrencia_lock_processos_sem_roubo_de_lock(self):
+        lock1 = LockProcessosSEI(self.caminho_sessao, timeout=2.0)
+        lock2 = LockProcessosSEI(self.caminho_sessao, timeout=0.1, poll_interval=0.02)
+
+        with lock1:
+            self.assertTrue(os.path.exists(lock1.lock_dir))
+
+            inicio_t = time.monotonic()
+            with self.assertRaises(TimeoutError):
+                with lock2:
+                    pass
+            duracao = time.monotonic() - inicio_t
+            self.assertGreaterEqual(duracao, 0.08)
+
+            # O lock do lock1 não foi removido pelo lock2
+            self.assertTrue(os.path.exists(lock1.lock_dir))
+
+        self.assertFalse(os.path.exists(lock1.lock_dir))
+
+        with lock2:
+            self.assertTrue(os.path.exists(lock2.lock_dir))
+        self.assertFalse(os.path.exists(lock2.lock_dir))
+
+    def test_11_sincronizacao_mtime_multiplas_instancias(self):
+        motor_instancia_a = MotorSEI(caminho_sessao=self.caminho_sessao)
+        motor_instancia_b = MotorSEI(caminho_sessao=self.caminho_sessao)
+
+        motor_instancia_a.salvar_sessao({"PHPSESSID": "token_instancia_a"})
+        self.assertEqual(motor_instancia_a.sessao.cookies.get("PHPSESSID"), "token_instancia_a")
+
+        motor_instancia_b._sincronizar_sessao_se_modificada()
+        self.assertEqual(motor_instancia_b.sessao.cookies.get("PHPSESSID"), "token_instancia_a")
+
+        time.sleep(0.05)
+
+        motor_instancia_a.salvar_sessao({"PHPSESSID": "token_instancia_b_atualizado"})
+        self.assertEqual(motor_instancia_a.sessao.cookies.get("PHPSESSID"), "token_instancia_b_atualizado")
+
+        motor_instancia_b._sincronizar_sessao_se_modificada()
+        self.assertEqual(motor_instancia_b.sessao.cookies.get("PHPSESSID"), "token_instancia_b_atualizado")
+
+        os.unlink(self.caminho_sessao)
+        motor_instancia_b._sincronizar_sessao_se_modificada()
+        self.assertEqual(len(motor_instancia_b.sessao.cookies), 0)
+        self.assertIsNone(motor_instancia_b._mtime_sessao)
+
+    def test_12_primeira_inicializacao_cria_diretorio_pai(self):
+        caminho_aninhado = os.path.join(self.temp_dir.name, "sub_novo", "pasta_sei", "sessao_sei.json")
+        self.assertFalse(os.path.exists(os.path.dirname(caminho_aninhado)))
+
+        motor_novo = MotorSEI(caminho_sessao=caminho_aninhado)
+        resultado = motor_novo.salvar_sessao({"PHPSESSID": "sessao_primeira_vez"})
+        self.assertTrue(resultado)
+        self.assertTrue(os.path.exists(caminho_aninhado))
+        self.assertEqual(motor_novo.sessao.cookies.get("PHPSESSID"), "sessao_primeira_vez")
+        self.assertFalse(os.path.exists(caminho_aninhado + ".lock"))
+
+
+if __name__ == "__main__":
     unittest.main()

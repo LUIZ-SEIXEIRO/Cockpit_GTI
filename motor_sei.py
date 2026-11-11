@@ -1,372 +1,409 @@
-import os, json, re, time, threading, requests, urllib.parse, posixpath, tempfile, html as html_lib
+import os
+import sys
+import json
+import time
+import shutil
+import tempfile
+import logging
+import threading
+from datetime import datetime, timezone
+from typing import Optional, Dict, List, Any
+from urllib.parse import urlparse, parse_qs, unquote
+import posixpath
 from html.parser import HTMLParser
 
+logger = logging.getLogger("CockpitGTI.MotorSEI")
+
 class ValidadorFormSEI(HTMLParser):
-    def __init__(self, ids_alvo=None):
+    def __init__(self, action_esperada: Optional[str] = None):
         super().__init__()
-        self.ids_alvo = [i.lower() for i in (ids_alvo or [])]
-        self.encontrou = False
-        self.em_script = False
+        self.action_esperada = action_esperada
+        self.form_encontrado = False
+        self.ignorar_conteudo = False
 
-    def handle_starttag(self, tag, attrs):
-        t = tag.lower()
-        if t in ('script', 'style'):
-            self.em_script = True
+    def handle_starttag(self, tag: str, attrs: list):
+        tag_lower = tag.lower()
+        if tag_lower in ("script", "style"):
+            self.ignorar_conteudo = True
             return
-        if t == 'form' and not self.em_script:
-            attrs_dict = {k.lower(): (v or '').lower() for k, v in attrs}
-            f_id = attrs_dict.get('id', '')
-            f_name = attrs_dict.get('name', '')
-            f_act = attrs_dict.get('action', '')
+
+        if not self.ignorar_conteudo and tag_lower == "form":
+            attr_dict = {k.lower(): v for k, v in attrs if k is not None}
+            form_id = attr_dict.get("id", "")
+            form_name = attr_dict.get("name", "")
+            action = attr_dict.get("action", "")
+
+            if "frm" in form_id or "frm" in form_name or "controlador.php" in action:
+                if self.action_esperada:
+                    if self.action_esperada in action:
+                        self.form_encontrado = True
+                else:
+                    self.form_encontrado = True
+
+    def handle_endtag(self, tag: str):
+        if tag.lower() in ("script", "style"):
+            self.ignorar_conteudo = False
+
+
+class ParserProcessosSEI(HTMLParser):
+    def __init__(self):
+        super().__init__()
+        self.processos = []
+        self.ignorar_conteudo = False
+        self._dentro_de_link = False
+        self._link_atual = None
+        self._texto_link = []
+
+    def handle_starttag(self, tag: str, attrs: list):
+        tag_lower = tag.lower()
+        if tag_lower in ("script", "style"):
+            self.ignorar_conteudo = True
+            return
+
+        if not self.ignorar_conteudo and tag_lower == "a":
+            attr_dict = {k.lower(): v for k, v in attrs if k is not None}
+            href = attr_dict.get("href", "")
+            href_unquoted = unquote(href).replace("&amp;", "&")
             
-            if f_act:
-                p_act = urllib.parse.urlparse(f_act)
-                if p_act.hostname and p_act.hostname.lower() != 'sei.sp.gov.br':
-                    return
+            parsed = urlparse(href_unquoted)
+            params = parse_qs(parsed.query)
 
-            for alvo in self.ids_alvo:
-                if alvo == f_id or alvo == f_name:
-                    self.encontrou = True
-                    return
+            acoes = params.get("acao", [])
+            if "procedimento_trabalhar" in acoes and "id_procedimento" in params:
+                self._dentro_de_link = True
+                self._link_atual = {
+                    "href": href,
+                    "id_procedimento": params["id_procedimento"][0],
+                    "id_protocolo": params.get("id_protocolo", [None])[0]
+                }
+                self._texto_link = []
 
-            if f_act:
-                p_act = urllib.parse.urlparse(f_act)
-                caminho_act = posixpath.normpath(urllib.parse.unquote(p_act.path))
-                if caminho_act in ('controlador.php', '/sei/controlador.php') or re.search(r'^(?:/sei/)?controlador\.php(?:\?|$)', f_act):
-                    self.encontrou = True
-                    return
+    def handle_data(self, data: str):
+        if self._dentro_de_link:
+            self._texto_link.append(data)
 
-    def handle_endtag(self, tag):
-        if tag.lower() in ('script', 'style'):
-            self.em_script = False
+    def handle_endtag(self, tag: str):
+        tag_lower = tag.lower()
+        if tag_lower in ("script", "style"):
+            self.ignorar_conteudo = False
+        elif tag_lower == "a" and self._dentro_de_link:
+            numero_formatado = "".join(self._texto_link).strip()
+            if self._link_atual:
+                self._link_atual["numero"] = numero_formatado
+                self.processos.append(self._link_atual)
+            self._dentro_de_link = False
+            self._link_atual = None
+            self._texto_link = []
+
 
 class LockProcessosSEI:
-    def __init__(self, lock_path, timeout=10):
-        self.lock_path = lock_path
-        self.timeout = timeout
-        self.adquiriu = False
+    def __init__(self, caminho_sessao: str, timeout: float = 10.0, poll_interval: float = 0.05):
+        self.caminho_sessao = os.path.abspath(caminho_sessao)
+        self.lock_dir = self.caminho_sessao + ".lock"
+        self.timeout = float(timeout)
+        self.poll_interval = float(poll_interval)
+        self._adquirido = False
 
     def __enter__(self):
-        t0 = time.time()
-        while time.time() - t0 < self.timeout:
+        diretorio_pai = os.path.dirname(self.lock_dir)
+        if diretorio_pai:
+            os.makedirs(diretorio_pai, exist_ok=True)
+
+        inicio = time.monotonic()
+        while True:
             try:
-                os.mkdir(self.lock_path)
-                self.adquiriu = True
+                os.mkdir(self.lock_dir)
+                self._adquirido = True
                 return self
             except FileExistsError:
-                time.sleep(0.02)
-        try:
-            os.rmdir(self.lock_path)
-            os.mkdir(self.lock_path)
-            self.adquiriu = True
-        except Exception:
-            pass
-        return self
+                if (time.monotonic() - inicio) >= self.timeout:
+                    raise TimeoutError(
+                        f"Timeout ({self.timeout}s) ao aguardar lock de concorrência do SEI: {self.lock_dir}"
+                    )
+                time.sleep(self.poll_interval)
+            except FileNotFoundError:
+                if diretorio_pai:
+                    os.makedirs(diretorio_pai, exist_ok=True)
+                time.sleep(self.poll_interval)
 
     def __exit__(self, exc_type, exc_val, exc_tb):
-        if self.adquiriu and os.path.exists(self.lock_path):
+        if self._adquirido:
             try:
-                os.rmdir(self.lock_path)
-            except Exception:
+                os.rmdir(self.lock_dir)
+            except FileNotFoundError:
                 pass
+            except Exception as e:
+                logger.warning(f"Erro ao liberar lock de processos {self.lock_dir}: {e}")
+            finally:
+                self._adquirido = False
+
 
 class MotorSEI:
     _lock_threads = threading.Lock()
-    
-    BASE_URL = "https://sei.sp.gov.br/sei"
-    HOST_PERMITIDO = "sei.sp.gov.br"
-    UNIDADE_SAGTI = "110050725"
-    SISTEMA_ID = "100000100"
-    
-    TERMOS_ERRO = [
-        "infraexception", "acesso negado", "sessão inválida", "sessao invalida",
-        "não foi possível", "erro no sistema", "falha na autenticação",
-        "txtusuario", "plataforma.sp.gov.br", "minhaarea.sp.gov.br", "acesso.gov.br",
-        "erro no processamento", "sistema indisponível", "erro interno", "falha na execução"
-    ]
-    
-    def __init__(self, caminho_sessao=None):
-        self.base_dir = os.path.dirname(os.path.abspath(__file__))
-        self.caminho_sessao = caminho_sessao or os.path.join(self.base_dir, "data", "sessao_sei.json")
-        self.session = requests.Session()
-        self.session.headers.update({
-            "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0.0.0 Safari/537.36",
-            "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
-            "Accept-Language": "pt-BR,pt;q=0.9,en-US;q=0.8",
+
+    def __init__(
+        self,
+        base_url: str = "https://sei.sp.gov.br/sei",
+        id_unidade: str = "110050725",
+        caminho_sessao: str = "data/sessao_sei.json"
+    ):
+        self.base_url = base_url.rstrip("/")
+        self.id_unidade = str(id_unidade)
+        self.caminho_sessao = os.path.abspath(caminho_sessao)
+        self._mtime_sessao: Optional[float] = None
+        
+        import requests
+        self.sessao = requests.Session()
+        self.sessao.headers.update({
+            "User-Agent": "CockpitGTI/1.0 (SP-Aguas SA-GTI; MotorSEI)",
+            "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8"
         })
-        self.carregar_sessao()
 
-    def salvar_sessao(self, cookies_dict):
-        lock_caminho = self.caminho_sessao + ".lock"
-        with MotorSEI._lock_threads, LockProcessosSEI(lock_caminho):
-            dir_sessao = os.path.dirname(self.caminho_sessao)
-            os.makedirs(dir_sessao, exist_ok=True)
-            
-            conteudo = json.dumps({
-                "atualizado_em": time.strftime("%Y-%m-%dT%H:%M:%SZ"),
-                "cookies": cookies_dict
-            }, indent=2).encode("utf-8")
-            
-            tmp_fd = None
-            tmp_path = None
-            backup_fd = None
-            backup_path = None
-            sucesso_replace = False
-            ja_existia = os.path.exists(self.caminho_sessao)
-            
-            try:
-                # 1. Criação do backup prévio com fechamento imediato do descritor
-                if ja_existia:
-                    try:
-                        backup_fd, backup_path = tempfile.mkstemp(dir=dir_sessao, prefix="sessao_backup_", suffix=".tmp")
-                        try:
-                            os.fchmod(backup_fd, 0o600)
-                        except Exception:
-                            pass
-                        try:
-                            with open(self.caminho_sessao, "rb") as f_src:
-                                conteudo_backup = f_src.read()
-                            escritos_bkp = 0
-                            while escritos_bkp < len(conteudo_backup):
-                                n = os.write(backup_fd, conteudo_backup[escritos_bkp:])
-                                escritos_bkp += n
-                            os.fsync(backup_fd)
-                        finally:
-                            os.close(backup_fd)
-                            backup_fd = None
-                    except Exception as e:
-                        raise OSError(f"Falha ao criar backup integro da sessao: {str(e)}")
-
-                # 2. Criação do temporário com 0600
-                tmp_fd, tmp_path = tempfile.mkstemp(dir=dir_sessao, prefix="sessao_sei_", suffix=".tmp")
-                try:
-                    os.fchmod(tmp_fd, 0o600)
-                except Exception:
-                    pass
-                        
-                if hasattr(os, "fstat") and hasattr(os, "getuid"):
-                    st = os.fstat(tmp_fd)
-                    if (st.st_mode & 0o077) != 0:
-                        raise PermissionError("Insegurança: permissão não restrita para 0600.")
-
-                escritos = 0
-                while escritos < len(conteudo):
-                    n = os.write(tmp_fd, conteudo[escritos:])
-                    escritos += n
-
-                try:
-                    os.fsync(tmp_fd)
-                finally:
-                    os.close(tmp_fd)
-                    tmp_fd = None
-
-                os.replace(tmp_path, self.caminho_sessao)
-                sucesso_replace = True
-                tmp_path = None
-
-                if hasattr(os, "O_DIRECTORY"):
-                    try:
-                        dir_fd = os.open(dir_sessao, os.O_RDONLY | os.O_DIRECTORY)
-                        try:
-                            os.fsync(dir_fd)
-                        finally:
-                            os.close(dir_fd)
-                    except Exception:
-                        if ja_existia and backup_path and os.path.exists(backup_path):
-                            try:
-                                os.replace(backup_path, self.caminho_sessao)
-                                backup_path = None
-                            except Exception:
-                                self.session.cookies.clear()
-                                raise
-                        elif not ja_existia and os.path.exists(self.caminho_sessao):
-                            try:
-                                os.remove(self.caminho_sessao)
-                            except Exception:
-                                self.session.cookies.clear()
-                                raise
-                        raise
-
-                if not self.carregar_sessao():
-                    self.session.cookies.clear()
-                    raise OSError("Falha crítica ao recarregar a sessão na memória após persistência.")
-
-            finally:
-                if backup_fd is not None:
-                    try: os.close(backup_fd)
-                    except Exception: pass
-                if backup_path and os.path.exists(backup_path):
-                    try: os.remove(backup_path)
-                    except Exception: pass
-                if tmp_fd is not None:
-                    try: os.close(tmp_fd)
-                    except Exception: pass
-                if not sucesso_replace and tmp_path and os.path.exists(tmp_path):
-                    try:
-                        with open(tmp_path, "wb") as f_del:
-                            f_del.write(b"\x00" * len(conteudo))
-                            f_del.truncate(0)
-                            f_del.flush()
-                            os.fsync(f_del.fileno())
-                    except Exception: pass
-                    try: os.remove(tmp_path)
-                    except Exception: pass
-
-    def carregar_sessao(self):
         if os.path.exists(self.caminho_sessao):
             try:
-                with open(self.caminho_sessao, "r", encoding="utf-8") as f:
-                    dados = json.load(f)
-                cookies = dados.get("cookies", {})
-                self.session.cookies.clear()
-                for k, v in cookies.items():
-                    self.session.cookies.set(k, v, domain=self.HOST_PERMITIDO, path="/sei", secure=True)
-                return True
-            except Exception:
-                pass
-        return False
+                self.carregar_sessao()
+            except Exception as e:
+                logger.warning(f"Falha ao carregar sessão inicial de {self.caminho_sessao}: {e}")
 
-    def _executar_requisicao_segura(self, metodo, url, **kwargs):
-        parsed = urllib.parse.urlparse(url)
-        path_decodificado = urllib.parse.unquote(parsed.path)
-        norm_path = posixpath.normpath(path_decodificado)
-        
-        if parsed.scheme != "https" or parsed.hostname != self.HOST_PERMITIDO or (not norm_path.startswith("/sei/") and norm_path != "/sei"):
-            raise ValueError(f"Destino não autorizado: {url}")
-            
-        resp = self.session.request(metodo, url, allow_redirects=False, **kwargs)
-        if resp.is_redirect:
-            loc = resp.headers.get("Location", "")
-            loc_url = urllib.parse.urljoin(url, loc)
-            p_loc = urllib.parse.urlparse(loc_url)
-            p_loc_norm = posixpath.normpath(urllib.parse.unquote(p_loc.path))
-            if p_loc.scheme != "https" or p_loc.hostname != self.HOST_PERMITIDO or (not p_loc_norm.startswith("/sei/") and p_loc_norm != "/sei"):
-                return resp
-            return self.session.request(metodo, loc_url, allow_redirects=False, **kwargs)
-        return resp
+    def _sincronizar_sessao_se_modificada(self) -> None:
+        if not os.path.exists(self.caminho_sessao):
+            if self._mtime_sessao is not None:
+                self.sessao.cookies.clear()
+                self._mtime_sessao = None
+            return
 
-    def _pagina_caixa_valida(self, resp):
-        if resp.status_code != 200:
-            return False
-        parsed = urllib.parse.urlparse(resp.url)
-        norm_path = posixpath.normpath(urllib.parse.unquote(parsed.path))
-        if parsed.scheme != "https" or parsed.hostname != self.HOST_PERMITIDO or (not norm_path.startswith("/sei/") and norm_path != "/sei"):
-            return False
-            
-        texto_limpo = re.sub(r"<!--.*?-->", "", resp.text, flags=re.DOTALL)
-        texto_lower = texto_limpo.lower()
-        if any(t in texto_lower for t in self.TERMOS_ERRO):
-            return False
-            
-        parser = ValidadorFormSEI(ids_alvo=["frmprocedimentocontrolar"])
         try:
-            parser.feed(texto_limpo)
-        except Exception:
-            return False
-            
-        texto_sem_script = re.sub(r"<script[^>]*>[\s\S]*?</script>", "", texto_limpo, flags=re.IGNORECASE)
-        texto_sem_script = re.sub(r"<style[^>]*>[\s\S]*?</style>", "", texto_sem_script, flags=re.IGNORECASE).lower()
-        
-        tem_tabela = "infratabela" in texto_sem_script or "infraareadados" in texto_sem_script or "id_procedimento" in texto_sem_script
-        return parser.encontrou and tem_tabela
-
-    def _pagina_busca_valida(self, resp):
-        if resp.status_code != 200:
-            return False
-        parsed = urllib.parse.urlparse(resp.url)
-        norm_path = posixpath.normpath(urllib.parse.unquote(parsed.path))
-        if parsed.scheme != "https" or parsed.hostname != self.HOST_PERMITIDO or (not norm_path.startswith("/sei/") and norm_path != "/sei"):
-            return False
-            
-        texto_limpo = re.sub(r"<!--.*?-->", "", resp.text, flags=re.DOTALL)
-        texto_lower = texto_limpo.lower()
-        if any(t in texto_lower for t in self.TERMOS_ERRO):
-            return False
-            
-        parser = ValidadorFormSEI(ids_alvo=["frmpesquisaprocesso", "frmpesquisarapida"])
-        try:
-            parser.feed(texto_limpo)
-        except Exception:
-            return False
-            
-        texto_sem_script = re.sub(r"<script[^>]*>[\s\S]*?</script>", "", texto_limpo, flags=re.IGNORECASE)
-        texto_sem_script = re.sub(r"<style[^>]*>[\s\S]*?</style>", "", texto_sem_script, flags=re.IGNORECASE).lower()
-        
-        tem_resultado = "infratabela" in texto_sem_script or "procedimento_trabalhar" in texto_sem_script or "nenhum" in texto_sem_script
-        return parser.encontrou and tem_resultado
-
-    def _detectar_expiracao(self, resp):
-        loc = resp.headers.get("Location", "").lower()
-        url = resp.url.lower()
-        texto = resp.text.lower()
-        termos_login = ["txtusuario", "plataforma.sp.gov.br", "minhaarea.sp.gov.br", "acesso.gov.br", "/login"]
-        return any(t in texto or t in loc or t in url for t in termos_login)
-
-    def validar_sessao(self):
-        try:
-            url = f"{self.BASE_URL}/controlador.php?acao=procedimento_controlar&infra_sistema={self.SISTEMA_ID}&infra_unidade_atual={self.UNIDADE_SAGTI}"
-            resp = self._executar_requisicao_segura("GET", url, timeout=6)
-            if not self._pagina_caixa_valida(resp):
-                is_expired = self._detectar_expiracao(resp)
-                return {"autenticado": False, "codigo": resp.status_code, "sessao_expirada": is_expired, "mensagem": "Sessão expirada ou resposta não autorizada."}
-            return {"autenticado": True, "unidade": self.UNIDADE_SAGTI, "mensagem": "Sessão ativa na SA-GTI"}
+            mtime_disco = os.path.getmtime(self.caminho_sessao)
+            if self._mtime_sessao is None or mtime_disco != self._mtime_sessao:
+                self.carregar_sessao()
         except Exception as e:
-            return {"autenticado": False, "erro": str(e), "mensagem": "Falha de conexão com o SEI"}
+            logger.warning(f"Erro ao verificar sincronização de sessão por mtime: {e}")
 
-    def buscar_processos(self, termo="", unidade=None):
-        unidade = unidade or self.UNIDADE_SAGTI
-        url = f"{self.BASE_URL}/controlador.php?acao=pesquisa_processo_pesquisar&infra_sistema={self.SISTEMA_ID}&infra_unidade_atual={unidade}"
+    def carregar_sessao(self) -> bool:
+        if not os.path.exists(self.caminho_sessao):
+            self.sessao.cookies.clear()
+            self._mtime_sessao = None
+            return False
+
+        try:
+            with open(self.caminho_sessao, "r", encoding="utf-8") as f:
+                conteudo = json.load(f)
+            cookies = conteudo.get("cookies", {})
+            self.sessao.cookies.clear()
+            for k, v in cookies.items():
+                self.sessao.cookies.set(k, v)
+            self._mtime_sessao = os.path.getmtime(self.caminho_sessao)
+            return True
+        except Exception as e:
+            logger.error(f"Erro ao ler arquivo de sessão {self.caminho_sessao}: {e}")
+            self.sessao.cookies.clear()
+            self._mtime_sessao = None
+            raise
+
+    def _fsync_diretorio(self, caminho_diretorio: str):
+        if os.name == "nt":
+            return
+        dir_fd = os.open(caminho_diretorio, os.O_RDONLY)
+        try:
+            os.fsync(dir_fd)
+        finally:
+            os.close(dir_fd)
+
+    def salvar_sessao(self, cookies: dict, usuario: Optional[str] = None) -> bool:
+        with self._lock_threads:
+            with LockProcessosSEI(self.caminho_sessao, timeout=10.0):
+                diretorio = os.path.dirname(os.path.abspath(self.caminho_sessao))
+                if diretorio:
+                    os.makedirs(diretorio, exist_ok=True)
+
+                houve_backup = False
+                backup_caminho = None
+                sessao_anterior_existia = os.path.exists(self.caminho_sessao)
+
+                if sessao_anterior_existia:
+                    backup_fd, backup_caminho = tempfile.mkstemp(
+                        prefix="sessao_backup_",
+                        suffix=".tmp",
+                        dir=diretorio
+                    )
+                    try:
+                        with open(self.caminho_sessao, "rb") as f_orig, os.fdopen(backup_fd, "wb") as f_bkp:
+                            shutil.copyfileobj(f_orig, f_bkp)
+                            f_bkp.flush()
+                            try:
+                                os.fsync(f_bkp.fileno())
+                            except OSError:
+                                pass
+                        houve_backup = True
+                    except Exception as e:
+                        logger.error(f"Falha ao criar backup da sessão: {e}")
+                        if backup_caminho and os.path.exists(backup_caminho):
+                            try:
+                                os.unlink(backup_caminho)
+                            except OSError:
+                                pass
+                        raise
+
+                payload = {
+                    "cookies": cookies,
+                    "usuario": usuario,
+                    "atualizado_em": datetime.now(timezone.utc).isoformat()
+                }
+                dados_json = json.dumps(payload, indent=2, ensure_ascii=False).encode("utf-8")
+
+                temp_fd, temp_caminho = tempfile.mkstemp(
+                    prefix="sessao_tmp_",
+                    suffix=".json",
+                    dir=diretorio
+                )
+                try:
+                    os.chmod(temp_caminho, 0o600)
+                except Exception:
+                    pass
+
+                try:
+                    with os.fdopen(temp_fd, "wb") as f_tmp:
+                        pos = 0
+                        while pos < len(dados_json):
+                            escrito = f_tmp.write(dados_json[pos:])
+                            pos += escrito
+                        f_tmp.flush()
+                        os.fsync(f_tmp.fileno())
+                except Exception as e:
+                    if os.path.exists(temp_caminho):
+                        try:
+                            os.unlink(temp_caminho)
+                        except OSError:
+                            pass
+                    if houve_backup and backup_caminho and os.path.exists(backup_caminho):
+                        try:
+                            os.unlink(backup_caminho)
+                        except OSError:
+                            pass
+                    raise
+
+                try:
+                    os.replace(temp_caminho, self.caminho_sessao)
+                except Exception as e:
+                    if os.path.exists(temp_caminho):
+                        try:
+                            os.unlink(temp_caminho)
+                        except OSError:
+                            pass
+                    if houve_backup and backup_caminho and os.path.exists(backup_caminho):
+                        try:
+                            os.unlink(backup_caminho)
+                        except OSError:
+                            pass
+                    raise
+
+                try:
+                    self._fsync_diretorio(diretorio)
+                except Exception as e_dir:
+                    logger.error(f"Falha no fsync do diretório ({e_dir}). Executando rollback.")
+                    if houve_backup and backup_caminho and os.path.exists(backup_caminho):
+                        try:
+                            os.replace(backup_caminho, self.caminho_sessao)
+                        except Exception as e_rollback:
+                            logger.critical(f"Falha crítica no rollback: {e_rollback}")
+                        try:
+                            self.carregar_sessao()
+                        except Exception:
+                            self.sessao.cookies.clear()
+                            self._mtime_sessao = None
+                    else:
+                        if os.path.exists(self.caminho_sessao):
+                            try:
+                                os.unlink(self.caminho_sessao)
+                            except OSError:
+                                pass
+                        self.sessao.cookies.clear()
+                        self._mtime_sessao = None
+                    raise
+
+                if houve_backup and backup_caminho and os.path.exists(backup_caminho):
+                    try:
+                        os.unlink(backup_caminho)
+                    except OSError:
+                        pass
+
+                try:
+                    self.carregar_sessao()
+                except Exception as e_recarga:
+                    logger.error(f"Falha ao recarregar sessão gravada: {e_recarga}")
+                    self.sessao.cookies.clear()
+                    self._mtime_sessao = None
+                    raise
+
+                return True
+
+    def validar_action_segura(self, action: str) -> bool:
+        if not action:
+            return False
+
+        unquoted_action = unquote(action)
+        if ".." in unquoted_action:
+            return False
+
+        parsed = urlparse(unquoted_action)
+
+        if parsed.netloc:
+            sei_netloc = urlparse(self.base_url).netloc
+            if parsed.netloc.lower() != sei_netloc.lower():
+                return False
+
+        if parsed.path.startswith("/"):
+            sei_path = urlparse(self.base_url).path.rstrip("/")
+            caminho_norm = posixpath.normpath(parsed.path)
+            if not caminho_norm.startswith(sei_path):
+                return False
+
+        return True
+
+    def validar_sessao_ativa(self) -> bool:
+        self._sincronizar_sessao_se_modificada()
+
+        if not self.sessao.cookies:
+            return False
+
+        url_teste = f"{self.base_url}/controlador.php?acao=procedimento_controlar&infra_unidade_atual={self.id_unidade}&infra_sistema=100000100"
+        try:
+            resp = self.sessao.get(url_teste, timeout=10, allow_redirects=True)
+            if resp.status_code != 200:
+                return False
+
+            parser = ValidadorFormSEI()
+            parser.feed(resp.text)
+            return parser.form_encontrado
+        except Exception as e:
+            logger.warning(f"Erro ao validar sessão ativa no SEI: {e}")
+            return False
+
+    def listar_caixa_unidade(self) -> List[Dict[str, Any]]:
+        self._sincronizar_sessao_se_modificada()
+
+        url_caixa = f"{self.base_url}/controlador.php?acao=procedimento_controlar&infra_unidade_atual={self.id_unidade}&infra_sistema=100000100"
+        resp = self.sessao.get(url_caixa, timeout=15)
+        if resp.status_code != 200:
+            resp.raise_for_status()
+
+        parser = ParserProcessosSEI()
+        parser.feed(resp.text)
+        return parser.processos
+
+    def buscar_processos(self, termo: str) -> List[Dict[str, Any]]:
+        self._sincronizar_sessao_se_modificada()
+
+        url_busca = f"{self.base_url}/controlador.php?acao=pesquisa_processo&infra_unidade_atual={self.id_unidade}&infra_sistema=100000100"
         payload = {
-            "txtPalavraChave": termo,
-            "chkSinonimo": "S",
-            "optData": "0",
+            "txtPesquisa": termo,
+            "chkSinonimo": "N",
             "btnPesquisar": "Pesquisar"
         }
-        try:
-            resp = self._executar_requisicao_segura("POST", url, data=payload, timeout=10)
-            if not self._pagina_busca_valida(resp):
-                is_expired = self._detectar_expiracao(resp)
-                return {"sucesso": False, "codigo": resp.status_code, "sessao_expirada": is_expired, "erro": "Sessão expirada ou erro na busca.", "processos": []}
-            return self.parsear_tabela_processos(resp.text)
-        except Exception as e:
-            return {"sucesso": False, "codigo": 502, "erro": f"Falha de conexão: {str(e)}", "processos": []}
+        resp = self.sessao.post(url_busca, data=payload, timeout=20)
+        if resp.status_code != 200:
+            resp.raise_for_status()
 
-    def listar_caixa_unidade(self, unidade=None):
-        unidade = unidade or self.UNIDADE_SAGTI
-        url = f"{self.BASE_URL}/controlador.php?acao=procedimento_controlar&infra_sistema={self.SISTEMA_ID}&infra_unidade_atual={unidade}"
-        try:
-            resp = self._executar_requisicao_segura("GET", url, timeout=10)
-            if not self._pagina_caixa_valida(resp):
-                is_expired = self._detectar_expiracao(resp)
-                return {"sucesso": False, "codigo": resp.status_code, "sessao_expirada": is_expired, "erro": "Sessão expirada ou acesso negado.", "processos": []}
-            return self.parsear_tabela_processos(resp.text)
-        except Exception as e:
-            return {"sucesso": False, "codigo": 502, "erro": f"Falha de conexão: {str(e)}", "processos": []}
-
-    def parsear_tabela_processos(self, html):
-        processos = []
-        tags_a = re.findall(r"<a\s+([^>]+)>(.*?)</a>", html, flags=re.DOTALL | re.IGNORECASE)
-        for attrs, texto_bruto in tags_a:
-            m_href = re.search(r'href=["\']([^"\']+)["\']', attrs, flags=re.IGNORECASE)
-            if not m_href:
-                continue
-            href = html_lib.unescape(m_href.group(1))
-
-            if not re.search(r"(?:^|[?&])acao=procedimento_trabalhar(?:&|$)", href):
-                continue
-
-            m_id = re.search(r"(?:^|[?&])id_procedimento=(\d+)(?:&|$)", href)
-            if not m_id:
-                continue
-            id_proc = m_id.group(1)
-
-            num_proc = re.sub(r"<[^>]+>", "", texto_bruto).strip()
-            if num_proc and not any(ign in num_proc.lower() for ign in ["excluir", "anotação", "post-it"]):
-                processos.append({
-                    "id_procedimento": id_proc,
-                    "ID_Processo": num_proc,
-                    "Prefixo_Orgao": num_proc[:3] if "." in num_proc else "137",
-                    "link_sei": f"{self.BASE_URL}/controlador.php?acao=procedimento_trabalhar&id_procedimento={id_proc}",
-                    "unidade": "SA-GTI"
-                })
-        return {"sucesso": True, "total": len(processos), "processos": processos}
+        parser = ParserProcessosSEI()
+        parser.feed(resp.text)
+        return parser.processos
