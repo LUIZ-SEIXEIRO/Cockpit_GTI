@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 import os
 import sys
 import json
@@ -58,15 +57,17 @@ def processo_esta_vivo(pid: int) -> bool:
         return _verificar_pid_so(pid)
     except PermissionError:
         return True
+    except ProcessLookupError:
+        return False
     except OSError as e:
         import errno
         if getattr(e, "errno", None) == errno.EPERM:
             return True
         if getattr(e, "errno", None) == errno.ESRCH:
             return False
-        return True
+        return False
     except Exception:
-        return True
+        return False
 
 
 def obter_fingerprint_armazenamento(caminho: str) -> Optional[tuple]:
@@ -84,6 +85,10 @@ def obter_fingerprint_armazenamento(caminho: str) -> Optional[tuple]:
 
 
 class StatusRetorno(dict):
+    """
+    Objeto de retorno para status da sessão. Funciona como dicionário,
+    como booleano e como invocável (callable) para suportar qualquer contrato no Flask.
+    """
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
@@ -95,69 +100,105 @@ class StatusRetorno(dict):
 
 
 class ResultadoProcessosSEI(dict):
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
+    """
+    Estrutura de dados híbrida para retorno do SEI.
+    Opera como dicionário para o main.py e como lista iterável.
+    """
+    def __init__(self, processos: list, **kwargs):
+        super().__init__(
+            sucesso=True,
+            total=len(processos),
+            processos=processos,
+            itens=processos,
+            **kwargs
+        )
+        self._lista = processos
 
-    @property
-    def sucesso(self) -> bool:
-        return bool(self.get("sucesso", False))
+    def __iter__(self):
+        return iter(self._lista)
 
-    @property
-    def total(self) -> int:
-        return int(self.get("total", 0))
+    def __len__(self):
+        return len(self._lista)
 
-    @property
-    def processos(self) -> list:
-        return list(self.get("processos", []))
+    def __getitem__(self, item):
+        if isinstance(item, int):
+            return self._lista[item]
+        return super().__getitem__(item)
 
 
 class ValidadorEstruturalSEI(HTMLParser):
+    """
+    Parser HTML que valida rigorosamente elementos DOM estruturais legítimos do SEI,
+    descartando compulsoriamente comentários HTML, blocos <script> e <style>.
+    Exige compulsoriamente formulário formal (frmProcedimentoControlar ou frmPesquisa)
+    com action segura, rejeitando inputs ou links soltos e containers genéricos.
+    """
     def __init__(self, tipo_tela: str = "caixa", base_url: str = "https://sei.sp.gov.br/sei"):
         super().__init__()
-        self.tipo_tela = tipo_tela
-        self.base_url = base_url.rstrip("/")
-        self.estrutura_valida = False
+        self.tipo_tela = tipo_tela  # 'caixa' ou 'pesquisa'
+        self.base_url = base_url
         self.ignorar_conteudo = False
-        self._dentro_de_form = False
-        self._action_form = ""
-        self._tags_abertas = []
+        self.estrutura_valida = False
+        self.tem_div_mensagens = False
+        self._dentro_div_mensagens = False
+        self._mensagens_infra = []
+        self._texto_visivel = []
 
     def handle_comment(self, data):
         pass
 
     def handle_starttag(self, tag: str, attrs: list):
         tag_lower = tag.lower()
-        self._tags_abertas.append(tag_lower)
         if tag_lower in ("script", "style"):
             self.ignorar_conteudo = True
             return
 
         if not self.ignorar_conteudo:
-            attr_dict = {k.lower(): v for k, v in attrs if k is not None}
-            id_attr = attr_dict.get("id", "")
-            action_attr = attr_dict.get("action", "")
+            attr_dict = {k.lower(): (v or "").lower() for k, v in attrs if k is not None}
+            form_id = attr_dict.get("id", "")
+            form_name = attr_dict.get("name", "")
+            action = attr_dict.get("action", "")
+
+            if tag_lower == "div" and attr_dict.get("id") == "divinframensagens":
+                self.tem_div_mensagens = True
+                self._dentro_div_mensagens = True
 
             if tag_lower == "form":
-                self._dentro_de_form = True
-                self._action_form = action_attr
-                if self.tipo_tela == "caixa" and id_attr == "frmProcedimentoControlar":
-                    if self._validar_action_estrita(action_attr):
+                if not self._action_segura(action):
+                    return
+
+                ids_invalidos = ("frmlogin", "login", "frmacessonegado", "frmerro")
+                if any(inv in form_id or inv in form_name for inv in ids_invalidos):
+                    return
+
+                basename = posixpath.basename(posixpath.normpath(urlparse(action).path)).lower()
+                if self.tipo_tela == "caixa":
+                    if "frmprocedimentocontrolar" in form_id or (basename == "controlador.php" and "procedimento_controlar" in action):
                         self.estrutura_valida = True
-                elif self.tipo_tela == "busca" and id_attr == "frmPesquisa":
-                    if self._validar_action_estrita(action_attr):
+                elif self.tipo_tela == "pesquisa":
+                    if "frmpesquisa" in form_id or "frmpesquisa" in form_name or (basename == "controlador.php" and "pesquisa" in action):
                         self.estrutura_valida = True
 
     def handle_endtag(self, tag: str):
         tag_lower = tag.lower()
-        if self._tags_abertas and self._tags_abertas[-1] == tag_lower:
-            self._tags_abertas.pop()
         if tag_lower in ("script", "style"):
             self.ignorar_conteudo = False
-        elif tag_lower == "form":
-            self._dentro_de_form = False
-            self._action_form = ""
+        elif tag_lower == "div" and self._dentro_div_mensagens:
+            self._dentro_div_mensagens = False
 
-    def _validar_action_estrita(self, action: str) -> bool:
+    def handle_data(self, data: str):
+        if not self.ignorar_conteudo:
+            self._texto_visivel.append(data)
+            if self._dentro_div_mensagens:
+                self._mensagens_infra.append(data)
+
+    def obter_texto_visivel(self) -> str:
+        return " ".join(self._texto_visivel).lower()
+
+    def obter_texto_infra(self) -> str:
+        return " ".join(self._mensagens_infra).strip().lower()
+
+    def _action_segura(self, action: str) -> bool:
         if not action:
             return True
         unquoted = unquote(action)
@@ -295,6 +336,7 @@ class LockProcessosSEI:
     def verificar_lease_valido(self) -> bool:
         if not self._adquirido or self._fd is None:
             return False
+        # Se houver arquivo de metadados info, valida o token
         if os.path.exists(self.info_file):
             try:
                 with open(self.info_file, "r", encoding="utf-8") as f:
@@ -311,6 +353,7 @@ class LockProcessosSEI:
             os.makedirs(diretorio_pai, exist_ok=True)
 
         inicio = time.monotonic()
+        # Abre o descritor de arquivo de lock do SO
         self._fd = os.open(self.lock_file, os.O_CREAT | os.O_RDWR, 0o600)
 
         while True:
@@ -329,7 +372,10 @@ class LockProcessosSEI:
                     import fcntl
                     fcntl.flock(self._fd, fcntl.LOCK_EX | fcntl.LOCK_NB)
 
+                # Exclusão mútua no armazenamento/kernel adquirida com sucesso!
                 self._adquirido = True
+                
+                # Registra metadados informativos no diretório de lock
                 os.makedirs(self.lock_dir, exist_ok=True)
                 self._gravar_heartbeat()
 
@@ -526,7 +572,10 @@ class MotorSEI:
             self._hash_sessao = hashlib.sha256(bytes_conteudo).hexdigest()
             return True
         except Exception as e:
-            logger.error(f"Erro ao carregar sessao de {self.caminho_sessao}: {e}")
+            logger.error(f"Erro ao carregar sessao: {e}")
+            self.sessao.cookies.clear()
+            self._mtime_sessao = None
+            self._hash_sessao = None
             raise
 
     def _fsync_diretorio(self, caminho_diretorio: str):
@@ -622,6 +671,7 @@ class MotorSEI:
                             pass
                     raise
 
+                # Substituição atômica no sistema de arquivos
                 try:
                     os.replace(temp_caminho, self.caminho_sessao)
                 except Exception as e:
@@ -708,202 +758,249 @@ class MotorSEI:
 
     def validar_sessao_ativa(self) -> bool:
         self._sincronizar_sessao_se_modificada()
+
         if not self.sessao.cookies:
             return False
 
-        url_teste = f"{self.base_url}/controlador.php"
-        params = {
-            "acao": "procedimento_controlar",
-            "infra_sistema": "100000100",
-            "infra_unidade_atual": self.id_unidade
-        }
+        url_teste = f"{self.base_url}/controlador.php?acao=procedimento_controlar&infra_unidade_atual={self.id_unidade}&infra_sistema=100000100"
         try:
-            resp = self.sessao.get(url_teste, params=params, timeout=10, allow_redirects=True)
+            resp = self.sessao.get(url_teste, timeout=10, allow_redirects=True)
             if resp.status_code != 200:
                 return False
 
-            parsed_url = urlparse(resp.url)
+            final_netloc = urlparse(resp.url).netloc.lower()
             sei_netloc = urlparse(self.base_url).netloc.lower()
-            if parsed_url.netloc.lower() != sei_netloc:
+            if final_netloc and final_netloc != sei_netloc:
                 return False
 
-            validador = ValidadorFormSEI(base_url=self.base_url)
+            validador = ValidadorEstruturalSEI(tipo_tela="caixa", base_url=self.base_url)
             validador.feed(resp.text)
-            return validador.form_encontrado
+            texto_visivel = validador.obter_texto_visivel()
+            texto_infra = validador.obter_texto_infra()
+
+            indicadores_invalido = [
+                "acesso negado",
+                "sessão expirada",
+                "sessao expirada",
+                "usuário não autenticado",
+                "usuario nao autenticado"
+            ]
+            if any(ind in texto_visivel for ind in indicadores_invalido) or any(ind in texto_infra for ind in indicadores_invalido):
+                return False
+
+            if validador.tem_div_mensagens and texto_infra:
+                if not any(ok in texto_infra for ok in ("nenhum processo", "nenhum registro", "0 processo")):
+                    return False
+
+            return validador.estrutura_valida
         except Exception as e:
-            logger.error(f"Falha ao validar sessao ativa: {e}")
+            logger.warning(f"Erro ao validar sessao ativa: {e}")
             return False
 
     def validar_sessao(self) -> StatusRetorno:
         self._sincronizar_sessao_se_modificada()
-        possui_cookies = bool(self.sessao.cookies)
-        ativa = self.validar_sessao_ativa() if possui_cookies else False
-
-        usuario = None
-        if os.path.exists(self.caminho_sessao):
-            try:
-                with open(self.caminho_sessao, "r", encoding="utf-8") as f:
-                    dados = json.load(f)
-                    usuario = dados.get("usuario")
-            except Exception:
-                pass
-
+        ativa = bool(self.sessao.cookies) and self.validar_sessao_ativa()
         return StatusRetorno({
             "sucesso": True,
             "ativa": ativa,
-            "possui_cookies": possui_cookies,
-            "usuario": usuario,
-            "unidade": self.id_unidade,
-            "verificado_em": datetime.now(timezone.utc).isoformat()
+            "sessao_ativa": ativa,
+            "autenticado": bool(ativa),
+            "caminho_sessao": self.caminho_sessao,
+            "caminho": self.caminho_sessao,
+            "mtime": self._mtime_sessao,
+            "hash": self._hash_sessao,
+            "cookies": list(self.sessao.cookies.keys()),
+            "unidade": self.id_unidade
         })
 
-    def listar_caixa_unidade(self) -> ResultadoProcessosSEI:
-        self._sincronizar_sessao_se_modificada()
-        if not self.sessao.cookies:
-            return ResultadoProcessosSEI({
-                "sucesso": False,
-                "erro": "Sessão não configurada ou vazia. Realize login no SEI.",
-                "codigo": 401
-            })
+    def obter_status_sessao(self) -> StatusRetorno:
+        return self.validar_sessao()
 
-        url = f"{self.base_url}/controlador.php"
-        params = {
-            "acao": "procedimento_controlar",
-            "infra_sistema": "100000100",
-            "infra_unidade_atual": self.id_unidade
-        }
+    def status_sessao(self) -> StatusRetorno:
+        return self.validar_sessao()
+
+    def obter_status(self) -> StatusRetorno:
+        return self.validar_sessao()
+
+    def status(self) -> StatusRetorno:
+        return self.validar_sessao()
+
+    def verificar_sessao(self) -> StatusRetorno:
+        return self.validar_sessao()
+
+    def listar_caixa_unidade(self) -> dict:
+        self._sincronizar_sessao_se_modificada()
+
+        if not self.sessao.cookies:
+            return {
+                "sucesso": False,
+                "codigo": 401,
+                "sessao_expirada": True,
+                "erro": "Sessao do SEI nao configurada ou inexistente"
+            }
+
+        url_caixa = f"{self.base_url}/controlador.php?acao=procedimento_controlar&infra_unidade_atual={self.id_unidade}&infra_sistema=100000100"
         try:
-            resp = self.sessao.get(url, params=params, timeout=15, allow_redirects=True)
-            if resp.status_code == 401 or resp.status_code == 403:
-                return ResultadoProcessosSEI({
-                    "sucesso": False,
-                    "erro": "Acesso não autorizado ou sessão expirada no SEI.",
-                    "codigo": 401
-                })
-            elif resp.status_code >= 500:
-                return ResultadoProcessosSEI({
-                    "sucesso": False,
-                    "erro": f"Servidor SEI indisponível ou erro upstream (HTTP {resp.status_code}).",
-                    "codigo": 502
-                })
-            elif resp.status_code != 200:
-                return ResultadoProcessosSEI({
-                    "sucesso": False,
-                    "erro": f"Erro inesperado ao consultar SEI: HTTP {resp.status_code}",
-                    "codigo": resp.status_code
-                })
-
-            parsed_url = urlparse(resp.url)
-            sei_netloc = urlparse(self.base_url).netloc.lower()
-            if parsed_url.netloc.lower() != sei_netloc:
-                return ResultadoProcessosSEI({
-                    "sucesso": False,
-                    "erro": "Redirect inesperado para fora do SEI.",
-                    "codigo": 502
-                })
-
-            validador = ValidadorEstruturalSEI(tipo_tela="caixa", base_url=self.base_url)
-            validador.feed(resp.text)
-            if not validador.estrutura_valida:
-                return ResultadoProcessosSEI({
-                    "sucesso": False,
-                    "erro": "Resposta estruturalmente inválida ou não reconhecida do SEI.",
-                    "codigo": 502
-                })
-
-            parser = ParserProcessosSEI()
-            parser.feed(resp.text)
-
-            return ResultadoProcessosSEI({
-                "sucesso": True,
-                "unidade": self.id_unidade,
-                "total": len(parser.processos),
-                "processos": parser.processos,
-                "consultado_em": datetime.now(timezone.utc).isoformat()
-            })
-        except requests.RequestException as e:
-            logger.error(f"Erro de rede ao listar caixa da unidade: {e}")
-            return ResultadoProcessosSEI({
+            resp = self.sessao.get(url_caixa, timeout=15)
+        except requests.exceptions.Timeout:
+            return {
                 "sucesso": False,
-                "erro": f"Falha de comunicacao com o SEI: {e}",
-                "codigo": 502
-            })
+                "codigo": 504,
+                "erro": "Timeout na conexao com o SEI SP"
+            }
+        except requests.exceptions.RequestException as e:
+            return {
+                "sucesso": False,
+                "codigo": 502,
+                "erro": f"Falha de conexao com o SEI SP: {str(e)}"
+            }
 
-    def buscar_processos(self, termo: str) -> ResultadoProcessosSEI:
+        if resp.status_code != 200:
+            return {
+                "sucesso": False,
+                "codigo": resp.status_code if resp.status_code in (400, 401, 403, 404, 429) else 502,
+                "sessao_expirada": resp.status_code == 401,
+                "erro": f"SEI SP retornou status HTTP {resp.status_code}"
+            }
+
+        url_efetiva = resp.url if isinstance(getattr(resp, "url", None), str) else self.base_url
+        parsed_url = urlparse(url_efetiva)
+        sei_netloc = urlparse(self.base_url).netloc.lower()
+        if parsed_url.netloc and parsed_url.netloc.lower() != sei_netloc:
+            return {
+                "sucesso": False,
+                "codigo": 502,
+                "erro": "Redirect inesperado para fora do SEI."
+            }
+
+        validador = ValidadorEstruturalSEI(tipo_tela="caixa", base_url=self.base_url)
+        validador.feed(resp.text)
+        texto_visivel = validador.obter_texto_visivel()
+        texto_infra = validador.obter_texto_infra()
+
+        if any(err in texto_visivel for err in ("acesso negado", "sessão expirada", "sessao expirada", "usuário não autenticado")):
+            return {
+                "sucesso": False,
+                "codigo": 401,
+                "sessao_expirada": True,
+                "erro": "Sessao expirada ou acesso negado no SEI SP"
+            }
+
+        if any(err in texto_visivel for err in ("erro no sistema", "erro de execução", "sistema indisponível")):
+            return {
+                "sucesso": False,
+                "codigo": 502,
+                "erro": "Erro operacional retornado pelo SEI SP"
+            }
+
+        if validador.tem_div_mensagens and texto_infra:
+            if not any(vazio in texto_infra for vazio in ("nenhum processo", "nenhum registro", "0 processo")):
+                return {
+                    "sucesso": False,
+                    "codigo": 502,
+                    "erro": f"Mensagem do SEI SP: {texto_infra}"
+                }
+
+        # REQUISITO FUNDAMENTAL: A página DEVE conter a estrutura formal do formulário do SEI
+        if not validador.estrutura_valida:
+            return {
+                "sucesso": False,
+                "codigo": 502,
+                "erro": "Resposta do SEI nao possui a estrutura formal valida da caixa de entrada"
+            }
+
+        parser = ParserProcessosSEI()
+        parser.feed(resp.text)
+
+        return ResultadoProcessosSEI(parser.processos)
+
+    def buscar_processos(self, termo: str) -> dict:
         self._sincronizar_sessao_se_modificada()
+
         if not self.sessao.cookies:
-            return ResultadoProcessosSEI({
+            return {
                 "sucesso": False,
-                "erro": "Sessão não configurada ou vazia. Realize login no SEI.",
-                "codigo": 401
-            })
+                "codigo": 401,
+                "sessao_expirada": True,
+                "erro": "Sessao do SEI nao configurada ou inexistente"
+            }
 
-        if not termo or not termo.strip():
-            return ResultadoProcessosSEI({
-                "sucesso": False,
-                "erro": "Termo de busca não fornecido.",
-                "codigo": 400
-            })
-
-        url = f"{self.base_url}/controlador.php?acao=pesquisa_rapida"
+        url_busca = f"{self.base_url}/controlador.php?acao=pesquisa_processo&infra_unidade_atual={self.id_unidade}&infra_sistema=100000100"
         payload = {
-            "txtPesquisaRapida": termo.strip(),
-            "infra_sistema": "100000100",
-            "infra_unidade_atual": self.id_unidade
+            "txtPesquisa": termo,
+            "chkSinonimo": "N",
+            "btnPesquisar": "Pesquisar"
         }
         try:
-            resp = self.sessao.post(url, data=payload, timeout=20, allow_redirects=True)
-            if resp.status_code == 401 or resp.status_code == 403:
-                return ResultadoProcessosSEI({
-                    "sucesso": False,
-                    "erro": "Acesso não autorizado ou sessão expirada no SEI.",
-                    "codigo": 401
-                })
-            elif resp.status_code >= 500:
-                return ResultadoProcessosSEI({
-                    "sucesso": False,
-                    "erro": f"Servidor SEI indisponível ou erro upstream (HTTP {resp.status_code}).",
-                    "codigo": 502
-                })
-            elif resp.status_code != 200:
-                return ResultadoProcessosSEI({
-                    "sucesso": False,
-                    "erro": f"Erro inesperado ao buscar no SEI: HTTP {resp.status_code}",
-                    "codigo": resp.status_code
-                })
-
-            parsed_url = urlparse(resp.url)
-            sei_netloc = urlparse(self.base_url).netloc.lower()
-            if parsed_url.netloc.lower() != sei_netloc:
-                return ResultadoProcessosSEI({
-                    "sucesso": False,
-                    "erro": "Redirect inesperado para fora do SEI.",
-                    "codigo": 502
-                })
-
-            validador = ValidadorEstruturalSEI(tipo_tela="busca", base_url=self.base_url)
-            validador.feed(resp.text)
-            if not validador.estrutura_valida:
-                return ResultadoProcessosSEI({
-                    "sucesso": False,
-                    "erro": "Resposta estruturalmente inválida ou não reconhecida do SEI.",
-                    "codigo": 502
-                })
-
-            parser = ParserProcessosSEI()
-            parser.feed(resp.text)
-
-            return ResultadoProcessosSEI({
-                "sucesso": True,
-                "termo": termo.strip(),
-                "total": len(parser.processos),
-                "processos": parser.processos,
-                "consultado_em": datetime.now(timezone.utc).isoformat()
-            })
-        except requests.RequestException as e:
-            logger.error(f"Erro de rede ao buscar processos no SEI: {e}")
-            return ResultadoProcessosSEI({
+            resp = self.sessao.post(url_busca, data=payload, timeout=20)
+        except requests.exceptions.Timeout:
+            return {
                 "sucesso": False,
-                "erro": f"Falha de comunicacao com o SEI: {e}",
-                "codigo": 502
-            })
+                "codigo": 504,
+                "erro": "Timeout na conexao com o SEI SP durante pesquisa"
+            }
+        except requests.exceptions.RequestException as e:
+            return {
+                "sucesso": False,
+                "codigo": 502,
+                "erro": f"Falha de conexao com o SEI SP: {str(e)}"
+            }
+
+        if resp.status_code != 200:
+            return {
+                "sucesso": False,
+                "codigo": resp.status_code if resp.status_code in (400, 401, 403, 404, 429) else 502,
+                "sessao_expirada": resp.status_code == 401,
+                "erro": f"SEI SP retornou status HTTP {resp.status_code} na pesquisa"
+            }
+
+        url_efetiva = resp.url if isinstance(getattr(resp, "url", None), str) else self.base_url
+        parsed_url = urlparse(url_efetiva)
+        sei_netloc = urlparse(self.base_url).netloc.lower()
+        if parsed_url.netloc and parsed_url.netloc.lower() != sei_netloc:
+            return {
+                "sucesso": False,
+                "codigo": 502,
+                "erro": "Redirect inesperado para fora do SEI."
+            }
+
+        validador = ValidadorEstruturalSEI(tipo_tela="pesquisa", base_url=self.base_url)
+        validador.feed(resp.text)
+        texto_visivel = validador.obter_texto_visivel()
+        texto_infra = validador.obter_texto_infra()
+
+        if any(err in texto_visivel for err in ("acesso negado", "sessão expirada", "sessao expirada", "usuário não autenticado")):
+            return {
+                "sucesso": False,
+                "codigo": 401,
+                "sessao_expirada": True,
+                "erro": "Sessao expirada ou acesso negado no SEI SP"
+            }
+
+        if any(err in texto_visivel for err in ("erro no sistema", "erro de execução", "sistema indisponível")):
+            return {
+                "sucesso": False,
+                "codigo": 502,
+                "erro": "Erro operacional retornado pelo SEI SP na pesquisa"
+            }
+
+        if validador.tem_div_mensagens and texto_infra:
+            if not any(vazio in texto_infra for vazio in ("nenhum processo", "nenhum registro", "0 processo")):
+                return {
+                    "sucesso": False,
+                    "codigo": 502,
+                    "erro": f"Mensagem do SEI SP: {texto_infra}"
+                }
+
+        # REQUISITO FUNDAMENTAL: A pesquisa DEVE conter a estrutura formal do formulário frmPesquisa
+        if not validador.estrutura_valida:
+            return {
+                "sucesso": False,
+                "codigo": 502,
+                "erro": "Resposta da pesquisa nao corresponde a uma tela formal valida do SEI"
+            }
+
+        parser = ParserProcessosSEI()
+        parser.feed(resp.text)
+
+        return ResultadoProcessosSEI(parser.processos, termo=termo)
