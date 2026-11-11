@@ -107,5 +107,26 @@ class TestMotorSEI(unittest.TestCase):
         self.assertEqual(dados_disco["cookies"]["PHPSESSID"], "sessao_original_estavel")
         self.assertEqual(self.motor.session.cookies.get("PHPSESSID", domain="sei.sp.gov.br"), "sessao_original_estavel")
 
+def test_08_falha_abertura_diretorio_executa_rollback(self):
+        """Valida que erro na abertura do diretório pós-replace dispara rollback e preserva consistência."""
+        cookies_iniciais = {"PHPSESSID": "sessao_inicial_teste08"}
+        self.motor.salvar_sessao(cookies_iniciais)
+
+        real_os_open = os.open
+        def fake_open(path, flags, *args):
+            if os.path.isdir(path):
+                raise PermissionError("Simulando falha de abertura do diretorio")
+            return real_os_open(path, flags, *args)
+
+        with patch('os.O_DIRECTORY', create=True, new=1), patch('os.open', side_effect=fake_open):
+            with self.assertRaises(PermissionError):
+                self.motor.salvar_sessao({"PHPSESSID": "sessao_corrompida"})
+
+        # Comprova consistência de disco e memória após falha no os.open do diretório
+        with open(self.caminho_sessao, "r", encoding="utf-8") as f:
+            dados = json.load(f)
+        self.assertEqual(dados["cookies"]["PHPSESSID"], "sessao_inicial_teste08")
+        self.assertEqual(self.motor.session.cookies.get("PHPSESSID", domain="sei.sp.gov.br"), "sessao_inicial_teste08")
+
 if __name__ == '__main__':
     unittest.main()

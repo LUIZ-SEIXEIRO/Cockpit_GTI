@@ -71,7 +71,7 @@ class MotorSEI:
         self.carregar_sessao()
 
     def salvar_sessao(self, cookies_dict):
-        """Gravação atômica transacional: backup anti-symlink, rollback completo e fsync."""
+        """Gravação atômica transacional: backup em loop, rollback total e sincronismo incondicional."""
         dir_sessao = os.path.dirname(self.caminho_sessao)
         os.makedirs(dir_sessao, exist_ok=True)
         
@@ -88,7 +88,7 @@ class MotorSEI:
         ja_existia = os.path.exists(self.caminho_sessao)
         
         try:
-            # 1. Se já existe sessão, cria backup com nome aleatório exclusivo (anti-symlink)
+            # 1. Se já existe sessão, cria backup com loop de escrita completa garantida
             if ja_existia:
                 try:
                     backup_fd, backup_path = tempfile.mkstemp(dir=dir_sessao, prefix="sessao_backup_", suffix=".tmp")
@@ -98,15 +98,20 @@ class MotorSEI:
                         pass
                     with open(self.caminho_sessao, "rb") as f_src:
                         conteudo_backup = f_src.read()
-                    os.write(backup_fd, conteudo_backup)
+                    
+                    # Escrita do backup em loop estrito contra escritas parciais
+                    escritos_bkp = 0
+                    while escritos_bkp < len(conteudo_backup):
+                        n = os.write(backup_fd, conteudo_backup[escritos_bkp:])
+                        escritos_bkp += n
+
                     os.fsync(backup_fd)
                     os.close(backup_fd)
                     backup_fd = None
                 except Exception as e:
-                    # Se falhar ao criar backup de segurança, aborta antes de alterar o arquivo ativo
-                    raise OSError(f"Falha de segurança ao criar backup prévio da sessão: {str(e)}")
+                    raise OSError(f"Falha ao criar backup integro da sessao: {str(e)}")
 
-            # 2. Cria arquivo temporário novo
+            # 2. Cria arquivo temporário novo com 0600
             tmp_fd, tmp_path = tempfile.mkstemp(dir=dir_sessao, prefix="sessao_sei_", suffix=".tmp")
             try:
                 os.fchmod(tmp_fd, 0o600)
@@ -136,29 +141,31 @@ class MotorSEI:
             sucesso_replace = True
             tmp_path = None
 
-            # 6. fsync obrigatório no diretório pai em POSIX para metadados de renomeação
+            # 6. fsync no diretório pai com abertura e execução 100% envelopadas para rollback
             if hasattr(os, "O_DIRECTORY"):
-                dir_fd = os.open(dir_sessao, os.O_RDONLY | os.O_DIRECTORY)
                 try:
-                    os.fsync(dir_fd)
+                    dir_fd = os.open(dir_sessao, os.O_RDONLY | os.O_DIRECTORY)
+                    try:
+                        os.fsync(dir_fd)
+                    finally:
+                        os.close(dir_fd)
                 except Exception:
-                    # ROLLBACK COMPLETO:
+                    # ROLLBACK IMEDIATO caso abertura ou fsync do diretório falhem:
                     if ja_existia and backup_path and os.path.exists(backup_path):
                         try:
                             os.replace(backup_path, self.caminho_sessao)
                             backup_path = None
                         except Exception:
+                            # Se rollback falhar, sincroniza memória com disco incondicionalmente
                             self.carregar_sessao()
                             raise
                     elif not ja_existia and os.path.exists(self.caminho_sessao):
-                        # Primeira sessão: remove arquivo para manter disco e memória vazios
                         try:
                             os.remove(self.caminho_sessao)
                         except Exception:
-                            pass
+                            self.carregar_sessao()
+                            raise
                     raise
-                finally:
-                    os.close(dir_fd)
 
             # 7. Atualiza memória apenas após confirmação total
             self.carregar_sessao()
