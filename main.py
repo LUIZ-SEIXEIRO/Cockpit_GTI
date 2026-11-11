@@ -852,3 +852,36 @@ def api_v1_obter_documento(doc_id):
 if __name__ == '__main__':
     porta = int(os.environ.get('PORT', 5000))
     app.run(host='0.0.0.0', port=porta, debug=False)
+
+# -------------------------------------------------------------------------
+# 5. MOTOR DE BUSCA E AUTOMAÇÃO SEI 4.1.5 (SA-GTI 110050725)
+# -------------------------------------------------------------------------
+from motor_sei import MotorSEI
+motor_sei_instance = MotorSEI()
+
+@app.route('/api/v1/sei/status', methods=['GET'])
+def api_v1_sei_status():
+    status = motor_sei_instance.validar_sessao()
+    return jsonify(status), 200
+
+@app.route('/api/v1/sei/sessao', methods=['POST'])
+@requer_autenticacao
+def api_v1_sei_salvar_sessao():
+    dados = request.get_json(force=True) or {}
+    cookies = dados.get('cookies') or dados
+    if isinstance(cookies, dict):
+        motor_sei_instance.salvar_sessao(cookies)
+        return jsonify({'sucesso': True, 'mensagem': 'Cookies de sessão do SEI atualizados com sucesso.'}), 200
+    return jsonify({'sucesso': False, 'mensagem': 'Formato de cookies inválido.'}), 400
+
+@app.route('/api/v1/sei/processos', methods=['GET'])
+def api_v1_sei_processos():
+    resultado = motor_sei_instance.listar_caixa_unidade()
+    return jsonify(resultado), 200
+
+@app.route('/api/v1/sei/buscar', methods=['POST'])
+def api_v1_sei_buscar():
+    dados = request.get_json(force=True) or {}
+    termo = dados.get('termo') or dados.get('query') or ''
+    resultado = motor_sei_instance.buscar_processos(termo=termo)
+    return jsonify(resultado), 200
