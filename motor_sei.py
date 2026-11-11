@@ -8,6 +8,7 @@ import logging
 import hashlib
 import threading
 import socket
+import uuid
 from datetime import datetime, timezone
 from typing import Optional, Dict, List, Any
 from urllib.parse import urlparse, parse_qs, unquote
@@ -252,7 +253,8 @@ class LockProcessosSEI:
         caminho_sessao: str,
         timeout: float = 10.0,
         poll_interval: float = 0.05,
-        max_lock_age: float = 30.0
+        max_lock_age: float = 30.0,
+        hostname: Optional[str] = None
     ):
         self.caminho_sessao = os.path.abspath(caminho_sessao)
         self.lock_dir = self.caminho_sessao + ".lock"
@@ -260,6 +262,8 @@ class LockProcessosSEI:
         self.timeout = float(timeout)
         self.poll_interval = float(poll_interval)
         self.max_lock_age = float(max_lock_age)
+        self.hostname = hostname or socket.gethostname()
+        self.token = str(uuid.uuid4())
         self._adquirido = False
         self._heartbeat_thread: Optional[threading.Thread] = None
         self._stop_heartbeat = threading.Event()
@@ -268,7 +272,8 @@ class LockProcessosSEI:
         try:
             with open(self.info_file, "w", encoding="utf-8") as f:
                 json.dump({
-                    "hostname": socket.gethostname(),
+                    "token": self.token,
+                    "hostname": self.hostname,
                     "pid": os.getpid(),
                     "timestamp": time.time()
                 }, f)
@@ -280,7 +285,23 @@ class LockProcessosSEI:
         while not self._stop_heartbeat.wait(intervalo):
             if not self._adquirido or not os.path.exists(self.lock_dir):
                 break
+            if not self.verificar_lease_valido():
+                break
             self._gravar_heartbeat()
+
+    def verificar_lease_valido(self) -> bool:
+        if not self._adquirido or not os.path.exists(self.info_file):
+            return False
+        try:
+            with open(self.info_file, "r", encoding="utf-8") as f:
+                info = json.load(f)
+            if info.get("token") != self.token:
+                return False
+            if (time.time() - info.get("timestamp", 0)) > self.max_lock_age:
+                return False
+            return True
+        except Exception:
+            return False
 
     def _limpar_lock_se_obsoleto(self) -> bool:
         if not os.path.exists(self.lock_dir):
@@ -288,7 +309,7 @@ class LockProcessosSEI:
 
         obsoleto = False
         agora = time.time()
-        local_hostname = socket.gethostname()
+        local_hostname = self.hostname
 
         if os.path.exists(self.info_file):
             try:
@@ -319,7 +340,7 @@ class LockProcessosSEI:
                 pass
 
         if obsoleto:
-            logger.warning(f"Limpando lock orfao de processo finalizado: {self.lock_dir}")
+            logger.warning(f"Limpando lock orfao/expirado: {self.lock_dir}")
             try:
                 if os.path.exists(self.info_file):
                     os.unlink(self.info_file)
@@ -369,15 +390,16 @@ class LockProcessosSEI:
             self._stop_heartbeat.set()
             if self._heartbeat_thread and self._heartbeat_thread.is_alive():
                 self._heartbeat_thread.join(timeout=0.5)
+
             try:
                 if os.path.exists(self.info_file):
-                    os.unlink(self.info_file)
-            except OSError:
-                pass
-            try:
-                os.rmdir(self.lock_dir)
-            except FileNotFoundError:
-                pass
+                    with open(self.info_file, "r", encoding="utf-8") as f:
+                        info = json.load(f)
+                    if info.get("token") == self.token:
+                        os.unlink(self.info_file)
+                        os.rmdir(self.lock_dir)
+                    else:
+                        logger.warning("Lock tomado por outro titular apos expiracao de lease; nao removendo lock alheio.")
             except Exception as e:
                 logger.warning(f"Erro ao liberar lock {self.lock_dir}: {e}")
             finally:
@@ -542,7 +564,10 @@ class MotorSEI:
 
     def salvar_sessao(self, cookies: dict, usuario: Optional[str] = None) -> bool:
         with self._lock_threads:
-            with LockProcessosSEI(self.caminho_sessao, timeout=10.0):
+            with LockProcessosSEI(self.caminho_sessao, timeout=10.0) as lock:
+                if not lock.verificar_lease_valido():
+                    raise TimeoutError("Lease do lock expirou ou foi perdido antes de iniciar escrita.")
+
                 diretorio = os.path.dirname(os.path.abspath(self.caminho_sessao))
                 if diretorio:
                     os.makedirs(diretorio, exist_ok=True)
@@ -613,6 +638,19 @@ class MotorSEI:
                             pass
                     raise
 
+                if not lock.verificar_lease_valido():
+                    if os.path.exists(temp_caminho):
+                        try:
+                            os.unlink(temp_caminho)
+                        except OSError:
+                            pass
+                    if houve_backup and backup_caminho and os.path.exists(backup_caminho):
+                        try:
+                            os.unlink(backup_caminho)
+                        except OSError:
+                            pass
+                    raise TimeoutError("Lease expirou durante escrita; abortando replace para proteger lock alheio.")
+
                 try:
                     os.replace(temp_caminho, self.caminho_sessao)
                 except Exception as e:
@@ -632,26 +670,29 @@ class MotorSEI:
                     self._fsync_diretorio(diretorio)
                 except Exception as e_dir:
                     logger.error(f"Falha no fsync do diretorio ({e_dir}). Executando rollback.")
-                    if houve_backup and backup_caminho and os.path.exists(backup_caminho):
-                        try:
-                            os.replace(backup_caminho, self.caminho_sessao)
-                        except Exception as e_rollback:
-                            logger.critical(f"Falha no rollback: {e_rollback}")
-                        try:
-                            self.carregar_sessao()
-                        except Exception:
+                    if lock.verificar_lease_valido():
+                        if houve_backup and backup_caminho and os.path.exists(backup_caminho):
+                            try:
+                                os.replace(backup_caminho, self.caminho_sessao)
+                            except Exception as e_rollback:
+                                logger.critical(f"Falha no rollback: {e_rollback}")
+                            try:
+                                self.carregar_sessao()
+                            except Exception:
+                                self.sessao.cookies.clear()
+                                self._mtime_sessao = None
+                                self._hash_sessao = None
+                        else:
+                            if os.path.exists(self.caminho_sessao):
+                                try:
+                                    os.unlink(self.caminho_sessao)
+                                except OSError:
+                                    pass
                             self.sessao.cookies.clear()
                             self._mtime_sessao = None
                             self._hash_sessao = None
                     else:
-                        if os.path.exists(self.caminho_sessao):
-                            try:
-                                os.unlink(self.caminho_sessao)
-                            except OSError:
-                                pass
-                        self.sessao.cookies.clear()
-                        self._mtime_sessao = None
-                        self._hash_sessao = None
+                        logger.warning("Lease perdido no fsync; abortando rollback para proteger nova gravacao.")
                     raise
 
                 if houve_backup and backup_caminho and os.path.exists(backup_caminho):
@@ -832,6 +873,7 @@ class MotorSEI:
                     "erro": f"Mensagem do SEI SP: {texto_infra}"
                 }
 
+        # REQUISITO FUNDAMENTAL: A página DEVE conter a estrutura formal do formulário do SEI
         if not validador.estrutura_valida:
             return {
                 "sucesso": False,
@@ -912,6 +954,7 @@ class MotorSEI:
                     "erro": f"Mensagem do SEI SP: {texto_infra}"
                 }
 
+        # REQUISITO FUNDAMENTAL: A pesquisa DEVE conter a estrutura formal do formulário frmPesquisa
         if not validador.estrutura_valida:
             return {
                 "sucesso": False,

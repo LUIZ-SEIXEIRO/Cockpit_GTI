@@ -298,7 +298,12 @@ class TestMotorSEI(unittest.TestCase):
         
         # 1. Processo MORTO no mesmo host (PID 999999): deve ser limpo
         with open(os.path.join(lock_dir, "lock.info"), "w", encoding="utf-8") as f:
-            json.dump({"hostname": socket.gethostname(), "pid": 999999, "timestamp": time.time() - 100}, f)
+            json.dump({
+                "token": "tok-morto",
+                "hostname": socket.gethostname(),
+                "pid": 999999,
+                "timestamp": time.time() - 100
+            }, f)
 
         novo_lock = LockProcessosSEI(self.caminho_sessao, timeout=2.0)
         with novo_lock:
@@ -308,7 +313,12 @@ class TestMotorSEI(unittest.TestCase):
         # 2. Processo VIVO com falha de permissão simulada: NUNCA deve ser tomado!
         os.makedirs(lock_dir, exist_ok=True)
         with open(os.path.join(lock_dir, "lock.info"), "w", encoding="utf-8") as f:
-            json.dump({"hostname": socket.gethostname(), "pid": 12345, "timestamp": time.time() - 100}, f)
+            json.dump({
+                "token": "tok-vivo",
+                "hostname": socket.gethostname(),
+                "pid": 12345,
+                "timestamp": time.time() - 100
+            }, f)
 
         with patch("motor_sei._verificar_pid_so", side_effect=PermissionError("Simulando EPERM/Access Denied")):
             lock_concorrente = LockProcessosSEI(self.caminho_sessao, timeout=0.1, max_lock_age=0.05)
@@ -405,12 +415,13 @@ class TestMotorSEI(unittest.TestCase):
         os.makedirs(lock_dir, exist_ok=True)
         with open(os.path.join(lock_dir, "lock.info"), "w", encoding="utf-8") as f:
             json.dump({
+                "token": "tok-container-xyz",
                 "hostname": "container-concorrente-xyz",
                 "pid": 10,
                 "timestamp": time.time()
             }, f)
 
-        lock_local = LockProcessosSEI(self.caminho_sessao, timeout=0.1, max_lock_age=30.0)
+        lock_local = LockProcessosSEI(self.caminho_sessao, timeout=0.1, max_lock_age=30.0, hostname="container-local")
         with self.assertRaises(TimeoutError):
             with lock_local:
                 pass
@@ -453,13 +464,11 @@ class TestMotorSEI(unittest.TestCase):
             self.assertFalse(res.get("sucesso"))
             self.assertEqual(res.get("codigo"), 502)
 
-    def test_24_lock_heartbeat_mantem_lease_ativo_com_idade_reduzida(self):
-        # Valida que o heartbeat contínuo renova o timestamp do lock mesmo com max_lock_age=0.1s
-        lock1 = LockProcessosSEI(self.caminho_sessao, timeout=2.0, max_lock_age=0.1)
+    def test_24_lock_heartbeat_mantem_lease_ativo_com_idade_reduzida_hostnames_distintos(self):
+        lock1 = LockProcessosSEI(self.caminho_sessao, timeout=2.0, max_lock_age=0.15, hostname="container-A")
         with lock1:
             time.sleep(0.25)
-            # Processo 2 com hostname simulado diferente tenta tomar o lock com timeout 0.05
-            lock2 = LockProcessosSEI(self.caminho_sessao, timeout=0.05, max_lock_age=0.1)
+            lock2 = LockProcessosSEI(self.caminho_sessao, timeout=0.05, max_lock_age=0.15, hostname="container-B")
             with self.assertRaises(TimeoutError):
                 with lock2:
                     pass
@@ -468,7 +477,7 @@ class TestMotorSEI(unittest.TestCase):
     def test_25_rejeitar_pagina_erro_com_input_solto_ou_link_solto(self):
         self.motor.salvar_sessao({"PHPSESSID": "sessao_ativa"})
 
-        # Cenário 1: Página com apenas <input name="txtPesquisa"> solto sem <form id="frmPesquisa">
+        # 1. Página com apenas <input name="txtPesquisa"> solto sem <form id="frmPesquisa">
         html_input_solto = """
         <html>
             <body>
@@ -483,7 +492,7 @@ class TestMotorSEI(unittest.TestCase):
             self.assertFalse(res1.get("sucesso"))
             self.assertEqual(res1.get("codigo"), 502)
 
-        # Cenário 2: Página com link solto de processo sem <form id="frmProcedimentoControlar">
+        # 2. Página com link solto de processo sem <form id="frmProcedimentoControlar">
         html_link_solto = """
         <html>
             <body>
@@ -497,6 +506,37 @@ class TestMotorSEI(unittest.TestCase):
             res2 = self.motor.listar_caixa_unidade()
             self.assertFalse(res2.get("sucesso"))
             self.assertEqual(res2.get("codigo"), 502)
+
+    def test_26_titular_suspenso_nao_remove_lock_alheio_nem_escreve(self):
+        # 1. Titular A adquire o lock com lease de 0.15s
+        lock_a = LockProcessosSEI(self.caminho_sessao, timeout=1.0, max_lock_age=0.15, hostname="container-A")
+        lock_a.__enter__()
+        token_a = lock_a.token
+
+        # 2. Simula suspensão do Titular A parando o heartbeat e dormindo além do lease
+        lock_a._stop_heartbeat.set()
+        time.sleep(0.2)
+
+        # 3. Concorrente B adquire legitimamente o lock após expiração do lease
+        lock_b = LockProcessosSEI(self.caminho_sessao, timeout=1.0, max_lock_age=0.15, hostname="container-B")
+        lock_b.__enter__()
+        self.assertTrue(lock_b._adquirido)
+        self.assertNotEqual(lock_a.token, lock_b.token)
+
+        # 4. Titular A retoma da suspensão: lease deve ser inválido (fencing token)
+        self.assertFalse(lock_a.verificar_lease_valido())
+
+        # 5. Titular A encerra seu contexto: JAMAIS deve remover o lock que agora pertence a B!
+        lock_a.__exit__(None, None, None)
+        self.assertTrue(os.path.exists(lock_b.lock_dir))
+        with open(lock_b.info_file, "r", encoding="utf-8") as f:
+            info_atual = json.load(f)
+        self.assertEqual(info_atual.get("token"), lock_b.token)
+        self.assertEqual(info_atual.get("hostname"), "container-B")
+
+        # 6. Titular B encerra normalmente seu contexto e libera o lock com sucesso
+        lock_b.__exit__(None, None, None)
+        self.assertFalse(os.path.exists(lock_b.lock_dir))
 
 
 if __name__ == "__main__":
