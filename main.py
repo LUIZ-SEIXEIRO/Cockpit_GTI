@@ -54,7 +54,7 @@ def requer_autenticacao(f):
 # ==========================================
 # SEGURANÇA E AUTENTICAÇÃO INSTITUCIONAL
 # ==========================================
-COCKPIT_API_TOKEN = os.getenv("COCKPIT_API_TOKEN") or os.getenv("API_TOKEN") or "spaguas_cockpit_auth_token_padrao"
+COCKPIT_API_TOKEN = os.getenv("COCKPIT_API_TOKEN") or os.getenv("API_TOKEN") or ""
 API_TOKEN = COCKPIT_API_TOKEN
 OPENPROJECT_API_TOKEN = os.getenv("OPENPROJECT_API_TOKEN") or os.getenv("OPENPROJECT_API_KEY") or ""
 OPENPROJECT_API_KEY = OPENPROJECT_API_TOKEN
@@ -333,12 +333,46 @@ def mascarar_chaves_recursivo(obj):
 
 def extrair_id_item(item):
     if isinstance(item, dict):
-        return str(item.get('id') or item.get('slot') or item.get('modelo') or item.get('nome') or '')
+        for k in ('id', 'slot', 'modelo', 'model', 'nome', 'name', 'url', 'endpoint', 'baseUrl', 'base_url'):
+            v = item.get(k)
+            if v:
+                return str(v).strip().lower()
+        itens_estaveis = {k: v for k, v in item.items() if not any(s in k.lower() for s in ('key', 'token', 'secret'))}
+        return str(sorted(itens_estaveis.items()))
     return ''
+
+def resolver_chave_real(modelo_ou_id):
+    cfg_path = localizar_config_pool()
+    if os.path.exists(cfg_path):
+        try:
+            with open(cfg_path, 'r', encoding='utf-8') as f:
+                dados = json.load(f)
+            lista = dados if isinstance(dados, list) else (dados.get('ias') or dados.get('slots') or [])
+            for item in lista:
+                if isinstance(item, dict):
+                    if extrair_id_item(item) == str(modelo_ou_id).strip().lower() or item.get('modelo') == modelo_ou_id or item.get('id') == modelo_ou_id:
+                        for k in ('apiKey', 'api_key', 'chave', 'token', 'secret'):
+                            if item.get(k) and item[k] != '***':
+                                return item[k]
+        except Exception:
+            pass
+    return os.getenv('NEWAPI_API_KEY') or os.getenv('NEW_API_KEY') or ''
+
+def mascarar_chaves_recursivo(obj):
+    if isinstance(obj, dict):
+        novo = {}
+        for k, v in obj.items():
+            if any(termo in k.lower() for termo in ('apikey', 'api_key', 'chave', 'secret', 'token')) and isinstance(v, str):
+                novo[k] = '***' if v else ''
+            else:
+                novo[k] = mascarar_chaves_recursivo(v)
+        return novo
+    elif isinstance(obj, list):
+        return [mascarar_chaves_recursivo(item) for item in obj]
+    return obj
 
 def mesclar_preservando_segredos(novos, originais):
     if isinstance(novos, list) and isinstance(originais, list):
-        # Mapeia originais por identificador para suportar reordenação
         mapa_originais = {}
         for orig in originais:
             chave_id = extrair_id_item(orig)
@@ -364,6 +398,7 @@ def mesclar_preservando_segredos(novos, originais):
                     resultado[k] = mesclar_preservando_segredos(v, originais[k])
         return resultado
     return novos
+
 
 @app.route('/api/v1/ia/pool', methods=['GET', 'POST'])
 def api_v1_ia_pool():
@@ -618,7 +653,13 @@ def api_v1_op_sync_batch():
         if c_id:
             try:
                 patch_url = f"{op_base_url}/api/v3/work_packages/{c_id}"
-                body_patch = json.dumps({'lockVersion': c.get('lockVersion', 1)}).encode('utf-8')
+                # Monta payload com conteúdo real enviado no teste (description, subject, etc.)
+                payload_patch = {'lockVersion': c.get('lockVersion', 1)}
+                for k, v in c.items():
+                    if k not in ('id', 'card_id', 'cardId', 'lockVersion'):
+                        payload_patch[k] = v
+                
+                body_patch = json.dumps(payload_patch).encode('utf-8')
                 req = urllib.request.Request(patch_url, data=body_patch, headers=headers, method='PATCH')
                 with urllib.request.urlopen(req, timeout=5, context=ctx) as resp:
                     wp_data = json.loads(resp.read().decode())
