@@ -280,63 +280,74 @@ def openproject_status():
 # -------------------------------------------------------------------------
 def resolver_chave_real(modelo=None, slot=None):
     cfg_path = localizar_config_pool()
-    if os.path.exists(cfg_path):
-        try:
-            with open(cfg_path, 'r', encoding='utf-8') as f:
-                dados = json.load(f)
+    if not os.path.exists(cfg_path):
+        return os.getenv('NEWAPI_API_KEY') or os.getenv('NEW_API_KEY') or ''
 
-            slots_dict = dados.get('ias', {})
-            itens = list(slots_dict.values()) if isinstance(slots_dict, dict) else (slots_dict if isinstance(slots_dict, list) else (dados if isinstance(dados, list) else [dados]))
+    try:
+        with open(cfg_path, 'r', encoding='utf-8') as f:
+            dados = json.load(f)
 
-            # 1. PRIORIDADE MÁXIMA: Se informou slot E modelo, valida no slot especificado se o modelo confere
-            if slot and isinstance(slots_dict, dict) and str(slot) in slots_dict and isinstance(slots_dict[str(slot)], dict):
-                it_slot = slots_dict[str(slot)]
-                m_it = str(it_slot.get('agent') or it_slot.get('modelo') or it_slot.get('model') or '').strip().lower()
-                if not modelo or m_it == str(modelo).strip().lower():
-                    for k in ('apiKey', 'api_key', 'chave', 'token', 'secret'):
-                        if it_slot.get(k) and it_slot[k] != '***':
-                            return it_slot[k]
+        slots_dict = dados.get('ias', {})
+        if isinstance(slots_dict, dict):
+            itens_com_chave = list(slots_dict.items())
+        elif isinstance(slots_dict, list):
+            itens_com_chave = [(it.get('id', str(i)), it) for i, it in enumerate(slots_dict) if isinstance(it, dict)]
+        elif isinstance(dados, list):
+            itens_com_chave = [(it.get('id', str(i)), it) for i, it in enumerate(dados) if isinstance(it, dict)]
+        else:
+            itens_com_chave = [('principal', dados)]
 
-            # 2. Se informou slot e modelo, busca item na lista que bata ambos (id/slot E modelo)
-            if slot and modelo:
-                alvo_s = str(slot).strip().lower()
-                alvo_m = str(modelo).strip().lower()
-                for it in itens:
-                    if isinstance(it, dict):
-                        s_val = str(it.get('id') or it.get('slot') or '').strip().lower()
-                        m_val = str(it.get('agent') or it.get('modelo') or it.get('model') or '').strip().lower()
-                        if s_val == alvo_s and m_val == alvo_m:
+        # 1. Se informou um slot específico: IDENTIFICA O SLOT EXATO
+        if slot:
+            alvo_s = str(slot).strip().lower()
+            alvo_m = str(modelo).strip().lower() if modelo else None
+            slot_encontrado = None
+
+            # 1.1 Prioridade absoluta: Match por ID explícito do item (segue o ID, não a posição do slot)
+            for s_key, it in itens_com_chave:
+                if isinstance(it, dict):
+                    it_id = str(it.get('id') or it.get('slot') or '').strip().lower()
+                    if it_id == alvo_s:
+                        slot_encontrado = it
+                        break
+
+            # 1.2 Se não achou por ID do item, busca pelo nome/chave do slot no dict
+            if not slot_encontrado:
+                for s_key, it in itens_com_chave:
+                    if str(s_key).strip().lower() == alvo_s:
+                        slot_encontrado = it
+                        break
+
+            # SE LOCALIZOU O SLOT ESPECIFICADO:
+            if slot_encontrado:
+                if alvo_m:
+                    m_it = str(slot_encontrado.get('agent') or slot_encontrado.get('modelo') or slot_encontrado.get('model') or '').strip().lower()
+                    if m_it and m_it != alvo_m:
+                        return ''
+
+                # Retorna estritamente a chave deste slot (ou vazio se não tiver)
+                # NUNCA pega emprestada chave de outro slot com o mesmo modelo!
+                for k in ('apiKey', 'api_key', 'chave', 'token', 'secret'):
+                    v = slot_encontrado.get(k)
+                    if v and v != '***':
+                        return v
+                return ''
+
+        # 2. Se NÃO informou slot: busca no pool pelo modelo
+        if modelo:
+            alvo_m = str(modelo).strip().lower()
+            for s_key, it in itens_com_chave:
+                if isinstance(it, dict):
+                    for campo in ('agent', 'modelo', 'model', 'nome'):
+                        if str(it.get(campo) or '').strip().lower() == alvo_m:
                             for k in ('apiKey', 'api_key', 'chave', 'token', 'secret'):
-                                if it.get(k) and it[k] != '***':
-                                    return it[k]
+                                v = it.get(k)
+                                if v and v != '***':
+                                    return v
 
-            # 3. Se informou apenas modelo (sem slot): busca no pool pelo modelo
-            if modelo:
-                alvo_m = str(modelo).strip().lower()
-                for it in itens:
-                    if isinstance(it, dict):
-                        for campo in ('agent', 'modelo', 'model', 'nome'):
-                            if str(it.get(campo) or '').strip().lower() == alvo_m:
-                                for k in ('apiKey', 'api_key', 'chave', 'token', 'secret'):
-                                    if it.get(k) and it[k] != '***':
-                                        return it[k]
+    except Exception:
+        pass
 
-            # 4. Se informou apenas slot: busca pelo slot/id
-            if slot:
-                if isinstance(slots_dict, dict) and str(slot) in slots_dict and isinstance(slots_dict[str(slot)], dict):
-                    it_slot = slots_dict[str(slot)]
-                    for k in ('apiKey', 'api_key', 'chave', 'token', 'secret'):
-                        if it_slot.get(k) and it_slot[k] != '***':
-                            return it_slot[k]
-                alvo_s = str(slot).strip().lower()
-                for it in itens:
-                    if isinstance(it, dict):
-                        if str(it.get('id') or '').strip().lower() == alvo_s or str(it.get('slot') or '').strip().lower() == alvo_s:
-                            for k in ('apiKey', 'api_key', 'chave', 'token', 'secret'):
-                                if it.get(k) and it[k] != '***':
-                                    return it[k]
-        except Exception:
-            pass
     return os.getenv('NEWAPI_API_KEY') or os.getenv('NEW_API_KEY') or ''
 
 def mascarar_chaves_recursivo(obj):
