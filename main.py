@@ -848,10 +848,13 @@ def api_v1_sei_processos():
     erro = str(resultado.get('erro', '')).lower()
     if cod in (400, 404, 429):
         return jsonify(resultado), cod
-    # Falha de rede, erro >= 500 ou resposta 200 inesperada retornam 502
-    if (cod and cod >= 500) or 'conexão' in erro or 'timeout' in erro or 'falha de conexão' in erro or (cod == 200 and not resultado.get('sessao_expirada')):
+    if cod == 403 and not resultado.get('sessao_expirada'):
+        return jsonify(resultado), 403
+    if (cod and cod >= 500) or 'conexão' in erro or 'timeout' in erro or 'falha de conexão' in erro or (cod in (200, 302) and not resultado.get('sessao_expirada')):
         return jsonify(resultado), 502
-    return jsonify(resultado), 401
+    if resultado.get('sessao_expirada') or cod == 401:
+        return jsonify(resultado), 401
+    return jsonify(resultado), (cod or 502)
 
 @app.route('/api/v1/sei/buscar', methods=['POST'])
 @requer_autenticacao
@@ -865,9 +868,13 @@ def api_v1_sei_buscar():
     erro = str(resultado.get('erro', '')).lower()
     if cod in (400, 404, 429):
         return jsonify(resultado), cod
-    if (cod and cod >= 500) or 'conexão' in erro or 'timeout' in erro or 'falha de conexão' in erro or (cod == 200 and not resultado.get('sessao_expirada')):
+    if cod == 403 and not resultado.get('sessao_expirada'):
+        return jsonify(resultado), 403
+    if (cod and cod >= 500) or 'conexão' in erro or 'timeout' in erro or 'falha de conexão' in erro or (cod in (200, 302) and not resultado.get('sessao_expirada')):
         return jsonify(resultado), 502
-    return jsonify(resultado), 401
+    if resultado.get('sessao_expirada') or cod == 401:
+        return jsonify(resultado), 401
+    return jsonify(resultado), (cod or 502)
 
 if __name__ == '__main__':
     porta = int(os.environ.get('PORT', 5000))

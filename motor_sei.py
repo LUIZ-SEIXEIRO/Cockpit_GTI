@@ -2,10 +2,11 @@ import os, json, re, time, requests, urllib.parse, posixpath, tempfile, html as 
 from html.parser import HTMLParser
 
 class ValidadorFormSEI(HTMLParser):
-    """Parser HTML rigoroso que valida apenas tags <form> reais fora de <script>/<style>."""
-    def __init__(self, alvos):
+    """Parser HTML que valida exclusivamente tags <form> ativas fora de <script>/<style>."""
+    def __init__(self, ids_alvo=None, actions_alvo=None):
         super().__init__()
-        self.alvos = [a.lower() for a in alvos]
+        self.ids_alvo = [i.lower() for i in (ids_alvo or [])]
+        self.actions_alvo = actions_alvo or []
         self.encontrou = False
         self.em_script = False
 
@@ -19,10 +20,20 @@ class ValidadorFormSEI(HTMLParser):
             f_id = attrs_dict.get('id', '')
             f_name = attrs_dict.get('name', '')
             f_act = attrs_dict.get('action', '')
-            for a in self.alvos:
-                if a in f_id or a in f_name or a in f_act:
+            
+            # Valida por ID ou Name do formulário
+            for alvo in self.ids_alvo:
+                if alvo == f_id or alvo == f_name:
                     self.encontrou = True
-                    break
+                    return
+
+            # Valida por Action estrita (deve ser exatamente controlador.php)
+            if f_act:
+                p_act = urllib.parse.urlparse(f_act)
+                caminho_act = posixpath.normpath(urllib.parse.unquote(p_act.path))
+                if caminho_act in ('controlador.php', '/sei/controlador.php') or re.search(r'^(?:/sei/)?controlador\.php(?:\?|$)', f_act):
+                    self.encontrou = True
+                    return
 
     def handle_endtag(self, tag):
         if tag.lower() in ('script', 'style'):
@@ -55,7 +66,7 @@ class MotorSEI:
         self.carregar_sessao()
 
     def salvar_sessao(self, cookies_dict):
-        """Gravação atômica com zero-shredding em caso de falha de substituição."""
+        """Gravação atômica via mkstemp com 0600 em nível de kernel e fsync."""
         dir_sessao = os.path.dirname(self.caminho_sessao)
         os.makedirs(dir_sessao, exist_ok=True)
         
@@ -64,35 +75,49 @@ class MotorSEI:
             "cookies": cookies_dict
         }, indent=2).encode("utf-8")
         
+        tmp_fd = None
         tmp_path = None
         try:
-            with tempfile.NamedTemporaryFile(dir=dir_sessao, prefix="sessao_sei_", suffix=".tmp", delete=False, mode="wb") as f_tmp:
-                tmp_path = f_tmp.name
-                f_tmp.write(conteudo)
-                
+            tmp_fd, tmp_path = tempfile.mkstemp(dir=dir_sessao, prefix="sessao_sei_", suffix=".tmp")
             try:
-                os.chmod(tmp_path, 0o600)
+                os.fchmod(tmp_fd, 0o600)
             except Exception:
-                pass
-                
-            if hasattr(os, "stat") and hasattr(os, "getuid"):
-                st = os.stat(tmp_path)
+                try:
+                    os.chmod(tmp_path, 0o600)
+                except Exception:
+                    pass
+                    
+            if hasattr(os, "fstat") and hasattr(os, "getuid"):
+                st = os.fstat(tmp_fd)
                 if (st.st_mode & 0o077) != 0:
-                    raise PermissionError("Insegurança: impossível garantir permissão 0600.")
+                    raise PermissionError("Insegurança: permissão não restrita para 0600.")
+
+            os.write(tmp_fd, conteudo)
+            os.fsync(tmp_fd)
+            os.close(tmp_fd)
+            tmp_fd = None
 
             os.replace(tmp_path, self.caminho_sessao)
             tmp_path = None
         finally:
-            # Sobrescreve com zeros e trunca antes de tentar remover (anti-leak de segredos)
-            if tmp_path and os.path.exists(tmp_path):
+            if tmp_fd is not None:
                 try:
-                    with open(tmp_path, "wb") as f_clean:
-                        f_clean.write(b"\x00" * len(conteudo))
-                        f_clean.truncate(0)
-                    os.remove(tmp_path)
+                    os.close(tmp_fd)
                 except Exception:
                     pass
-                    
+            if tmp_path and os.path.exists(tmp_path):
+                try:
+                    with open(tmp_path, "wb") as f_del:
+                        f_del.write(b"\x00" * len(conteudo))
+                        f_del.flush()
+                        os.fsync(f_del.fileno())
+                    os.remove(tmp_path)
+                except Exception:
+                    try:
+                        os.remove(tmp_path)
+                    except Exception:
+                        pass
+                        
         self.carregar_sessao()
 
     def carregar_sessao(self):
@@ -131,7 +156,7 @@ class MotorSEI:
         return resp
 
     def _pagina_caixa_valida(self, resp):
-        """Validação positiva via HTMLParser checando form real e tabela."""
+        """Validação positiva com descarte de comentários e action estrita."""
         if resp.status_code != 200:
             return False
         parsed = urllib.parse.urlparse(resp.url)
@@ -139,13 +164,14 @@ class MotorSEI:
         if parsed.scheme != "https" or parsed.hostname != self.HOST_PERMITIDO or (not norm_path.startswith("/sei/") and norm_path != "/sei"):
             return False
             
-        texto_lower = resp.text.lower()
+        texto_limpo = re.sub(r"<!--.*?-->", "", resp.text, flags=re.DOTALL)
+        texto_lower = texto_limpo.lower()
         if any(t in texto_lower for t in self.TERMOS_ERRO):
             return False
             
-        parser = ValidadorFormSEI(["frmprocedimentocontrolar", "procedimento_controlar", "controlador.php"])
+        parser = ValidadorFormSEI(ids_alvo=["frmprocedimentocontrolar"])
         try:
-            parser.feed(resp.text)
+            parser.feed(texto_limpo)
         except Exception:
             return False
             
@@ -160,13 +186,14 @@ class MotorSEI:
         if parsed.scheme != "https" or parsed.hostname != self.HOST_PERMITIDO or (not norm_path.startswith("/sei/") and norm_path != "/sei"):
             return False
             
-        texto_lower = resp.text.lower()
+        texto_limpo = re.sub(r"<!--.*?-->", "", resp.text, flags=re.DOTALL)
+        texto_lower = texto_limpo.lower()
         if any(t in texto_lower for t in self.TERMOS_ERRO):
             return False
             
-        parser = ValidadorFormSEI(["frmpesquisa", "pesquisa_processo", "controlador.php"])
+        parser = ValidadorFormSEI(ids_alvo=["frmpesquisaprocesso", "frmpesquisarapida"])
         try:
-            parser.feed(resp.text)
+            parser.feed(texto_limpo)
         except Exception:
             return False
             
