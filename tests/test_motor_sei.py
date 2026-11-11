@@ -125,18 +125,19 @@ class TestMotorSEI(unittest.TestCase):
         self.assertEqual(dados["cookies"]["PHPSESSID"], "sessao_inicial_teste08")
         self.assertEqual(self.motor.session.cookies.get("PHPSESSID", domain="sei.sp.gov.br"), "sessao_inicial_teste08")
 
-def test_09_falha_recarga_invalida_memoria(self):
-        """Valida que falha na leitura pós-gravação limpa a memória para não divergir do disco."""
+    def test_09_falha_recarga_invalida_memoria(self):
+        """Valida que falha na recarga limpa a memória incondicionalmente."""
         cookies_iniciais = {"PHPSESSID": "sessao_inicial_teste09"}
         self.motor.salvar_sessao(cookies_iniciais)
         self.assertEqual(self.motor.session.cookies.get("PHPSESSID", domain="sei.sp.gov.br"), "sessao_inicial_teste09")
 
-        # Simula falha especificamente na recarga
-        with patch.object(MotorSEI, 'carregar_sessao', side_effect=[True, False]):
+        def fake_carregar():
+            return False
+
+        with patch.object(self.motor, 'carregar_sessao', side_effect=fake_carregar):
             with self.assertRaises(OSError):
                 self.motor.salvar_sessao({"PHPSESSID": "sessao_nova"})
 
-        # Comprova que a memória da sessão foi invalidada (cookies limpos)
         self.assertEqual(len(self.motor.session.cookies), 0)
 
 if __name__ == '__main__':

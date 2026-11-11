@@ -2,7 +2,6 @@ import os, json, re, time, requests, urllib.parse, posixpath, tempfile, html as 
 from html.parser import HTMLParser
 
 class ValidadorFormSEI(HTMLParser):
-    """Parser HTML que valida exclusivamente tags <form> ativas com action e host autorizados."""
     def __init__(self, ids_alvo=None):
         super().__init__()
         self.ids_alvo = [i.lower() for i in (ids_alvo or [])]
@@ -20,19 +19,17 @@ class ValidadorFormSEI(HTMLParser):
             f_name = attrs_dict.get('name', '')
             f_act = attrs_dict.get('action', '')
             
-            # PRIORIDADE MÁXIMA: Se houver action com hostname externo, REJEITA IMEDIATAMENTE
+            # Prioridade máxima: rejeita action em host externo
             if f_act:
                 p_act = urllib.parse.urlparse(f_act)
                 if p_act.hostname and p_act.hostname.lower() != 'sei.sp.gov.br':
                     return
 
-            # Valida por ID ou Name do formulário
             for alvo in self.ids_alvo:
                 if alvo == f_id or alvo == f_name:
                     self.encontrou = True
                     return
 
-            # Valida por Action autorizada sob sei.sp.gov.br
             if f_act:
                 p_act = urllib.parse.urlparse(f_act)
                 caminho_act = posixpath.normpath(urllib.parse.unquote(p_act.path))
@@ -45,8 +42,6 @@ class ValidadorFormSEI(HTMLParser):
             self.em_script = False
 
 class MotorSEI:
-    """Motor de Scraping, Busca e Classificação do SEI SP (v4.1.5 Oficial) para a SA-GTI."""
-    
     BASE_URL = "https://sei.sp.gov.br/sei"
     HOST_PERMITIDO = "sei.sp.gov.br"
     UNIDADE_SAGTI = "110050725"
@@ -71,7 +66,6 @@ class MotorSEI:
         self.carregar_sessao()
 
     def salvar_sessao(self, cookies_dict):
-        """Gravação atômica transacional: consistência incondicional entre disco e memória."""
         dir_sessao = os.path.dirname(self.caminho_sessao)
         os.makedirs(dir_sessao, exist_ok=True)
         
@@ -88,14 +82,11 @@ class MotorSEI:
         ja_existia = os.path.exists(self.caminho_sessao)
         
         try:
-            # 1. Se já existe sessão, cria backup com loop de escrita completa
             if ja_existia:
                 try:
                     backup_fd, backup_path = tempfile.mkstemp(dir=dir_sessao, prefix="sessao_backup_", suffix=".tmp")
-                    try:
-                        os.fchmod(backup_fd, 0o600)
-                    except Exception:
-                        pass
+                    try: os.fchmod(backup_fd, 0o600)
+                    except Exception: pass
                     with open(self.caminho_sessao, "rb") as f_src:
                         conteudo_backup = f_src.read()
                     
@@ -110,37 +101,30 @@ class MotorSEI:
                 except Exception as e:
                     raise OSError(f"Falha ao criar backup integro da sessao: {str(e)}")
 
-            # 2. Cria arquivo temporário novo com 0600
             tmp_fd, tmp_path = tempfile.mkstemp(dir=dir_sessao, prefix="sessao_sei_", suffix=".tmp")
-            try:
-                os.fchmod(tmp_fd, 0o600)
-            except Exception:
-                pass
+            try: os.fchmod(tmp_fd, 0o600)
+            except Exception: pass
                     
             if hasattr(os, "fstat") and hasattr(os, "getuid"):
                 st = os.fstat(tmp_fd)
                 if (st.st_mode & 0o077) != 0:
                     raise PermissionError("Insegurança: permissão não restrita para 0600.")
 
-            # 3. Escrita completa em loop
             escritos = 0
             while escritos < len(conteudo):
                 n = os.write(tmp_fd, conteudo[escritos:])
                 escritos += n
 
-            # 4. fsync obrigatório do arquivo temporário
             try:
                 os.fsync(tmp_fd)
             finally:
                 os.close(tmp_fd)
                 tmp_fd = None
 
-            # 5. Substituição atômica no disco
             os.replace(tmp_path, self.caminho_sessao)
             sucesso_replace = True
             tmp_path = None
 
-            # 6. fsync no diretório pai com rollback imediato se falhar
             if hasattr(os, "O_DIRECTORY"):
                 try:
                     dir_fd = os.open(dir_sessao, os.O_RDONLY | os.O_DIRECTORY)
@@ -149,13 +133,11 @@ class MotorSEI:
                     finally:
                         os.close(dir_fd)
                 except Exception:
-                    # ROLLBACK IMEDIATO:
                     if ja_existia and backup_path and os.path.exists(backup_path):
                         try:
                             os.replace(backup_path, self.caminho_sessao)
                             backup_path = None
                         except Exception:
-                            # Se rollback falhar, limpa a memória para não manter sessão divergente
                             self.session.cookies.clear()
                             raise
                     elif not ja_existia and os.path.exists(self.caminho_sessao):
@@ -165,11 +147,10 @@ class MotorSEI:
                             self.session.cookies.clear()
                             raise
                     raise
-            # 7. Recarrega a memória e exige sucesso absoluto (se falhar, invalida a memória e aborta)
+
+            # Recarga estritamente única com limpeza de memória em falha
             if not self.carregar_sessao():
                 self.session.cookies.clear()
-                raise OSError("Falha crítica ao recarregar a sessão na memória após persistência.")
-            if not self.carregar_sessao():
                 raise OSError("Falha crítica ao recarregar a sessão na memória após persistência.")
 
         finally:
@@ -194,7 +175,6 @@ class MotorSEI:
                 except Exception: pass
 
     def carregar_sessao(self):
-        """Carrega cookies vinculando-os exclusivamente ao host sei.sp.gov.br e path /sei."""
         if os.path.exists(self.caminho_sessao):
             try:
                 with open(self.caminho_sessao, "r", encoding="utf-8") as f:
