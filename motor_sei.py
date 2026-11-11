@@ -71,7 +71,7 @@ class MotorSEI:
         self.carregar_sessao()
 
     def salvar_sessao(self, cookies_dict):
-        """Gravação atômica via mkstemp com fsync de arquivo e diretório, e shredding defensivo."""
+        """Gravação atômica transacional com rollback e fsync garantindo consistência total."""
         dir_sessao = os.path.dirname(self.caminho_sessao)
         os.makedirs(dir_sessao, exist_ok=True)
         
@@ -83,7 +83,23 @@ class MotorSEI:
         tmp_fd = None
         tmp_path = None
         sucesso_replace = False
+        backup_path = self.caminho_sessao + ".bak"
+        tem_backup = False
+        
         try:
+            # 1. Cria backup prévio da sessão válida existente para viabilizar rollback
+            if os.path.exists(self.caminho_sessao):
+                try:
+                    with open(self.caminho_sessao, "rb") as f_src, open(backup_path, "wb") as f_dst:
+                        f_dst.write(f_src.read())
+                    try:
+                        os.chmod(backup_path, 0o600)
+                    except Exception:
+                        pass
+                    tem_backup = True
+                except Exception:
+                    pass
+
             tmp_fd, tmp_path = tempfile.mkstemp(dir=dir_sessao, prefix="sessao_sei_", suffix=".tmp")
             try:
                 os.fchmod(tmp_fd, 0o600)
@@ -98,30 +114,44 @@ class MotorSEI:
                 if (st.st_mode & 0o077) != 0:
                     raise PermissionError("Insegurança: permissão não restrita para 0600.")
 
-            # Escrita completa em loop
+            # 2. Escrita completa em loop
             escritos = 0
             while escritos < len(conteudo):
                 n = os.write(tmp_fd, conteudo[escritos:])
                 escritos += n
 
-            # fsync obrigatório do arquivo
+            # 3. fsync obrigatório do arquivo temporário
             try:
                 os.fsync(tmp_fd)
             finally:
                 os.close(tmp_fd)
                 tmp_fd = None
 
-            # Substituição atômica
+            # 4. Substituição atômica no disco
             os.replace(tmp_path, self.caminho_sessao)
             sucesso_replace = True
             tmp_path = None
-            # fsync obrigatório no diretório pai em POSIX para durabilidade física completa da renomeação
+
+            # 5. fsync obrigatório no diretório pai em POSIX para metadados de renomeação
             if hasattr(os, "O_DIRECTORY"):
                 dir_fd = os.open(dir_sessao, os.O_RDONLY | os.O_DIRECTORY)
                 try:
                     os.fsync(dir_fd)
+                except Exception:
+                    # ROLLBACK: Se o fsync do diretório falhar, restaura o arquivo original!
+                    if tem_backup and os.path.exists(backup_path):
+                        try:
+                            os.replace(backup_path, self.caminho_sessao)
+                        except Exception:
+                            # Se até o rollback falhar, sincroniza memória com o disco para nunca divergir
+                            self.carregar_sessao()
+                            raise
+                    raise
                 finally:
                     os.close(dir_fd)
+
+            # 6. Atualiza a memória somente após confirmação integral de persistência e fsync
+            self.carregar_sessao()
 
         finally:
             if tmp_fd is not None:
@@ -142,8 +172,11 @@ class MotorSEI:
                     os.remove(tmp_path)
                 except Exception:
                     pass
-                        
-        self.carregar_sessao()
+            if tem_backup and os.path.exists(backup_path):
+                try:
+                    os.remove(backup_path)
+                except Exception:
+                    pass
 
     def carregar_sessao(self):
         """Carrega cookies vinculando-os exclusivamente ao host sei.sp.gov.br e path /sei."""
