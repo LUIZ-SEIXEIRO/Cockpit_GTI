@@ -11,7 +11,7 @@ class TestMotorSEI(unittest.TestCase):
     def tearDown(self):
         self.temp_dir.cleanup()
 
-    def test_01_salvar_sessao_atomico_0600(self):
+    def test_01_salvar_sessao_tmp_e_0600(self):
         cookies = {"PHPSESSID": "sessao_123"}
         self.motor.salvar_sessao(cookies)
         self.assertTrue(os.path.exists(self.caminho_sessao))
@@ -20,7 +20,6 @@ class TestMotorSEI(unittest.TestCase):
 
     @patch('requests.Session.request')
     def test_02_validar_sessao_ativa_form_id(self, mock_req):
-        """Comprova validação de formulário identificado apenas por id."""
         mock_resp = MagicMock()
         mock_resp.status_code = 200
         mock_resp.is_redirect = False
@@ -32,8 +31,19 @@ class TestMotorSEI(unittest.TestCase):
         self.assertTrue(status.get("autenticado"))
 
     @patch('requests.Session.request')
-    def test_03_rejeitar_form_em_comentario_html(self, mock_req):
-        """Comprova que formulário em comentário HTML <!-- ... --> é descartado."""
+    def test_03_validar_sessao_ativa_form_name(self, mock_req):
+        mock_resp = MagicMock()
+        mock_resp.status_code = 200
+        mock_resp.is_redirect = False
+        mock_resp.url = "https://sei.sp.gov.br/sei/controlador.php?acao=procedimento_controlar&infra_unidade_atual=110050725"
+        mock_resp.text = "<html><body><form name='frmProcedimentoControlar' action='controlador.php'><table class='infraTabela'>Controle de Processos id_procedimento</table></form></body></html>"
+        mock_req.return_value = mock_resp
+
+        status = self.motor.validar_sessao()
+        self.assertTrue(status.get("autenticado"))
+
+    @patch('requests.Session.request')
+    def test_04_rejeitar_form_em_comentario_html(self, mock_req):
         mock_resp = MagicMock()
         mock_resp.status_code = 200
         mock_resp.is_redirect = False
@@ -44,7 +54,7 @@ class TestMotorSEI(unittest.TestCase):
         status = self.motor.validar_sessao()
         self.assertFalse(status.get("autenticado"))
 
-    def test_04_parser_com_entidade_amp(self):
+    def test_05_parser_com_entidade_amp(self):
         html = """
         <table>
             <tr><td><a href='controlador.php?acao=procedimento_trabalhar&amp;id_procedimento=701'>137.00001111/2026-10</a></td></tr>

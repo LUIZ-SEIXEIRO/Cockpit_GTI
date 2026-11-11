@@ -17,3 +17,8 @@ sessao_sei.json
 
 *.tmp
 data/*.tmp
+
+*.tmp
+*.tmp*
+*sessao*
+data/*sessao*

@@ -22,3 +22,8 @@ volumes_docker/
 # Sessão e credenciais temporárias do SEI
 data/sessao_sei.json
 *.sessao.json
+
+*.tmp
+*.tmp*
+*sessao*
+data/*sessao*

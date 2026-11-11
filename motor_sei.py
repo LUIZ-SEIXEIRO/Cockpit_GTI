@@ -27,7 +27,7 @@ class MotorSEI:
         self.carregar_sessao()
 
     def salvar_sessao(self, cookies_dict):
-        """Gravação atômica com arquivo temporário aleatório anti-symlink e permissão 0600."""
+        """Gravação atômica com arquivo temporário terminando compulsoriamente em .tmp."""
         dir_sessao = os.path.dirname(self.caminho_sessao)
         os.makedirs(dir_sessao, exist_ok=True)
         
@@ -38,8 +38,8 @@ class MotorSEI:
         
         tmp_path = None
         try:
-            # Cria arquivo temporário com nome aleatório no mesmo diretório (anti-symlink)
-            with tempfile.NamedTemporaryFile(dir=dir_sessao, delete=False, mode="wb") as f_tmp:
+            # Cria temporário com prefixo e sufixo .tmp para cobertura no .dockerignore
+            with tempfile.NamedTemporaryFile(dir=dir_sessao, prefix="sessao_sei_", suffix=".tmp", delete=False, mode="wb") as f_tmp:
                 tmp_path = f_tmp.name
                 f_tmp.write(conteudo)
                 
@@ -57,7 +57,6 @@ class MotorSEI:
             os.replace(tmp_path, self.caminho_sessao)
             tmp_path = None
         finally:
-            # Se falhou antes de substituir, elimina resíduos do arquivo temporário
             if tmp_path and os.path.exists(tmp_path):
                 try:
                     os.remove(tmp_path)
@@ -102,7 +101,7 @@ class MotorSEI:
         return resp
 
     def _pagina_caixa_valida(self, resp):
-        """Validação positiva com descarte prévio de comentários HTML."""
+        """Validação positiva exigindo form real do SEI (por id, name ou action)."""
         if resp.status_code != 200:
             return False
         parsed = urllib.parse.urlparse(resp.url)
@@ -110,16 +109,21 @@ class MotorSEI:
         if parsed.scheme != "https" or parsed.hostname != self.HOST_PERMITIDO or (not norm_path.startswith("/sei/") and norm_path != "/sei"):
             return False
             
-        # Remove comentários HTML antes da verificação
-        texto_limpo = re.sub(r"<!--.*?-->", "", resp.text, flags=re.DOTALL).lower()
-        if any(t in texto_limpo for t in self.TERMOS_ERRO):
+        # Descarta comentários HTML
+        texto_limpo = re.sub(r"<!--.*?-->", "", resp.text, flags=re.DOTALL)
+        texto_lower = texto_limpo.lower()
+        if any(t in texto_lower for t in self.TERMOS_ERRO):
             return False
             
-        tem_form = bool(
-            re.search(r"<form[^>]*(?:id|name)=["']?frmprocedimentocontrolar", texto_limpo)
-            or re.search(r"<form[^>]*action=["'][^"']*controlador\.php", texto_limpo)
-        )
-        tem_tabela = "infratabela" in texto_limpo or "infraareadados" in texto_limpo or "id_procedimento" in texto_limpo
+        # Procura form legítimo ativo
+        tem_form = False
+        for tag in re.findall(r"<form[^>]+>", texto_limpo, flags=re.IGNORECASE):
+            t_low = tag.lower()
+            if "frmprocedimentocontrolar" in t_low or "procedimento_controlar" in t_low or "controlador.php" in t_low:
+                tem_form = True
+                break
+                
+        tem_tabela = "infratabela" in texto_lower or "infraareadados" in texto_lower or "id_procedimento" in texto_lower
         return tem_form and tem_tabela
 
     def _pagina_busca_valida(self, resp):
@@ -130,15 +134,19 @@ class MotorSEI:
         if parsed.scheme != "https" or parsed.hostname != self.HOST_PERMITIDO or (not norm_path.startswith("/sei/") and norm_path != "/sei"):
             return False
             
-        texto_limpo = re.sub(r"<!--.*?-->", "", resp.text, flags=re.DOTALL).lower()
-        if any(t in texto_limpo for t in self.TERMOS_ERRO):
+        texto_limpo = re.sub(r"<!--.*?-->", "", resp.text, flags=re.DOTALL)
+        texto_lower = texto_limpo.lower()
+        if any(t in texto_lower for t in self.TERMOS_ERRO):
             return False
             
-        tem_form = bool(
-            re.search(r"<form[^>]*(?:id|name)=["']?frmpesquisa", texto_limpo)
-            or re.search(r"<form[^>]*action=["'][^"']*controlador\.php", texto_limpo)
-        )
-        tem_resultado = "infratabela" in texto_limpo or "procedimento_trabalhar" in texto_limpo or "nenhum" in texto_limpo
+        tem_form = False
+        for tag in re.findall(r"<form[^>]+>", texto_limpo, flags=re.IGNORECASE):
+            t_low = tag.lower()
+            if "frmpesquisa" in t_low or "pesquisa_processo" in t_low or "controlador.php" in t_low:
+                tem_form = True
+                break
+                
+        tem_resultado = "infratabela" in texto_lower or "procedimento_trabalhar" in texto_lower or "nenhum" in texto_lower
         return tem_form and tem_resultado
 
     def validar_sessao(self):
@@ -184,13 +192,11 @@ class MotorSEI:
         processos = []
         tags_a = re.findall(r"<a\s+([^>]+)>(.*?)</a>", html, flags=re.DOTALL | re.IGNORECASE)
         for attrs, texto_bruto in tags_a:
-            # Captura href com aspas simples ou duplas
-            m_href = re.search(r'href=["\']([^"\']+)["\']', attrs, flags=re.IGNORECASE)
+            m_href = re.search(r'''href=["']([^"']+)["']''', attrs, flags=re.IGNORECASE)
             if not m_href:
                 continue
             href = html_lib.unescape(m_href.group(1))
 
-            # Valida estritamente acao=procedimento_trabalhar (rejeita acoes derivadas)
             if not re.search(r"(?:^|[?&])acao=procedimento_trabalhar(?:&|$)", href):
                 continue
 
