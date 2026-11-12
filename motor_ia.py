@@ -45,7 +45,8 @@ def obter_endpoint_padrao() -> str:
         limpo = env_ep.rstrip("/")
         return limpo if limpo.endswith("/v1") else limpo + "/v1"
     if em_container_docker():
-        return "http://new-api:3000/v1"
+        tem_chave_newapi = bool((os.getenv("NEW_API_KEY") or os.getenv("NEWAPI_API_KEY") or "").strip())
+        return "http://new-api:3000/v1" if tem_chave_newapi else "http://ollama:11434/v1"
     return "http://127.0.0.1:3001/v1"
 
 

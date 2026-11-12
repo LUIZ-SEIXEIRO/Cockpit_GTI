@@ -79,7 +79,10 @@ class TestMotorIA(unittest.TestCase):
 
         with patch("motor_ia.em_container_docker", return_value=True):
             self.assertEqual(motor_ia.validar_endpoint_ia("http://127.0.0.1:3001/v1"), "http://new-api:3000/v1")
-            self.assertEqual(motor_ia.obter_endpoint_padrao(), "http://new-api:3000/v1")
+            with patch.dict(os.environ, {"NEW_API_KEY": "", "NEWAPI_API_KEY": "", "IA_DEFAULT_ENDPOINT": ""}):
+                self.assertEqual(motor_ia.obter_endpoint_padrao(), "http://ollama:11434/v1")
+            with patch.dict(os.environ, {"NEW_API_KEY": "sk-teste", "IA_DEFAULT_ENDPOINT": ""}):
+                self.assertEqual(motor_ia.obter_endpoint_padrao(), "http://new-api:3000/v1")
 
         capturado = {}
         def fake_urlopen(req, timeout=45):

@@ -21,6 +21,8 @@ services:
       - GLPI_USER_TOKEN=${GLPI_USER_TOKEN:-}
       - NEW_API_KEY=${NEW_API_KEY:-}
       - NEWAPI_API_KEY=${NEWAPI_API_KEY:-${NEW_API_KEY:-}}
+      - IA_DEFAULT_ENDPOINT=${IA_DEFAULT_ENDPOINT:-}
+      - IA_ALLOWED_ENDPOINTS=${IA_ALLOWED_ENDPOINTS:-}
 
   new-api:
     image: calciumion/new-api:latest
@@ -61,6 +63,8 @@ services:
       - GLPI_USER_TOKEN=${GLPI_USER_TOKEN:-}
       - NEW_API_KEY=${NEW_API_KEY:-}
       - NEWAPI_API_KEY=${NEWAPI_API_KEY:-${NEW_API_KEY:-}}
+      - IA_DEFAULT_ENDPOINT=${IA_DEFAULT_ENDPOINT:-}
+      - IA_ALLOWED_ENDPOINTS=${IA_ALLOWED_ENDPOINTS:-}
     depends_on:
       - new-api
       - ollama
