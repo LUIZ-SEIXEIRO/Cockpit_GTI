@@ -602,6 +602,14 @@ except TimeoutError:
             motor_v10.salvar_sessao({"PHPSESSID": "sessao_v10"}, timeout=0.5)
         self.assertIn("Clean Cutover Obrigatório", str(ctx.exception))
 
+        # Também deve bloquear lock legado de outro hostname sem removê-lo
+        with open(os.path.join(lock_dir, "lock.info"), "w", encoding="utf-8") as f:
+            json.dump({"pid": 999999, "timestamp": time.time(), "token": "v9_remoto", "hostname": "container_legado_remoto"}, f)
+        with self.assertRaises(RuntimeError) as ctx_remoto:
+            motor_v10.salvar_sessao({"PHPSESSID": "sessao_v10"}, timeout=0.5)
+        self.assertIn("Clean Cutover Obrigatório", str(ctx_remoto.exception))
+        self.assertTrue(os.path.exists(lock_dir))
+
         os.unlink(os.path.join(lock_dir, "lock.info"))
         os.rmdir(lock_dir)
 
@@ -648,6 +656,32 @@ except TimeoutError:
         arquivos = os.listdir(diretorio)
         self.assertFalse(any("sessao_backup_" in a for a in arquivos), f"Arquivos de backup residuais encontrados: {arquivos}")
         self.assertFalse(any("sessao_tmp_" in a for a in arquivos), f"Arquivos temporários residuais encontrados: {arquivos}")
+
+
+
+    def test_32_falha_rollback_preserva_backup_anterior(self):
+        self.motor.salvar_sessao({"PHPSESSID": "sessao_anterior_valida"})
+        diretorio = os.path.dirname(self.caminho_sessao)
+        orig_replace = os.replace
+        chamadas = {"n": 0}
+
+        def replace_com_falha_no_rollback(src, dst):
+            chamadas["n"] += 1
+            if chamadas["n"] == 1:
+                return orig_replace(src, dst)
+            raise PermissionError("Falha simulada na restauração do backup")
+
+        with patch.object(self.motor, "_fsync_diretorio", side_effect=OSError("Falha simulada no fsync do diretório")):
+            with patch("os.replace", side_effect=replace_com_falha_no_rollback):
+                with self.assertRaises(RuntimeError) as ctx:
+                    self.motor.salvar_sessao({"PHPSESSID": "sessao_nova_nao_sincronizada"})
+                self.assertIn("Backup anterior preservado", str(ctx.exception))
+
+        backups = [a for a in os.listdir(diretorio) if a.startswith("sessao_backup_")]
+        self.assertEqual(len(backups), 1, f"Backup anterior deveria ter sido preservado, encontrados: {backups}")
+        with open(os.path.join(diretorio, backups[0]), "r", encoding="utf-8") as f:
+            dados_backup = json.load(f)
+        self.assertEqual(dados_backup["cookies"]["PHPSESSID"], "sessao_anterior_valida")
 
 
 if __name__ == "__main__":

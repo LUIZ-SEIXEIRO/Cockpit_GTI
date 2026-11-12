@@ -351,17 +351,23 @@ class LockProcessosSEI:
                         info = json.load(f)
                     pid = info.get("pid")
                     host = info.get("hostname")
+                    if host and host != self.hostname:
+                        raise RuntimeError(
+                            f"Clean Cutover Obrigatório: Detectado lock SEI legado de outro host ({host}, PID {pid}). "
+                            "Interrompa todos os processos v9 antes da troca para v10."
+                        )
                     if host == self.hostname and pid and processo_esta_vivo(pid):
                         raise RuntimeError(
                             f"Clean Cutover Obrigatório: Detectado escritor SEI legado ativo (PID {pid}). "
                             "Interrompa todos os processos v9 antes da troca para v10."
                         )
-                    # Processo morto: limpa lock órfão
-                    try:
-                        os.unlink(self.info_file)
-                        os.rmdir(self.lock_dir)
-                    except OSError:
-                        pass
+                    # Processo local comprovadamente morto: limpa lock órfão
+                    if host == self.hostname:
+                        try:
+                            os.unlink(self.info_file)
+                            os.rmdir(self.lock_dir)
+                        except OSError:
+                            pass
                 except RuntimeError:
                     raise
                 except Exception:
@@ -369,7 +375,7 @@ class LockProcessosSEI:
             else:
                 try:
                     st = os.stat(self.lock_dir)
-                    if (time.time() - st.st_mtime) > 0.5:
+                    if (time.time() - st.st_mtime) > 5.0:
                         os.rmdir(self.lock_dir)
                 except OSError:
                     pass
@@ -597,6 +603,7 @@ class MotorSEI:
                 backup_caminho = None
                 temp_caminho = None
                 houve_rollback = False
+                falha_rollback = False
                 sessao_anterior_existia = os.path.exists(self.caminho_sessao)
 
                 try:
@@ -666,7 +673,18 @@ class MotorSEI:
                                 os.replace(backup_caminho, self.caminho_sessao)
                                 houve_rollback = True
                             except Exception as e_rollback:
-                                logger.critical(f"Falha no rollback: {e_rollback}")
+                                falha_rollback = True
+                                logger.critical(
+                                    f"Falha crítica no rollback ({e_rollback}). "
+                                    f"Backup da sessão anterior preservado em: {backup_caminho}"
+                                )
+                                self.sessao.cookies.clear()
+                                self._mtime_sessao = None
+                                self._hash_sessao = None
+                                raise RuntimeError(
+                                    f"Falha no fsync do diretório ({e_dir}) e falha ao restaurar backup ({e_rollback}). "
+                                    f"Backup anterior preservado em: {backup_caminho}"
+                                ) from e_rollback
                             try:
                                 self.carregar_sessao()
                             except Exception:
@@ -698,7 +716,7 @@ class MotorSEI:
                 finally:
                     # LIMPEZA RIGOROSA DE ARTEFATOS TEMPORÁRIOS:
                     # Se não houve rollback para restaurar a sessão original, o backup temporário é compulsoriamente deletado
-                    if not houve_rollback and backup_caminho and os.path.exists(backup_caminho):
+                    if not houve_rollback and not falha_rollback and backup_caminho and os.path.exists(backup_caminho):
                         try:
                             os.unlink(backup_caminho)
                         except OSError:
