@@ -13,14 +13,17 @@ RE_VALOR_BRL = re.compile(r"R\$\s*\d+(?:\.\d{3})*(?:,\d{2})?")
 RE_PRAZO = re.compile(r"\b\d+\s+(?:dias?|meses|m\u00eas|anos?)\b", re.IGNORECASE)
 RE_DATA = re.compile(r"\b\d{2}/\d{2}/\d{4}\b")
 
-HOSTS_PADRAO_PERMITIDOS = frozenset({
-    "127.0.0.1",
-    "localhost",
-    "new-api",
-    "ollama",
-    "cockpit-gti-newapi",
-    "cockpit-gti-ollama",
-    "100.103.100.98",
+ENDPOINTS_PADRAO_PERMITIDOS = frozenset({
+    ("http", "127.0.0.1", 3001),
+    ("http", "localhost", 3001),
+    ("http", "127.0.0.1", 11434),
+    ("http", "localhost", 11434),
+    ("http", "new-api", 3000),
+    ("http", "cockpit-gti-newapi", 3000),
+    ("http", "ollama", 11434),
+    ("http", "cockpit-gti-ollama", 11434),
+    ("http", "100.103.100.98", 3001),
+    ("http", "100.103.100.98", 11434),
 })
 
 DIRETRIZ_GROUNDING_ESTRITO = (
@@ -46,17 +49,16 @@ def obter_endpoint_padrao() -> str:
     return "http://127.0.0.1:3001/v1"
 
 
-def obter_hosts_permitidos(extras: Optional[Iterable[str]] = None) -> Set[str]:
-    permitidos = set(HOSTS_PADRAO_PERMITIDOS)
-    env_hosts = os.getenv("IA_ALLOWED_HOSTS", "")
-    for h in env_hosts.split(","):
-        h_limpo = h.strip().lower()
-        if h_limpo:
-            permitidos.add(h_limpo)
-    if extras:
-        for h in extras:
-            if isinstance(h, str) and h.strip():
-                permitidos.add(h.strip().lower())
+def obter_endpoints_permitidos() -> Set[tuple]:
+    permitidos = set(ENDPOINTS_PADRAO_PERMITIDOS)
+    env_eps = os.getenv("IA_ALLOWED_ENDPOINTS", "")
+    for item in env_eps.split(","):
+        item_limpo = item.strip().rstrip("/")
+        if not item_limpo:
+            continue
+        p = urlparse(item_limpo)
+        if p.scheme.lower() in ("http", "https") and p.hostname and p.port:
+            permitidos.add((p.scheme.lower(), p.hostname.lower(), int(p.port)))
     return permitidos
 
 
@@ -95,22 +97,27 @@ def normalizar_max_tokens(valor: Any, padrao: int = 700) -> int:
 
 def validar_endpoint_ia(endpoint: Any, hosts_permitidos: Optional[Iterable[str]] = None) -> str:
     if not isinstance(endpoint, str) or not endpoint.strip():
-        raise ValueError("Endpoint de IA inv\u00e1lido ou n\u00e3o informado.")
+        raise ValueError("Endpoint de IA inválido ou não informado.")
     limpo = endpoint.strip().rstrip("/")
     parsed = urlparse(limpo)
-    if parsed.scheme.lower() not in ("http", "https") or not parsed.netloc:
-        raise ValueError(f"Endpoint de IA inv\u00e1lido: {endpoint}")
+    scheme = parsed.scheme.lower()
+    if scheme not in ("http", "https") or not parsed.netloc:
+        raise ValueError(f"Endpoint de IA inválido: {endpoint}")
+    if parsed.username or parsed.password or parsed.query or parsed.fragment:
+        raise PermissionError("Endpoint de IA com credenciais embutidas, query ou fragmento não autorizado.")
     host = (parsed.hostname or "").lower()
-    if host not in obter_hosts_permitidos(hosts_permitidos):
-        raise PermissionError(f"Host de provedor de IA n\u00e3o autorizado: {host}")
+    porta = parsed.port
+    caminho = parsed.path.rstrip("/")
+    if caminho not in ("", "/v1"):
+        raise PermissionError(f"Caminho de endpoint de IA não autorizado: {parsed.path}")
+    if porta is None or (scheme, host, int(porta)) not in obter_endpoints_permitidos():
+        raise PermissionError(f"Endpoint de provedor de IA não autorizado: {scheme}://{host}:{porta}")
     if em_container_docker() and host in ("127.0.0.1", "localhost"):
-        if parsed.port == 3001:
+        if int(porta) == 3001:
             return "http://new-api:3000/v1"
-        if parsed.port == 11434:
+        if int(porta) == 11434:
             return "http://ollama:11434/v1"
-    if not limpo.endswith("/v1"):
-        limpo += "/v1"
-    return limpo
+    return f"{scheme}://{host}:{int(porta)}/v1"
 
 
 def sanitizar_mensagens(mensagens: Any) -> List[Dict[str, str]]:

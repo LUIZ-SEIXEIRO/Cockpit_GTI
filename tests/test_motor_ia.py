@@ -63,7 +63,15 @@ class TestMotorIA(unittest.TestCase):
         self.assertFalse(motor_ia.verificar_consistencia_contextual("Vencimento em 31/12/2026.", ctx)["consistente"])
 
     def test_04_executar_chat_ia_allowlist_docker_e_bordas(self):
-        self.assertEqual(motor_ia.executar_chat_ia([{"role": "user", "content": "oi"}], endpoint="http://evil.example.com/v1")["codigo"], 403)
+        for ep_bloq in (
+            "http://evil.example.com/v1",
+            "http://127.0.0.1:22/v1",
+            "http://localhost:8080/v1",
+            "http://new-api:9999/v1",
+            "http://100.103.100.98:80/v1",
+            "http://127.0.0.1:3001/admin",
+        ):
+            self.assertEqual(motor_ia.executar_chat_ia([{"role": "user", "content": "oi"}], endpoint=ep_bloq)["codigo"], 403)
         self.assertEqual(motor_ia.executar_chat_ia([{"role": "user", "content": "oi"}], endpoint=12345)["codigo"], 400)
 
         with patch("urllib.request.urlopen", return_value=_mock_urlopen_json([])):
@@ -166,6 +174,24 @@ class TestMotorIA(unittest.TestCase):
                     json={"ias": {"principal": {"endpoint": "http://evil.example.com/v1"}}},
                 )
                 self.assertEqual(r_pool_evil.status_code, 403)
+
+                for ep_porta_errada in ("http://127.0.0.1:22/v1", "http://100.103.100.98:80/v1"):
+                    self.assertEqual(
+                        client.post(
+                            "/api/v1/ia/chat",
+                            headers={"Authorization": "Bearer token_ia_teste"},
+                            json={"endpoint": ep_porta_errada, "messages": [{"role": "user", "content": "oi"}]},
+                        ).status_code,
+                        403,
+                    )
+                    self.assertEqual(
+                        client.post(
+                            "/api/v1/ia/pool",
+                            headers={"Authorization": "Bearer token_ia_teste"},
+                            json={"ias": {"principal": {"endpoint": ep_porta_errada}}},
+                        ).status_code,
+                        403,
+                    )
 
                 # URLError em testar_slot deve retornar 502 (nunca 500)
                 with patch("urllib.request.urlopen", side_effect=urllib.error.URLError("recusado")):
