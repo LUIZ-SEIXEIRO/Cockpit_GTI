@@ -5,6 +5,7 @@ import sys
 import tempfile
 import types
 import unittest
+from pathlib import Path
 from unittest.mock import MagicMock, patch
 
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
@@ -115,6 +116,14 @@ class TestConectorSEIPlaywright(unittest.TestCase):
                 self.assertTrue(dados.get("sucesso"))
                 self.assertNotIn("segredo_nao_logar", str(dados))
                 mock_save.assert_called_once()
+
+    def test_05_painel_disponibiliza_campos_de_login_playwright(self):
+        painel = Path(__file__).resolve().parents[1] / "painel.html"
+        html = painel.read_text(encoding="utf-8-sig")
+        for campo in ("input-usuario-sei-pw", "input-senha-sei-pw", "input-orgao-sei-pw"):
+            with self.subTest(campo=campo):
+                self.assertIn(f'id="{campo}"', html)
+        self.assertIn('onclick="window.loginPlaywrightSei()"', html)
 
 
 if __name__ == "__main__":

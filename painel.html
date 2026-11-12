@@ -25692,6 +25692,15 @@ window.dispararHomologacaoBackendReal = async function(btn) {
     </div>
 
     <div id="form-cookies-sei" style="display:none;background:#1e293b;padding:10px;border-radius:8px;margin-bottom:12px;">
+      <div style="border-bottom:1px solid #334155;padding-bottom:10px;margin-bottom:10px;">
+        <strong style="display:block;font-size:12px;margin-bottom:8px;color:#cbd5e1;">Login institucional via SIP/SEI</strong>
+        <div style="display:grid;gap:8px;margin-bottom:8px;">
+          <input id="input-usuario-sei-pw" type="text" autocomplete="username" placeholder="Usuário do SEI" style="padding:6px 8px;border-radius:6px;border:1px solid #475569;background:#0f172a;color:#f8fafc;font-size:12px;">
+          <input id="input-senha-sei-pw" type="password" autocomplete="current-password" placeholder="Senha do SEI" style="padding:6px 8px;border-radius:6px;border:1px solid #475569;background:#0f172a;color:#f8fafc;font-size:12px;">
+          <input id="input-orgao-sei-pw" type="text" value="SPAGUAS" autocomplete="organization" placeholder="Órgão" style="padding:6px 8px;border-radius:6px;border:1px solid #475569;background:#0f172a;color:#f8fafc;font-size:12px;">
+        </div>
+        <button onclick="window.loginPlaywrightSei()" style="background:#2563eb;color:#fff;border:none;border-radius:6px;padding:6px 12px;font-size:12px;font-weight:700;cursor:pointer;">Entrar no SEI</button>
+      </div>
       <label style="display:block;font-size:12px;margin-bottom:4px;color:#cbd5e1;">Cookie PHPSESSID do SEI:</label>
       <div style="display:flex;gap:8px;margin-bottom:8px;">
         <input id="input-phpsessid-sei" type="password" placeholder="Cole o PHPSESSID autenticado" style="flex:1;padding:6px 8px;border-radius:6px;border:1px solid #475569;background:#0f172a;color:#f8fafc;font-size:12px;">
