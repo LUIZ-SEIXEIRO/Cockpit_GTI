@@ -13,6 +13,7 @@ import motor_ia
 
 def _mock_urlopen_json(payload):
     resp = MagicMock()
+    resp.status = 200
     resp.read.return_value = json.dumps(payload).encode("utf-8")
     resp.__enter__.return_value = resp
     resp.__exit__.return_value = False
@@ -158,7 +159,12 @@ class TestMotorIA(unittest.TestCase):
                 )
                 self.assertEqual(r_slot_ssrf.status_code, 403)
 
-                with patch("main.obter_hosts_pool_configurado", return_value=["100.103.100.98"]):
+                import tempfile
+                with tempfile.NamedTemporaryFile("w", suffix=".json", delete=False, encoding="utf-8") as tf:
+                    json.dump({"ias": {"principal": {"endpoint": "http://100.103.100.98:3001/v1"}}}, tf)
+                    cfg_tmp = tf.name
+                try:
+                  with patch("main.localizar_config_pool", return_value=cfg_tmp):
                     with patch("urllib.request.urlopen", return_value=_mock_urlopen_json({
                         "model": "qwen2.5:14b",
                         "choices": [{"message": {"content": "OK."}}],
@@ -176,6 +182,9 @@ class TestMotorIA(unittest.TestCase):
                             json={"endpoint": "http://100.103.100.98:3001/v1", "model": "qwen2.5:14b"},
                         )
                         self.assertEqual(r_slot_pool.status_code, 200)
+                finally:
+                    if os.path.exists(cfg_tmp):
+                        os.unlink(cfg_tmp)
 
 
 if __name__ == "__main__":

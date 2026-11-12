@@ -524,16 +524,27 @@ def api_v1_ia_testar_slot():
             data=json.dumps(payload).encode('utf-8'),
             headers=headers_req
         )
-        with urllib.request.urlopen(req, timeout=45) as resp:
-            latencia = int((time.time() - t0) * 1000)
-            return jsonify({
-                'sucesso': True,
-                'status': 'sucesso',
-                'codigo': resp.status,
-                'codigoHttp': resp.status,
-                'latenciaMs': latencia,
-                'resposta': 'pong'
-            }), 200
+        try:
+            with urllib.request.urlopen(req, timeout=45) as resp:
+                latencia = int((time.time() - t0) * 1000)
+                cod_http = getattr(resp, 'status', 200)
+                if not isinstance(cod_http, int):
+                    cod_http = 200
+                return jsonify({
+                    'sucesso': True,
+                    'status': 'sucesso',
+                    'codigo': cod_http,
+                    'codigoHttp': cod_http,
+                    'latenciaMs': latencia,
+                    'resposta': 'pong'
+                }), 200
+        except urllib.error.HTTPError as he:
+            cod = he.code if he.code in (400, 401, 403, 404, 429) else 502
+            return jsonify({'sucesso': False, 'status': 'erro', 'mensagem': f'Provedor retornou HTTP {he.code}'}), cod
+        except TimeoutError:
+            return jsonify({'sucesso': False, 'status': 'erro', 'mensagem': 'Timeout ao testar slot de IA.'}), 504
+        except urllib.error.URLError as ue:
+            return jsonify({'sucesso': False, 'status': 'erro', 'mensagem': f'Falha de conexão: {ue.reason}'}), 502, 200
     except Exception as e:
         return jsonify({'sucesso': False, 'status': 'erro', 'mensagem': str(e)}), 500
 
