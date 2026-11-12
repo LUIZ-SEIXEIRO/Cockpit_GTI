@@ -496,6 +496,7 @@ class MotorSEI:
         self._marcador_rollback = self.caminho_sessao + ".rollback_pendente"
         self._mtime_sessao: Optional[float] = None
         self._hash_sessao: Optional[str] = None
+        self.urls_assinadas: Dict[str, str] = {}
         
         sei_host = urlparse(self.base_url).hostname or "sei.sp.gov.br"
         self.sessao = StrictSEISession(host_permitido=sei_host)
@@ -521,6 +522,7 @@ class MotorSEI:
     def _sincronizar_sessao_se_modificada(self) -> None:
         if os.path.exists(self._marcador_rollback):
             self.sessao.cookies.clear()
+            self.urls_assinadas = {}
             self._mtime_sessao = None
             self._hash_sessao = None
             raise RuntimeError(
@@ -547,6 +549,7 @@ class MotorSEI:
     def carregar_sessao(self) -> bool:
         if os.path.exists(self._marcador_rollback):
             self.sessao.cookies.clear()
+            self.urls_assinadas = {}
             self._mtime_sessao = None
             self._hash_sessao = None
             raise RuntimeError(
@@ -555,6 +558,7 @@ class MotorSEI:
             )
         if not os.path.exists(self.caminho_sessao):
             self.sessao.cookies.clear()
+            self.urls_assinadas = {}
             self._mtime_sessao = None
             self._hash_sessao = None
             return False
@@ -565,6 +569,8 @@ class MotorSEI:
 
             conteudo = json.loads(bytes_conteudo.decode("utf-8"))
             cookies = conteudo.get("cookies", {})
+            urls_salvas = conteudo.get("urls_assinadas", {})
+            self.urls_assinadas = urls_salvas if isinstance(urls_salvas, dict) else {}
             self.sessao.cookies.clear()
 
             sei_host = urlparse(self.base_url).hostname
@@ -588,6 +594,7 @@ class MotorSEI:
         except Exception as e:
             logger.error(f"Erro ao carregar sessao: {e}")
             self.sessao.cookies.clear()
+            self.urls_assinadas = {}
             self._mtime_sessao = None
             self._hash_sessao = None
             raise
@@ -605,7 +612,8 @@ class MotorSEI:
         self,
         cookies: dict,
         usuario: Optional[str] = None,
-        timeout: float = 10.0
+        timeout: float = 10.0,
+        urls_assinadas: Optional[Dict[str, str]] = None
     ) -> bool:
         """
         Grava a sessão no disco de forma atômica e com exclusão mútua contínua no kernel do SO.
@@ -653,8 +661,10 @@ class MotorSEI:
                             logger.error(f"Falha ao criar backup da sessao: {e}")
                             raise
 
+                    urls_para_salvar = urls_assinadas if isinstance(urls_assinadas, dict) else self.urls_assinadas
                     payload = {
                         "cookies": cookies,
+                        "urls_assinadas": urls_para_salvar,
                         "usuario": usuario,
                         "lock_token": lock.token,
                         "atualizado_em": datetime.now(timezone.utc).isoformat()
@@ -812,7 +822,7 @@ class MotorSEI:
         if not self.sessao.cookies:
             return False
 
-        url_teste = f"{self.base_url}/controlador.php?acao=procedimento_controlar&infra_unidade_atual={self.id_unidade}&infra_sistema=100000100"
+        url_teste = self.urls_assinadas.get("procedimento_controlar") or f"{self.base_url}/controlador.php?acao=procedimento_controlar&infra_unidade_atual={self.id_unidade}&infra_sistema=100000100"
         try:
             resp = self.sessao.get(url_teste, timeout=10, allow_redirects=True)
             if resp.status_code != 200:
@@ -916,7 +926,7 @@ class MotorSEI:
                 "erro": "Sessao do SEI nao configurada ou inexistente"
             }
 
-        url_caixa = f"{self.base_url}/controlador.php?acao=procedimento_controlar&infra_unidade_atual={self.id_unidade}&infra_sistema=100000100"
+        url_caixa = self.urls_assinadas.get("procedimento_controlar") or f"{self.base_url}/controlador.php?acao=procedimento_controlar&infra_unidade_atual={self.id_unidade}&infra_sistema=100000100"
         try:
             resp = self.sessao.get(url_caixa, timeout=15)
         except requests.exceptions.Timeout:
@@ -1008,7 +1018,7 @@ class MotorSEI:
                 "erro": "Sessao do SEI nao configurada ou inexistente"
             }
 
-        url_busca = f"{self.base_url}/controlador.php?acao=pesquisa_processo&infra_unidade_atual={self.id_unidade}&infra_sistema=100000100"
+        url_busca = self.urls_assinadas.get("protocolo_pesquisar") or self.urls_assinadas.get("pesquisa_processo") or f"{self.base_url}/controlador.php?acao=pesquisa_processo&infra_unidade_atual={self.id_unidade}&infra_sistema=100000100"
         payload = {
             "txtPesquisa": termo,
             "chkSinonimo": "N",

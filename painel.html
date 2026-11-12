@@ -25764,6 +25764,33 @@ window.dispararHomologacaoBackendReal = async function(btn) {
     }
   };
 
+  window.loginPlaywrightSei = async function() {
+    var u = ((document.getElementById('input-usuario-sei-pw') || {}).value || '').trim();
+    var s = ((document.getElementById('input-senha-sei-pw') || {}).value || '');
+    var o = ((document.getElementById('input-orgao-sei-pw') || {}).value || 'SPAGUAS').trim();
+    if (!u || !s) { alert('Informe usuário e senha do SEI.'); return; }
+    var out = document.getElementById('resultado-motor-sei');
+    if (out) out.innerHTML = '<div style="color:#38bdf8;">Autenticando no SEI SP via Playwright...</div>';
+    try {
+      var r = await fetch('/api/v1/sei/login', {
+        method: 'POST',
+        headers: obterHeadersComAuth(),
+        body: JSON.stringify({ usuario: u, senha: s, orgao: o })
+      });
+      var d = await r.json();
+      if (r.ok && d.sucesso) {
+        document.getElementById('input-senha-sei-pw').value = '';
+        document.getElementById('form-cookies-sei').style.display = 'none';
+        if (out) out.innerHTML = '<div style="color:#4ade80;">' + escSei(d.mensagem || 'Autenticado!') + '</div>';
+        await window.atualizarStatusMotorSei();
+      } else {
+        if (out) out.innerHTML = '<div style="color:#f87171;">' + escSei(d.erro || ('Erro ' + r.status)) + '</div>';
+      }
+    } catch (e) {
+      if (out) out.innerHTML = '<div style="color:#f87171;">Falha: ' + escSei(e) + '</div>';
+    }
+  };
+
   window.salvarCookiesMotorSei = async function() {
     var val = (document.getElementById('input-phpsessid-sei') || {}).value || '';
     if (!val.trim()) { alert('Informe o PHPSESSID.'); return; }

@@ -875,7 +875,42 @@ def api_v1_obter_documento(doc_id):
 # -------------------------------------------------------------------------
 from motor_sei import MotorSEI
 import motor_ia
+import conector_sei_playwright
 motor_sei_instance = MotorSEI()
+
+
+@app.route('/api/v1/sei/login', methods=['POST'])
+@requer_autenticacao
+def api_v1_sei_login():
+    dados = request.get_json(force=True) or {}
+    if not isinstance(dados, dict):
+        return jsonify({'sucesso': False, 'erro': 'Payload JSON inválido.'}), 400
+    usuario = dados.get('usuario') or ''
+    senha = dados.get('senha') or ''
+    orgao = dados.get('orgao') or 'SPAGUAS'
+    res = conector_sei_playwright.autenticar_sei_playwright(
+        usuario=usuario,
+        senha=senha,
+        orgao=orgao,
+        id_unidade=motor_sei_instance.id_unidade,
+        base_url=motor_sei_instance.base_url,
+    )
+    if not res.get('sucesso'):
+        return jsonify(res), res.get('codigo', 502)
+    try:
+        motor_sei_instance.salvar_sessao(
+            res['cookies'],
+            usuario=str(usuario).strip(),
+            urls_assinadas=res.get('urls_assinadas') or {},
+        )
+    except Exception as e:
+        return jsonify({'sucesso': False, 'erro': f'Erro ao persistir sessão: {e}'}), 500
+    return jsonify({
+        'sucesso': True,
+        'mensagem': 'Sessão do SEI SP autenticada via Playwright com sucesso.',
+        'unidade': motor_sei_instance.id_unidade,
+        'urls_assinadas_count': len(res.get('urls_assinadas') or {}),
+    }), 200
 
 @app.route('/api/v1/sei/status', methods=['GET'])
 def api_v1_sei_status():
