@@ -130,6 +130,7 @@ def proteger_rotas_mutaveis():
         '/api/v1/ia/pool',
         '/api/v1/ia/chat',
         '/api/v1/ia/testar_slot',
+        '/api/v1/ia/revisar_processo',
         '/api/v1/openproject/sync_card',
         '/api/v1/openproject/sync_batch'
     }
@@ -525,27 +526,38 @@ def api_v1_ia_chat():
         if not api_key or api_key == '***':
             api_key = resolver_chave_real(model, slot_id)
 
-        url = endpoint + '/chat/completions'
-        payload = {
-            'model': model,
-            'messages': mensagens,
-            'temperature': 0.3,
-            'max_tokens': 2000
-        }
-        headers_req = {'Content-Type': 'application/json'}
-        if api_key and api_key.strip():
-            headers_req['Authorization'] = f'Bearer {api_key.strip()}'
-
-        req = urllib.request.Request(
-            url,
-            data=json.dumps(payload).encode('utf-8'),
-            headers=headers_req
+        resultado = motor_ia.executar_chat_ia(
+            mensagens=mensagens,
+            endpoint=endpoint,
+            model=model,
+            api_key=api_key,
+            temperature=dados.get('temperature', 0.0),
+            max_tokens=dados.get('max_tokens', 700),
+            timeout=45,
         )
-        with urllib.request.urlopen(req, timeout=45) as resp:
-            resp_dados = json.loads(resp.read().decode())
-            return jsonify(resp_dados), 200
+        return jsonify(resultado), resultado.get('codigo', 200)
     except Exception as e:
         return jsonify({'sucesso': False, 'status': 'erro', 'mensagem': str(e)}), 500
+
+
+@app.route('/api/v1/ia/revisar_processo', methods=['POST'])
+def api_v1_ia_revisar_processo():
+    try:
+        dados = request.get_json(force=True) or {}
+        endpoint = normalizar_endpoint_ia(dados.get('endpoint', 'http://127.0.0.1:3001/v1'))
+        model = dados.get('model') or 'llama3.2:1b'
+        api_key = dados.get('apiKey') or dados.get('api_key') or ''
+        if not api_key or api_key == '***':
+            api_key = resolver_chave_real(model, 'revisao')
+        resultado = motor_ia.revisar_processo_ia(
+            dados=dados,
+            endpoint=endpoint,
+            model=model,
+            api_key=api_key,
+        )
+        return jsonify(resultado), resultado.get('codigo', 200)
+    except Exception as e:
+        return jsonify({'sucesso': False, 'erro': str(e)}), 500
 
 
 # -------------------------------------------------------------------------
@@ -821,6 +833,7 @@ def api_v1_obter_documento(doc_id):
 # 5. MOTOR DE BUSCA E AUTOMAÇÃO SEI 4.1.5 (SA-GTI 110050725)
 # -------------------------------------------------------------------------
 from motor_sei import MotorSEI
+import motor_ia
 motor_sei_instance = MotorSEI()
 
 @app.route('/api/v1/sei/status', methods=['GET'])
