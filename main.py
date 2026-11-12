@@ -130,6 +130,7 @@ def proteger_rotas_mutaveis():
         '/api/v1/ia/pool',
         '/api/v1/ia/chat',
         '/api/v1/ia/testar_slot',
+        '/api/v1/ia/revisar_processo',
         '/api/v1/openproject/sync_card',
         '/api/v1/openproject/sync_batch'
     }
@@ -182,13 +183,22 @@ def servir_estaticos(filename):
             return send_from_directory(p, filename)
     return "Arquivo não encontrado", 404
 
+def validar_endpoints_payload_pool(dados):
+    ias = dados.get('ias') if isinstance(dados, dict) else dados
+    itens = list(ias.values()) if isinstance(ias, dict) else (ias if isinstance(ias, list) else [])
+    for it in itens:
+        if isinstance(it, dict):
+            ep = it.get('endpoint') or it.get('url')
+            if ep is not None and ep != '':
+                motor_ia.validar_endpoint_ia(ep)
+
+
 def normalizar_endpoint_ia(endpoint):
-    if not endpoint:
-        endpoint = 'http://127.0.0.1:3001/v1'
-    endpoint = endpoint.strip().rstrip('/')
-    if not endpoint.endswith('/v1'):
-        endpoint += '/v1'
-    return endpoint
+    if endpoint is None or endpoint == '':
+        return motor_ia.obter_endpoint_padrao()
+    if not isinstance(endpoint, str):
+        raise ValueError('Endpoint de IA deve ser uma string.')
+    return motor_ia.validar_endpoint_ia(endpoint)
 
 def localizar_config_pool():
     base = os.path.dirname(os.path.abspath(__file__))
@@ -447,6 +457,12 @@ def api_v1_ia_pool():
     if request.method == 'POST':
         try:
             dados = request.get_json(force=True) or {}
+            try:
+                validar_endpoints_payload_pool(dados)
+            except PermissionError as pe:
+                return jsonify({'sucesso': False, 'status': 'erro', 'mensagem': str(pe)}), 403
+            except ValueError as ve:
+                return jsonify({'sucesso': False, 'status': 'erro', 'mensagem': str(ve)}), 400
             if os.path.exists(cfg_path):
                 try:
                     with open(cfg_path, 'r', encoding='utf-8') as f_orig:
@@ -474,7 +490,12 @@ def api_v1_ia_testar_slot():
         t0 = time.time()
         dados = request.get_json(force=True) or {}
         raw_endpoint = dados.get('endpoint', 'http://127.0.0.1:3001/v1')
-        endpoint = normalizar_endpoint_ia(raw_endpoint)
+        try:
+            endpoint = normalizar_endpoint_ia(raw_endpoint)
+        except PermissionError as pe:
+            return jsonify({'sucesso': False, 'status': 'erro', 'mensagem': str(pe)}), 403
+        except ValueError as ve:
+            return jsonify({'sucesso': False, 'status': 'erro', 'mensagem': str(ve)}), 400
         model = dados.get('model') or dados.get('agent') or 'qwen2.5:14b'
         slot = dados.get('slot', 'ia')
 
@@ -497,16 +518,27 @@ def api_v1_ia_testar_slot():
             data=json.dumps(payload).encode('utf-8'),
             headers=headers_req
         )
-        with urllib.request.urlopen(req, timeout=45) as resp:
-            latencia = int((time.time() - t0) * 1000)
-            return jsonify({
-                'sucesso': True,
-                'status': 'sucesso',
-                'codigo': resp.status,
-                'codigoHttp': resp.status,
-                'latenciaMs': latencia,
-                'resposta': 'pong'
-            }), 200
+        try:
+            with urllib.request.urlopen(req, timeout=45) as resp:
+                latencia = int((time.time() - t0) * 1000)
+                cod_http = getattr(resp, 'status', 200)
+                if not isinstance(cod_http, int):
+                    cod_http = 200
+                return jsonify({
+                    'sucesso': True,
+                    'status': 'sucesso',
+                    'codigo': cod_http,
+                    'codigoHttp': cod_http,
+                    'latenciaMs': latencia,
+                    'resposta': 'pong'
+                }), 200
+        except urllib.error.HTTPError as he:
+            cod = he.code if he.code in (400, 401, 403, 404, 429) else 502
+            return jsonify({'sucesso': False, 'status': 'erro', 'mensagem': f'Provedor retornou HTTP {he.code}'}), cod
+        except TimeoutError:
+            return jsonify({'sucesso': False, 'status': 'erro', 'mensagem': 'Timeout ao testar slot de IA.'}), 504
+        except urllib.error.URLError as ue:
+            return jsonify({'sucesso': False, 'status': 'erro', 'mensagem': f'Falha de conexão: {ue.reason}'}), 502
     except Exception as e:
         return jsonify({'sucesso': False, 'status': 'erro', 'mensagem': str(e)}), 500
 
@@ -515,9 +547,18 @@ def api_v1_ia_testar_slot():
 def api_v1_ia_chat():
     try:
         dados = request.get_json(force=True) or {}
+        if not isinstance(dados, dict):
+            return jsonify({'sucesso': False, 'status': 'erro', 'mensagem': 'Payload JSON inválido.'}), 400
         mensagens = dados.get('mensagens') or dados.get('messages') or []
         ia_alvo = dados.get('ia', 'principal')
-        endpoint = normalizar_endpoint_ia(dados.get('endpoint', 'http://127.0.0.1:3001/v1'))
+        raw_endpoint = dados.get('endpoint')
+        try:
+            endpoint = normalizar_endpoint_ia(raw_endpoint)
+        except PermissionError as pe:
+            return jsonify({'sucesso': False, 'status': 'erro', 'mensagem': str(pe)}), 403
+        except ValueError as ve:
+            return jsonify({'sucesso': False, 'status': 'erro', 'mensagem': str(ve)}), 400
+
         model = dados.get('model', 'qwen2.5:14b' if ia_alvo == 'principal' else 'qwen2.5:7b')
         slot_id = dados.get('slot') or ia_alvo
 
@@ -525,27 +566,39 @@ def api_v1_ia_chat():
         if not api_key or api_key == '***':
             api_key = resolver_chave_real(model, slot_id)
 
-        url = endpoint + '/chat/completions'
-        payload = {
-            'model': model,
-            'messages': mensagens,
-            'temperature': 0.3,
-            'max_tokens': 2000
-        }
-        headers_req = {'Content-Type': 'application/json'}
-        if api_key and api_key.strip():
-            headers_req['Authorization'] = f'Bearer {api_key.strip()}'
-
-        req = urllib.request.Request(
-            url,
-            data=json.dumps(payload).encode('utf-8'),
-            headers=headers_req
+        resultado = motor_ia.executar_chat_ia(
+            mensagens=mensagens,
+            endpoint=endpoint,
+            model=model,
+            api_key=api_key,
+            temperature=dados.get('temperature', 0.0),
+            max_tokens=dados.get('max_tokens', 700),
+            timeout=45,
         )
-        with urllib.request.urlopen(req, timeout=45) as resp:
-            resp_dados = json.loads(resp.read().decode())
-            return jsonify(resp_dados), 200
+        return jsonify(resultado), resultado.get('codigo', 200)
     except Exception as e:
         return jsonify({'sucesso': False, 'status': 'erro', 'mensagem': str(e)}), 500
+
+
+@app.route('/api/v1/ia/revisar_processo', methods=['POST'])
+def api_v1_ia_revisar_processo():
+    try:
+        dados = request.get_json(force=True) or {}
+        if not isinstance(dados, dict):
+            return jsonify({'sucesso': False, 'erro': 'Payload JSON inválido.'}), 400
+        # Rota de revisao usa exclusivamente o endpoint interno configurado no servidor
+        endpoint = motor_ia.obter_endpoint_padrao()
+        model = 'llama3.2:1b'
+        api_key = resolver_chave_real(model, 'revisao')
+        resultado = motor_ia.revisar_processo_ia(
+            dados=dados,
+            endpoint=endpoint,
+            model=model,
+            api_key=api_key,
+        )
+        return jsonify(resultado), resultado.get('codigo', 200)
+    except Exception as e:
+        return jsonify({'sucesso': False, 'erro': str(e)}), 500
 
 
 # -------------------------------------------------------------------------
@@ -821,6 +874,7 @@ def api_v1_obter_documento(doc_id):
 # 5. MOTOR DE BUSCA E AUTOMAÇÃO SEI 4.1.5 (SA-GTI 110050725)
 # -------------------------------------------------------------------------
 from motor_sei import MotorSEI
+import motor_ia
 motor_sei_instance = MotorSEI()
 
 @app.route('/api/v1/sei/status', methods=['GET'])

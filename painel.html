@@ -21656,12 +21656,14 @@ html body #view-gestao_agil .kanban-card-modelo .k-status-sei-critico {
                     signal: ctrl.signal
                 });
                 clearTimeout(tid);
-                if (resBackend.ok) {
-                    var dadosIa = await resBackend.json();
-                    if (dadosIa && dadosIa.parecer) {
-                        parecerTexto = dadosIa.parecer.trim();
-                        modeloUsado = dadosIa.modelo || 'llama3.2:1b';
-                    }
+                var dadosIa = null;
+                try { dadosIa = await resBackend.json(); } catch (_) {}
+                if (resBackend.ok && dadosIa && dadosIa.sucesso && dadosIa.parecer && !(dadosIa.consistencia && dadosIa.consistencia.consistente === false)) {
+                    parecerTexto = dadosIa.parecer.trim();
+                    modeloUsado = dadosIa.modelo || 'llama3.2:1b';
+                } else if (resBackend.status === 422 || (dadosIa && dadosIa.bloqueado_por_inconsistencia)) {
+                    modeloUsado = 'Bloqueio de Consistência (SA-GTI)';
+                    parecerTexto = '[BLOQUEADO POR INCONSISTÊNCIA DE CONTEXTO] ' + ((dadosIa && dadosIa.erro) || 'A resposta da IA citou dados fora do contexto verificado. Revisão manual obrigatória.');
                 }
             } catch(e) {
                 console.log('Backend proxy offline ou em fallback local:', e);
