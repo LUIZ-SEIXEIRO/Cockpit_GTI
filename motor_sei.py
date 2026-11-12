@@ -370,15 +370,16 @@ class LockProcessosSEI:
                             pass
                 except RuntimeError:
                     raise
-                except Exception:
-                    pass
+                except Exception as e_info:
+                    raise RuntimeError(
+                        f"Clean Cutover Obrigatório: Diretório de lock SEI legado (.lock) com metadados ilegíveis ({e_info}). "
+                        "Interrompa todos os escritores v9 antes da troca para v10."
+                    ) from e_info
             else:
-                try:
-                    st = os.stat(self.lock_dir)
-                    if (time.time() - st.st_mtime) > 5.0:
-                        os.rmdir(self.lock_dir)
-                except OSError:
-                    pass
+                raise RuntimeError(
+                    "Clean Cutover Obrigatório: Detectado diretório de lock SEI legado (.lock) sem metadados (lock.info). "
+                    "Interrompa todos os escritores v9 e conclua o clean cutover antes de iniciar a v10."
+                )
 
     def __enter__(self):
         diretorio_pai = os.path.dirname(self.lock_file)

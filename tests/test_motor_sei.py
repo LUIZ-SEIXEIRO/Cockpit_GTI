@@ -294,8 +294,9 @@ class TestMotorSEI(unittest.TestCase):
     def test_16_recuperacao_lock_processo_morto_vs_vivo(self):
         lock_dir = self.caminho_sessao + ".lock"
         os.makedirs(lock_dir, exist_ok=True)
-        # Marca como diretório órfão abandonado antigo
-        os.utime(lock_dir, (time.time() - 10.0, time.time() - 10.0))
+        # Lock legado local com PID comprovadamente morto
+        with open(os.path.join(lock_dir, "lock.info"), "w", encoding="utf-8") as f:
+            json.dump({"pid": 99999999, "timestamp": time.time() - 60.0, "token": "orfao", "hostname": socket.gethostname()}, f)
         
         # 1. Processo MORTO: lock do kernel liberado automaticamente ao fechar o processo
         lock1 = LockProcessosSEI(self.caminho_sessao, timeout=2.0)
@@ -610,7 +611,14 @@ except TimeoutError:
         self.assertIn("Clean Cutover Obrigatório", str(ctx_remoto.exception))
         self.assertTrue(os.path.exists(lock_dir))
 
+        # Também deve falhar fechado se .lock existir sem lock.info (mesmo após > 5s)
         os.unlink(os.path.join(lock_dir, "lock.info"))
+        os.utime(lock_dir, (time.time() - 60.0, time.time() - 60.0))
+        with self.assertRaises(RuntimeError) as ctx_sem_meta:
+            motor_v10.salvar_sessao({"PHPSESSID": "sessao_v10"}, timeout=0.5)
+        self.assertIn("Clean Cutover Obrigatório", str(ctx_sem_meta.exception))
+        self.assertTrue(os.path.exists(lock_dir))
+
         os.rmdir(lock_dir)
 
         self.assertTrue(motor_v10.salvar_sessao({"PHPSESSID": "sessao_v10_sucesso"}, timeout=1.0))
