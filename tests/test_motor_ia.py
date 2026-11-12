@@ -54,7 +54,7 @@ class TestMotorIA(unittest.TestCase):
         self.assertEqual(p2[0]["content"].count(motor_ia.DIRETRIZ_GROUNDING_ESTRITO), 1)
 
     def test_03_consistencia_contextual_detecta_processos_valores_prazos_e_datas(self):
-        ctx = "Processo SEI: 137.00029841/2026-14\nAging L\u00edquido: 12 dias."
+        ctx = "Processo SEI: 137.00029841/2026-14\nAging L\u00edquido (dias): 12"
         self.assertTrue(motor_ia.verificar_consistencia_contextual("Processo 137.00029841/2026-14 com aging de 12 dias.", ctx)["consistente"])
         self.assertFalse(motor_ia.verificar_consistencia_contextual("Relacionado ao 999.00012345/2026-99.", ctx)["consistente"])
         self.assertFalse(motor_ia.verificar_consistencia_contextual("Valor de R$ 150.000,00.", ctx)["consistente"])
@@ -103,7 +103,7 @@ class TestMotorIA(unittest.TestCase):
 
         with patch("urllib.request.urlopen", return_value=_mock_urlopen_json({
             "model": "llama3.2:1b",
-            "choices": [{"message": {"content": "Parecer: processo 137.00029841/2026-14 regular."}}],
+            "choices": [{"message": {"content": "Parecer: processo 137.00029841/2026-14 com aging de 10 dias."}}],
         })):
             res_ok = motor_ia.revisar_processo_ia(dados_proc)
         self.assertTrue(res_ok["sucesso"])
@@ -149,6 +149,33 @@ class TestMotorIA(unittest.TestCase):
                     )
                 self.assertEqual(r_ok.status_code, 200)
                 self.assertTrue(r_ok.get_json().get("sucesso"))
+
+                # Regressao: /ia/chat e /ia/testar_slot aceitam host do config_pool_ias.json e bloqueiam externos (403)
+                r_slot_ssrf = client.post(
+                    "/api/v1/ia/testar_slot",
+                    headers={"Authorization": "Bearer token_ia_teste"},
+                    json={"endpoint": "http://169.254.169.254/latest", "model": "qwen2.5:14b"},
+                )
+                self.assertEqual(r_slot_ssrf.status_code, 403)
+
+                with patch("main.obter_hosts_pool_configurado", return_value=["100.103.100.98"]):
+                    with patch("urllib.request.urlopen", return_value=_mock_urlopen_json({
+                        "model": "qwen2.5:14b",
+                        "choices": [{"message": {"content": "OK."}}],
+                    })):
+                        r_chat_pool = client.post(
+                            "/api/v1/ia/chat",
+                            headers={"Authorization": "Bearer token_ia_teste"},
+                            json={"endpoint": "http://100.103.100.98:3001/v1", "messages": [{"role": "user", "content": "oi"}]},
+                        )
+                        self.assertEqual(r_chat_pool.status_code, 200)
+
+                        r_slot_pool = client.post(
+                            "/api/v1/ia/testar_slot",
+                            headers={"Authorization": "Bearer token_ia_teste"},
+                            json={"endpoint": "http://100.103.100.98:3001/v1", "model": "qwen2.5:14b"},
+                        )
+                        self.assertEqual(r_slot_pool.status_code, 200)
 
 
 if __name__ == "__main__":

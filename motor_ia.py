@@ -160,6 +160,9 @@ def verificar_consistencia_contextual(resposta: str, contexto: str) -> Dict[str,
         alertas.append(f"Valor(es) monet\u00e1rio(s) fora do contexto: {', '.join(vals_fora)}")
 
     prazos_ctx = {re.sub(r"\s+", " ", p.lower()) for p in RE_PRAZO.findall(texto_ctx)}
+    for num_dias in re.findall(r"(?:aging|prazo)[^:\n]*\(dias\)\s*:\s*(\d+)", texto_ctx, re.IGNORECASE):
+        prazos_ctx.add(f"{num_dias} dia")
+        prazos_ctx.add(f"{num_dias} dias")
     prazos_resp = {re.sub(r"\s+", " ", p.lower()) for p in RE_PRAZO.findall(texto_resp)}
     prazos_fora = sorted(prazos_resp - prazos_ctx)
     if prazos_fora:
