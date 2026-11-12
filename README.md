@@ -33,7 +33,7 @@ Este repositório conta com documentação institucional extensiva, didática e 
 2. ⚙️ **[Documentação Técnica, Arquitetura \& Engenharia de Integrações (docs/DOCUMENTACAO\_TECNICA.md)](docs/DOCUMENTACAO_TECNICA.md)**  
    *Especificação profunda da topologia Docker, mapeamento de IDs DOM e funções JavaScript, catálogo da API REST (`/api/v1/`), concorrência otimista no OpenProject v3, conector GLPI 10, cálculo de Aging Líquido e Troubleshooting.*
 3. 🐙 **[Guia de DevOps, Docker Desktop \& Governança Git (docs/GUIA\_PUBLICACAO\_GITHUB.md)](docs/GUIA_PUBLICACAO_GITHUB.md)**  
-   *Manual de implantação do zero via Docker Desktop, administração de modelos de 60+ GB no Ollama, configuração de canais/tokens no New API, fluxo de branches/commits e rotina de Backup 3-2-1-1-0.*
+   *Manual de implantação do zero via Docker Desktop, administração de modelos locais no Ollama, configuração de canais/tokens no New API, gates de aceite, implantação gradual, rollback e rotina de Backup 3-2-1-1-0.*
 
 ---
 
@@ -204,10 +204,10 @@ O servidor backend (`main.py` / `backend/main.py`) expõe os seguintes endpoints
 | :---: | :--- | :--- |
 | `GET` | `/` ou `/painel` | Serve a aplicação Single-Page Application (`painel.html`). |
 | `GET` | `/api/v1/telemetria` | Verifica em tempo real via socket TCP a saúde dos 5 pilares (`mariadb`, `ollama`, `glpi`, `openproject`, `newapi`). |
-| `GET` / `POST` | `/api/v1/ia/pool` | Lê ou salva em disco (`config_pool_ias.json`) os parâmetros dos 3 slots de IA. |
-| `POST` | `/api/v1/ia/testar_slot` | Executa teste real de inferência (`ping`) no slot informado, normaliza o endpoint (`/v1`) e retorna o status HTTP e a latência exata em milissegundos (`latenciaMs`). |
-| `POST` | `/api/v1/ia/chat` | Envia mensagens contextualizadas para o agente selecionado (`principal`, `orquestracao` ou `microservicos`) e retorna a resposta gerada pelo LLM. |
-| `POST` | `/api/v1/openproject/sync_card` | Sincroniza o parecer ou dossiê técnico de um processo SEI com o respectivo *Work Package* no OpenProject. |
+| `GET` / `POST` | `/api/v1/ia/pool` | Exige autenticação (`Bearer API_TOKEN` ou `X-Cockpit-Token`); lê o pool com chaves mascaradas ou salva a configuração em `config_pool_ias.json`. |
+| `POST` | `/api/v1/ia/testar_slot` | Exige autenticação e testa o slot pelo backend, que valida a allowlist do endpoint; retorna status e latência (`latenciaMs`). Não há chamada direta do navegador ao provedor. |
+| `POST` | `/api/v1/ia/chat` | Exige autenticação e encaminha conversas, análises e minutas pelo gateway do backend; falha do gateway não aciona provedores alternativos no navegador. |
+| `POST` | `/api/v1/openproject/sync_card` | Exige autenticação. No fluxo do painel, a gravação só é oferecida após análise consistente, prévia para revisão humana e confirmação explícita. |
 | `GET` | `/api/v1/openproject/historico_agendado_v2` | Retorna o log auditável das sincronizações automáticas executadas (`registro_execucao_agendada.json`). |
 | `GET` | `/api/v1/glpi/tickets` | Retorna a fila de chamados técnicos e dados do cache de produção do GLPI 10 (`glpi_producao_cache.json`). |
 
@@ -247,6 +247,19 @@ Cockpit_GTI/
     ├── iniciar_cockpit.sh                 # Inicializador para ambientes Linux / WSL
     └── atualizar_painel_windows.ps1       # Script de sincronização local no Windows
 ```
+
+---
+
+## 🧪 Testes Automatizados e Contratos
+
+Para executar localmente, instale as dependências e rode a suíte:
+
+```bash
+python -m pip install -r requirements.txt
+python -m unittest discover -v tests
+```
+
+Os testes de contrato isolam as integrações com IA e OpenProject, validam formatos de entrada, autenticação e códigos HTTP, e verificam os gates do painel. O workflow do GitHub Actions executa a suíte em Python 3.11 e 3.12 em cada push e pull request, sem depender de serviços externos.
 
 ---
 
