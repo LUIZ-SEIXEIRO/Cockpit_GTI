@@ -708,5 +708,37 @@ except TimeoutError:
         self.assertIsNone(motor_outro.sessao.cookies.get("PHPSESSID"))
 
 
+
+    def test_33_rota_status_trata_marcador_rollback_pendente(self):
+        with open(self.motor._marcador_rollback, "w", encoding="utf-8") as f:
+            f.write("backup_pendente.tmp")
+
+        status = self.motor.validar_sessao()
+        self.assertFalse(status.get("sucesso"))
+        self.assertEqual(status.get("codigo"), 503)
+        self.assertTrue(status.get("rollback_pendente"))
+        self.assertFalse(status.get("autenticado"))
+
+        res_caixa = self.motor.listar_caixa_unidade()
+        self.assertFalse(res_caixa.get("sucesso"))
+        self.assertEqual(res_caixa.get("codigo"), 503)
+
+        try:
+            import main
+            app = main.app
+        except Exception:
+            return
+
+        with app.test_client() as client:
+            with patch.object(main, "motor_sei_instance", self.motor):
+                resp = client.get("/api/v1/sei/status")
+                self.assertNotEqual(resp.status_code, 500)
+                dados = resp.get_json()
+                self.assertIsInstance(dados, dict)
+                self.assertFalse(dados.get("sucesso"))
+                self.assertFalse(dados.get("autenticado"))
+                self.assertTrue(dados.get("rollback_pendente"))
+
+
 if __name__ == "__main__":
     unittest.main()

@@ -839,8 +839,25 @@ class MotorSEI:
             return False
 
     def validar_sessao(self) -> StatusRetorno:
-        self._sincronizar_sessao_se_modificada()
-        ativa = bool(self.sessao.cookies) and self.validar_sessao_ativa()
+        try:
+            self._sincronizar_sessao_se_modificada()
+            ativa = bool(self.sessao.cookies) and self.validar_sessao_ativa()
+        except RuntimeError as e:
+            return StatusRetorno({
+                "sucesso": False,
+                "codigo": 503,
+                "ativa": False,
+                "sessao_ativa": False,
+                "autenticado": False,
+                "rollback_pendente": True,
+                "erro": str(e),
+                "caminho_sessao": self.caminho_sessao,
+                "caminho": self.caminho_sessao,
+                "mtime": None,
+                "hash": None,
+                "cookies": [],
+                "unidade": self.id_unidade
+            })
         return StatusRetorno({
             "sucesso": True,
             "ativa": ativa,
@@ -870,7 +887,15 @@ class MotorSEI:
         return self.validar_sessao()
 
     def listar_caixa_unidade(self) -> dict:
-        self._sincronizar_sessao_se_modificada()
+        try:
+            self._sincronizar_sessao_se_modificada()
+        except RuntimeError as e:
+            return {
+                "sucesso": False,
+                "codigo": 503,
+                "rollback_pendente": True,
+                "erro": str(e)
+            }
 
         if not self.sessao.cookies:
             return {
@@ -946,7 +971,15 @@ class MotorSEI:
         return ResultadoProcessosSEI(parser.processos)
 
     def buscar_processos(self, termo: str) -> dict:
-        self._sincronizar_sessao_se_modificada()
+        try:
+            self._sincronizar_sessao_se_modificada()
+        except RuntimeError as e:
+            return {
+                "sucesso": False,
+                "codigo": 503,
+                "rollback_pendente": True,
+                "erro": str(e)
+            }
 
         if not self.sessao.cookies:
             return {
