@@ -1678,6 +1678,111 @@ th.th-sortable-v9:hover {
         box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
     }
 </style>
+    <style id="sagti-clean-executive-theme">
+    /* =========================================================================
+       SA-GTI / SP-AGUAS — DESIGN SYSTEM EXECUTIVO LIMPO (ANTI-AI-SLOP)
+       Superficies solidas, hierarquia tipografica, tabular-nums e zero neon
+       ========================================================================= */
+    :root {
+        --sagti-bg: #0b1120;
+        --sagti-sidebar: #090e1a;
+        --sagti-surface: #111827;
+        --sagti-surface-alt: #162032;
+        --sagti-border: #1e293b;
+        --sagti-border-strong: #334155;
+        --sagti-accent: #0284c7;
+        --sagti-accent-hover: #0369a1;
+        --sagti-text: #f8fafc;
+        --sagti-text-muted: #94a3b8;
+        --sagti-radius: 10px;
+    }
+
+    body, .main-content, .app-shell {
+        background: var(--sagti-bg) !important;
+        color: var(--sagti-text);
+        font-family: 'Inter', 'Segoe UI', system-ui, -apple-system, sans-serif !important;
+        -webkit-font-smoothing: antialiased;
+    }
+
+    .sidebar, aside#sidebar {
+        background: var(--sagti-sidebar) !important;
+        border-right: 1px solid var(--sagti-border) !important;
+        backdrop-filter: none !important;
+    }
+
+    /* Remove translucidez pesada, sombras exageradas e gradientes de IA nos cards */
+    .card, .kpi-card, .kpi-card.hero, .panel, .chart-card, .modal-content, .kanban-col {
+        background: var(--sagti-surface) !important;
+        background-image: none !important;
+        border: 1px solid var(--sagti-border) !important;
+        border-radius: var(--sagti-radius) !important;
+        box-shadow: 0 1px 2px rgba(0, 0, 0, 0.28) !important;
+        backdrop-filter: none !important;
+    }
+
+    .kpi-card.hero {
+        border-left: 3px solid var(--sagti-accent) !important;
+    }
+
+    .card:hover, .kpi-card:hover {
+        border-color: var(--sagti-border-strong) !important;
+        transform: none !important;
+    }
+
+    /* Numeros tabulares alinhados em KPIs, tabelas e badges */
+    .kpi-value, .kpi-number, table td, table th, .badge, .pill-tag {
+        font-variant-numeric: tabular-nums !important;
+    }
+
+    /* Tabelas executivas com leitura limpa */
+    table {
+        border-collapse: collapse !important;
+    }
+    table thead th {
+        background: #0f172a !important;
+        color: var(--sagti-text-muted) !important;
+        font-size: 11px !important;
+        font-weight: 600 !important;
+        letter-spacing: 0.04em !important;
+        text-transform: uppercase !important;
+        border-bottom: 1px solid var(--sagti-border-strong) !important;
+    }
+    table tbody tr {
+        border-bottom: 1px solid var(--sagti-border) !important;
+    }
+    table tbody tr:hover {
+        background: var(--sagti-surface-alt) !important;
+    }
+
+    /* Botoes sobrios sem gradiente roxo/neon */
+    .btn, button.btn-primary {
+        background-image: none !important;
+        border-radius: 7px !important;
+        font-weight: 600 !important;
+        box-shadow: none !important;
+        transition: background-color 0.15s ease, border-color 0.15s ease !important;
+    }
+    .btn-primary, button.btn-primary {
+        background-color: var(--sagti-accent) !important;
+        border: 1px solid var(--sagti-accent) !important;
+        color: #ffffff !important;
+    }
+    .btn-primary:hover, button.btn-primary:hover {
+        background-color: var(--sagti-accent-hover) !important;
+    }
+
+    /* Inputs e foco acessivel */
+    input, select, textarea {
+        background-color: #0f172a !important;
+        border: 1px solid var(--sagti-border-strong) !important;
+        border-radius: 6px !important;
+        color: var(--sagti-text) !important;
+    }
+    button:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-visible, a:focus-visible {
+        outline: 2px solid #38bdf8 !important;
+        outline-offset: 2px !important;
+    }
+    </style>
 </head>
 <body>
     <!-- BARRA DO MODO GESTÃO À VISTA (TV KIOSK) -->
