@@ -569,7 +569,7 @@ class MotorSEI:
 
             sei_host = urlparse(self.base_url).hostname
             is_https = urlparse(self.base_url).scheme.lower() == "https"
-            sei_path = urlparse(self.base_url).path.rstrip("/") or "/"
+            sei_path = "/"
 
             for k, v in cookies.items():
                 self.sessao.cookies.set(
@@ -797,6 +797,15 @@ class MotorSEI:
 
         return True
 
+    def _eh_tela_login_sei(self, resp) -> bool:
+        url_resp = str(getattr(resp, "url", "") or "").lower()
+        texto_resp = str(getattr(resp, "text", "") or "").lower()
+        if "/sip/login.php" in url_resp or "msg=link%20sem%20assinatura" in url_resp or "link sem assinatura" in texto_resp:
+            return True
+        if 'id="frmlogin"' in texto_resp or "id='frmlogin'" in texto_resp or 'name="frmlogin"' in texto_resp:
+            return True
+        return False
+
     def validar_sessao_ativa(self) -> bool:
         self._sincronizar_sessao_se_modificada()
 
@@ -812,6 +821,8 @@ class MotorSEI:
             final_netloc = urlparse(resp.url).netloc.lower()
             sei_netloc = urlparse(self.base_url).netloc.lower()
             if final_netloc and final_netloc != sei_netloc:
+                return False
+            if self._eh_tela_login_sei(resp):
                 return False
 
             validador = ValidadorEstruturalSEI(tipo_tela="caixa", base_url=self.base_url)
@@ -929,6 +940,14 @@ class MotorSEI:
                 "erro": f"SEI SP retornou status HTTP {resp.status_code}"
             }
 
+        if self._eh_tela_login_sei(resp):
+            return {
+                "sucesso": False,
+                "codigo": 401,
+                "sessao_expirada": True,
+                "erro": "Sessao expirada ou login necessario no SEI SP"
+            }
+
         validador = ValidadorEstruturalSEI(tipo_tela="caixa", base_url=self.base_url)
         validador.feed(resp.text)
         texto_visivel = validador.obter_texto_visivel()
@@ -1016,6 +1035,14 @@ class MotorSEI:
                 "codigo": resp.status_code if resp.status_code in (400, 401, 403, 404, 429) else 502,
                 "sessao_expirada": resp.status_code == 401,
                 "erro": f"SEI SP retornou status HTTP {resp.status_code} na pesquisa"
+            }
+
+        if self._eh_tela_login_sei(resp):
+            return {
+                "sucesso": False,
+                "codigo": 401,
+                "sessao_expirada": True,
+                "erro": "Sessao expirada ou login necessario no SEI SP"
             }
 
         validador = ValidadorEstruturalSEI(tipo_tela="pesquisa", base_url=self.base_url)
