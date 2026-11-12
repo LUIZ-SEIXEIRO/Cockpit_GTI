@@ -3,6 +3,7 @@
 .env.*
 !.env.example
 data/usuarios_cockpit.json
+data/config_pool_ias.local.json
 
 # Backups e temporários
 *_backup_*

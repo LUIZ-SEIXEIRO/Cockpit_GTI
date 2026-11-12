@@ -357,11 +357,21 @@ class TestMotorSEI(unittest.TestCase):
             return
 
         with app.test_client() as client:
-            with patch.object(main.motor_sei_instance, "validar_sessao", return_value={"sucesso": True, "ativa": False, "autenticado": False}):
-                resp_status = client.get("/api/v1/sei/status")
+            with patch.dict(os.environ, {"COCKPIT_API_TOKEN": "", "API_TOKEN": "token_sei_teste"}), \
+                 patch.object(main.motor_sei_instance, "validar_sessao", return_value={
+                     "sucesso": True,
+                     "ativa": False,
+                     "autenticado": False,
+                     "caminho_sessao": "/private/path/sessao.json",
+                 }):
+                resp_status = client.get(
+                    "/api/v1/sei/status",
+                    headers={"Authorization": "Bearer token_sei_teste"},
+                )
                 self.assertEqual(resp_status.status_code, 200)
                 dados = resp_status.get_json()
                 self.assertFalse(dados.get("autenticado"))
+                self.assertNotIn("caminho_sessao", dados)
 
     def test_20_rejeitar_marcadores_falsos_em_script_e_comentarios(self):
         self.motor.salvar_sessao({"PHPSESSID": "sessao_ativa_valida"})
@@ -731,13 +741,18 @@ except TimeoutError:
 
         with app.test_client() as client:
             with patch.object(main, "motor_sei_instance", self.motor):
-                resp = client.get("/api/v1/sei/status")
+                with patch.dict(os.environ, {"COCKPIT_API_TOKEN": "", "API_TOKEN": "token_sei_teste"}):
+                    resp = client.get(
+                        "/api/v1/sei/status",
+                        headers={"Authorization": "Bearer token_sei_teste"},
+                    )
                 self.assertEqual(resp.status_code, 503)
                 dados = resp.get_json()
                 self.assertIsInstance(dados, dict)
                 self.assertFalse(dados.get("sucesso"))
                 self.assertFalse(dados.get("autenticado"))
                 self.assertTrue(dados.get("rollback_pendente"))
+                self.assertNotIn("caminho_sessao", dados)
 
 
 if __name__ == "__main__":

@@ -7095,8 +7095,25 @@ cockpit-gti-spaguas/
     </div>
 
     <script>
+    window.obterTokenCockpitSeguro = function() {
+        const tokenAtual = window.__COCKPIT_TOKEN__ || sessionStorage.getItem('cockpit_token') || '';
+        if (tokenAtual) return tokenAtual;
+        const tokenLegado = localStorage.getItem('cockpit_token') || '';
+        if (tokenLegado) {
+            sessionStorage.setItem('cockpit_token', tokenLegado);
+            localStorage.removeItem('cockpit_token');
+        }
+        return tokenLegado;
+    };
+    window.obterTokenCockpitSeguro();
+    const tokenOpenProjectLegado = localStorage.getItem('sagti_openproject_token') || '';
+    if (tokenOpenProjectLegado && !sessionStorage.getItem('sagti_openproject_token')) {
+        sessionStorage.setItem('sagti_openproject_token', tokenOpenProjectLegado);
+    }
+    localStorage.removeItem('sagti_openproject_token');
+
     function obterHeadersComAuth(extras = {}) {
-        const token = window.__COCKPIT_TOKEN__ || localStorage.getItem('cockpit_token') || '';
+        const token = window.obterTokenCockpitSeguro();
         const h = { 'Content-Type': 'application/json', ...extras };
         if (token) h['Authorization'] = 'Bearer ' + token;
         return h;
@@ -13262,7 +13279,8 @@ window.baixarCadernoAtivo = function() {
     window.salvarTokenOpenProject = function() {
         const inp = document.getElementById('cfg-endpoint-op-token');
         if (inp) {
-            localStorage.setItem('sagti_openproject_token', inp.value);
+            sessionStorage.setItem('sagti_openproject_token', inp.value);
+            localStorage.removeItem('sagti_openproject_token');
             if (typeof mostrarNotificacao === 'function') {
                 mostrarNotificacao('Token Salvo', 'API Token do OpenProject salvo com blindagem departamental (sa-gti)!', 'success');
             } else {
@@ -13357,6 +13375,30 @@ const promptsOriginais = window.inserirPromptRapido;
 window.STORAGE_KEY_POOL_3_IAS = 'sagti_pool_tres_ias_v96';
     window.agenteForcadoChat = 'auto';
 
+    window.removerSegredosPoolLocal = function(pool) {
+        var copia = JSON.parse(JSON.stringify(pool));
+        function limpar(obj) {
+            if (Array.isArray(obj)) return obj.map(limpar);
+            if (!obj || typeof obj !== 'object') return obj;
+            Object.keys(obj).forEach(function(chave) {
+                if (/(api.?key|token|secret|password|senha|chave)/i.test(chave)) {
+                    obj[chave] = '';
+                } else {
+                    obj[chave] = limpar(obj[chave]);
+                }
+            });
+            return obj;
+        }
+        return limpar(copia);
+    };
+
+    window.persistirPoolLocalSemSegredos = function(pool) {
+        localStorage.setItem(
+            window.STORAGE_KEY_POOL_3_IAS,
+            JSON.stringify(window.removerSegredosPoolLocal(pool))
+        );
+    };
+
     window.obterPoolPadraoTresIas = function() {
         var keyIa1 = 'sk-CHAVE-SANITIZADA-INSTITUCIONAL';
         var keyIa2 = 'sk-CHAVE-SANITIZADA-INSTITUCIONAL';
@@ -13426,7 +13468,10 @@ window.STORAGE_KEY_POOL_3_IAS = 'sagti_pool_tres_ias_v96';
         try {
             var ctrl = new AbortController();
             var tid = setTimeout(function() { ctrl.abort(); }, 2000);
-            var resp = await fetch('/api/v1/ia/pool', { signal: ctrl.signal });
+            var resp = await fetch('/api/v1/ia/pool', {
+                headers: obterHeadersComAuth(),
+                signal: ctrl.signal
+            });
             clearTimeout(tid);
             if (resp.ok) {
                 var dadosDisco = await resp.json();
@@ -13456,7 +13501,7 @@ window.STORAGE_KEY_POOL_3_IAS = 'sagti_pool_tres_ias_v96';
         }
 
         try {
-            localStorage.setItem(window.STORAGE_KEY_POOL_3_IAS, JSON.stringify(window.POOL_TRES_IAS));
+            window.persistirPoolLocalSemSegredos(window.POOL_TRES_IAS);
         } catch (e) {}
 
         window.sincronizarInputsPoolTresIas();
@@ -13532,7 +13577,9 @@ window.STORAGE_KEY_POOL_3_IAS = 'sagti_pool_tres_ias_v96';
         var pre = (slot === 'principal') ? 'cfg-ia1' : ((slot === 'orquestracao') ? 'cfg-ia2' : 'cfg-ia3');
 
         var ep = (document.getElementById(pre + '-endpoint') || {}).value || (pool && pool.ias && pool.ias[slot] ? pool.ias[slot].endpoint : 'http://100.103.100.98:3001/v1');
-        var key = (document.getElementById(pre + '-apikey') || {}).value || (pool && pool.ias && pool.ias[slot] ? pool.ias[slot].apiKey : 'sk-CHAVE-SANITIZADA-INSTITUCIONAL');
+        var key = (document.getElementById(pre + '-apikey') || {}).value || (pool && pool.ias && pool.ias[slot] ? pool.ias[slot].apiKey : '');
+        if (key === '***' || key === 'sk-CHAVE-SANITIZADA-INSTITUCIONAL') key = '';
+        if (!key) ep = '';
         var mod = (document.getElementById(pre + '-agent') || {}).value || (pool && pool.ias && pool.ias[slot] ? pool.ias[slot].agent : 'gemini-2.5-flash');
 
         var t0 = performance.now();
@@ -13553,9 +13600,9 @@ window.STORAGE_KEY_POOL_3_IAS = 'sagti_pool_tres_ias_v96';
             lat = Math.round(performance.now() - t0);
             if (resp.ok) {
                 var j = await resp.json();
-                if (j && (j.sucesso === true || j.status === 'sucesso' || j.codigo === 200 || j.choices || j.id)) {
+                if (j && j.sucesso === true) {
                     sucesso = true;
-                    if (j.latencia_ms) lat = j.latencia_ms;
+                    if (j.latenciaMs) lat = j.latenciaMs;
                 } else {
                     erroMsg = (j && (j.erro || j.mensagem || j.error)) ? (j.erro || j.mensagem || j.error) : 'Erro no retorno';
                 }
@@ -13563,23 +13610,7 @@ window.STORAGE_KEY_POOL_3_IAS = 'sagti_pool_tres_ias_v96';
                 erroMsg = 'HTTP ' + resp.status;
             }
         } catch (e) {
-            try {
-                var ctrl2 = new AbortController();
-                var tid2 = setTimeout(function() { ctrl2.abort(); }, 30000);
-                var urlDirect = ep.replace(/\/$/, '') + '/chat/completions';
-                var resp2 = await fetch(urlDirect, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json', ...(key && key !== '***' ? { 'Authorization': 'Bearer ' + key } : {}) },
-                    body: JSON.stringify({ model: mod, messages: [{ role: 'user', content: 'ping' }], max_tokens: 2 }),
-                    signal: ctrl2.signal
-                });
-                clearTimeout(tid2);
-                lat = Math.round(performance.now() - t0);
-                if (resp2.ok) sucesso = true;
-                else erroMsg = 'HTTP ' + resp2.status;
-            } catch(e2) {
-                erroMsg = e2.message || 'Timeout / Rede';
-            }
+            erroMsg = e && e.name === 'AbortError' ? 'Tempo limite excedido no gateway.' : (e.message || 'Falha de rede no gateway.');
         }
 
         if (btn) {
@@ -13691,24 +13722,32 @@ window.STORAGE_KEY_POOL_3_IAS = 'sagti_pool_tres_ias_v96';
 
             // 1. Salva no localStorage
             try {
-                localStorage.setItem(window.STORAGE_KEY_POOL_3_IAS, JSON.stringify(pool));
-                localStorage.setItem('newapi_token', pool.ias.microservicos.apiKey || pool.ias.principal.apiKey);
+                window.persistirPoolLocalSemSegredos(pool);
+                var tokenPool = pool.ias.microservicos.apiKey || pool.ias.principal.apiKey;
+                window.salvarTokenNewApiSessao(tokenPool);
                 localStorage.setItem('newapi_model', pool.ias.microservicos.agent || pool.ias.principal.agent);
             } catch (e) {}
 
             // 2. Persistência em disco via backend Flask (:5000/api/v1/ia/pool)
+            var ctrl = new AbortController();
+            var tid = setTimeout(function() { ctrl.abort(); }, 3000);
+            var respostaServidor;
             try {
-                var ctrl = new AbortController();
-                var tid = setTimeout(function() { ctrl.abort(); }, 3000);
-                await fetch('/api/v1/ia/pool', {
+                respostaServidor = await fetch('/api/v1/ia/pool', {
                     method: 'POST',
                     headers: obterHeadersComAuth(),
                     body: JSON.stringify(pool),
                     signal: ctrl.signal
                 });
+            } finally {
                 clearTimeout(tid);
-            } catch (e) {
-                console.warn('Backend proxy offline para persistência:', e);
+            }
+            if (!respostaServidor.ok) {
+                throw new Error('Servidor não confirmou a gravação (HTTP ' + respostaServidor.status + ').');
+            }
+            var retornoServidor = await respostaServidor.json();
+            if (!retornoServidor || retornoServidor.sucesso !== true) {
+                throw new Error('Servidor não confirmou a persistência do pool de IA.');
             }
 
             try {
@@ -13735,7 +13774,7 @@ window.STORAGE_KEY_POOL_3_IAS = 'sagti_pool_tres_ias_v96';
             }
         } catch (errGeral) {
             console.error('Erro ao salvar pool de IAs:', errGeral);
-            alert('⚠️ Ocorreu um erro ao salvar as configurações: ' + errGeral.message);
+            alert('⚠️ Não foi possível confirmar a gravação do pool no servidor. Verifique a conexão e tente novamente.\n\n' + errGeral.message);
         } finally {
             if (btn) {
                 btn.disabled = false;
@@ -13751,7 +13790,7 @@ window.STORAGE_KEY_POOL_3_IAS = 'sagti_pool_tres_ias_v96';
         if (confirm('Deseja restaurar as configurações e prompts originais recomendados das 3 IAs?')) {
             var padrao = window.obterPoolPadraoTresIas();
             window.POOL_TRES_IAS = padrao;
-            try { localStorage.setItem(window.STORAGE_KEY_POOL_3_IAS, JSON.stringify(padrao)); } catch(e) {}
+            try { window.persistirPoolLocalSemSegredos(padrao); } catch(e) {}
             window.sincronizarInputsPoolTresIas();
             alert('🔄 Configurações e prompts padrão restaurados com sucesso!');
         }
@@ -14270,7 +14309,7 @@ SP-Águas — Governo do Estado de São Paulo`;
 
     // Inicializar credenciais salvas da New API (:3001)
     window.addEventListener('DOMContentLoaded', function() {
-        const savedToken = localStorage.getItem('newapi_token');
+        const savedToken = window.obterTokenNewApiSeguro();
         const tokenInput = document.getElementById('chat-token-input');
         if (savedToken && tokenInput) tokenInput.value = savedToken;
 
@@ -14386,8 +14425,29 @@ window.NEWAPI_DETERMINISTIC_LOCK = Object.freeze({
         return String(s).toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
     }
 
+    window.obterTokenNewApiSeguro = function() {
+        const tokenAtual = sessionStorage.getItem('newapi_token') || '';
+        if (tokenAtual) return tokenAtual;
+        const tokenLegado = localStorage.getItem('newapi_token') || '';
+        if (tokenLegado) {
+            sessionStorage.setItem('newapi_token', tokenLegado);
+            localStorage.removeItem('newapi_token');
+        }
+        return tokenLegado;
+    };
+
+    window.salvarTokenNewApiSessao = function(token) {
+        const limpo = String(token || '').trim();
+        localStorage.removeItem('newapi_token');
+        if (limpo && limpo !== '***' && limpo !== 'sk-CHAVE-SANITIZADA-INSTITUCIONAL') {
+            sessionStorage.setItem('newapi_token', limpo);
+        } else {
+            sessionStorage.removeItem('newapi_token');
+        }
+    };
+
     function obterTokenNewApi() {
-        return localStorage.getItem('newapi_token') ||
+        return window.obterTokenNewApiSeguro() ||
                (window.NEWAPI_AUTO_CFG && window.NEWAPI_AUTO_CFG.token) ||
                'sk-CHAVE-SANITIZADA-INSTITUCIONAL';
     }
@@ -14406,7 +14466,7 @@ window.NEWAPI_DETERMINISTIC_LOCK = Object.freeze({
         var baseUrl = obterBaseUrlNewApi();
         var topoBadge = document.getElementById('badge-status-newapi-topo');
         var inpTok = document.getElementById('chat-token-input');
-        var savedTok = (localStorage.getItem('newapi_token') || '').trim();
+        var savedTok = (window.obterTokenNewApiSeguro() || '').trim();
         if (inpTok && savedTok && savedTok !== 'sk-CHAVE-SANITIZADA-INSTITUCIONAL') {
             inpTok.value = savedTok;
         }
@@ -14421,7 +14481,7 @@ window.NEWAPI_DETERMINISTIC_LOCK = Object.freeze({
                 });
                 clearTimeout(tid);
                 if (r.status === 401) {
-                    localStorage.removeItem('newapi_token');
+                    window.salvarTokenNewApiSessao('');
                 } else if (r.ok) {
                     var j = await r.json();
                     if (j && Array.isArray(j.data) && j.data.length > 0) {
@@ -15384,7 +15444,11 @@ window.NEWAPI_DETERMINISTIC_LOCK = Object.freeze({
         for (var i = 0; i < ordemTentativa.length; i++) {
             var slotAtual = ordemTentativa[i];
             var cfg = (pool && pool.ias) ? pool.ias[slotAtual] : null;
-            if (!cfg || !cfg.apiKey || !cfg.agent) continue;
+            if (!cfg || !cfg.agent) continue;
+            var chaveConfigurada = typeof cfg.apiKey === 'string' &&
+                cfg.apiKey.trim() !== '' &&
+                cfg.apiKey !== '***' &&
+                cfg.apiKey !== 'sk-CHAVE-SANITIZADA-INSTITUCIONAL';
 
             var sysContent = promptInfo.systemPrompt + contextoAmbiente + (typeof window.obterContextoDocumentosDriveIA === 'function' ? window.obterContextoDocumentosDriveIA() : '') +
                 (cfg.promptCustom ? ('\n\n[DIRETRIZES DO AGENTE ' + cfg.nome.toUpperCase() + ']:\n' + cfg.promptCustom) : '');
@@ -15401,18 +15465,18 @@ window.NEWAPI_DETERMINISTIC_LOCK = Object.freeze({
             var t0 = performance.now();
             try {
                 var ctrl = new AbortController();
-                var tid = setTimeout(function() { ctrl.abort(); }, cfg.timeoutMs || 14000);
+                var tid = setTimeout(function() { ctrl.abort(); }, 50000);
                 // 1. Tenta via Proxy Flask (:5000/api/v1/ia/chat) - Zero bloqueio de CORS
                 var r = await fetch('/api/v1/ia/chat', {
                     method: 'POST',
                     headers: obterHeadersComAuth(),
                     body: JSON.stringify({
-                        endpoint: cfg.endpoint,
-                        apiKey: cfg.apiKey,
-                        slot: (cfg.id || 'principal'),
-                        ia: (cfg.id || 'principal'),
+                        endpoint: chaveConfigurada ? cfg.endpoint : undefined,
+                        apiKey: chaveConfigurada ? cfg.apiKey : '',
+                        slot: slotAtual,
+                        ia: slotAtual,
                         model: cfg.agent,
-                        temperature: cfg.temperature || 0.0,
+                        temperature: 0.0,
                         max_tokens: cfg.maxTokens || 700,
                         messages: msgsPayload
                     }),
@@ -15420,23 +15484,6 @@ window.NEWAPI_DETERMINISTIC_LOCK = Object.freeze({
                 });
                 clearTimeout(tid);
 
-                if (!r.ok) {
-                    var urlChat = (cfg.endpoint || 'http://localhost:3001/v1').replace(/\/$/, '') + '/chat/completions';
-                    var ctrl2 = new AbortController();
-                    var tid2 = setTimeout(function() { ctrl2.abort(); }, 6000);
-                    r = await fetch(urlChat, {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json', ...(cfg.apiKey && cfg.apiKey !== '***' ? { 'Authorization': 'Bearer ' + cfg.apiKey } : {}) },
-                        body: JSON.stringify({
-                            model: cfg.agent,
-                            temperature: 0.0,
-                            max_tokens: cfg.maxTokens || 700,
-                            messages: msgsPayload
-                        }),
-                        signal: ctrl2.signal
-                    });
-                    clearTimeout(tid2);
-                }
                 var lat = Math.round(performance.now() - t0);
 
                 if (r.ok) {
@@ -15469,54 +15516,11 @@ window.NEWAPI_DETERMINISTIC_LOCK = Object.freeze({
             } catch (e) {}
         }
 
-        // Fallback local: tentar endpoint Flask relativo /api/chat ou /chat (porta 5000)
-        try {
-            var ctrlFlask = new AbortController();
-            var tidFlask = setTimeout(function() { ctrlFlask.abort(); }, 2000);
-            var rFlask = await fetch('/api/chat', {
-                method: 'POST',
-                headers: obterHeadersComAuth(),
-                body: JSON.stringify({ message: pergunta }),
-                signal: ctrlFlask.signal
-            });
-            clearTimeout(tidFlask);
-            if (rFlask.ok) {
-                var jFlask = await rFlask.json();
-                if (jFlask && (jFlask.reply || jFlask.response)) {
-                    return {
-                        texto: String(jFlask.reply || jFlask.response).trim(),
-                        slotUsado: 'flask_local',
-                        agenteUsado: 'Flask Local'
-                    };
-                }
-            }
-        } catch (eF) {}
-
-        // Fallback secundário para o backend Python (:8000/chat) se estiver ativo
-        try {
-            var ctrlPy = new AbortController();
-            var tidPy = setTimeout(function() { ctrlPy.abort(); }, 2000);
-            var rPy = await fetch('http://localhost:8000/chat', {
-                method: 'POST',
-                headers: obterHeadersComAuth(),
-                body: JSON.stringify({ message: pergunta, action: 'chat' }),
-                signal: ctrlPy.signal
-            });
-            clearTimeout(tidPy);
-            if (rPy.ok) {
-                var jPy = await rPy.json();
-                if (jPy && jPy.reply && String(jPy.reply).trim()) {
-                    return {
-                        texto: String(jPy.reply).trim(),
-                        tokensPrompt: promptInfo.tokensEstimados,
-                        slotUsado: 'backend_py',
-                        agenteUsado: 'Agente SA-GTI'
-                    };
-                }
-            }
-        } catch (ePy) {}
-
-        return null;
+        return {
+            texto: null,
+            status: 'indisponivel',
+            erro: 'Os provedores de IA não responderam pelo gateway autenticado. Tente novamente mais tarde.'
+        };
     };
 
     window.executarGatilhoAutomacaoChat = async function(pergunta) {
@@ -15567,21 +15571,42 @@ window.NEWAPI_DETERMINISTIC_LOCK = Object.freeze({
             var escopoDoc = (mDoc[2] || 'Sustentação de Sistemas e Infraestrutura de TIC da SP-Águas').trim();
             try {
                 var ctrlD = new AbortController();
-                var tidD = setTimeout(function() { ctrlD.abort(); }, 6000);
-                var rDoc = await fetch('http://localhost:8000/chat', {
+                var tidD = setTimeout(function() { ctrlD.abort(); }, 50000);
+                var modelDoc = (document.getElementById('chat-model-select') && document.getElementById('chat-model-select').value) || 'qwen2.5:7b';
+                var rDoc = await fetch('/api/v1/ia/chat', {
                     method: 'POST',
                     headers: obterHeadersComAuth(),
-                    body: JSON.stringify({ message: escopoDoc, tipo_doc: tipoArtefato, processo_sei: '137.00029841/2026-14' }),
+                    body: JSON.stringify({
+                        model: modelDoc,
+                        temperature: 0.0,
+                        max_tokens: 1200,
+                        messages: [
+                            {
+                                role: 'system',
+                                content: 'Elabore uma minuta preliminar de ' + tipoArtefato + ' para a SP-Águas. Use apenas os dados fornecidos pelo usuário, não invente números de processo, valores, prazos ou fundamentos legais. Identifique lacunas e informe que o documento exige revisão humana antes de qualquer uso oficial.'
+                            },
+                            { role: 'user', content: escopoDoc }
+                        ]
+                    }),
                     signal: ctrlD.signal
                 });
                 clearTimeout(tidD);
                 if (rDoc.ok) {
                     var jDoc = await rDoc.json();
+                    var textoDoc = jDoc && jDoc.choices && jDoc.choices[0] && jDoc.choices[0].message
+                        ? String(jDoc.choices[0].message.content || '').trim()
+                        : '';
+                    if (!textoDoc) throw new Error('O gateway IA não retornou uma minuta válida.');
                     return '<div style="margin-bottom:10px;padding:10px 12px;background:#f0fdf4;border:1px solid #86efac;border-radius:8px;font-size:12.5px;color:#14532d;">' +
-                        'Elaborei e validei a minuta de <strong>' + window.escapeHtml(tipoArtefato) + '</strong> para você (Nota de conformidade: <strong>' + (jDoc.nota || jDoc.nota_auditoria || 96) + '/100</strong>).' +
+                        '<strong>Minuta preliminar de ' + window.escapeHtml(tipoArtefato) + ' — revisão humana obrigatória.</strong><br>' +
+                        window.escapeHtml(textoDoc).replace(/\n/g, '<br>') +
                         '</div>';
                 }
+                var erroDoc = await rDoc.json().catch(function() { return {}; });
+                throw new Error((erroDoc && (erroDoc.erro || erroDoc.mensagem)) || ('Gateway IA retornou HTTP ' + rDoc.status + '.'));
             } catch (e) {}
+            return '<div style="margin-bottom:10px;padding:10px 12px;background:#fff7ed;border:1px solid #fdba74;border-radius:8px;font-size:12.5px;color:#9a3412;">' +
+                '<strong>IA indisponível.</strong> Não foi possível gerar a minuta pelo gateway autenticado; nenhum documento foi produzido.</div>';
         }
 
         // =====================================================================
@@ -15818,7 +15843,11 @@ window.NEWAPI_DETERMINISTIC_LOCK = Object.freeze({
         }
 
         // Síntese principal (da IA ao vivo ou do motor humanizado pessoal)
-        if (temRespostaLlmViva) {
+        if (resultadoLlm && resultadoLlm.status === 'indisponivel') {
+            html.push('<div style="padding:10px 12px;background:#fff7ed;border:1px solid #fdba74;border-radius:8px;color:#9a3412;">' +
+                '<strong>IA indisponível.</strong> ' + window.escapeHtml(resultadoLlm.erro || 'Não foi possível consultar o gateway autenticado.') +
+                ' Nenhuma resposta de IA foi produzida.</div>');
+        } else if (temRespostaLlmViva) {
             html.push('<div>' + window.formatarTextoLlmParaHtml(resultadoLlm.texto) + '</div>');
         } else {
             html.push('<div>' + (ctx && ctx.sinteseDeterministica ? ctx.sinteseDeterministica : window.gerarSinteseHumanizadaPessoal(pergunta, ctx)) + '</div>');
@@ -16224,17 +16253,12 @@ Base sincronizada com sucesso.`);
     };
 
 window.temTokenNewApiCustomizado = function() {
-        var t = (localStorage.getItem('newapi_token') || '').trim();
+        var t = (window.obterTokenNewApiSeguro() || '').trim();
         return Boolean(t && t.indexOf('sk-') === 0 && t !== 'sk-CHAVE-SANITIZADA-INSTITUCIONAL' && t !== 'sk-CHAVE-SANITIZADA-INSTITUCIONAL');
     };
 
     window.salvarTokenNewApiUsuario = function(novoToken) {
-        var limpo = (novoToken || '').trim();
-        if (limpo) {
-            localStorage.setItem('newapi_token', limpo);
-        } else {
-            localStorage.removeItem('newapi_token');
-        }
+        window.salvarTokenNewApiSessao(novoToken);
         window.detectarModeloNewApi();
     };
 
@@ -16247,7 +16271,7 @@ window.temTokenNewApiCustomizado = function() {
             var urlProbe = motor.endpoint;
             if (motor.id === 'newapi_llm') {
                 if (window.temTokenNewApiCustomizado()) {
-                    headers['Authorization'] = 'Bearer ' + localStorage.getItem('newapi_token').trim();
+                    headers['Authorization'] = 'Bearer ' + window.obterTokenNewApiSeguro().trim();
                 } else {
                     // Usa o endpoint publico /api/status do New API (:3001) para evitar 401 Unauthorized no console
                     urlProbe = 'http://localhost:3001/api/status';
@@ -17870,7 +17894,6 @@ window.kioskTelas = [
     };
 
 (function() {
-    var origResponder = window.responderPerguntaAssistente;
     window.responderPerguntaAssistente = async function() {
         var inp = document.getElementById('modal-assistente-pergunta');
         var resp = document.getElementById('modal-assistente-resposta');
@@ -17882,72 +17905,67 @@ window.kioskTelas = [
         var dInfo = (window.dadosDiretoriasSpAguas && window.dadosDiretoriasSpAguas[diretoria]) ? window.dadosDiretoriasSpAguas[diretoria] : null;
         var escopoStr = dInfo ? (dInfo.bannerTitulo + ' | ' + dInfo.bannerDesc + ' | ' + dInfo.bannerTag) : 'SP-Aguas Consolidado';
 
-        resp.innerHTML = '<div style="display:flex;align-items:center;gap:8px;color:#0056d2;"><span>\ud83e\udd16</span> <em>Consultando Base RAG Regimental (Delibera\u00e7\u00e3o n\u00ba 21/2026, PCA 2027, PNCP) e New API (:3001)...</em></div>';
+        resp.innerHTML = '<div style="display:flex;align-items:center;gap:8px;color:#0056d2;"><span>\ud83e\udd16</span> <em>Consultando o gateway autenticado de IA...</em></div>';
         resp.style.display = 'block';
 
-        // 1. Tentar enriquecer com os mineradores do Gateway (:8000)
-        var ctxGateway = '';
-        try {
-            var rRag = await fetch('http://localhost:8000/api/v1/rag/contexto');
-            if (rRag.ok) {
-                var jRag = await rRag.json();
-                ctxGateway = JSON.stringify(jRag.base_regimental || {});
-            }
-        } catch (e) {}
-
-        // 2. Consultar o container New API (:3001) com RAG Regimental injetado
-        var token = (document.getElementById('chat-token-input') && document.getElementById('chat-token-input').value) || localStorage.getItem('newapi_token') || '';
         var model = (document.getElementById('chat-model-select') && document.getElementById('chat-model-select').value) || localStorage.getItem('newapi_model') || 'qwen2.5-coder:7b';
+        var sysPrompt = 'Você é o assistente do Cockpit SP-Águas. Escopo selecionado: ' + escopoStr + '. ' +
+            'Responda em português com objetividade. Diferencie fatos fornecidos de inferências e informe claramente quando não houver contexto suficiente.';
+        var ctrl = new AbortController();
+        var tid = setTimeout(function() { ctrl.abort(); }, 50000);
 
-        if (token) {
-            try {
-                var ctrl = new AbortController();
-                var tid = setTimeout(function() { ctrl.abort(); }, 45000);
-                var sysPrompt = 'Voce e o Assistente Flutuante RAG do Cockpit SP-Aguas (SA-GTI). ' +
-                    'Escopo ativo no painel: ' + escopoStr + '. ' +
-                    'Base Regimental (Deliberacao no 21/2026 - 114 artigos, PCA 2027 - R$ 1,51 bi, 33 Cadeias de Valor SA-GTI e 179 processos SEI): ' + ctxGateway + '. ' +
-                    'Responda em portugues de forma objetiva, citando os artigos regimentais e pacotes do PCA.';
-                var rApi = await fetch('http://localhost:3001/v1/chat/completions', {
-                    method: 'POST',
-                    headers: obterHeadersComAuth(),
-                    body: JSON.stringify({
-                        model: model,
-                        messages: [
-                            { role: 'system', content: sysPrompt },
-                            { role: 'user', content: txt }
-                        ],
-                        temperature: 0.0, top_p: 0.1, seed: 42
-                    }),
-                    signal: ctrl.signal
-                });
-                clearTimeout(tid);
-                if (rApi.ok) {
-                    var dApi = await rApi.json();
-                    if (dApi.choices && dApi.choices[0] && dApi.choices[0].message) {
-                        var rawReply = dApi.choices[0].message.content || '';
-                        var chkRag = (typeof window.validarFidelidadeRespostaLLM === 'function') ? window.validarFidelidadeRespostaLLM(rawReply) : { valido: true };
-                        if (!chkRag.valido) { throw new Error(chkRag.motivo); }
-                        var replyTxt = window.escapeHtml(rawReply).replace(/\n/g, '<br>');
-                        resp.innerHTML = '<div style="background:#ffffff;border:1px solid #cbd5e1;border-left:4px solid #10b981;border-radius:6px;padding:12px;margin-top:6px;line-height:1.55;">' +
-                            '<div style="font-size:11px;font-weight:700;color:#047857;margin-bottom:6px;display:flex;align-items:center;gap:6px;">' +
-                            '<span>\ud83d\udfe2</span> <span>Copiloto RAG New API (:3001 \u2022 ' + model + ')</span>' +
-                            '<span style="margin-left:auto;font-size:10px;background:#dcfce7;color:#166534;padding:2px 6px;border-radius:4px;">RAG Regimental Ativo</span></div>' +
-                            '<div style="color:#1e293b;font-size:12px;">' + replyTxt + '</div></div>';
-                        return;
-                    }
-                }
-            } catch (err) {}
-        }
+        try {
+            var rApi = await fetch('/api/v1/ia/chat', {
+                method: 'POST',
+                headers: obterHeadersComAuth(),
+                body: JSON.stringify({
+                    model: model,
+                    messages: [
+                        { role: 'system', content: sysPrompt },
+                        { role: 'user', content: txt }
+                    ],
+                    temperature: 0.0
+                }),
+                signal: ctrl.signal
+            });
+            clearTimeout(tid);
+            var dados = null;
+            try { dados = await rApi.json(); } catch (_) {}
+            if (!rApi.ok) {
+                throw new Error((dados && (dados.erro || dados.mensagem)) || ('Gateway IA retornou HTTP ' + rApi.status + '.'));
+            }
 
-        // 3. Fallback para o motor SSOT local enriquecido com o escopo regimental
-        if (typeof origResponder === 'function') {
-            await origResponder();
+            var rawReply = dados && dados.choices && dados.choices[0] && dados.choices[0].message
+                ? String(dados.choices[0].message.content || '').trim()
+                : '';
+            if (!rawReply) throw new Error('O gateway IA não retornou uma resposta válida.');
+
+            var chkRag = (typeof window.validarFidelidadeRespostaLLM === 'function')
+                ? window.validarFidelidadeRespostaLLM(rawReply)
+                : { valido: true };
+            if (!chkRag.valido) {
+                resp.innerHTML = '<div style="padding:10px 12px;background:#fff7ed;border:1px solid #fdba74;border-radius:8px;color:#9a3412;">' +
+                    '<strong>Resposta bloqueada pela verificação de contexto.</strong> ' + window.escapeHtml(chkRag.motivo) +
+                    ' A revisão humana é necessária.</div>';
+                return;
+            }
+
+            var replyTxt = window.escapeHtml(rawReply).replace(/\n/g, '<br>');
+            resp.innerHTML = '<div style="background:#ffffff;border:1px solid #cbd5e1;border-left:4px solid #10b981;border-radius:6px;padding:12px;margin-top:6px;line-height:1.55;">' +
+                '<div style="font-size:11px;font-weight:700;color:#047857;margin-bottom:6px;">Gateway IA Cockpit • ' + window.escapeHtml(model) + '</div>' +
+                '<div style="color:#1e293b;font-size:12px;">' + replyTxt + '</div></div>';
+        } catch (err) {
+            clearTimeout(tid);
+            resp.innerHTML = '<div style="padding:10px 12px;background:#fff7ed;border:1px solid #fdba74;border-radius:8px;color:#9a3412;">' +
+                '<strong>IA indisponível.</strong> ' + window.escapeHtml(err && err.message ? err.message : 'Falha ao consultar o gateway autenticado.') +
+                ' Nenhuma resposta foi produzida.</div>';
         }
     };
 })();
 
 </script>
-    <script src="/static/conector_api.js">
+    <script src="/static/conector_api.js"></script>
+    <script>
     window.abrirModalManualGovernanca = function() {
         document.getElementById('modal-manual-governanca').style.display = 'flex';
     };
@@ -18139,7 +18157,7 @@ window.kioskTelas = [
 
 <script>
     function obterHeadersComAuth(extras = {}) {
-        const token = window.__COCKPIT_TOKEN__ || localStorage.getItem('cockpit_token') || '';
+        const token = window.obterTokenCockpitSeguro();
         const h = { 'Content-Type': 'application/json', ...extras };
         if (token) h['Authorization'] = 'Bearer ' + token;
         return h;
@@ -18251,7 +18269,7 @@ function abrirModalRegrasSEI() {
 
 <script>
     function obterHeadersComAuth(extras = {}) {
-        const token = window.__COCKPIT_TOKEN__ || localStorage.getItem('cockpit_token') || '';
+        const token = window.obterTokenCockpitSeguro();
         const h = { 'Content-Type': 'application/json', ...extras };
         if (token) h['Authorization'] = 'Bearer ' + token;
         return h;
@@ -18345,7 +18363,7 @@ function dispararProcessamentoSEI() {
 
 <script>
     function obterHeadersComAuth(extras = {}) {
-        const token = window.__COCKPIT_TOKEN__ || localStorage.getItem('cockpit_token') || '';
+        const token = window.obterTokenCockpitSeguro();
         const h = { 'Content-Type': 'application/json', ...extras };
         if (token) h['Authorization'] = 'Bearer ' + token;
         return h;
@@ -18393,7 +18411,7 @@ window.alternarSubConfig = function(modo) {
 
 <script>
     function obterHeadersComAuth(extras = {}) {
-        const token = window.__COCKPIT_TOKEN__ || localStorage.getItem('cockpit_token') || '';
+        const token = window.obterTokenCockpitSeguro();
         const h = { 'Content-Type': 'application/json', ...extras };
         if (token) h['Authorization'] = 'Bearer ' + token;
         return h;
@@ -18759,7 +18777,7 @@ input::placeholder, textarea::placeholder {
 
 <script>
     function obterHeadersComAuth(extras = {}) {
-        const token = window.__COCKPIT_TOKEN__ || localStorage.getItem('cockpit_token') || '';
+        const token = window.obterTokenCockpitSeguro();
         const h = { 'Content-Type': 'application/json', ...extras };
         if (token) h['Authorization'] = 'Bearer ' + token;
         return h;
@@ -19286,7 +19304,7 @@ input::placeholder, textarea::placeholder {
 
 <script>
     function obterHeadersComAuth(extras = {}) {
-        const token = window.__COCKPIT_TOKEN__ || localStorage.getItem('cockpit_token') || '';
+        const token = window.obterTokenCockpitSeguro();
         const h = { 'Content-Type': 'application/json', ...extras };
         if (token) h['Authorization'] = 'Bearer ' + token;
         return h;
@@ -19316,7 +19334,7 @@ input::placeholder, textarea::placeholder {
 
 <script>
     function obterHeadersComAuth(extras = {}) {
-        const token = window.__COCKPIT_TOKEN__ || localStorage.getItem('cockpit_token') || '';
+        const token = window.obterTokenCockpitSeguro();
         const h = { 'Content-Type': 'application/json', ...extras };
         if (token) h['Authorization'] = 'Bearer ' + token;
         return h;
@@ -19344,7 +19362,7 @@ input::placeholder, textarea::placeholder {
 
 <script>
     function obterHeadersComAuth(extras = {}) {
-        const token = window.__COCKPIT_TOKEN__ || localStorage.getItem('cockpit_token') || '';
+        const token = window.obterTokenCockpitSeguro();
         const h = { 'Content-Type': 'application/json', ...extras };
         if (token) h['Authorization'] = 'Bearer ' + token;
         return h;
@@ -19483,7 +19501,7 @@ input::placeholder, textarea::placeholder {
 
 <script>
     function obterHeadersComAuth(extras = {}) {
-        const token = window.__COCKPIT_TOKEN__ || localStorage.getItem('cockpit_token') || '';
+        const token = window.obterTokenCockpitSeguro();
         const h = { 'Content-Type': 'application/json', ...extras };
         if (token) h['Authorization'] = 'Bearer ' + token;
         return h;
@@ -21626,18 +21644,16 @@ html body #view-gestao_agil .kanban-card-modelo .k-status-sei-critico {
         revisarCardComIa2Orquestracao: async function(proc, cardOpExistente) {
             var payloadBase = window.openProjectOrchestrator.gerarPayloadEnriquecido(proc, cardOpExistente);
             var idProc = proc ? proc.ID_Processo : '';
-            var espec = proc ? (proc.Especificacao || proc.Tipo_Processo || 'Demanda de TIC homologada SA-GTI') : '';
+            var espec = proc ? (proc.Especificacao || proc.Tipo_Processo || 'Demanda de TIC sob governança SA-GTI') : '';
             var respNom = proc ? (proc.Responsavel_Tecnico || 'SA-GTI') : 'SA-GTI';
             var cardIdFinal = cardOpExistente ? cardOpExistente.id : (idProc.split('.')[1] ? idProc.split('.')[1].split('/')[0] : '1498');
 
-            var parecerTexto = null;
-            var modeloUsado = 'llama3.2:1b';
-
-            // 1. Tenta chamada direta ao Backend Proxy local (:5000/api/v1/ia/revisar_processo)
-            // Sem qualquer bloqueio de CORS, conectando ao Llama 3.2 1B via Tailscale
+            var parecerTexto = '';
+            var modeloUsado = '';
+            var tid = null;
             try {
                 var ctrl = new AbortController();
-                var tid = setTimeout(function() { ctrl.abort(); }, 45000);
+                tid = setTimeout(function() { ctrl.abort(); }, 65000);
                 var resBackend = await fetch('/api/v1/ia/revisar_processo', {
                     method: 'POST',
                     headers: obterHeadersComAuth(),
@@ -21658,54 +21674,61 @@ html body #view-gestao_agil .kanban-card-modelo .k-status-sei-critico {
                 clearTimeout(tid);
                 var dadosIa = null;
                 try { dadosIa = await resBackend.json(); } catch (_) {}
-                if (resBackend.ok && dadosIa && dadosIa.sucesso && dadosIa.parecer && !(dadosIa.consistencia && dadosIa.consistencia.consistente === false)) {
-                    parecerTexto = dadosIa.parecer.trim();
-                    modeloUsado = dadosIa.modelo || 'llama3.2:1b';
-                } else if (resBackend.status === 422 || (dadosIa && dadosIa.bloqueado_por_inconsistencia)) {
-                    modeloUsado = 'Bloqueio de Consistência (SA-GTI)';
-                    parecerTexto = '[BLOQUEADO POR INCONSISTÊNCIA DE CONTEXTO] ' + ((dadosIa && dadosIa.erro) || 'A resposta da IA citou dados fora do contexto verificado. Revisão manual obrigatória.');
+                if (resBackend.status === 422 || (dadosIa && (
+                    dadosIa.bloqueado_por_inconsistencia ||
+                    (dadosIa.consistencia && dadosIa.consistencia.consistente === false)
+                ))) {
+                    var erroBloqueio = new Error((dadosIa && dadosIa.erro) || 'Parecer bloqueado por inconsistência de contexto. Revisão humana obrigatória.');
+                    erroBloqueio.code = 'IA_INCONSISTENTE';
+                    throw erroBloqueio;
                 }
+                if (!resBackend.ok || !dadosIa || dadosIa.sucesso !== true ||
+                    typeof dadosIa.parecer !== 'string' || !dadosIa.parecer.trim() ||
+                    !dadosIa.consistencia || dadosIa.consistencia.consistente !== true) {
+                    var erroIndisponivel = new Error((dadosIa && (dadosIa.erro || dadosIa.mensagem)) || 'A revisão de IA não foi concluída com consistência confirmada.');
+                    erroIndisponivel.code = 'IA_INDISPONIVEL';
+                    throw erroIndisponivel;
+                }
+                parecerTexto = dadosIa.parecer.trim();
+                modeloUsado = dadosIa.modelo || 'modelo não informado';
             } catch(e) {
-                console.log('Backend proxy offline ou em fallback local:', e);
-            }
-
-            // Fallback cognitivo contextual exclusivo para este processo
-            if (!parecerTexto) {
-                modeloUsado = 'llama3.2:1b (Motor Analítico Local)';
-                parecerTexto = 'O processo administrativo SEI ' + idProc + ' tem como objeto "' + espec + '". ' +
-                    'Demanda de TIC atribuída à equipe técnica (' + respNom + ') sob governança da SA-GTI.\n\n' +
-                    'Sob a ótica da Lei Federal nº 14.133/2021 e do PDTIC 2027-2030, a instrução atende aos requisitos formais ' +
-                    'de planejamento, justificativa da necessidade e compatibilidade com o catálogo de serviços.\n\n' +
-                    'Recomendação da IA 2: Homologar os artefatos técnicos, mantendo a rastreabilidade do processo no OpenProject e no SEI-SP.';
+                clearTimeout(tid);
+                if (e && (e.code === 'IA_INCONSISTENTE' || e.code === 'IA_INDISPONIVEL')) throw e;
+                var erroFalha = new Error(e && e.name === 'AbortError'
+                    ? 'Tempo limite excedido ao revisar o processo.'
+                    : 'Falha ao consultar o gateway autenticado de IA.');
+                erroFalha.code = 'IA_INDISPONIVEL';
+                throw erroFalha;
             }
 
             // Injeta o Parecer da IA 2 no corpo do Dossiê Técnico
             var carimboData = new Date().toLocaleDateString('pt-BR') + ' às ' + new Date().toLocaleTimeString('pt-BR');
-            var trechoParecer = '\n\n## 🤖 2. Parecer & Análise Crítica da IA 2 (' + modeloUsado + ')\n> *Homologação emitida em ' + carimboData + ':*\n' + parecerTexto + '\n';
+            var trechoParecer = '\n\n## 🤖 2. Análise preliminar da IA (' + modeloUsado + ')\n> *Gerada em ' + carimboData + '. Não constitui homologação; exige revisão humana.*\n' + parecerTexto + '\n';
 
-            if (payloadBase.descricao.indexOf('## 🤖 2. Parecer') === -1) {
+            if (payloadBase.descricao.indexOf('## 🤖 2. ') === -1) {
                 payloadBase.descricao = payloadBase.descricao.replace('## 📁 2. Repositório', trechoParecer + '\n## 📁 3. Repositório');
             } else {
-                payloadBase.descricao = payloadBase.descricao.replace(/## 🤖 2\. Parecer[\s\S]*?(?=## 📁)/, trechoParecer + '\n');
+                payloadBase.descricao = payloadBase.descricao.replace(/## 🤖 2\.[\s\S]*?(?=## 📁)/, trechoParecer + '\n');
             }
 
             // Injeta no Comentário de Atividade ("O que mudou")
             payloadBase.comentario = '🔄 **[Cockpit GTI] Registro de Governança & Sincronização — ' + carimboData + '**\n\n' +
-                '🤖 **Parecer Analítico da IA 2 (' + modeloUsado + '):**\n' +
-                '• Processo Administrativo SEI ' + idProc + ' homologado com base no PDTIC 2027-2030 e Lei Federal nº 14.133/2021.\n' +
+                '🤖 **Análise preliminar da IA (' + modeloUsado + '), sujeita à revisão humana:**\n' +
+                '• Processo Administrativo SEI ' + idProc + ' analisado com base nos dados fornecidos ao sistema; não é uma homologação.\n' +
                 '• Objeto: ' + espec + '\n' +
                 '• Análise: ' + parecerTexto.split('\n')[0] + '\n\n' +
                 '📌 **O que mudou nesta atualização:**\n' +
                 '• **Dossiê Técnico Enriquecido:** Carga abrangente de metadados, análise da IA 2 e repositório probatório de links.\n' +
-                '• **Aging Líquido & Poréns:** Recálculo homologado de prazos processuais (Aging Líquido: ' + (proc ? (proc.Aging_Liquido_Dias || proc.Dias_Ultima_Mov || '0') : '0') + ' dias).\n' +
+                '• **Aging Líquido & Poréns:** Dados de prazo registrados (Aging Líquido: ' + (proc ? (proc.Aging_Liquido_Dias || proc.Dias_Ultima_Mov || '0') : '0') + ' dias).\n' +
                 '• **Matriz RACI Atualizada:** Validação nominal de papéis (Gestor da Demanda: Luiz Antonio Seixeiro / Executor: ' + respNom + ').\n' +
                 '• **Status do Card:** ' + (payloadBase.status || '🚀 Em progresso') + ' | Criticidade: ' + (proc ? (proc.Farol_Criticidade || '🟢 4 - Fluxo Normal') : '🟢 4 - Fluxo Normal') + '.\n\n' +
                 '👤 **Responsável pela Atualização:** ' + (window.obterUsuarioSessaoAtual ? window.obterUsuarioSessaoAtual().nome : 'Luiz Antonio Seixeiro') + ' (SA-GTI / Governança)\n' +
-                '🤖 **Auditoria Cognitiva:** IA 2 (' + modeloUsado + ')';
+                '🤖 **Auditoria Cognitiva:** IA (' + modeloUsado + '); validação humana pendente.';
 
             payloadBase.revisadoPorIa2 = true;
             payloadBase.modeloIa2 = modeloUsado;
             payloadBase.parecerIa2 = parecerTexto;
+            payloadBase.consistenciaIa2 = true;
             return payloadBase;
         },
 
@@ -21897,11 +21920,15 @@ html body #view-gestao_agil .kanban-card-modelo .k-status-sei-critico {
         },
 
         // ENVIO REAL VIA PROXY DO SERVIDOR FLASK LOCAL (/api/v1/openproject/sync_card)
-        // Contorna 100% o bloqueio de CORS do navegador e grava diretamente no servidor do OpenProject
+        // A escrita deve passar pelo backend e exigir revisão consistente concluída.
         enviarAtualizacaoCardApiSilencioso: async function(cardId, payload, idProcesso) {
+            if (!payload || payload.revisadoPorIa2 !== true || payload.consistenciaIa2 !== true || !payload.parecerIa2) {
+                throw new Error('Gravação bloqueada: revisão de IA consistente não concluída.');
+            }
+
+            var resProxy;
             try {
-                // 1. Tenta via Proxy Backend Python local (:5000) - Sem bloqueio CORS!
-                var resProxy = await fetch('/api/v1/openproject/sync_card', {
+                resProxy = await fetch('/api/v1/openproject/sync_card', {
                     method: 'POST',
                     headers: obterHeadersComAuth(),
                     body: JSON.stringify({
@@ -21909,70 +21936,24 @@ html body #view-gestao_agil .kanban-card-modelo .k-status-sei-critico {
                         idProcesso: idProcesso || '',
                         assunto: payload.assunto,
                         descricao: payload.descricao,
-                        comentario: payload.comentario,
-                        token: localStorage.getItem('sagti_openproject_token') || ''
+                        comentario: payload.comentario
                     })
                 });
-                if (resProxy.ok) {
-                    var dataProxy = await resProxy.json();
-                    console.log('✅ [Proxy Backend] Card #' + cardId + ' resposta:', dataProxy);
-                    if (dataProxy.gravadoRemoto) {
-                        alert('✅ Card #' + cardId + ' GRAVADO COM SUCESSO NO OPENPROJECT!\n\n• Dossiê Técnico de Governança atualizado.\n• Comentário de Atividade publicado na timeline.\n• Status HTTP: ' + (dataProxy.statusHttp || 200));
-                    } else if (dataProxy.erro) {
-                        alert('⚠️ Aviso ao gravar Card #' + cardId + ':\n\n' + dataProxy.erro);
-                    }
-                    return dataProxy;
-                } else {
-                    alert('⚠️ Erro HTTP ' + resProxy.status + ' ao comunicar com o Backend Flask (:5000).\n\nExecute no PowerShell: python atualizar_e_reiniciar_cockpit.py')
-                }
             } catch(e) {
-                console.log('Aviso proxy local:', e);
+                throw new Error('Falha ao comunicar com o backend de sincronização OpenProject.');
             }
 
-            // 2. Fallback direto via navegador (caso proxy ainda não esteja ativo)
-            var endpoint = (localStorage.getItem('sagti_openproject_url') || 'https://projetos.spaguas.sp.gov.br/api/v3').replace(/\/$/, '');
-            var token = (localStorage.getItem('sagti_openproject_token') || '').trim();
-            var urlCard = endpoint + '/work_packages/' + cardId;
-
+            var dataProxy = null;
             try {
-                var headers = { 'Content-Type': 'application/json' };
-                if (token) headers['Authorization'] = 'Basic ' + btoa('apikey:' + token);
-
-                fetch(urlCard, {
-                    method: 'GET',
-                    headers: headers,
-                    credentials: 'include'
-                }).then(function(res) {
-                    if (res.ok) {
-                        return res.json().then(function(data) {
-                            var lockVer = (data && typeof data.lockVersion !== 'undefined') ? data.lockVersion : 1;
-                            var bodyEnvio = {
-                                lockVersion: lockVer,
-                                description: { raw: payload.descricao }
-                            };
-                            if (payload.comentario) {
-                                bodyEnvio.comment = { raw: payload.comentario };
-                            }
-                            return fetch(urlCard, {
-                                method: 'PATCH',
-                                headers: headers,
-                                credentials: 'include',
-                                body: JSON.stringify(bodyEnvio)
-                            }).then(function() {
-                                if (payload.comentario) {
-                                    return fetch(urlCard + '/activities', {
-                                        method: 'POST',
-                                        headers: headers,
-                                        credentials: 'include',
-                                        body: JSON.stringify({ comment: { raw: payload.comentario } })
-                                    }).catch(function(){});
-                                }
-                            });
-                        });
-                    }
-                }).catch(function() {});
-            } catch(e) {}
-            return { sucesso: true, modo: 'local' };
+                dataProxy = await resProxy.json();
+            } catch(e) {
+                throw new Error('O backend retornou uma resposta inválida ao sincronizar com OpenProject.');
+            }
+            if (!resProxy.ok || !dataProxy || dataProxy.sucesso !== true) {
+                throw new Error((dataProxy && (dataProxy.mensagem || dataProxy.erro)) || ('Falha HTTP ' + resProxy.status + ' ao sincronizar o card.'));
+            }
+            console.log('✅ [Proxy Backend] Card #' + cardId + ' resposta:', dataProxy);
+            return dataProxy;
         }
     };
 
@@ -22354,7 +22335,7 @@ html body #view-gestao_agil .kanban-card-modelo .k-status-sei-critico {
             '</div>' +
 
             '<div style="display:flex;justify-content:space-between;align-items:center;border-top:1px solid rgba(255,255,255,0.1);padding-top:14px;flex-wrap:wrap;gap:10px;">' +
-                '<div style="font-size:11px;color:#94a3b8;">⚡ Sincronização via Proxy Backend e persistência local. Sem necessidade de token.</div>' +
+                '<div style="font-size:11px;color:#94a3b8;">⚡ Revisão prévia e gravação autenticada pelo backend.</div>' +
                 '<div style="display:flex;gap:8px;">' +
                     '<button type="button" class="btn btn-secondary" onclick="document.getElementById(\'modal-diff-orquestrador-op\').remove()" style="padding:7px 14px;font-size:12px;">Cancelar</button>' +
                     '<button type="button" class="btn btn-secondary" onclick="window.copiarDossieMarkdownParaClipboard(\'' + idProcesso + '\')" style="padding:7px 14px;font-size:12px;color:#38bdf8;font-weight:700;">📋 Copiar Dossiê</button>' +
@@ -22375,8 +22356,21 @@ html body #view-gestao_agil .kanban-card-modelo .k-status-sei-critico {
         if (!p) return;
 
         var cardOp = window.openProjectOrchestrator.localizarCardPorSEI(idProcesso);
-        var payload = window.openProjectOrchestrator.gerarPayloadEnriquecido(p, cardOp);
+        var payload = null;
         var pacotes = (typeof window.OP_PACOTES_OFICIAIS !== 'undefined' && Array.isArray(window.OP_PACOTES_OFICIAIS)) ? window.OP_PACOTES_OFICIAIS : [];
+        var preDossie = document.getElementById('diff-dossie-pre-view');
+        var preComentario = document.getElementById('diff-comentario-pre-view');
+        var revisaoPendente = window._revisaoIaPendenteOpenProject;
+        var revisaoAindaValida = revisaoPendente &&
+            revisaoPendente.idProcesso === idProcesso &&
+            Date.now() - revisaoPendente.criadoEm <= 300000 &&
+            revisaoPendente.payload &&
+            preDossie && preDossie.textContent === revisaoPendente.payload.descricao &&
+            preComentario && preComentario.textContent === revisaoPendente.payload.comentario;
+        if (!revisaoAindaValida) {
+            window._revisaoIaPendenteOpenProject = null;
+            revisaoPendente = null;
+        }
 
         var agora = new Date();
         var dataStr = agora.toLocaleDateString('pt-BR') + ' ' + agora.toLocaleTimeString('pt-BR');
@@ -22388,8 +22382,77 @@ html body #view-gestao_agil .kanban-card-modelo .k-status-sei-critico {
         var btnConfirmar = document.getElementById('btn-confirmar-gravacao-op');
         if (btnConfirmar) {
             btnConfirmar.disabled = true;
+        }
+
+        if (!revisaoPendente) {
+            if (btnConfirmar) {
+                btnConfirmar.innerHTML = '<span>⏳</span> Revisando o processo...';
+            }
+            try {
+                payload = await window.openProjectOrchestrator.revisarCardComIa2Orquestracao(p, cardOp);
+            } catch(err) {
+                if (btnConfirmar) {
+                    btnConfirmar.disabled = false;
+                    btnConfirmar.innerHTML = '⚠️ Revisão não concluída — tentar novamente';
+                }
+                var motivoRevisao = err && err.message ? err.message : 'A revisão de IA não foi concluída.';
+                if (err && err.code === 'IA_INCONSISTENTE') {
+                    alert('Gravação bloqueada por inconsistência de contexto.\n\n' + motivoRevisao + '\n\nNenhuma gravação foi enviada ao OpenProject.');
+                } else {
+                    alert('Gravação cancelada: o serviço de IA está indisponível ou não confirmou consistência.\n\n' + motivoRevisao + '\n\nNenhuma gravação foi enviada ao OpenProject.');
+                }
+                return;
+            }
+
+            if (!preDossie || !preComentario) {
+                if (btnConfirmar) {
+                    btnConfirmar.disabled = false;
+                    btnConfirmar.innerHTML = '⚠️ Prévia indisponível — tentar novamente';
+                }
+                alert('Gravação cancelada: não foi possível exibir o parecer para revisão humana.');
+                return;
+            }
+            preDossie.textContent = payload.descricao;
+            preComentario.textContent = payload.comentario;
+            window._revisaoIaPendenteOpenProject = {
+                idProcesso: idProcesso,
+                payload: payload,
+                criadoEm: Date.now()
+            };
+            if (btnConfirmar) {
+                btnConfirmar.disabled = false;
+                btnConfirmar.innerHTML = '✅ Confirmar após revisão humana';
+            }
+            alert('A análise preliminar foi gerada e passou pela verificação de consistência. Revise o dossiê e o comentário exibidos; clique novamente em “Confirmar após revisão humana” somente se autorizar a gravação.');
+            return;
+        }
+
+        payload = revisaoPendente.payload;
+        if (btnConfirmar) {
+            btnConfirmar.disabled = true;
             btnConfirmar.innerHTML = '<span>⏳</span> Gravando no OpenProject...';
         }
+
+        if (!window.confirm('Confirma que revisou o parecer preliminar e autoriza a gravação no OpenProject?')) {
+            if (btnConfirmar) {
+                btnConfirmar.disabled = false;
+                btnConfirmar.innerHTML = '✅ Confirmar após revisão humana';
+            }
+            return;
+        }
+
+        var resultadoSync;
+        try {
+            resultadoSync = await window.openProjectOrchestrator.enviarAtualizacaoCardApiSilencioso(cardIdFinal, payload, idProcesso);
+        } catch(err) {
+            if (btnConfirmar) {
+                btnConfirmar.disabled = false;
+                btnConfirmar.innerHTML = '⚠️ Falha na gravação — tentar novamente';
+            }
+            alert('Falha ao gravar no OpenProject.\n\n' + (err && err.message ? err.message : 'O backend não confirmou a operação.') + '\n\nNenhuma confirmação de sucesso foi registrada.');
+            return;
+        }
+        window._revisaoIaPendenteOpenProject = null;
 
         // 1. Atualiza o objeto do card
         if (cardOp) {
@@ -22437,9 +22500,6 @@ html body #view-gestao_agil .kanban-card-modelo .k-status-sei-critico {
             localStorage.setItem('sagti_op_ultima_sync_auto', Date.now().toString());
         } catch(e) {}
 
-        // 3. Envia ao Proxy Backend Python (:5000) para escrita real no servidor do OpenProject
-        await window.openProjectOrchestrator.enviarAtualizacaoCardApiSilencioso(cardIdFinal, payload, idProcesso);
-
         // 4. Copia automaticamente o Dossiê para a área de transferência
         if (typeof navigator !== "undefined" && navigator.clipboard && navigator.clipboard.writeText) {
             navigator.clipboard.writeText(payload.descricao).catch(function(){});
@@ -22456,7 +22516,7 @@ html body #view-gestao_agil .kanban-card-modelo .k-status-sei-critico {
             assunto: payload.assunto,
             usuario: usuarioLogado,
             dataHora: dataStr,
-            statusHttp: 200,
+            statusHttp: resultadoSync.statusHttp || 200,
             resultado: 'Gravação concluída com sucesso (Dossiê Abrangente e Comentário enviados).'
         });
         try { localStorage.setItem('sagti_op_orquestracoes_log', JSON.stringify(logOrquestracao.slice(0, 50))); } catch(e) {}
@@ -24712,8 +24772,43 @@ window.renderizarTabelaMesa = function() {
         if (confirm('Deseja realmente encerrar sua sessão e sair do Cockpit SP-Águas (SA-GTI)?')) {
             try {
                 localStorage.setItem('sagti_autenticado', 'false');
-                sessionStorage.clear();
+                localStorage.removeItem('cockpit_token');
+                localStorage.removeItem('newapi_token');
+                localStorage.removeItem('sagti_openproject_token');
             } catch(e) {}
+            window.__COCKPIT_TOKEN__ = '';
+            try {
+                if (window.POOL_TRES_IAS && window.persistirPoolLocalSemSegredos) {
+                    window.persistirPoolLocalSemSegredos(window.POOL_TRES_IAS);
+                    Object.values(window.POOL_TRES_IAS.ias || {}).forEach(function(slot) {
+                        if (slot && typeof slot === 'object') {
+                            ['apiKey', 'api_key', 'token', 'secret', 'chave'].forEach(function(campo) {
+                                if (campo in slot) slot[campo] = '';
+                            });
+                        }
+                    });
+                }
+            } catch(e) {
+                console.warn('Não foi possível sanitizar o cache local do pool.');
+            }
+            try {
+                [
+                    'chat-token-input',
+                    'chat-token-quick-input',
+                    'cfg-endpoint-op-token',
+                    'cfg-ia1-apikey',
+                    'cfg-ia2-apikey',
+                    'cfg-ia3-apikey',
+                    'input-cockpit-token-sei',
+                ].forEach(function(id) {
+                    var campo = document.getElementById(id);
+                    if (campo) campo.value = '';
+                });
+            } catch(e) {
+                console.warn('Não foi possível limpar os campos de credenciais da interface.');
+            } finally {
+                sessionStorage.clear();
+            }
 
             var modalExistente = document.getElementById('modal-logout-confirm');
             if (modalExistente) modalExistente.remove();
@@ -24724,7 +24819,7 @@ window.renderizarTabelaMesa = function() {
             modalLogout.innerHTML = '<div style="background:#0b0f19;border:1px solid rgba(56,189,248,0.3);border-top:4px solid #ef4444;border-radius:18px;max-width:440px;width:100%;padding:28px;text-align:center;box-shadow:0 24px 60px rgba(0,0,0,0.9);color:#ffffff;">' +
                 '<div style="font-size:42px;margin-bottom:12px;">🔒</div>' +
                 '<h3 style="margin:0 0 8px 0;font-size:18px;color:#ffffff;">Sessão Encerrada com Sucesso</h3>' +
-                '<p style="font-size:12.5px;color:#94a3b8;line-height:1.5;margin-bottom:20px;">Você foi desconectado do Cockpit GTI de forma segura. Todas as credenciais locais e buffers da sessão foram liberados.</p>' +
+                '<p style="font-size:12.5px;color:#94a3b8;line-height:1.5;margin-bottom:20px;">As credenciais da sessão foram removidas. Dados de trabalho salvos localmente permanecem nesta estação.</p>' +
                 '<button type="button" class="btn btn-primary" onclick="document.getElementById(\'modal-logout-confirm\').remove(); window.abrirTelaLogin();" style="padding:10px 24px;font-size:13px;font-weight:700;background:linear-gradient(135deg,#0284c7 0%,#0ea5e9 100%);border-radius:8px;cursor:pointer;">🔑 Conectar Novamente</button>' +
             '</div>';
             document.body.appendChild(modalLogout);
@@ -24817,8 +24912,6 @@ window.renderizarTabelaMesa = function() {
     if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init);
     else init();
     
-    // Inicializa o Agendador Horário de Sincronização do OpenProject
-    try { window.iniciarAgendadorSincronizacaoHorariaOpenProject(); } catch(e) { console.error(e); }
     window.addEventListener('load', init);
 })();
 
@@ -25699,7 +25792,7 @@ window.dispararHomologacaoBackendReal = async function(btn) {
       </div>
       <label style="display:block;font-size:11px;margin-bottom:4px;color:#94a3b8;">Token da API do Cockpit (API_TOKEN):</label>
       <div style="display:flex;gap:8px;">
-        <input id="input-cockpit-token-sei" type="password" placeholder="Opcional: salva em localStorage (cockpit_token)" style="flex:1;padding:6px 8px;border-radius:6px;border:1px solid #475569;background:#0f172a;color:#f8fafc;font-size:12px;">
+        <input id="input-cockpit-token-sei" type="password" placeholder="Opcional: válido somente nesta aba" style="flex:1;padding:6px 8px;border-radius:6px;border:1px solid #475569;background:#0f172a;color:#f8fafc;font-size:12px;">
         <button onclick="window.salvarTokenCockpitSei()" style="background:#334155;color:#f8fafc;border:1px solid #475569;border-radius:6px;padding:6px 12px;font-size:12px;cursor:pointer;">Definir Token</button>
       </div>
     </div>
@@ -25736,17 +25829,18 @@ window.dispararHomologacaoBackendReal = async function(btn) {
   window.salvarTokenCockpitSei = function() {
     var t = ((document.getElementById('input-cockpit-token-sei') || {}).value || '').trim();
     if (!t) { alert('Informe o API_TOKEN.'); return; }
-    localStorage.setItem('cockpit_token', t);
+    sessionStorage.setItem('cockpit_token', t);
+    localStorage.removeItem('cockpit_token');
     document.getElementById('input-cockpit-token-sei').value = '';
     var out = document.getElementById('resultado-motor-sei');
-    if (out) out.innerHTML = '<div style="color:#4ade80;">Token salvo no navegador.</div>';
+    if (out) out.innerHTML = '<div style="color:#4ade80;">Token salvo somente nesta aba.</div>';
   };
 
   window.atualizarStatusMotorSei = async function() {
     var dot = document.getElementById('dot-status-motor-sei');
     var txt = document.getElementById('sei-status-texto');
     try {
-      var r = await fetch('/api/v1/sei/status');
+      var r = await fetch('/api/v1/sei/status', { headers: obterHeadersComAuth() });
       var d = await r.json();
       if (r.status === 503 || d.rollback_pendente) {
         if (dot) dot.style.background = '#ef4444';
