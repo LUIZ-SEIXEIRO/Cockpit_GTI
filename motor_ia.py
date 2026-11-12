@@ -20,6 +20,7 @@ HOSTS_PADRAO_PERMITIDOS = frozenset({
     "ollama",
     "cockpit-gti-newapi",
     "cockpit-gti-ollama",
+    "100.103.100.98",
 })
 
 DIRETRIZ_GROUNDING_ESTRITO = (

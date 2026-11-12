@@ -159,32 +159,40 @@ class TestMotorIA(unittest.TestCase):
                 )
                 self.assertEqual(r_slot_ssrf.status_code, 403)
 
-                import tempfile
-                with tempfile.NamedTemporaryFile("w", suffix=".json", delete=False, encoding="utf-8") as tf:
-                    json.dump({"ias": {"principal": {"endpoint": "http://100.103.100.98:3001/v1"}}}, tf)
-                    cfg_tmp = tf.name
-                try:
-                  with patch("main.localizar_config_pool", return_value=cfg_tmp):
-                    with patch("urllib.request.urlopen", return_value=_mock_urlopen_json({
-                        "model": "qwen2.5:14b",
-                        "choices": [{"message": {"content": "OK."}}],
-                    })):
-                        r_chat_pool = client.post(
-                            "/api/v1/ia/chat",
-                            headers={"Authorization": "Bearer token_ia_teste"},
-                            json={"endpoint": "http://100.103.100.98:3001/v1", "messages": [{"role": "user", "content": "oi"}]},
-                        )
-                        self.assertEqual(r_chat_pool.status_code, 200)
+                # POST /api/v1/ia/pool rejeita host fora da allowlist fixa (403)
+                r_pool_evil = client.post(
+                    "/api/v1/ia/pool",
+                    headers={"Authorization": "Bearer token_ia_teste"},
+                    json={"ias": {"principal": {"endpoint": "http://evil.example.com/v1"}}},
+                )
+                self.assertEqual(r_pool_evil.status_code, 403)
 
-                        r_slot_pool = client.post(
-                            "/api/v1/ia/testar_slot",
-                            headers={"Authorization": "Bearer token_ia_teste"},
-                            json={"endpoint": "http://100.103.100.98:3001/v1", "model": "qwen2.5:14b"},
-                        )
-                        self.assertEqual(r_slot_pool.status_code, 200)
-                finally:
-                    if os.path.exists(cfg_tmp):
-                        os.unlink(cfg_tmp)
+                # URLError em testar_slot deve retornar 502 (nunca 500)
+                with patch("urllib.request.urlopen", side_effect=urllib.error.URLError("recusado")):
+                    r_slot_err = client.post(
+                        "/api/v1/ia/testar_slot",
+                        headers={"Authorization": "Bearer token_ia_teste"},
+                        json={"endpoint": "http://100.103.100.98:3001/v1", "model": "qwen2.5:14b"},
+                    )
+                    self.assertEqual(r_slot_err.status_code, 502)
+
+                with patch("urllib.request.urlopen", return_value=_mock_urlopen_json({
+                    "model": "qwen2.5:14b",
+                    "choices": [{"message": {"content": "OK."}}],
+                })):
+                    r_chat_pool = client.post(
+                        "/api/v1/ia/chat",
+                        headers={"Authorization": "Bearer token_ia_teste"},
+                        json={"endpoint": "http://100.103.100.98:3001/v1", "messages": [{"role": "user", "content": "oi"}]},
+                    )
+                    self.assertEqual(r_chat_pool.status_code, 200)
+
+                    r_slot_pool = client.post(
+                        "/api/v1/ia/testar_slot",
+                        headers={"Authorization": "Bearer token_ia_teste"},
+                        json={"endpoint": "http://100.103.100.98:3001/v1", "model": "qwen2.5:14b"},
+                    )
+                    self.assertEqual(r_slot_pool.status_code, 200)
 
 
 if __name__ == "__main__":

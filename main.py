@@ -183,26 +183,14 @@ def servir_estaticos(filename):
             return send_from_directory(p, filename)
     return "Arquivo não encontrado", 404
 
-def obter_hosts_pool_configurado():
-    from urllib.parse import urlparse
-    hosts = []
-    cfg_path = localizar_config_pool()
-    if os.path.exists(cfg_path):
-        try:
-            with open(cfg_path, 'r', encoding='utf-8') as f:
-                dados = json.load(f)
-            ias = dados.get('ias') if isinstance(dados, dict) else dados
-            itens = list(ias.values()) if isinstance(ias, dict) else (ias if isinstance(ias, list) else [])
-            for it in itens:
-                if isinstance(it, dict):
-                    ep = it.get('endpoint') or it.get('url') or ''
-                    if isinstance(ep, str) and ep.strip():
-                        h = (urlparse(ep.strip()).hostname or '').lower()
-                        if h:
-                            hosts.append(h)
-        except Exception:
-            pass
-    return hosts
+def validar_endpoints_payload_pool(dados):
+    ias = dados.get('ias') if isinstance(dados, dict) else dados
+    itens = list(ias.values()) if isinstance(ias, dict) else (ias if isinstance(ias, list) else [])
+    for it in itens:
+        if isinstance(it, dict):
+            ep = it.get('endpoint') or it.get('url')
+            if ep is not None and ep != '':
+                motor_ia.validar_endpoint_ia(ep)
 
 
 def normalizar_endpoint_ia(endpoint):
@@ -210,7 +198,7 @@ def normalizar_endpoint_ia(endpoint):
         return motor_ia.obter_endpoint_padrao()
     if not isinstance(endpoint, str):
         raise ValueError('Endpoint de IA deve ser uma string.')
-    return motor_ia.validar_endpoint_ia(endpoint, hosts_permitidos=obter_hosts_pool_configurado())
+    return motor_ia.validar_endpoint_ia(endpoint)
 
 def localizar_config_pool():
     base = os.path.dirname(os.path.abspath(__file__))
@@ -469,6 +457,12 @@ def api_v1_ia_pool():
     if request.method == 'POST':
         try:
             dados = request.get_json(force=True) or {}
+            try:
+                validar_endpoints_payload_pool(dados)
+            except PermissionError as pe:
+                return jsonify({'sucesso': False, 'status': 'erro', 'mensagem': str(pe)}), 403
+            except ValueError as ve:
+                return jsonify({'sucesso': False, 'status': 'erro', 'mensagem': str(ve)}), 400
             if os.path.exists(cfg_path):
                 try:
                     with open(cfg_path, 'r', encoding='utf-8') as f_orig:
@@ -544,7 +538,7 @@ def api_v1_ia_testar_slot():
         except TimeoutError:
             return jsonify({'sucesso': False, 'status': 'erro', 'mensagem': 'Timeout ao testar slot de IA.'}), 504
         except urllib.error.URLError as ue:
-            return jsonify({'sucesso': False, 'status': 'erro', 'mensagem': f'Falha de conexão: {ue.reason}'}), 502, 200
+            return jsonify({'sucesso': False, 'status': 'erro', 'mensagem': f'Falha de conexão: {ue.reason}'}), 502
     except Exception as e:
         return jsonify({'sucesso': False, 'status': 'erro', 'mensagem': str(e)}), 500
 
@@ -580,7 +574,6 @@ def api_v1_ia_chat():
             temperature=dados.get('temperature', 0.0),
             max_tokens=dados.get('max_tokens', 700),
             timeout=45,
-            hosts_permitidos=obter_hosts_pool_configurado(),
         )
         return jsonify(resultado), resultado.get('codigo', 200)
     except Exception as e:
