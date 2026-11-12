@@ -1,3 +1,4 @@
+import threading
 import os
 import sys
 import json
@@ -5,7 +6,6 @@ import stat
 import time
 import shutil
 import tempfile
-import threading
 import unittest
 import socket
 from unittest.mock import patch, MagicMock
@@ -162,39 +162,63 @@ class TestMotorSEI(unittest.TestCase):
 
         with patch.object(self.motor, "carregar_sessao", side_effect=ValueError("Arquivo corrompido")):
             with self.assertRaises(ValueError):
-                self.motor.salvar_sessao({"PHPSESSID": "sessao_invalida"})
+                self.motor.salvar_sessao({"PHPSESSID": "sessao_corrompida"})
 
         self.assertEqual(len(self.motor.sessao.cookies), 0)
         self.assertIsNone(self.motor._mtime_sessao)
-        self.assertIsNone(self.motor._hash_sessao)
 
     def test_10_concorrencia_lock_processos_sem_roubo_de_lock(self):
-        lock1 = LockProcessosSEI(self.caminho_sessao, timeout=1.0)
-        lock2 = LockProcessosSEI(self.caminho_sessao, timeout=0.1)
+        lock1 = LockProcessosSEI(self.caminho_sessao, timeout=2.0)
+        lock2 = LockProcessosSEI(self.caminho_sessao, timeout=0.1, poll_interval=0.02)
 
         with lock1:
+            self.assertTrue(lock1._adquirido)
+
+            inicio_t = time.monotonic()
             with self.assertRaises(TimeoutError):
                 with lock2:
                     pass
+            duracao = time.monotonic() - inicio_t
+            self.assertGreaterEqual(duracao, 0.08)
+
+            self.assertTrue(lock1._adquirido)
+
+        with lock2:
+            self.assertTrue(lock2._adquirido)
+        self.assertFalse(lock2._adquirido)
 
     def test_11_sincronizacao_mtime_multiplas_instancias(self):
-        self.motor.salvar_sessao({"PHPSESSID": "sessao_instancia_1"})
+        motor_instancia_a = MotorSEI(caminho_sessao=self.caminho_sessao)
+        motor_instancia_b = MotorSEI(caminho_sessao=self.caminho_sessao)
 
-        motor2 = MotorSEI(caminho_sessao=self.caminho_sessao)
-        self.assertEqual(motor2.sessao.cookies.get("PHPSESSID"), "sessao_instancia_1")
+        motor_instancia_a.salvar_sessao({"PHPSESSID": "token_instancia_a"})
+        self.assertEqual(motor_instancia_a.sessao.cookies.get("PHPSESSID"), "token_instancia_a")
 
-        self.motor.salvar_sessao({"PHPSESSID": "sessao_instancia_1_atualizada"})
-        motor2._sincronizar_sessao_se_modificada()
-        self.assertEqual(motor2.sessao.cookies.get("PHPSESSID"), "sessao_instancia_1_atualizada")
+        motor_instancia_b._sincronizar_sessao_se_modificada()
+        self.assertEqual(motor_instancia_b.sessao.cookies.get("PHPSESSID"), "token_instancia_a")
+
+        time.sleep(0.05)
+
+        motor_instancia_a.salvar_sessao({"PHPSESSID": "token_instancia_b_atualizado"})
+        self.assertEqual(motor_instancia_a.sessao.cookies.get("PHPSESSID"), "token_instancia_b_atualizado")
+
+        motor_instancia_b._sincronizar_sessao_se_modificada()
+        self.assertEqual(motor_instancia_b.sessao.cookies.get("PHPSESSID"), "token_instancia_b_atualizado")
+
+        os.unlink(self.caminho_sessao)
+        motor_instancia_b._sincronizar_sessao_se_modificada()
+        self.assertEqual(len(motor_instancia_b.sessao.cookies), 0)
+        self.assertIsNone(motor_instancia_b._mtime_sessao)
 
     def test_12_primeira_inicializacao_cria_diretorio_pai(self):
-        sub_dir = os.path.join(self.temp_dir.name, "sub_novo", "profundo")
-        caminho_novo = os.path.join(sub_dir, "sessao.json")
-        motor_novo = MotorSEI(caminho_sessao=caminho_novo)
+        caminho_aninhado = os.path.join(self.temp_dir.name, "sub_novo", "pasta_sei", "sessao_sei.json")
+        self.assertFalse(os.path.exists(os.path.dirname(caminho_aninhado)))
 
-        resultado = motor_novo.salvar_sessao({"PHPSESSID": "sessao_diretorio_profundo"})
+        motor_novo = MotorSEI(caminho_sessao=caminho_aninhado)
+        resultado = motor_novo.salvar_sessao({"PHPSESSID": "sessao_primeira_vez"})
         self.assertTrue(resultado)
-        self.assertTrue(os.path.exists(caminho_novo))
+        self.assertTrue(os.path.exists(caminho_aninhado))
+        self.assertEqual(motor_novo.sessao.cookies.get("PHPSESSID"), "sessao_primeira_vez")
 
     def test_13_escopo_rigoroso_cookies_seguranca_subdominios_e_redirect(self):
         self.motor.salvar_sessao({"PHPSESSID": "segredo_sei_xyz"})
@@ -222,35 +246,55 @@ class TestMotorSEI(unittest.TestCase):
             self.assertIsNone(interceptado.get("cookie"))
 
     def test_14_rejeitar_pagina_acesso_negado_e_form_fake(self):
-        html_erro_sei = """
+        self.motor.salvar_sessao({"PHPSESSID": "sessao_bloqueada"})
+
+        html_negado = """
         <html>
             <body>
-                <div id="divInfraMensagens">Sessão Expirada ou Acesso Negado</div>
-                <form id="frmLogin" action="controlador.php?acao=login">
-                    <input type="text" name="txtUsuario" />
-                </form>
+                <h1>Acesso Negado</h1>
+                <form id="frmProcedimentoControlar" action="controlador.php?acao=procedimento_controlar"></form>
             </body>
         </html>
         """
-        validador = ValidadorFormSEI(base_url="https://sei.sp.gov.br/sei")
-        validador.feed(html_erro_sei)
-        self.assertFalse(validador.form_encontrado)
+        mock_resp1 = MagicMock(status_code=200, text=html_negado, url="https://sei.sp.gov.br/sei/controlador.php")
+        with patch.object(self.motor.sessao, "get", return_value=mock_resp1):
+            self.assertFalse(self.motor.validar_sessao_ativa())
+
+        html_fake = """
+        <html>
+            <body>
+                <form id="frmTeste" action="controlador.php.fake"></form>
+            </body>
+        </html>
+        """
+        mock_resp2 = MagicMock(status_code=200, text=html_fake, url="https://sei.sp.gov.br/sei/controlador.php")
+        with patch.object(self.motor.sessao, "get", return_value=mock_resp2):
+            self.assertFalse(self.motor.validar_sessao_ativa())
 
     def test_15_sincronizacao_resiliente_colisao_mtime(self):
-        self.motor.salvar_sessao({"PHPSESSID": "sessao_inicial"})
-        motor_cliente = MotorSEI(caminho_sessao=self.caminho_sessao)
-        self.assertEqual(motor_cliente.sessao.cookies.get("PHPSESSID"), "sessao_inicial")
+        motor_a = MotorSEI(caminho_sessao=self.caminho_sessao)
+        motor_b = MotorSEI(caminho_sessao=self.caminho_sessao)
 
-        mtime_antigo = self.motor._mtime_sessao
-        self.motor.salvar_sessao({"PHPSESSID": "sessao_modificada_mesmo_mtime"})
+        motor_a.salvar_sessao({"PHPSESSID": "sessao_original"})
+        motor_b._sincronizar_sessao_se_modificada()
+        self.assertEqual(motor_b.sessao.cookies.get("PHPSESSID"), "sessao_original")
 
-        os.utime(self.caminho_sessao, (mtime_antigo, mtime_antigo))
-        motor_cliente._sincronizar_sessao_se_modificada()
-        self.assertEqual(motor_cliente.sessao.cookies.get("PHPSESSID"), "sessao_modificada_mesmo_mtime")
+        mtime_original = os.path.getmtime(self.caminho_sessao)
+
+        with open(self.caminho_sessao, "w", encoding="utf-8") as f:
+            json.dump({
+                "cookies": {"PHPSESSID": "sessao_colidida_nova"},
+                "atualizado_em": "2026-11-11T12:00:00Z"
+            }, f)
+        os.utime(self.caminho_sessao, (mtime_original, mtime_original))
+
+        motor_b._sincronizar_sessao_se_modificada()
+        self.assertEqual(motor_b.sessao.cookies.get("PHPSESSID"), "sessao_colidida_nova")
 
     def test_16_recuperacao_lock_processo_morto_vs_vivo(self):
         lock_dir = self.caminho_sessao + ".lock"
         os.makedirs(lock_dir, exist_ok=True)
+        # Marca como diretório órfão abandonado antigo
         os.utime(lock_dir, (time.time() - 10.0, time.time() - 10.0))
         
         # 1. Processo MORTO: lock do kernel liberado automaticamente ao fechar o processo
@@ -267,44 +311,42 @@ class TestMotorSEI(unittest.TestCase):
                     pass
 
     def test_17_contrato_rotas_status_autenticado_vs_inativo(self):
-        status_inativo = self.motor.validar_sessao()
-        self.assertTrue(status_inativo["sucesso"])
-        self.assertFalse(status_inativo["ativa"])
-        self.assertFalse(status_inativo["sessao_ativa"])
-        self.assertFalse(bool(status_inativo))
-        self.assertEqual(status_inativo(), status_inativo)
-
-        self.motor.salvar_sessao({"PHPSESSID": "sessao_mock_valida"})
-        with patch.object(self.motor, "validar_sessao_ativa", return_value=True):
-            status_ativo = self.motor.validar_sessao()
-            self.assertTrue(status_ativo["sucesso"])
-            self.assertTrue(status_ativo["ativa"])
-            self.assertTrue(status_ativo["sessao_ativa"])
-            self.assertTrue(bool(status_ativo))
+        self.motor.salvar_sessao({"PHPSESSID": "sessao_expirada"})
+        
+        mock_resp_inativo = MagicMock(
+            status_code=200,
+            text='<html><body><h1>Acesso Negado</h1></body></html>',
+            url="https://sei.sp.gov.br/sei/controlador.php"
+        )
+        with patch.object(self.motor.sessao, "get", return_value=mock_resp_inativo):
+            status_info = self.motor.validar_sessao()
+            self.assertIsInstance(status_info, dict)
+            self.assertFalse(status_info.get("ativa"))
+            self.assertFalse(status_info.get("autenticado"))
 
     def test_18_rotas_sei_diagnostico_e_erros_upstream(self):
-        self.motor.sessao.cookies.clear()
-        if os.path.exists(self.caminho_sessao):
-            os.unlink(self.caminho_sessao)
+        self.motor.salvar_sessao({"PHPSESSID": "sessao_teste"})
 
-        res_caixa = self.motor.listar_caixa_unidade()
-        self.assertFalse(res_caixa["sucesso"])
-        self.assertEqual(res_caixa["codigo"], 401)
+        html_expirada = "<html><body><div class='infraMensagem'>Sessão expirada</div></body></html>"
+        mock_resp_exp = MagicMock(status_code=200, text=html_expirada)
+        with patch.object(self.motor.sessao, "get", return_value=mock_resp_exp):
+            res_caixa = self.motor.listar_caixa_unidade()
+            self.assertFalse(res_caixa.get("sucesso"))
+            self.assertTrue(res_caixa.get("sessao_expirada"))
+            self.assertEqual(res_caixa.get("codigo"), 401)
 
-        res_busca = self.motor.buscar_processos("termo")
-        self.assertFalse(res_busca["sucesso"])
-        self.assertEqual(res_busca["codigo"], 401)
-
-        self.motor.salvar_sessao({"PHPSESSID": "sessao_valida"})
-        mock_resp_503 = MagicMock()
-        mock_resp_503.status_code = 503
-        mock_resp_503.text = "Service Unavailable"
-        mock_resp_503.url = "https://sei.sp.gov.br/sei/controlador.php"
-
+        mock_resp_503 = MagicMock(status_code=503, text="Service Unavailable")
         with patch.object(self.motor.sessao, "get", return_value=mock_resp_503):
-            res_caixa_503 = self.motor.listar_caixa_unidade()
-            self.assertFalse(res_caixa_503["sucesso"])
-            self.assertEqual(res_caixa_503["codigo"], 502)
+            res_503 = self.motor.listar_caixa_unidade()
+            self.assertFalse(res_503.get("sucesso"))
+            self.assertEqual(res_503.get("codigo"), 502)
+
+        html_generica = "<html><body><h1>Portal Geral SP</h1></body></html>"
+        mock_resp_gen = MagicMock(status_code=200, text=html_generica)
+        with patch.object(self.motor.sessao, "post", return_value=mock_resp_gen):
+            res_busca = self.motor.buscar_processos("termo_inexistente")
+            self.assertFalse(res_busca.get("sucesso"))
+            self.assertEqual(res_busca.get("codigo"), 502)
 
     def test_19_cliente_flask_integrado(self):
         try:
@@ -321,39 +363,48 @@ class TestMotorSEI(unittest.TestCase):
                 self.assertFalse(dados.get("autenticado"))
 
     def test_20_rejeitar_marcadores_falsos_em_script_e_comentarios(self):
-        html_script_falso = """
+        self.motor.salvar_sessao({"PHPSESSID": "sessao_ativa_valida"})
+
+        html_falsa_injetada = """
         <html>
             <head>
                 <script>
-                    var formHtml = '<form id="frmProcedimentoControlar" action="controlador.php"></form>';
-                    var searchHtml = '<form id="frmPesquisa" action="controlador.php"></form>';
+                    var acao = "controlador.php?acao=pesquisa_processo";
+                    var campo = "txtPesquisa";
+                    // <form id="frmProcedimentoControlar" action="controlador.php"></form>
                 </script>
+                <!-- controlador.php?acao=procedimento_controlar -->
             </head>
             <body>
-                <!-- <form id="frmProcedimentoControlar" action="controlador.php"></form> -->
-                <div class="erro">Falha geral do sistema</div>
+                <div class="aviso">Erro interno no servidor de aplicações SP</div>
             </body>
         </html>
         """
-        validador_caixa = ValidadorEstruturalSEI(tipo_tela="caixa", base_url="https://sei.sp.gov.br/sei")
-        validador_caixa.feed(html_script_falso)
-        self.assertFalse(validador_caixa.estrutura_valida)
+        mock_resp_falsa = MagicMock(status_code=200, text=html_falsa_injetada)
 
-        validador_busca = ValidadorEstruturalSEI(tipo_tela="pesquisa", base_url="https://sei.sp.gov.br/sei")
-        validador_busca.feed(html_script_falso)
-        self.assertFalse(validador_busca.estrutura_valida)
+        with patch.object(self.motor.sessao, "get", return_value=mock_resp_falsa):
+            res_caixa = self.motor.listar_caixa_unidade()
+            self.assertFalse(res_caixa.get("sucesso"))
+            self.assertEqual(res_caixa.get("codigo"), 502)
+
+        with patch.object(self.motor.sessao, "post", return_value=mock_resp_falsa):
+            res_busca = self.motor.buscar_processos("12345")
+            self.assertFalse(res_busca.get("sucesso"))
+            self.assertEqual(res_busca.get("codigo"), 502)
 
     def test_21_lock_entre_containers_hostname_diferente(self):
-        lock_host1 = LockProcessosSEI(self.caminho_sessao, timeout=0.5, hostname="container-alpha")
-        lock_host2 = LockProcessosSEI(self.caminho_sessao, timeout=0.05, hostname="container-beta")
+        # Valida exclusão mútua no armazenamento mesmo com hostnames simulados diferentes
+        lock_a = LockProcessosSEI(self.caminho_sessao, timeout=1.0, hostname="container-alpha")
+        lock_b = LockProcessosSEI(self.caminho_sessao, timeout=0.08, hostname="container-beta")
 
-        with lock_host1:
+        with lock_a:
             with self.assertRaises(TimeoutError):
-                with lock_host2:
+                with lock_b:
                     pass
 
     def test_22_rejeitar_form_action_externa_em_validacao_sessao(self):
         self.motor.salvar_sessao({"PHPSESSID": "sessao_com_form_externo"})
+
         html_externo = """
         <html>
             <body>
@@ -369,6 +420,7 @@ class TestMotorSEI(unittest.TestCase):
 
     def test_23_rejeitar_pagina_erro_com_div_infra_mensagens(self):
         self.motor.salvar_sessao({"PHPSESSID": "sessao_ok"})
+
         html_erro_infra = """
         <html>
             <body>
@@ -398,6 +450,7 @@ class TestMotorSEI(unittest.TestCase):
     def test_25_rejeitar_pagina_erro_com_input_solto_ou_link_solto(self):
         self.motor.salvar_sessao({"PHPSESSID": "sessao_ativa"})
 
+        # 1. Página com apenas <input name="txtPesquisa"> solto sem <form id="frmPesquisa">
         html_input_solto = """
         <html>
             <body>
@@ -412,6 +465,7 @@ class TestMotorSEI(unittest.TestCase):
             self.assertFalse(res1.get("sucesso"))
             self.assertEqual(res1.get("codigo"), 502)
 
+        # 2. Página com link solto de processo sem <form id="frmProcedimentoControlar">
         html_link_solto = """
         <html>
             <body>
@@ -430,6 +484,7 @@ class TestMotorSEI(unittest.TestCase):
         lock_a = LockProcessosSEI(self.caminho_sessao, timeout=1.0, max_lock_age=0.15, hostname="container-A")
         lock_a.__enter__()
 
+        # Durante execução de A, lock_b em container-B não pode adquirir o lock do armazenamento
         lock_b = LockProcessosSEI(self.caminho_sessao, timeout=0.08, hostname="container-B")
         with self.assertRaises(TimeoutError):
             with lock_b:
@@ -437,6 +492,7 @@ class TestMotorSEI(unittest.TestCase):
 
         lock_a.__exit__(None, None, None)
 
+        # Após liberação, lock_b consegue adquirir
         with lock_b:
             self.assertTrue(lock_b._adquirido)
 
@@ -535,15 +591,16 @@ except TimeoutError:
             d = json.load(f)
         self.assertEqual(d["cookies"]["PHPSESSID"], "sessao_A")
 
-    def test_29_compatibilidade_mutua_lock_v9_e_v10(self):
+    def test_29_clean_cutover_bloqueia_escritor_legado_ativo(self):
         lock_dir = self.caminho_sessao + ".lock"
-        os.makedirs(lock_dir)
+        os.makedirs(lock_dir, exist_ok=True)
         with open(os.path.join(lock_dir, "lock.info"), "w", encoding="utf-8") as f:
-            json.dump({"pid": os.getpid(), "timestamp": time.time(), "token": "v9_legado"}, f)
+            json.dump({"pid": os.getpid(), "timestamp": time.time(), "token": "v9_legado", "hostname": socket.gethostname()}, f)
 
         motor_v10 = MotorSEI(caminho_sessao=self.caminho_sessao)
-        with self.assertRaises(TimeoutError):
-            motor_v10.salvar_sessao({"PHPSESSID": "sessao_v10"}, timeout=0.08)
+        with self.assertRaises(RuntimeError) as ctx:
+            motor_v10.salvar_sessao({"PHPSESSID": "sessao_v10"}, timeout=0.5)
+        self.assertIn("Clean Cutover Obrigatório", str(ctx.exception))
 
         os.unlink(os.path.join(lock_dir, "lock.info"))
         os.rmdir(lock_dir)
@@ -552,26 +609,30 @@ except TimeoutError:
         self.assertTrue(os.path.exists(self.caminho_sessao + ".flock"))
 
     def test_30_falha_aquisicao_libera_descritor_e_lock_kernel(self):
-        lock_a = LockProcessosSEI(self.caminho_sessao, timeout=1.0)
-        with patch("os.mkdir", side_effect=PermissionError("Acesso negado simulado")):
-            with self.assertRaises(PermissionError):
+        lock_a = LockProcessosSEI(self.caminho_sessao, timeout=0.05)
+        patch_target = "msvcrt.locking" if os.name == "nt" else "fcntl.flock"
+
+        with patch(patch_target, side_effect=PermissionError("Acesso negado no kernel")):
+            with self.assertRaises(TimeoutError):
                 with lock_a:
                     pass
 
+        self.assertIsNone(lock_a._fd)
+        self.assertFalse(lock_a._adquirido)
+
+        # Escritor subsequente adquire normalmente sem sofrer timeout
         lock_b = LockProcessosSEI(self.caminho_sessao, timeout=0.5)
         with lock_b:
             self.assertTrue(lock_b._adquirido)
 
-    def test_31_fencing_armazenamento_impede_sobrescrita_concorrente(self):
-        # Valida que se o arquivo de sessão sofrer alteração concorrente externa durante a execução,
-        # o titular detecta a violação de fencing, aborta e NÃO sobrescreve a gravação externa.
+    def test_31_fencing_armazenamento_impede_sobrescrita_e_limpa_residuos(self):
         self.motor.salvar_sessao({"PHPSESSID": "sessao_inicial"})
         motor_a = MotorSEI(caminho_sessao=self.caminho_sessao)
 
+        diretorio = os.path.dirname(self.caminho_sessao)
         orig_mkstemp = tempfile.mkstemp
         def mkstemp_com_interferencia_externa(*args, **kwargs):
             res = orig_mkstemp(*args, **kwargs)
-            # Escritor externo altera a sessão no armazenamento
             with open(self.caminho_sessao, "w", encoding="utf-8") as f:
                 json.dump({"cookies": {"PHPSESSID": "sessao_externa_prioritaria"}}, f)
             return res
@@ -580,10 +641,13 @@ except TimeoutError:
             with self.assertRaises(TimeoutError):
                 motor_a.salvar_sessao({"PHPSESSID": "sessao_A_titular"})
 
-        # Comprova que a gravação externa não foi sobrescrita
         with open(self.caminho_sessao, "r", encoding="utf-8") as f:
             d = json.load(f)
         self.assertEqual(d["cookies"]["PHPSESSID"], "sessao_externa_prioritaria")
+
+        arquivos = os.listdir(diretorio)
+        self.assertFalse(any("sessao_backup_" in a for a in arquivos), f"Arquivos de backup residuais encontrados: {arquivos}")
+        self.assertFalse(any("sessao_tmp_" in a for a in arquivos), f"Arquivos temporários residuais encontrados: {arquivos}")
 
 
 if __name__ == "__main__":

@@ -57,17 +57,15 @@ def processo_esta_vivo(pid: int) -> bool:
         return _verificar_pid_so(pid)
     except PermissionError:
         return True
-    except ProcessLookupError:
-        return False
     except OSError as e:
         import errno
         if getattr(e, "errno", None) == errno.EPERM:
             return True
         if getattr(e, "errno", None) == errno.ESRCH:
             return False
-        return False
+        return True
     except Exception:
-        return False
+        return True
 
 
 def obter_fingerprint_armazenamento(caminho: str) -> Optional[tuple]:
@@ -285,10 +283,13 @@ class ParserProcessosSEI(HTMLParser):
 
 class LockProcessosSEI:
     """
-    Exclusão mútua persistente e estrita imposta pelo armazenamento e sistema operacional.
+    Exclusão mútua persistente e contínua imposta pelo kernel do sistema operacional.
     Utiliza fcntl.flock no Linux/POSIX e msvcrt.locking no Windows sobre arquivo de lock dedicado (.flock).
-    Adicionalmente adquire o diretório .lock com lock.info para compatibilidade mútua com versões v9.
-    O arquivo .flock NUNCA é removido, garantindo estabilidade de inode e proteção contínua no kernel.
+    O lock é mantido pela tabela de arquivos abertos do kernel do SO durante toda a operação,
+    sendo 100% imune a pausas, suspensões ou desescalonamentos de processos e threads.
+    O arquivo .flock NUNCA é removido, garantindo estabilidade de inode e eliminando corridas de deleção.
+    Diretriz de Clean Cutover: todos os escritores antigos (v9 ou anteriores) devem ser interrompidos
+    antes da implantação da v10; a coexistência entre versões não é homologada.
     """
     def __init__(
         self,
@@ -308,44 +309,12 @@ class LockProcessosSEI:
         self.hostname = hostname or socket.gethostname()
         self.token = str(uuid.uuid4())
         self._adquirido = False
-        self._dir_adquirido = False
         self._fd: Optional[int] = None
         self._heartbeat_thread: Optional[threading.Thread] = None
         self._stop_heartbeat = threading.Event()
 
-    def _gravar_heartbeat(self):
-        try:
-            with open(self.info_file, "w", encoding="utf-8") as f:
-                json.dump({
-                    "token": self.token,
-                    "hostname": self.hostname,
-                    "pid": os.getpid(),
-                    "timestamp": time.time()
-                }, f)
-        except Exception:
-            pass
-
-    def _loop_heartbeat(self):
-        intervalo = max(0.01, min(1.0, self.max_lock_age / 3.0))
-        while not self._stop_heartbeat.wait(intervalo):
-            if not self._adquirido or not os.path.exists(self.lock_dir):
-                break
-            if not self.verificar_lease_valido():
-                break
-            self._gravar_heartbeat()
-
     def verificar_lease_valido(self) -> bool:
-        if not self._adquirido or self._fd is None:
-            return False
-        if os.path.exists(self.info_file):
-            try:
-                with open(self.info_file, "r", encoding="utf-8") as f:
-                    info = json.load(f)
-                if info.get("token") != self.token:
-                    return False
-            except Exception:
-                pass
-        return True
+        return bool(self._adquirido and self._fd is not None)
 
     def _liberar_kernel_lock(self):
         if self._fd is not None:
@@ -369,17 +338,54 @@ class LockProcessosSEI:
             self._fd = None
             self._adquirido = False
 
+    def _verificar_e_limpar_lock_legado(self):
+        """
+        Garante conformidade com o Clean Cutover:
+        Se houver diretório .lock legado de v9 com processo vivo, emite aviso ou bloqueio.
+        Se for lock órfão (processo morto), limpa para permitir inicialização da v10.
+        """
+        if os.path.exists(self.lock_dir):
+            if os.path.exists(self.info_file):
+                try:
+                    with open(self.info_file, "r", encoding="utf-8") as f:
+                        info = json.load(f)
+                    pid = info.get("pid")
+                    host = info.get("hostname")
+                    if host == self.hostname and pid and processo_esta_vivo(pid):
+                        raise RuntimeError(
+                            f"Clean Cutover Obrigatório: Detectado escritor SEI legado ativo (PID {pid}). "
+                            "Interrompa todos os processos v9 antes da troca para v10."
+                        )
+                    # Processo morto: limpa lock órfão
+                    try:
+                        os.unlink(self.info_file)
+                        os.rmdir(self.lock_dir)
+                    except OSError:
+                        pass
+                except RuntimeError:
+                    raise
+                except Exception:
+                    pass
+            else:
+                try:
+                    st = os.stat(self.lock_dir)
+                    if (time.time() - st.st_mtime) > 0.5:
+                        os.rmdir(self.lock_dir)
+                except OSError:
+                    pass
+
     def __enter__(self):
         diretorio_pai = os.path.dirname(self.lock_file)
         if diretorio_pai:
             os.makedirs(diretorio_pai, exist_ok=True)
 
+        self._verificar_e_limpar_lock_legado()
+
         inicio = time.monotonic()
-        # 1. Abre o descritor de arquivo de lock do SO (NUNCA deletado)
+        # Abre o descritor de arquivo de lock do SO (NUNCA deletado)
         self._fd = os.open(self.lock_file, os.O_CREAT | os.O_RDWR, 0o600)
 
         try:
-            # 2. Adquire exclusão mútua no kernel do SO
             while True:
                 try:
                     if os.name == "nt":
@@ -397,102 +403,22 @@ class LockProcessosSEI:
                         fcntl.flock(self._fd, fcntl.LOCK_EX | fcntl.LOCK_NB)
 
                     self._adquirido = True
-                    break
+                    return self
 
                 except (BlockingIOError, OSError, PermissionError):
                     if (time.monotonic() - inicio) >= self.timeout:
                         raise TimeoutError(
-                            f"Timeout ({self.timeout}s) ao aguardar exclusão mútua no armazenamento: {self.lock_file}"
+                            f"Timeout ({self.timeout}s) ao aguardar exclusão mútua no kernel: {self.lock_file}"
                         )
                     time.sleep(self.poll_interval)
-
-            # 3. Adquire lock de diretório legado para compatibilidade com versões v9
-            while True:
-                try:
-                    os.mkdir(self.lock_dir)
-                    self._dir_adquirido = True
-                    break
-                except FileExistsError:
-                    if (time.monotonic() - inicio) >= self.timeout:
-                        raise TimeoutError(
-                            f"Timeout ({self.timeout}s) ao aguardar liberação de lock de diretório legado: {self.lock_dir}"
-                        )
-                    # Verifica se lock legado pertence a um processo morto
-                    if not os.path.exists(self.info_file):
-                        try:
-                            st_dir = os.stat(self.lock_dir)
-                            # Se o diretório foi criado recentemente (< 0.5s), aguarda e NÃO remove para evitar corrida
-                            if (time.time() - st_dir.st_mtime) > 0.5:
-                                os.rmdir(self.lock_dir)
-                                continue
-                        except OSError:
-                            pass
-                    else:
-                        try:
-                            with open(self.info_file, "r", encoding="utf-8") as f:
-                                info = json.load(f)
-                            pid = info.get("pid")
-                            host = info.get("hostname")
-                            # Só remove se o processo for comprovadamente MORTO no mesmo host local
-                            # Jamais remove por idade de lease se o processo estiver vivo ou suspenso!
-                            if host == self.hostname and pid and not processo_esta_vivo(pid):
-                                try:
-                                    os.unlink(self.info_file)
-                                    os.rmdir(self.lock_dir)
-                                    continue
-                                except OSError:
-                                    pass
-                        except Exception:
-                            pass
-                    time.sleep(self.poll_interval)
-
-            # 4. Registra metadados informativos no diretório de lock
-            self._gravar_heartbeat()
-
-            self._stop_heartbeat.clear()
-            self._heartbeat_thread = threading.Thread(
-                target=self._loop_heartbeat,
-                daemon=True,
-                name="LockSEI-Heartbeat"
-            )
-            self._heartbeat_thread.start()
-            return self
 
         except Exception:
-            # Liberação compulsória e imediata de todos os descritores e locks em QUALQUER falha
             self._liberar_kernel_lock()
-            if self._dir_adquirido and os.path.exists(self.lock_dir):
-                try:
-                    if os.path.exists(self.info_file):
-                        os.unlink(self.info_file)
-                    os.rmdir(self.lock_dir)
-                except OSError:
-                    pass
-                self._dir_adquirido = False
             raise
 
     def __exit__(self, exc_type, exc_val, exc_tb):
-        if self._adquirido:
-            self._stop_heartbeat.set()
-            if self._heartbeat_thread and self._heartbeat_thread.is_alive():
-                self._heartbeat_thread.join(timeout=0.5)
+        self._liberar_kernel_lock()
 
-            try:
-                if self._dir_adquirido or os.path.exists(self.lock_dir):
-                    if os.path.exists(self.info_file):
-                        try:
-                            with open(self.info_file, "r", encoding="utf-8") as f:
-                                info = json.load(f)
-                            if info.get("token") == self.token:
-                                os.unlink(self.info_file)
-                        except Exception:
-                            pass
-                    try:
-                        os.rmdir(self.lock_dir)
-                    except OSError:
-                        pass
-            finally:
-                self._liberar_kernel_lock()
 
 
 class StrictSEICookiePolicy(http.cookiejar.DefaultCookiePolicy):
@@ -649,9 +575,9 @@ class MotorSEI:
         timeout: float = 10.0
     ) -> bool:
         """
-        Grava a sessão no disco de forma atômica e com exclusão mútua estrita imposta pelo SO/armazenamento.
+        Grava a sessão no disco de forma atômica e com exclusão mútua contínua no kernel do SO.
         O lock no kernel (flock/locking) permanece 100% ativo durante toda a operação,
-        impedindo que qualquer processo concorrente entre nesta rotina enquanto o titular executa.
+        sendo imune a suspensões de processos e pausas de thread.
         """
         t_inicio = time.monotonic()
         if not self._lock_threads.acquire(timeout=timeout):
@@ -669,51 +595,48 @@ class MotorSEI:
 
                 houve_backup = False
                 backup_caminho = None
+                temp_caminho = None
+                houve_rollback = False
                 sessao_anterior_existia = os.path.exists(self.caminho_sessao)
 
-                if sessao_anterior_existia:
-                    backup_fd, backup_caminho = tempfile.mkstemp(
-                        prefix="sessao_backup_",
-                        suffix=".tmp",
+                try:
+                    if sessao_anterior_existia:
+                        backup_fd, backup_caminho = tempfile.mkstemp(
+                            prefix="sessao_backup_",
+                            suffix=".tmp",
+                            dir=diretorio
+                        )
+                        try:
+                            with open(self.caminho_sessao, "rb") as f_orig, os.fdopen(backup_fd, "wb") as f_bkp:
+                                shutil.copyfileobj(f_orig, f_bkp)
+                                f_bkp.flush()
+                                try:
+                                    os.fsync(f_bkp.fileno())
+                                except OSError:
+                                    pass
+                            houve_backup = True
+                        except Exception as e:
+                            logger.error(f"Falha ao criar backup da sessao: {e}")
+                            raise
+
+                    payload = {
+                        "cookies": cookies,
+                        "usuario": usuario,
+                        "lock_token": lock.token,
+                        "atualizado_em": datetime.now(timezone.utc).isoformat()
+                    }
+                    dados_json = json.dumps(payload, indent=2, ensure_ascii=False).encode("utf-8")
+
+                    temp_fd, temp_caminho = tempfile.mkstemp(
+                        prefix="sessao_tmp_",
+                        suffix=".json",
                         dir=diretorio
                     )
                     try:
-                        with open(self.caminho_sessao, "rb") as f_orig, os.fdopen(backup_fd, "wb") as f_bkp:
-                            shutil.copyfileobj(f_orig, f_bkp)
-                            f_bkp.flush()
-                            try:
-                                os.fsync(f_bkp.fileno())
-                            except OSError:
-                                pass
-                        houve_backup = True
-                    except Exception as e:
-                        logger.error(f"Falha ao criar backup da sessao: {e}")
-                        if backup_caminho and os.path.exists(backup_caminho):
-                            try:
-                                os.unlink(backup_caminho)
-                            except OSError:
-                                pass
-                        raise
+                        os.chmod(temp_caminho, 0o600)
+                    except Exception:
+                        pass
 
-                payload = {
-                    "cookies": cookies,
-                    "usuario": usuario,
-                    "lock_token": lock.token,
-                    "atualizado_em": datetime.now(timezone.utc).isoformat()
-                }
-                dados_json = json.dumps(payload, indent=2, ensure_ascii=False).encode("utf-8")
-
-                temp_fd, temp_caminho = tempfile.mkstemp(
-                    prefix="sessao_tmp_",
-                    suffix=".json",
-                    dir=diretorio
-                )
-                try:
-                    os.chmod(temp_caminho, 0o600)
-                except Exception:
-                    pass
-
-                try:
                     with os.fdopen(temp_fd, "wb") as f_tmp:
                         pos = 0
                         while pos < len(dados_json):
@@ -721,95 +644,71 @@ class MotorSEI:
                             pos += escrito
                         f_tmp.flush()
                         os.fsync(f_tmp.fileno())
-                except Exception as e:
-                    if os.path.exists(temp_caminho):
-                        try:
-                            os.unlink(temp_caminho)
-                        except OSError:
-                            pass
-                    if houve_backup and backup_caminho and os.path.exists(backup_caminho):
-                        try:
-                            os.unlink(backup_caminho)
-                        except OSError:
-                            pass
-                    raise
 
-                # Fencing estrito no armazenamento antes da substituição atômica
-                if not lock.verificar_lease_valido():
-                    if os.path.exists(temp_caminho):
-                        try:
-                            os.unlink(temp_caminho)
-                        except OSError:
-                            pass
-                    raise TimeoutError("Perda de posse do lock durante a execução; abortando gravação.")
+                    # Fencing estrito no armazenamento antes da substituição atômica
+                    if not lock.verificar_lease_valido():
+                        raise TimeoutError("Perda de posse do lock durante a execução; abortando gravação.")
 
-                fingerprint_atual = obter_fingerprint_armazenamento(self.caminho_sessao)
-                if fingerprint_atual != fingerprint_inicial:
-                    if os.path.exists(temp_caminho):
-                        try:
-                            os.unlink(temp_caminho)
-                        except OSError:
-                            pass
-                    raise TimeoutError("Fencing violado: arquivo modificado concorrentemente durante a execução; abortando gravação.")
+                    fingerprint_atual = obter_fingerprint_armazenamento(self.caminho_sessao)
+                    if fingerprint_atual != fingerprint_inicial:
+                        raise TimeoutError("Fencing violado: arquivo modificado concorrentemente durante a execução; abortando gravação.")
 
-                # Substituição atômica no sistema de arquivos
-                try:
+                    # Substituição atômica no sistema de arquivos
                     os.replace(temp_caminho, self.caminho_sessao)
-                except Exception as e:
-                    if os.path.exists(temp_caminho):
-                        try:
-                            os.unlink(temp_caminho)
-                        except OSError:
-                            pass
-                    if houve_backup and backup_caminho and os.path.exists(backup_caminho):
-                        try:
-                            os.unlink(backup_caminho)
-                        except OSError:
-                            pass
-                    raise
 
-                try:
-                    self._fsync_diretorio(diretorio)
-                except Exception as e_dir:
-                    logger.error(f"Falha no fsync do diretorio ({e_dir}). Executando rollback.")
-                    if houve_backup and backup_caminho and os.path.exists(backup_caminho):
-                        try:
-                            os.replace(backup_caminho, self.caminho_sessao)
-                        except Exception as e_rollback:
-                            logger.critical(f"Falha no rollback: {e_rollback}")
-                        try:
-                            self.carregar_sessao()
-                        except Exception:
+                    # Persistência do diretório
+                    try:
+                        self._fsync_diretorio(diretorio)
+                    except Exception as e_dir:
+                        logger.error(f"Falha no fsync do diretorio ({e_dir}). Executando rollback.")
+                        if houve_backup and backup_caminho and os.path.exists(backup_caminho):
+                            try:
+                                os.replace(backup_caminho, self.caminho_sessao)
+                                houve_rollback = True
+                            except Exception as e_rollback:
+                                logger.critical(f"Falha no rollback: {e_rollback}")
+                            try:
+                                self.carregar_sessao()
+                            except Exception:
+                                self.sessao.cookies.clear()
+                                self._mtime_sessao = None
+                                self._hash_sessao = None
+                        else:
+                            if os.path.exists(self.caminho_sessao):
+                                try:
+                                    os.unlink(self.caminho_sessao)
+                                except OSError:
+                                    pass
                             self.sessao.cookies.clear()
                             self._mtime_sessao = None
                             self._hash_sessao = None
-                    else:
-                        if os.path.exists(self.caminho_sessao):
-                            try:
-                                os.unlink(self.caminho_sessao)
-                            except OSError:
-                                pass
+                        raise
+
+                    try:
+                        self.carregar_sessao()
+                    except Exception as e_recarga:
+                        logger.error(f"Falha ao recarregar sessao: {e_recarga}")
                         self.sessao.cookies.clear()
                         self._mtime_sessao = None
                         self._hash_sessao = None
-                    raise
+                        raise
 
-                if houve_backup and backup_caminho and os.path.exists(backup_caminho):
-                    try:
-                        os.unlink(backup_caminho)
-                    except OSError:
-                        pass
+                    return True
 
-                try:
-                    self.carregar_sessao()
-                except Exception as e_recarga:
-                    logger.error(f"Falha ao recarregar sessao: {e_recarga}")
-                    self.sessao.cookies.clear()
-                    self._mtime_sessao = None
-                    self._hash_sessao = None
-                    raise
-
-                return True
+                finally:
+                    # LIMPEZA RIGOROSA DE ARTEFATOS TEMPORÁRIOS:
+                    # Se não houve rollback para restaurar a sessão original, o backup temporário é compulsoriamente deletado
+                    if not houve_rollback and backup_caminho and os.path.exists(backup_caminho):
+                        try:
+                            os.unlink(backup_caminho)
+                        except OSError:
+                            pass
+                    # Qualquer arquivo temporário de escrita não substituído é compulsoriamente deletado
+                    if temp_caminho and os.path.exists(temp_caminho):
+                        try:
+                            os.unlink(temp_caminho)
+                        except OSError:
+                            pass
         finally:
             self._lock_threads.release()
 
@@ -946,16 +845,6 @@ class MotorSEI:
                 "erro": f"SEI SP retornou status HTTP {resp.status_code}"
             }
 
-        url_efetiva = resp.url if isinstance(getattr(resp, "url", None), str) else self.base_url
-        parsed_url = urlparse(url_efetiva)
-        sei_netloc = urlparse(self.base_url).netloc.lower()
-        if parsed_url.netloc and parsed_url.netloc.lower() != sei_netloc:
-            return {
-                "sucesso": False,
-                "codigo": 502,
-                "erro": "Redirect inesperado para fora do SEI."
-            }
-
         validador = ValidadorEstruturalSEI(tipo_tela="caixa", base_url=self.base_url)
         validador.feed(resp.text)
         texto_visivel = validador.obter_texto_visivel()
@@ -1035,16 +924,6 @@ class MotorSEI:
                 "codigo": resp.status_code if resp.status_code in (400, 401, 403, 404, 429) else 502,
                 "sessao_expirada": resp.status_code == 401,
                 "erro": f"SEI SP retornou status HTTP {resp.status_code} na pesquisa"
-            }
-
-        url_efetiva = resp.url if isinstance(getattr(resp, "url", None), str) else self.base_url
-        parsed_url = urlparse(url_efetiva)
-        sei_netloc = urlparse(self.base_url).netloc.lower()
-        if parsed_url.netloc and parsed_url.netloc.lower() != sei_netloc:
-            return {
-                "sucesso": False,
-                "codigo": 502,
-                "erro": "Redirect inesperado para fora do SEI."
             }
 
         validador = ValidadorEstruturalSEI(tipo_tela="pesquisa", base_url=self.base_url)

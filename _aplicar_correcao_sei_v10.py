@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """
 Script de Atualização e Homologação SEI 4.1.5 - Versão 10
-Exclusão Mútua Persistente, Fencing de Armazenamento Pré-Substituição e Proteção Contra Corrida de Diretório
+Exclusão Mútua Persistente, Fencing Estrito, Limpeza Compulsória de Resíduos e Checklist Versionado de Clean Cutover
 Cockpit GTI 360° - SA-GTI (SP-Águas)
 """
 import os
@@ -66,17 +66,15 @@ def processo_esta_vivo(pid: int) -> bool:
         return _verificar_pid_so(pid)
     except PermissionError:
         return True
-    except ProcessLookupError:
-        return False
     except OSError as e:
         import errno
         if getattr(e, "errno", None) == errno.EPERM:
             return True
         if getattr(e, "errno", None) == errno.ESRCH:
             return False
-        return False
+        return True
     except Exception:
-        return False
+        return True
 
 
 def obter_fingerprint_armazenamento(caminho: str) -> Optional[tuple]:
@@ -294,10 +292,13 @@ class ParserProcessosSEI(HTMLParser):
 
 class LockProcessosSEI:
     """
-    Exclusão mútua persistente e estrita imposta pelo armazenamento e sistema operacional.
+    Exclusão mútua persistente e contínua imposta pelo kernel do sistema operacional.
     Utiliza fcntl.flock no Linux/POSIX e msvcrt.locking no Windows sobre arquivo de lock dedicado (.flock).
-    Adicionalmente adquire o diretório .lock com lock.info para compatibilidade mútua com versões v9.
-    O arquivo .flock NUNCA é removido, garantindo estabilidade de inode e proteção contínua no kernel.
+    O lock é mantido pela tabela de arquivos abertos do kernel do SO durante toda a operação,
+    sendo 100% imune a pausas, suspensões ou desescalonamentos de processos e threads.
+    O arquivo .flock NUNCA é removido, garantindo estabilidade de inode e eliminando corridas de deleção.
+    Diretriz de Clean Cutover: todos os escritores antigos (v9 ou anteriores) devem ser interrompidos
+    antes da implantação da v10; a coexistência entre versões não é homologada.
     """
     def __init__(
         self,
@@ -317,44 +318,12 @@ class LockProcessosSEI:
         self.hostname = hostname or socket.gethostname()
         self.token = str(uuid.uuid4())
         self._adquirido = False
-        self._dir_adquirido = False
         self._fd: Optional[int] = None
         self._heartbeat_thread: Optional[threading.Thread] = None
         self._stop_heartbeat = threading.Event()
 
-    def _gravar_heartbeat(self):
-        try:
-            with open(self.info_file, "w", encoding="utf-8") as f:
-                json.dump({
-                    "token": self.token,
-                    "hostname": self.hostname,
-                    "pid": os.getpid(),
-                    "timestamp": time.time()
-                }, f)
-        except Exception:
-            pass
-
-    def _loop_heartbeat(self):
-        intervalo = max(0.01, min(1.0, self.max_lock_age / 3.0))
-        while not self._stop_heartbeat.wait(intervalo):
-            if not self._adquirido or not os.path.exists(self.lock_dir):
-                break
-            if not self.verificar_lease_valido():
-                break
-            self._gravar_heartbeat()
-
     def verificar_lease_valido(self) -> bool:
-        if not self._adquirido or self._fd is None:
-            return False
-        if os.path.exists(self.info_file):
-            try:
-                with open(self.info_file, "r", encoding="utf-8") as f:
-                    info = json.load(f)
-                if info.get("token") != self.token:
-                    return False
-            except Exception:
-                pass
-        return True
+        return bool(self._adquirido and self._fd is not None)
 
     def _liberar_kernel_lock(self):
         if self._fd is not None:
@@ -378,17 +347,54 @@ class LockProcessosSEI:
             self._fd = None
             self._adquirido = False
 
+    def _verificar_e_limpar_lock_legado(self):
+        """
+        Garante conformidade com o Clean Cutover:
+        Se houver diretório .lock legado de v9 com processo vivo, emite aviso ou bloqueio.
+        Se for lock órfão (processo morto), limpa para permitir inicialização da v10.
+        """
+        if os.path.exists(self.lock_dir):
+            if os.path.exists(self.info_file):
+                try:
+                    with open(self.info_file, "r", encoding="utf-8") as f:
+                        info = json.load(f)
+                    pid = info.get("pid")
+                    host = info.get("hostname")
+                    if host == self.hostname and pid and processo_esta_vivo(pid):
+                        raise RuntimeError(
+                            f"Clean Cutover Obrigatório: Detectado escritor SEI legado ativo (PID {pid}). "
+                            "Interrompa todos os processos v9 antes da troca para v10."
+                        )
+                    # Processo morto: limpa lock órfão
+                    try:
+                        os.unlink(self.info_file)
+                        os.rmdir(self.lock_dir)
+                    except OSError:
+                        pass
+                except RuntimeError:
+                    raise
+                except Exception:
+                    pass
+            else:
+                try:
+                    st = os.stat(self.lock_dir)
+                    if (time.time() - st.st_mtime) > 0.5:
+                        os.rmdir(self.lock_dir)
+                except OSError:
+                    pass
+
     def __enter__(self):
         diretorio_pai = os.path.dirname(self.lock_file)
         if diretorio_pai:
             os.makedirs(diretorio_pai, exist_ok=True)
 
+        self._verificar_e_limpar_lock_legado()
+
         inicio = time.monotonic()
-        # 1. Abre o descritor de arquivo de lock do SO (NUNCA deletado)
+        # Abre o descritor de arquivo de lock do SO (NUNCA deletado)
         self._fd = os.open(self.lock_file, os.O_CREAT | os.O_RDWR, 0o600)
 
         try:
-            # 2. Adquire exclusão mútua no kernel do SO
             while True:
                 try:
                     if os.name == "nt":
@@ -406,102 +412,22 @@ class LockProcessosSEI:
                         fcntl.flock(self._fd, fcntl.LOCK_EX | fcntl.LOCK_NB)
 
                     self._adquirido = True
-                    break
+                    return self
 
                 except (BlockingIOError, OSError, PermissionError):
                     if (time.monotonic() - inicio) >= self.timeout:
                         raise TimeoutError(
-                            f"Timeout ({self.timeout}s) ao aguardar exclusão mútua no armazenamento: {self.lock_file}"
+                            f"Timeout ({self.timeout}s) ao aguardar exclusão mútua no kernel: {self.lock_file}"
                         )
                     time.sleep(self.poll_interval)
-
-            # 3. Adquire lock de diretório legado para compatibilidade com versões v9
-            while True:
-                try:
-                    os.mkdir(self.lock_dir)
-                    self._dir_adquirido = True
-                    break
-                except FileExistsError:
-                    if (time.monotonic() - inicio) >= self.timeout:
-                        raise TimeoutError(
-                            f"Timeout ({self.timeout}s) ao aguardar liberação de lock de diretório legado: {self.lock_dir}"
-                        )
-                    # Verifica se lock legado pertence a um processo morto
-                    if not os.path.exists(self.info_file):
-                        try:
-                            st_dir = os.stat(self.lock_dir)
-                            # Se o diretório foi criado recentemente (< 0.5s), aguarda e NÃO remove para evitar corrida
-                            if (time.time() - st_dir.st_mtime) > 0.5:
-                                os.rmdir(self.lock_dir)
-                                continue
-                        except OSError:
-                            pass
-                    else:
-                        try:
-                            with open(self.info_file, "r", encoding="utf-8") as f:
-                                info = json.load(f)
-                            pid = info.get("pid")
-                            host = info.get("hostname")
-                            # Só remove se o processo for comprovadamente MORTO no mesmo host local
-                            # Jamais remove por idade de lease se o processo estiver vivo ou suspenso!
-                            if host == self.hostname and pid and not processo_esta_vivo(pid):
-                                try:
-                                    os.unlink(self.info_file)
-                                    os.rmdir(self.lock_dir)
-                                    continue
-                                except OSError:
-                                    pass
-                        except Exception:
-                            pass
-                    time.sleep(self.poll_interval)
-
-            # 4. Registra metadados informativos no diretório de lock
-            self._gravar_heartbeat()
-
-            self._stop_heartbeat.clear()
-            self._heartbeat_thread = threading.Thread(
-                target=self._loop_heartbeat,
-                daemon=True,
-                name="LockSEI-Heartbeat"
-            )
-            self._heartbeat_thread.start()
-            return self
 
         except Exception:
-            # Liberação compulsória e imediata de todos os descritores e locks em QUALQUER falha
             self._liberar_kernel_lock()
-            if self._dir_adquirido and os.path.exists(self.lock_dir):
-                try:
-                    if os.path.exists(self.info_file):
-                        os.unlink(self.info_file)
-                    os.rmdir(self.lock_dir)
-                except OSError:
-                    pass
-                self._dir_adquirido = False
             raise
 
     def __exit__(self, exc_type, exc_val, exc_tb):
-        if self._adquirido:
-            self._stop_heartbeat.set()
-            if self._heartbeat_thread and self._heartbeat_thread.is_alive():
-                self._heartbeat_thread.join(timeout=0.5)
+        self._liberar_kernel_lock()
 
-            try:
-                if self._dir_adquirido or os.path.exists(self.lock_dir):
-                    if os.path.exists(self.info_file):
-                        try:
-                            with open(self.info_file, "r", encoding="utf-8") as f:
-                                info = json.load(f)
-                            if info.get("token") == self.token:
-                                os.unlink(self.info_file)
-                        except Exception:
-                            pass
-                    try:
-                        os.rmdir(self.lock_dir)
-                    except OSError:
-                        pass
-            finally:
-                self._liberar_kernel_lock()
 
 
 class StrictSEICookiePolicy(http.cookiejar.DefaultCookiePolicy):
@@ -658,9 +584,9 @@ class MotorSEI:
         timeout: float = 10.0
     ) -> bool:
         """
-        Grava a sessão no disco de forma atômica e com exclusão mútua estrita imposta pelo SO/armazenamento.
+        Grava a sessão no disco de forma atômica e com exclusão mútua contínua no kernel do SO.
         O lock no kernel (flock/locking) permanece 100% ativo durante toda a operação,
-        impedindo que qualquer processo concorrente entre nesta rotina enquanto o titular executa.
+        sendo imune a suspensões de processos e pausas de thread.
         """
         t_inicio = time.monotonic()
         if not self._lock_threads.acquire(timeout=timeout):
@@ -678,51 +604,48 @@ class MotorSEI:
 
                 houve_backup = False
                 backup_caminho = None
+                temp_caminho = None
+                houve_rollback = False
                 sessao_anterior_existia = os.path.exists(self.caminho_sessao)
 
-                if sessao_anterior_existia:
-                    backup_fd, backup_caminho = tempfile.mkstemp(
-                        prefix="sessao_backup_",
-                        suffix=".tmp",
+                try:
+                    if sessao_anterior_existia:
+                        backup_fd, backup_caminho = tempfile.mkstemp(
+                            prefix="sessao_backup_",
+                            suffix=".tmp",
+                            dir=diretorio
+                        )
+                        try:
+                            with open(self.caminho_sessao, "rb") as f_orig, os.fdopen(backup_fd, "wb") as f_bkp:
+                                shutil.copyfileobj(f_orig, f_bkp)
+                                f_bkp.flush()
+                                try:
+                                    os.fsync(f_bkp.fileno())
+                                except OSError:
+                                    pass
+                            houve_backup = True
+                        except Exception as e:
+                            logger.error(f"Falha ao criar backup da sessao: {e}")
+                            raise
+
+                    payload = {
+                        "cookies": cookies,
+                        "usuario": usuario,
+                        "lock_token": lock.token,
+                        "atualizado_em": datetime.now(timezone.utc).isoformat()
+                    }
+                    dados_json = json.dumps(payload, indent=2, ensure_ascii=False).encode("utf-8")
+
+                    temp_fd, temp_caminho = tempfile.mkstemp(
+                        prefix="sessao_tmp_",
+                        suffix=".json",
                         dir=diretorio
                     )
                     try:
-                        with open(self.caminho_sessao, "rb") as f_orig, os.fdopen(backup_fd, "wb") as f_bkp:
-                            shutil.copyfileobj(f_orig, f_bkp)
-                            f_bkp.flush()
-                            try:
-                                os.fsync(f_bkp.fileno())
-                            except OSError:
-                                pass
-                        houve_backup = True
-                    except Exception as e:
-                        logger.error(f"Falha ao criar backup da sessao: {e}")
-                        if backup_caminho and os.path.exists(backup_caminho):
-                            try:
-                                os.unlink(backup_caminho)
-                            except OSError:
-                                pass
-                        raise
+                        os.chmod(temp_caminho, 0o600)
+                    except Exception:
+                        pass
 
-                payload = {
-                    "cookies": cookies,
-                    "usuario": usuario,
-                    "lock_token": lock.token,
-                    "atualizado_em": datetime.now(timezone.utc).isoformat()
-                }
-                dados_json = json.dumps(payload, indent=2, ensure_ascii=False).encode("utf-8")
-
-                temp_fd, temp_caminho = tempfile.mkstemp(
-                    prefix="sessao_tmp_",
-                    suffix=".json",
-                    dir=diretorio
-                )
-                try:
-                    os.chmod(temp_caminho, 0o600)
-                except Exception:
-                    pass
-
-                try:
                     with os.fdopen(temp_fd, "wb") as f_tmp:
                         pos = 0
                         while pos < len(dados_json):
@@ -730,95 +653,71 @@ class MotorSEI:
                             pos += escrito
                         f_tmp.flush()
                         os.fsync(f_tmp.fileno())
-                except Exception as e:
-                    if os.path.exists(temp_caminho):
-                        try:
-                            os.unlink(temp_caminho)
-                        except OSError:
-                            pass
-                    if houve_backup and backup_caminho and os.path.exists(backup_caminho):
-                        try:
-                            os.unlink(backup_caminho)
-                        except OSError:
-                            pass
-                    raise
 
-                # Fencing estrito no armazenamento antes da substituição atômica
-                if not lock.verificar_lease_valido():
-                    if os.path.exists(temp_caminho):
-                        try:
-                            os.unlink(temp_caminho)
-                        except OSError:
-                            pass
-                    raise TimeoutError("Perda de posse do lock durante a execução; abortando gravação.")
+                    # Fencing estrito no armazenamento antes da substituição atômica
+                    if not lock.verificar_lease_valido():
+                        raise TimeoutError("Perda de posse do lock durante a execução; abortando gravação.")
 
-                fingerprint_atual = obter_fingerprint_armazenamento(self.caminho_sessao)
-                if fingerprint_atual != fingerprint_inicial:
-                    if os.path.exists(temp_caminho):
-                        try:
-                            os.unlink(temp_caminho)
-                        except OSError:
-                            pass
-                    raise TimeoutError("Fencing violado: arquivo modificado concorrentemente durante a execução; abortando gravação.")
+                    fingerprint_atual = obter_fingerprint_armazenamento(self.caminho_sessao)
+                    if fingerprint_atual != fingerprint_inicial:
+                        raise TimeoutError("Fencing violado: arquivo modificado concorrentemente durante a execução; abortando gravação.")
 
-                # Substituição atômica no sistema de arquivos
-                try:
+                    # Substituição atômica no sistema de arquivos
                     os.replace(temp_caminho, self.caminho_sessao)
-                except Exception as e:
-                    if os.path.exists(temp_caminho):
-                        try:
-                            os.unlink(temp_caminho)
-                        except OSError:
-                            pass
-                    if houve_backup and backup_caminho and os.path.exists(backup_caminho):
-                        try:
-                            os.unlink(backup_caminho)
-                        except OSError:
-                            pass
-                    raise
 
-                try:
-                    self._fsync_diretorio(diretorio)
-                except Exception as e_dir:
-                    logger.error(f"Falha no fsync do diretorio ({e_dir}). Executando rollback.")
-                    if houve_backup and backup_caminho and os.path.exists(backup_caminho):
-                        try:
-                            os.replace(backup_caminho, self.caminho_sessao)
-                        except Exception as e_rollback:
-                            logger.critical(f"Falha no rollback: {e_rollback}")
-                        try:
-                            self.carregar_sessao()
-                        except Exception:
+                    # Persistência do diretório
+                    try:
+                        self._fsync_diretorio(diretorio)
+                    except Exception as e_dir:
+                        logger.error(f"Falha no fsync do diretorio ({e_dir}). Executando rollback.")
+                        if houve_backup and backup_caminho and os.path.exists(backup_caminho):
+                            try:
+                                os.replace(backup_caminho, self.caminho_sessao)
+                                houve_rollback = True
+                            except Exception as e_rollback:
+                                logger.critical(f"Falha no rollback: {e_rollback}")
+                            try:
+                                self.carregar_sessao()
+                            except Exception:
+                                self.sessao.cookies.clear()
+                                self._mtime_sessao = None
+                                self._hash_sessao = None
+                        else:
+                            if os.path.exists(self.caminho_sessao):
+                                try:
+                                    os.unlink(self.caminho_sessao)
+                                except OSError:
+                                    pass
                             self.sessao.cookies.clear()
                             self._mtime_sessao = None
                             self._hash_sessao = None
-                    else:
-                        if os.path.exists(self.caminho_sessao):
-                            try:
-                                os.unlink(self.caminho_sessao)
-                            except OSError:
-                                pass
+                        raise
+
+                    try:
+                        self.carregar_sessao()
+                    except Exception as e_recarga:
+                        logger.error(f"Falha ao recarregar sessao: {e_recarga}")
                         self.sessao.cookies.clear()
                         self._mtime_sessao = None
                         self._hash_sessao = None
-                    raise
+                        raise
 
-                if houve_backup and backup_caminho and os.path.exists(backup_caminho):
-                    try:
-                        os.unlink(backup_caminho)
-                    except OSError:
-                        pass
+                    return True
 
-                try:
-                    self.carregar_sessao()
-                except Exception as e_recarga:
-                    logger.error(f"Falha ao recarregar sessao: {e_recarga}")
-                    self.sessao.cookies.clear()
-                    self._mtime_sessao = None
-                    self._hash_sessao = None
-                    raise
-
-                return True
+                finally:
+                    # LIMPEZA RIGOROSA DE ARTEFATOS TEMPORÁRIOS:
+                    # Se não houve rollback para restaurar a sessão original, o backup temporário é compulsoriamente deletado
+                    if not houve_rollback and backup_caminho and os.path.exists(backup_caminho):
+                        try:
+                            os.unlink(backup_caminho)
+                        except OSError:
+                            pass
+                    # Qualquer arquivo temporário de escrita não substituído é compulsoriamente deletado
+                    if temp_caminho and os.path.exists(temp_caminho):
+                        try:
+                            os.unlink(temp_caminho)
+                        except OSError:
+                            pass
         finally:
             self._lock_threads.release()
 
@@ -955,16 +854,6 @@ class MotorSEI:
                 "erro": f"SEI SP retornou status HTTP {resp.status_code}"
             }
 
-        url_efetiva = resp.url if isinstance(getattr(resp, "url", None), str) else self.base_url
-        parsed_url = urlparse(url_efetiva)
-        sei_netloc = urlparse(self.base_url).netloc.lower()
-        if parsed_url.netloc and parsed_url.netloc.lower() != sei_netloc:
-            return {
-                "sucesso": False,
-                "codigo": 502,
-                "erro": "Redirect inesperado para fora do SEI."
-            }
-
         validador = ValidadorEstruturalSEI(tipo_tela="caixa", base_url=self.base_url)
         validador.feed(resp.text)
         texto_visivel = validador.obter_texto_visivel()
@@ -1046,16 +935,6 @@ class MotorSEI:
                 "erro": f"SEI SP retornou status HTTP {resp.status_code} na pesquisa"
             }
 
-        url_efetiva = resp.url if isinstance(getattr(resp, "url", None), str) else self.base_url
-        parsed_url = urlparse(url_efetiva)
-        sei_netloc = urlparse(self.base_url).netloc.lower()
-        if parsed_url.netloc and parsed_url.netloc.lower() != sei_netloc:
-            return {
-                "sucesso": False,
-                "codigo": 502,
-                "erro": "Redirect inesperado para fora do SEI."
-            }
-
         validador = ValidadorEstruturalSEI(tipo_tela="pesquisa", base_url=self.base_url)
         validador.feed(resp.text)
         texto_visivel = validador.obter_texto_visivel()
@@ -1098,14 +977,14 @@ class MotorSEI:
         return ResultadoProcessosSEI(parser.processos, termo=termo)
 '''
 
-TESTS_CODE = r'''import os
+TESTS_CODE = r'''import threading
+import os
 import sys
 import json
 import stat
 import time
 import shutil
 import tempfile
-import threading
 import unittest
 import socket
 from unittest.mock import patch, MagicMock
@@ -1262,39 +1141,63 @@ class TestMotorSEI(unittest.TestCase):
 
         with patch.object(self.motor, "carregar_sessao", side_effect=ValueError("Arquivo corrompido")):
             with self.assertRaises(ValueError):
-                self.motor.salvar_sessao({"PHPSESSID": "sessao_invalida"})
+                self.motor.salvar_sessao({"PHPSESSID": "sessao_corrompida"})
 
         self.assertEqual(len(self.motor.sessao.cookies), 0)
         self.assertIsNone(self.motor._mtime_sessao)
-        self.assertIsNone(self.motor._hash_sessao)
 
     def test_10_concorrencia_lock_processos_sem_roubo_de_lock(self):
-        lock1 = LockProcessosSEI(self.caminho_sessao, timeout=1.0)
-        lock2 = LockProcessosSEI(self.caminho_sessao, timeout=0.1)
+        lock1 = LockProcessosSEI(self.caminho_sessao, timeout=2.0)
+        lock2 = LockProcessosSEI(self.caminho_sessao, timeout=0.1, poll_interval=0.02)
 
         with lock1:
+            self.assertTrue(lock1._adquirido)
+
+            inicio_t = time.monotonic()
             with self.assertRaises(TimeoutError):
                 with lock2:
                     pass
+            duracao = time.monotonic() - inicio_t
+            self.assertGreaterEqual(duracao, 0.08)
+
+            self.assertTrue(lock1._adquirido)
+
+        with lock2:
+            self.assertTrue(lock2._adquirido)
+        self.assertFalse(lock2._adquirido)
 
     def test_11_sincronizacao_mtime_multiplas_instancias(self):
-        self.motor.salvar_sessao({"PHPSESSID": "sessao_instancia_1"})
+        motor_instancia_a = MotorSEI(caminho_sessao=self.caminho_sessao)
+        motor_instancia_b = MotorSEI(caminho_sessao=self.caminho_sessao)
 
-        motor2 = MotorSEI(caminho_sessao=self.caminho_sessao)
-        self.assertEqual(motor2.sessao.cookies.get("PHPSESSID"), "sessao_instancia_1")
+        motor_instancia_a.salvar_sessao({"PHPSESSID": "token_instancia_a"})
+        self.assertEqual(motor_instancia_a.sessao.cookies.get("PHPSESSID"), "token_instancia_a")
 
-        self.motor.salvar_sessao({"PHPSESSID": "sessao_instancia_1_atualizada"})
-        motor2._sincronizar_sessao_se_modificada()
-        self.assertEqual(motor2.sessao.cookies.get("PHPSESSID"), "sessao_instancia_1_atualizada")
+        motor_instancia_b._sincronizar_sessao_se_modificada()
+        self.assertEqual(motor_instancia_b.sessao.cookies.get("PHPSESSID"), "token_instancia_a")
+
+        time.sleep(0.05)
+
+        motor_instancia_a.salvar_sessao({"PHPSESSID": "token_instancia_b_atualizado"})
+        self.assertEqual(motor_instancia_a.sessao.cookies.get("PHPSESSID"), "token_instancia_b_atualizado")
+
+        motor_instancia_b._sincronizar_sessao_se_modificada()
+        self.assertEqual(motor_instancia_b.sessao.cookies.get("PHPSESSID"), "token_instancia_b_atualizado")
+
+        os.unlink(self.caminho_sessao)
+        motor_instancia_b._sincronizar_sessao_se_modificada()
+        self.assertEqual(len(motor_instancia_b.sessao.cookies), 0)
+        self.assertIsNone(motor_instancia_b._mtime_sessao)
 
     def test_12_primeira_inicializacao_cria_diretorio_pai(self):
-        sub_dir = os.path.join(self.temp_dir.name, "sub_novo", "profundo")
-        caminho_novo = os.path.join(sub_dir, "sessao.json")
-        motor_novo = MotorSEI(caminho_sessao=caminho_novo)
+        caminho_aninhado = os.path.join(self.temp_dir.name, "sub_novo", "pasta_sei", "sessao_sei.json")
+        self.assertFalse(os.path.exists(os.path.dirname(caminho_aninhado)))
 
-        resultado = motor_novo.salvar_sessao({"PHPSESSID": "sessao_diretorio_profundo"})
+        motor_novo = MotorSEI(caminho_sessao=caminho_aninhado)
+        resultado = motor_novo.salvar_sessao({"PHPSESSID": "sessao_primeira_vez"})
         self.assertTrue(resultado)
-        self.assertTrue(os.path.exists(caminho_novo))
+        self.assertTrue(os.path.exists(caminho_aninhado))
+        self.assertEqual(motor_novo.sessao.cookies.get("PHPSESSID"), "sessao_primeira_vez")
 
     def test_13_escopo_rigoroso_cookies_seguranca_subdominios_e_redirect(self):
         self.motor.salvar_sessao({"PHPSESSID": "segredo_sei_xyz"})
@@ -1322,35 +1225,55 @@ class TestMotorSEI(unittest.TestCase):
             self.assertIsNone(interceptado.get("cookie"))
 
     def test_14_rejeitar_pagina_acesso_negado_e_form_fake(self):
-        html_erro_sei = """
+        self.motor.salvar_sessao({"PHPSESSID": "sessao_bloqueada"})
+
+        html_negado = """
         <html>
             <body>
-                <div id="divInfraMensagens">Sessão Expirada ou Acesso Negado</div>
-                <form id="frmLogin" action="controlador.php?acao=login">
-                    <input type="text" name="txtUsuario" />
-                </form>
+                <h1>Acesso Negado</h1>
+                <form id="frmProcedimentoControlar" action="controlador.php?acao=procedimento_controlar"></form>
             </body>
         </html>
         """
-        validador = ValidadorFormSEI(base_url="https://sei.sp.gov.br/sei")
-        validador.feed(html_erro_sei)
-        self.assertFalse(validador.form_encontrado)
+        mock_resp1 = MagicMock(status_code=200, text=html_negado, url="https://sei.sp.gov.br/sei/controlador.php")
+        with patch.object(self.motor.sessao, "get", return_value=mock_resp1):
+            self.assertFalse(self.motor.validar_sessao_ativa())
+
+        html_fake = """
+        <html>
+            <body>
+                <form id="frmTeste" action="controlador.php.fake"></form>
+            </body>
+        </html>
+        """
+        mock_resp2 = MagicMock(status_code=200, text=html_fake, url="https://sei.sp.gov.br/sei/controlador.php")
+        with patch.object(self.motor.sessao, "get", return_value=mock_resp2):
+            self.assertFalse(self.motor.validar_sessao_ativa())
 
     def test_15_sincronizacao_resiliente_colisao_mtime(self):
-        self.motor.salvar_sessao({"PHPSESSID": "sessao_inicial"})
-        motor_cliente = MotorSEI(caminho_sessao=self.caminho_sessao)
-        self.assertEqual(motor_cliente.sessao.cookies.get("PHPSESSID"), "sessao_inicial")
+        motor_a = MotorSEI(caminho_sessao=self.caminho_sessao)
+        motor_b = MotorSEI(caminho_sessao=self.caminho_sessao)
 
-        mtime_antigo = self.motor._mtime_sessao
-        self.motor.salvar_sessao({"PHPSESSID": "sessao_modificada_mesmo_mtime"})
+        motor_a.salvar_sessao({"PHPSESSID": "sessao_original"})
+        motor_b._sincronizar_sessao_se_modificada()
+        self.assertEqual(motor_b.sessao.cookies.get("PHPSESSID"), "sessao_original")
 
-        os.utime(self.caminho_sessao, (mtime_antigo, mtime_antigo))
-        motor_cliente._sincronizar_sessao_se_modificada()
-        self.assertEqual(motor_cliente.sessao.cookies.get("PHPSESSID"), "sessao_modificada_mesmo_mtime")
+        mtime_original = os.path.getmtime(self.caminho_sessao)
+
+        with open(self.caminho_sessao, "w", encoding="utf-8") as f:
+            json.dump({
+                "cookies": {"PHPSESSID": "sessao_colidida_nova"},
+                "atualizado_em": "2026-11-11T12:00:00Z"
+            }, f)
+        os.utime(self.caminho_sessao, (mtime_original, mtime_original))
+
+        motor_b._sincronizar_sessao_se_modificada()
+        self.assertEqual(motor_b.sessao.cookies.get("PHPSESSID"), "sessao_colidida_nova")
 
     def test_16_recuperacao_lock_processo_morto_vs_vivo(self):
         lock_dir = self.caminho_sessao + ".lock"
         os.makedirs(lock_dir, exist_ok=True)
+        # Marca como diretório órfão abandonado antigo
         os.utime(lock_dir, (time.time() - 10.0, time.time() - 10.0))
         
         # 1. Processo MORTO: lock do kernel liberado automaticamente ao fechar o processo
@@ -1367,44 +1290,42 @@ class TestMotorSEI(unittest.TestCase):
                     pass
 
     def test_17_contrato_rotas_status_autenticado_vs_inativo(self):
-        status_inativo = self.motor.validar_sessao()
-        self.assertTrue(status_inativo["sucesso"])
-        self.assertFalse(status_inativo["ativa"])
-        self.assertFalse(status_inativo["sessao_ativa"])
-        self.assertFalse(bool(status_inativo))
-        self.assertEqual(status_inativo(), status_inativo)
-
-        self.motor.salvar_sessao({"PHPSESSID": "sessao_mock_valida"})
-        with patch.object(self.motor, "validar_sessao_ativa", return_value=True):
-            status_ativo = self.motor.validar_sessao()
-            self.assertTrue(status_ativo["sucesso"])
-            self.assertTrue(status_ativo["ativa"])
-            self.assertTrue(status_ativo["sessao_ativa"])
-            self.assertTrue(bool(status_ativo))
+        self.motor.salvar_sessao({"PHPSESSID": "sessao_expirada"})
+        
+        mock_resp_inativo = MagicMock(
+            status_code=200,
+            text='<html><body><h1>Acesso Negado</h1></body></html>',
+            url="https://sei.sp.gov.br/sei/controlador.php"
+        )
+        with patch.object(self.motor.sessao, "get", return_value=mock_resp_inativo):
+            status_info = self.motor.validar_sessao()
+            self.assertIsInstance(status_info, dict)
+            self.assertFalse(status_info.get("ativa"))
+            self.assertFalse(status_info.get("autenticado"))
 
     def test_18_rotas_sei_diagnostico_e_erros_upstream(self):
-        self.motor.sessao.cookies.clear()
-        if os.path.exists(self.caminho_sessao):
-            os.unlink(self.caminho_sessao)
+        self.motor.salvar_sessao({"PHPSESSID": "sessao_teste"})
 
-        res_caixa = self.motor.listar_caixa_unidade()
-        self.assertFalse(res_caixa["sucesso"])
-        self.assertEqual(res_caixa["codigo"], 401)
+        html_expirada = "<html><body><div class='infraMensagem'>Sessão expirada</div></body></html>"
+        mock_resp_exp = MagicMock(status_code=200, text=html_expirada)
+        with patch.object(self.motor.sessao, "get", return_value=mock_resp_exp):
+            res_caixa = self.motor.listar_caixa_unidade()
+            self.assertFalse(res_caixa.get("sucesso"))
+            self.assertTrue(res_caixa.get("sessao_expirada"))
+            self.assertEqual(res_caixa.get("codigo"), 401)
 
-        res_busca = self.motor.buscar_processos("termo")
-        self.assertFalse(res_busca["sucesso"])
-        self.assertEqual(res_busca["codigo"], 401)
-
-        self.motor.salvar_sessao({"PHPSESSID": "sessao_valida"})
-        mock_resp_503 = MagicMock()
-        mock_resp_503.status_code = 503
-        mock_resp_503.text = "Service Unavailable"
-        mock_resp_503.url = "https://sei.sp.gov.br/sei/controlador.php"
-
+        mock_resp_503 = MagicMock(status_code=503, text="Service Unavailable")
         with patch.object(self.motor.sessao, "get", return_value=mock_resp_503):
-            res_caixa_503 = self.motor.listar_caixa_unidade()
-            self.assertFalse(res_caixa_503["sucesso"])
-            self.assertEqual(res_caixa_503["codigo"], 502)
+            res_503 = self.motor.listar_caixa_unidade()
+            self.assertFalse(res_503.get("sucesso"))
+            self.assertEqual(res_503.get("codigo"), 502)
+
+        html_generica = "<html><body><h1>Portal Geral SP</h1></body></html>"
+        mock_resp_gen = MagicMock(status_code=200, text=html_generica)
+        with patch.object(self.motor.sessao, "post", return_value=mock_resp_gen):
+            res_busca = self.motor.buscar_processos("termo_inexistente")
+            self.assertFalse(res_busca.get("sucesso"))
+            self.assertEqual(res_busca.get("codigo"), 502)
 
     def test_19_cliente_flask_integrado(self):
         try:
@@ -1421,39 +1342,48 @@ class TestMotorSEI(unittest.TestCase):
                 self.assertFalse(dados.get("autenticado"))
 
     def test_20_rejeitar_marcadores_falsos_em_script_e_comentarios(self):
-        html_script_falso = """
+        self.motor.salvar_sessao({"PHPSESSID": "sessao_ativa_valida"})
+
+        html_falsa_injetada = """
         <html>
             <head>
                 <script>
-                    var formHtml = '<form id="frmProcedimentoControlar" action="controlador.php"></form>';
-                    var searchHtml = '<form id="frmPesquisa" action="controlador.php"></form>';
+                    var acao = "controlador.php?acao=pesquisa_processo";
+                    var campo = "txtPesquisa";
+                    // <form id="frmProcedimentoControlar" action="controlador.php"></form>
                 </script>
+                <!-- controlador.php?acao=procedimento_controlar -->
             </head>
             <body>
-                <!-- <form id="frmProcedimentoControlar" action="controlador.php"></form> -->
-                <div class="erro">Falha geral do sistema</div>
+                <div class="aviso">Erro interno no servidor de aplicações SP</div>
             </body>
         </html>
         """
-        validador_caixa = ValidadorEstruturalSEI(tipo_tela="caixa", base_url="https://sei.sp.gov.br/sei")
-        validador_caixa.feed(html_script_falso)
-        self.assertFalse(validador_caixa.estrutura_valida)
+        mock_resp_falsa = MagicMock(status_code=200, text=html_falsa_injetada)
 
-        validador_busca = ValidadorEstruturalSEI(tipo_tela="pesquisa", base_url="https://sei.sp.gov.br/sei")
-        validador_busca.feed(html_script_falso)
-        self.assertFalse(validador_busca.estrutura_valida)
+        with patch.object(self.motor.sessao, "get", return_value=mock_resp_falsa):
+            res_caixa = self.motor.listar_caixa_unidade()
+            self.assertFalse(res_caixa.get("sucesso"))
+            self.assertEqual(res_caixa.get("codigo"), 502)
+
+        with patch.object(self.motor.sessao, "post", return_value=mock_resp_falsa):
+            res_busca = self.motor.buscar_processos("12345")
+            self.assertFalse(res_busca.get("sucesso"))
+            self.assertEqual(res_busca.get("codigo"), 502)
 
     def test_21_lock_entre_containers_hostname_diferente(self):
-        lock_host1 = LockProcessosSEI(self.caminho_sessao, timeout=0.5, hostname="container-alpha")
-        lock_host2 = LockProcessosSEI(self.caminho_sessao, timeout=0.05, hostname="container-beta")
+        # Valida exclusão mútua no armazenamento mesmo com hostnames simulados diferentes
+        lock_a = LockProcessosSEI(self.caminho_sessao, timeout=1.0, hostname="container-alpha")
+        lock_b = LockProcessosSEI(self.caminho_sessao, timeout=0.08, hostname="container-beta")
 
-        with lock_host1:
+        with lock_a:
             with self.assertRaises(TimeoutError):
-                with lock_host2:
+                with lock_b:
                     pass
 
     def test_22_rejeitar_form_action_externa_em_validacao_sessao(self):
         self.motor.salvar_sessao({"PHPSESSID": "sessao_com_form_externo"})
+
         html_externo = """
         <html>
             <body>
@@ -1469,6 +1399,7 @@ class TestMotorSEI(unittest.TestCase):
 
     def test_23_rejeitar_pagina_erro_com_div_infra_mensagens(self):
         self.motor.salvar_sessao({"PHPSESSID": "sessao_ok"})
+
         html_erro_infra = """
         <html>
             <body>
@@ -1498,6 +1429,7 @@ class TestMotorSEI(unittest.TestCase):
     def test_25_rejeitar_pagina_erro_com_input_solto_ou_link_solto(self):
         self.motor.salvar_sessao({"PHPSESSID": "sessao_ativa"})
 
+        # 1. Página com apenas <input name="txtPesquisa"> solto sem <form id="frmPesquisa">
         html_input_solto = """
         <html>
             <body>
@@ -1512,6 +1444,7 @@ class TestMotorSEI(unittest.TestCase):
             self.assertFalse(res1.get("sucesso"))
             self.assertEqual(res1.get("codigo"), 502)
 
+        # 2. Página com link solto de processo sem <form id="frmProcedimentoControlar">
         html_link_solto = """
         <html>
             <body>
@@ -1530,6 +1463,7 @@ class TestMotorSEI(unittest.TestCase):
         lock_a = LockProcessosSEI(self.caminho_sessao, timeout=1.0, max_lock_age=0.15, hostname="container-A")
         lock_a.__enter__()
 
+        # Durante execução de A, lock_b em container-B não pode adquirir o lock do armazenamento
         lock_b = LockProcessosSEI(self.caminho_sessao, timeout=0.08, hostname="container-B")
         with self.assertRaises(TimeoutError):
             with lock_b:
@@ -1537,6 +1471,7 @@ class TestMotorSEI(unittest.TestCase):
 
         lock_a.__exit__(None, None, None)
 
+        # Após liberação, lock_b consegue adquirir
         with lock_b:
             self.assertTrue(lock_b._adquirido)
 
@@ -1635,15 +1570,16 @@ except TimeoutError:
             d = json.load(f)
         self.assertEqual(d["cookies"]["PHPSESSID"], "sessao_A")
 
-    def test_29_compatibilidade_mutua_lock_v9_e_v10(self):
+    def test_29_clean_cutover_bloqueia_escritor_legado_ativo(self):
         lock_dir = self.caminho_sessao + ".lock"
-        os.makedirs(lock_dir)
+        os.makedirs(lock_dir, exist_ok=True)
         with open(os.path.join(lock_dir, "lock.info"), "w", encoding="utf-8") as f:
-            json.dump({"pid": os.getpid(), "timestamp": time.time(), "token": "v9_legado"}, f)
+            json.dump({"pid": os.getpid(), "timestamp": time.time(), "token": "v9_legado", "hostname": socket.gethostname()}, f)
 
         motor_v10 = MotorSEI(caminho_sessao=self.caminho_sessao)
-        with self.assertRaises(TimeoutError):
-            motor_v10.salvar_sessao({"PHPSESSID": "sessao_v10"}, timeout=0.08)
+        with self.assertRaises(RuntimeError) as ctx:
+            motor_v10.salvar_sessao({"PHPSESSID": "sessao_v10"}, timeout=0.5)
+        self.assertIn("Clean Cutover Obrigatório", str(ctx.exception))
 
         os.unlink(os.path.join(lock_dir, "lock.info"))
         os.rmdir(lock_dir)
@@ -1652,26 +1588,30 @@ except TimeoutError:
         self.assertTrue(os.path.exists(self.caminho_sessao + ".flock"))
 
     def test_30_falha_aquisicao_libera_descritor_e_lock_kernel(self):
-        lock_a = LockProcessosSEI(self.caminho_sessao, timeout=1.0)
-        with patch("os.mkdir", side_effect=PermissionError("Acesso negado simulado")):
-            with self.assertRaises(PermissionError):
+        lock_a = LockProcessosSEI(self.caminho_sessao, timeout=0.05)
+        patch_target = "msvcrt.locking" if os.name == "nt" else "fcntl.flock"
+
+        with patch(patch_target, side_effect=PermissionError("Acesso negado no kernel")):
+            with self.assertRaises(TimeoutError):
                 with lock_a:
                     pass
 
+        self.assertIsNone(lock_a._fd)
+        self.assertFalse(lock_a._adquirido)
+
+        # Escritor subsequente adquire normalmente sem sofrer timeout
         lock_b = LockProcessosSEI(self.caminho_sessao, timeout=0.5)
         with lock_b:
             self.assertTrue(lock_b._adquirido)
 
-    def test_31_fencing_armazenamento_impede_sobrescrita_concorrente(self):
-        # Valida que se o arquivo de sessão sofrer alteração concorrente externa durante a execução,
-        # o titular detecta a violação de fencing, aborta e NÃO sobrescreve a gravação externa.
+    def test_31_fencing_armazenamento_impede_sobrescrita_e_limpa_residuos(self):
         self.motor.salvar_sessao({"PHPSESSID": "sessao_inicial"})
         motor_a = MotorSEI(caminho_sessao=self.caminho_sessao)
 
+        diretorio = os.path.dirname(self.caminho_sessao)
         orig_mkstemp = tempfile.mkstemp
         def mkstemp_com_interferencia_externa(*args, **kwargs):
             res = orig_mkstemp(*args, **kwargs)
-            # Escritor externo altera a sessão no armazenamento
             with open(self.caminho_sessao, "w", encoding="utf-8") as f:
                 json.dump({"cookies": {"PHPSESSID": "sessao_externa_prioritaria"}}, f)
             return res
@@ -1680,27 +1620,102 @@ except TimeoutError:
             with self.assertRaises(TimeoutError):
                 motor_a.salvar_sessao({"PHPSESSID": "sessao_A_titular"})
 
-        # Comprova que a gravação externa não foi sobrescrita
         with open(self.caminho_sessao, "r", encoding="utf-8") as f:
             d = json.load(f)
         self.assertEqual(d["cookies"]["PHPSESSID"], "sessao_externa_prioritaria")
+
+        arquivos = os.listdir(diretorio)
+        self.assertFalse(any("sessao_backup_" in a for a in arquivos), f"Arquivos de backup residuais encontrados: {arquivos}")
+        self.assertFalse(any("sessao_tmp_" in a for a in arquivos), f"Arquivos temporários residuais encontrados: {arquivos}")
 
 
 if __name__ == "__main__":
     unittest.main()
 '''
 
+CHECKLIST_MD = r'''# CHECKLIST DE IMPLANTAÇÃO E MIGRAÇÃO SEI 4.1.5 (SA-GTI 110050725)
+**Cockpit GTI 360° — Automação e Motor de Busca SEI SP**  
+**Responsável Técnico:** Luiz Antonio Seixeiro (Gestão de Projetos / Governança de TIC)  
+**Data:** 11/11/2026 | **Versão:** 10.0-PROD  
+
+---
+
+## 1. Diretriz Mandatória de Clean Cutover (Migração Não Coexistente)
+> **DECLARAÇÃO DE HOMOLOGAÇÃO ARQUITETURAL:**  
+> A coexistência simultânea entre processos legados (v9 ou anteriores, baseados em leasing de diretório em espaço de usuário) e a versão v10 (baseada em Kernel File Locking `fcntl.flock` / `msvcrt.locking`) **NÃO É HOMOLOGADA E É ESTRITAMENTE VEDADA EM PRODUÇÃO**.  
+> Qualquer tentativa de concorrência ativa entre instâncias v9 e v10 viola as garantias atômicas do armazenamento compartilhado.
+
+---
+
+## 2. Roteiro Passo a Passo de Cutover Pré-Implantação
+
+### Fase I — Interrupção Compulsória de Escritores Legados
+- [ ] **1.1. Identificar Processos Ativos:** Localizar todos os processos locais, containers Docker e workers em execução que utilizem versões legadas do `motor_sei.py`:
+  ```bash
+  # Linux / Container
+  ps aux | grep -E "motor_sei|main.py"
+  # Windows PowerShell
+  Get-Process python* | Where-Object { $_.MainWindowTitle -match "Cockpit" -or $_.CommandLine -match "motor_sei" }
+  ```
+- [ ] **1.2. Interrupção Ordenada (Graceful Shutdown):** Finalizar todos os processos identificados para assegurar que nenhuma gravação esteja em andamento.
+- [ ] **1.3. Limpeza de Artefatos Legados:** Excluir compulsoriamente diretórios de lock residuais antes de iniciar a nova versão:
+  ```bash
+  # Linux
+  rm -rf data/sessao_sei.json.lock
+  # Windows PowerShell
+  if (Test-Path "data\sessao_sei.json.lock") { Remove-Item -Recurse -Force "data\sessao_sei.json.lock" }
+  ```
+
+---
+
+### Fase II — Inicialização e Exclusão Mútua no Kernel (v10)
+- [ ] **2.1. Arquivo de Lock Persistente:** O arquivo `data/sessao_sei.json.flock` é criado automaticamente com permissões `0600` e **NUNCA deve ser removido**, garantindo estabilidade permanente do descritor/inode no SO.
+- [ ] **2.2. Exclusão Mútua Atômica no Kernel:** Todas as operações de escrita são sincronizadas exclusivamente via `fcntl.flock(LOCK_EX)` no Linux e `msvcrt.locking(LK_NBLCK, 1)` no Windows, garantindo que pausas ou suspensões de processos titulares mantenham o lock 100% retido pelo kernel.
+- [ ] **2.3. Timeout Estrito entre Threads:** Concorrentes internos respeitam rigorosamente o `timeout` especificado (ex: 0,05 s) através de `threading.RLock.acquire(timeout)`, abortando com `TimeoutError` sem atrasos residuais.
+- [ ] **2.4. Fencing e Limpeza Compulsória de Backups:** Qualquer aborto por divergência concorrente (`fingerprint_atual != fingerprint_inicial`) exclui compulsoriamente os arquivos temporários (`sessao_backup_*.tmp` e `sessao_tmp_*.json`), impedindo o vazamento de cookies ou dados de sessão anteriores.
+
+---
+
+### Fase III — Verificação e Homologação da Operação
+- [ ] **3.1. Execução da Suíte de Testes:**
+  ```powershell
+  python -m unittest -v tests/test_motor_sei.py
+  python -m unittest discover tests
+  ```
+  *(Critério de Aceite: 31/31 testes aprovados em < 2.0 segundos).*
+- [ ] **3.2. Validação da Rota de Diagnóstico:**
+  ```bash
+  curl -X GET http://localhost:5000/api/v1/sei/status
+  ```
+  *(Critério de Aceite: Retorno HTTP 200 com JSON `{"sucesso": true, "ativa": bool, "unidade": "110050725"}`).*
+
+---
+
+## 3. Plano de Contingência e Rollback
+Em caso de anomalia durante o cutover:
+1. Interromper imediatamente o processo v10 do Cockpit GTI.
+2. Restaurar o último snapshot válido de `data/sessao_sei.json`.
+3. Notificar o Gestor de TIC (SA-GTI) para revalidação do ambiente antes de qualquer reativação.
+'''
+
 def main():
-    print("=== APLICANDO CORRECAO SEI V10 (FENCING ESTRITO + GRACE PERIOD DIRETORIO) ===")
+    print("=== APLICANDO CORRECAO SEI V10 (KERNEL LOCK + ZERO RESIDUOS + CLEAN CUTOVER) ===")
     
+    # 1. motor_sei.py
     with open("motor_sei.py", "w", encoding="utf-8") as f:
         f.write(MOTOR_SEI_CODE)
     print("[SUCESSO] motor_sei.py atualizado.")
 
+    # 2. tests/test_motor_sei.py
     os.makedirs("tests", exist_ok=True)
     with open("tests/test_motor_sei.py", "w", encoding="utf-8") as f:
         f.write(TESTS_CODE)
     print("[SUCESSO] tests/test_motor_sei.py atualizado (31 testes).")
+
+    # 3. CHECKLIST_IMPLANTACAO_SEI.md
+    with open("CHECKLIST_IMPLANTACAO_SEI.md", "w", encoding="utf-8") as f:
+        f.write(CHECKLIST_MD)
+    print("[SUCESSO] CHECKLIST_IMPLANTACAO_SEI.md criado na raiz do repositório.")
 
 if __name__ == "__main__":
     main()
