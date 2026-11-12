@@ -21658,7 +21658,7 @@ html body #view-gestao_agil .kanban-card-modelo .k-status-sei-critico {
                 clearTimeout(tid);
                 if (resBackend.ok) {
                     var dadosIa = await resBackend.json();
-                    if (dadosIa && dadosIa.parecer) {
+                    if (dadosIa && dadosIa.sucesso && dadosIa.parecer && !(dadosIa.consistencia && dadosIa.consistencia.consistente === false)) {
                         parecerTexto = dadosIa.parecer.trim();
                         modeloUsado = dadosIa.modelo || 'llama3.2:1b';
                     }

@@ -184,12 +184,11 @@ def servir_estaticos(filename):
     return "Arquivo não encontrado", 404
 
 def normalizar_endpoint_ia(endpoint):
-    if not endpoint:
-        endpoint = 'http://127.0.0.1:3001/v1'
-    endpoint = endpoint.strip().rstrip('/')
-    if not endpoint.endswith('/v1'):
-        endpoint += '/v1'
-    return endpoint
+    if endpoint is None or endpoint == '':
+        return motor_ia.obter_endpoint_padrao()
+    if not isinstance(endpoint, str):
+        raise ValueError('Endpoint de IA deve ser uma string.')
+    return motor_ia.validar_endpoint_ia(endpoint)
 
 def localizar_config_pool():
     base = os.path.dirname(os.path.abspath(__file__))
@@ -516,9 +515,18 @@ def api_v1_ia_testar_slot():
 def api_v1_ia_chat():
     try:
         dados = request.get_json(force=True) or {}
+        if not isinstance(dados, dict):
+            return jsonify({'sucesso': False, 'status': 'erro', 'mensagem': 'Payload JSON inválido.'}), 400
         mensagens = dados.get('mensagens') or dados.get('messages') or []
         ia_alvo = dados.get('ia', 'principal')
-        endpoint = normalizar_endpoint_ia(dados.get('endpoint', 'http://127.0.0.1:3001/v1'))
+        raw_endpoint = dados.get('endpoint')
+        try:
+            endpoint = normalizar_endpoint_ia(raw_endpoint)
+        except PermissionError as pe:
+            return jsonify({'sucesso': False, 'status': 'erro', 'mensagem': str(pe)}), 403
+        except ValueError as ve:
+            return jsonify({'sucesso': False, 'status': 'erro', 'mensagem': str(ve)}), 400
+
         model = dados.get('model', 'qwen2.5:14b' if ia_alvo == 'principal' else 'qwen2.5:7b')
         slot_id = dados.get('slot') or ia_alvo
 
@@ -544,11 +552,12 @@ def api_v1_ia_chat():
 def api_v1_ia_revisar_processo():
     try:
         dados = request.get_json(force=True) or {}
-        endpoint = normalizar_endpoint_ia(dados.get('endpoint', 'http://127.0.0.1:3001/v1'))
-        model = dados.get('model') or 'llama3.2:1b'
-        api_key = dados.get('apiKey') or dados.get('api_key') or ''
-        if not api_key or api_key == '***':
-            api_key = resolver_chave_real(model, 'revisao')
+        if not isinstance(dados, dict):
+            return jsonify({'sucesso': False, 'erro': 'Payload JSON inválido.'}), 400
+        # Rota de revisao usa exclusivamente o endpoint interno configurado no servidor
+        endpoint = motor_ia.obter_endpoint_padrao()
+        model = 'llama3.2:1b'
+        api_key = resolver_chave_real(model, 'revisao')
         resultado = motor_ia.revisar_processo_ia(
             dados=dados,
             endpoint=endpoint,

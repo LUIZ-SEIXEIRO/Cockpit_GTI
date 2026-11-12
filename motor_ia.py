@@ -1,30 +1,74 @@
 # -*- coding: utf-8 -*-
 import json
+import math
+import os
 import re
 import urllib.error
 import urllib.request
-from typing import Any, Dict, List
+from typing import Any, Dict, Iterable, List, Optional, Set
 from urllib.parse import urlparse
 
 RE_PROCESSO_SEI = re.compile(r"\b\d{3}\.\d{8}/\d{4}-\d{2}\b")
+RE_VALOR_BRL = re.compile(r"R\$\s*\d+(?:\.\d{3})*(?:,\d{2})?")
+RE_PRAZO = re.compile(r"\b\d+\s+(?:dias?|meses|m\u00eas|anos?)\b", re.IGNORECASE)
+RE_DATA = re.compile(r"\b\d{2}/\d{2}/\d{4}\b")
 
-DIRETRIZ_GROUNDING_ESTRIRO = (
+HOSTS_PADRAO_PERMITIDOS = frozenset({
+    "127.0.0.1",
+    "localhost",
+    "new-api",
+    "ollama",
+    "cockpit-gti-newapi",
+    "cockpit-gti-ollama",
+})
+
+DIRETRIZ_GROUNDING_ESTRITO = (
     "[DIRETRIZ DE GROUNDING ESTRITO SA-GTI]\n"
     "1. Responda EXCLUSIVAMENTE com base nos dados verificados presentes no contexto desta conversa.\n"
-    "2. Se uma informa\u00e7\u00e3o (n\u00famero de processo SEI, prazo, valor, norma ou respons\u00e1vel) n\u00e3o constar no contexto, "
+    "2. Se uma informa\u00e7\u00e3o (n\u00famero de processo SEI, prazo, valor, data, norma ou respons\u00e1vel) n\u00e3o constar no contexto, "
     "declare explicitamente: 'Informa\u00e7\u00e3o n\u00e3o localizada no contexto fornecido.'\n"
-    "3. Nunca invente n\u00fameros de processo, datas, m\u00e9tricas ou cita\u00e7\u00f5es legais."
+    "3. Nunca invente n\u00fameros de processo, datas, valores monet\u00e1rios, m\u00e9tricas ou cita\u00e7\u00f5es legais."
 )
 
 
+def em_container_docker() -> bool:
+    return os.path.exists("/.dockerenv")
+
+
+def obter_endpoint_padrao() -> str:
+    env_ep = (os.getenv("IA_DEFAULT_ENDPOINT") or os.getenv("NEW_API_URL") or "").strip()
+    if env_ep:
+        limpo = env_ep.rstrip("/")
+        return limpo if limpo.endswith("/v1") else limpo + "/v1"
+    if em_container_docker():
+        return "http://new-api:3000/v1"
+    return "http://127.0.0.1:3001/v1"
+
+
+def obter_hosts_permitidos(extras: Optional[Iterable[str]] = None) -> Set[str]:
+    permitidos = set(HOSTS_PADRAO_PERMITIDOS)
+    env_hosts = os.getenv("IA_ALLOWED_HOSTS", "")
+    for h in env_hosts.split(","):
+        h_limpo = h.strip().lower()
+        if h_limpo:
+            permitidos.add(h_limpo)
+    if extras:
+        for h in extras:
+            if isinstance(h, str) and h.strip():
+                permitidos.add(h.strip().lower())
+    return permitidos
+
+
 def normalizar_temperatura(valor: Any, padrao: float = 0.0) -> float:
-    if valor is None or valor == "":
+    if valor is None or valor == "" or isinstance(valor, bool):
         t = padrao
     else:
         try:
             t = float(valor)
-        except (TypeError, ValueError):
+        except (TypeError, ValueError, OverflowError):
             t = padrao
+    if not math.isfinite(t):
+        t = padrao
     if t < 0.0:
         return 0.0
     if t > 0.7:
@@ -33,12 +77,13 @@ def normalizar_temperatura(valor: Any, padrao: float = 0.0) -> float:
 
 
 def normalizar_max_tokens(valor: Any, padrao: int = 700) -> int:
-    if valor is None or valor == "":
+    if valor is None or valor == "" or isinstance(valor, bool):
         n = padrao
     else:
         try:
-            n = int(valor)
-        except (TypeError, ValueError):
+            f = float(valor)
+            n = padrao if not math.isfinite(f) else int(f)
+        except (TypeError, ValueError, OverflowError):
             n = padrao
     if n < 64:
         return 64
@@ -47,13 +92,23 @@ def normalizar_max_tokens(valor: Any, padrao: int = 700) -> int:
     return n
 
 
-def validar_endpoint_ia(endpoint: str) -> str:
+def validar_endpoint_ia(endpoint: Any, hosts_permitidos: Optional[Iterable[str]] = None) -> str:
     if not isinstance(endpoint, str) or not endpoint.strip():
-        raise ValueError("Endpoint de IA n\u00e3o informado.")
+        raise ValueError("Endpoint de IA inv\u00e1lido ou n\u00e3o informado.")
     limpo = endpoint.strip().rstrip("/")
     parsed = urlparse(limpo)
     if parsed.scheme.lower() not in ("http", "https") or not parsed.netloc:
         raise ValueError(f"Endpoint de IA inv\u00e1lido: {endpoint}")
+    host = (parsed.hostname or "").lower()
+    if host not in obter_hosts_permitidos(hosts_permitidos):
+        raise PermissionError(f"Host de provedor de IA n\u00e3o autorizado: {host}")
+    if em_container_docker() and host in ("127.0.0.1", "localhost"):
+        if parsed.port == 3001:
+            return "http://new-api:3000/v1"
+        if parsed.port == 11434:
+            return "http://ollama:11434/v1"
+    if not limpo.endswith("/v1"):
+        limpo += "/v1"
     return limpo
 
 
@@ -75,49 +130,66 @@ def sanitizar_mensagens(mensagens: Any) -> List[Dict[str, str]]:
 
 
 def aplicar_guardiao_grounding(mensagens: List[Dict[str, str]]) -> List[Dict[str, str]]:
-    resultado = [dict(m) for m in mensagens]
-    for msg in resultado:
-        if msg["role"] == "system":
-            if "[DIRETRIZ DE GROUNDING ESTRITO SA-GTI]" not in msg["content"]:
-                msg["content"] = msg["content"].rstrip() + "\n\n" + DIRETRIZ_GROUNDING_ESTRIRO
-            return resultado
-    return [{"role": "system", "content": DIRETRIZ_GROUNDING_ESTRIRO}] + resultado
+    outras = [dict(m) for m in mensagens if m["role"] != "system"]
+    sys_cliente = [
+        m["content"].replace(DIRETRIZ_GROUNDING_ESTRITO, "").replace("[DIRETRIZ DE GROUNDING ESTRITO SA-GTI]", "").strip()
+        for m in mensagens
+        if m["role"] == "system"
+    ]
+    sys_limpo = [s for s in sys_cliente if s]
+    conteudo_sys = ("\n\n".join(sys_limpo) + "\n\n" + DIRETRIZ_GROUNDING_ESTRITO) if sys_limpo else DIRETRIZ_GROUNDING_ESTRITO
+    return [{"role": "system", "content": conteudo_sys}] + outras
 
 
-def avaliar_fidelidade_resposta(resposta: str, contexto: str) -> Dict[str, Any]:
+def verificar_consistencia_contextual(resposta: str, contexto: str) -> Dict[str, Any]:
     texto_resp = str(resposta or "").strip()
     texto_ctx = str(contexto or "")
     alertas: List[str] = []
 
     if not texto_resp:
-        return {"fiel": False, "score": 0.0, "alertas": ["Resposta vazia."]}
+        return {"consistente": False, "alertas": ["Resposta vazia."]}
 
-    procs_ctx = set(RE_PROCESSO_SEI.findall(texto_ctx))
-    procs_resp = set(RE_PROCESSO_SEI.findall(texto_resp))
-    alucinados = sorted(procs_resp - procs_ctx)
-    if alucinados:
-        alertas.append(
-            f"N\u00famero(s) de processo SEI citado(s) fora do contexto: {', '.join(alucinados)}"
-        )
+    procs_fora = sorted(set(RE_PROCESSO_SEI.findall(texto_resp)) - set(RE_PROCESSO_SEI.findall(texto_ctx)))
+    if procs_fora:
+        alertas.append(f"Processo(s) SEI fora do contexto: {', '.join(procs_fora)}")
 
-    score = 1.0 if not alertas else max(0.0, round(1.0 - 0.5 * len(alertas), 2))
-    return {"fiel": len(alertas) == 0, "score": score, "alertas": alertas}
+    vals_ctx = {re.sub(r"\s+", "", v) for v in RE_VALOR_BRL.findall(texto_ctx)}
+    vals_resp = {re.sub(r"\s+", "", v) for v in RE_VALOR_BRL.findall(texto_resp)}
+    vals_fora = sorted(vals_resp - vals_ctx)
+    if vals_fora:
+        alertas.append(f"Valor(es) monet\u00e1rio(s) fora do contexto: {', '.join(vals_fora)}")
+
+    prazos_ctx = {re.sub(r"\s+", " ", p.lower()) for p in RE_PRAZO.findall(texto_ctx)}
+    prazos_resp = {re.sub(r"\s+", " ", p.lower()) for p in RE_PRAZO.findall(texto_resp)}
+    prazos_fora = sorted(prazos_resp - prazos_ctx)
+    if prazos_fora:
+        alertas.append(f"Prazo(s) fora do contexto: {', '.join(prazos_fora)}")
+
+    datas_fora = sorted(set(RE_DATA.findall(texto_resp)) - set(RE_DATA.findall(texto_ctx)))
+    if datas_fora:
+        alertas.append(f"Data(s) fora do contexto: {', '.join(datas_fora)}")
+
+    return {"consistente": len(alertas) == 0, "alertas": alertas}
 
 
 def executar_chat_ia(
     mensagens: Any,
-    endpoint: str = "http://127.0.0.1:3001/v1",
+    endpoint: Optional[str] = None,
     model: str = "qwen2.5:14b",
     api_key: str = "",
     temperature: Any = 0.0,
     max_tokens: Any = 700,
     timeout: int = 45,
+    hosts_permitidos: Optional[Iterable[str]] = None,
 ) -> Dict[str, Any]:
+    ep_alvo = obter_endpoint_padrao() if endpoint is None or endpoint == "" else endpoint
     try:
-        endpoint_valido = validar_endpoint_ia(endpoint)
+        endpoint_valido = validar_endpoint_ia(ep_alvo, hosts_permitidos=hosts_permitidos)
         msgs_limpas = sanitizar_mensagens(mensagens)
-    except ValueError as e:
-        return {"sucesso": False, "codigo": 400, "status": "erro", "mensagem": str(e)}
+    except PermissionError as pe:
+        return {"sucesso": False, "codigo": 403, "status": "erro", "mensagem": str(pe)}
+    except ValueError as ve:
+        return {"sucesso": False, "codigo": 400, "status": "erro", "mensagem": str(ve)}
 
     msgs_protegidas = aplicar_guardiao_grounding(msgs_limpas)
     temp_final = normalizar_temperatura(temperature, padrao=0.0)
@@ -134,12 +206,7 @@ def executar_chat_ia(
     if isinstance(api_key, str) and api_key.strip() and api_key.strip() != "***":
         headers_req["Authorization"] = f"Bearer {api_key.strip()}"
 
-    req = urllib.request.Request(
-        url,
-        data=json.dumps(payload).encode("utf-8"),
-        headers=headers_req,
-        method="POST",
-    )
+    req = urllib.request.Request(url, data=json.dumps(payload).encode("utf-8"), headers=headers_req, method="POST")
 
     try:
         with urllib.request.urlopen(req, timeout=timeout) as resp:
@@ -156,17 +223,22 @@ def executar_chat_ia(
     except Exception as e:
         return {"sucesso": False, "codigo": 502, "status": "erro", "mensagem": f"Erro ao processar resposta do provedor de IA: {e}"}
 
+    if not isinstance(resp_dados, dict):
+        return {"sucesso": False, "codigo": 502, "status": "erro", "mensagem": "Resposta inv\u00e1lida do provedor de IA (objeto JSON esperado)."}
+
     contexto_usuario = "\n".join(m["content"] for m in msgs_limpas if m["role"] in ("system", "user"))
     conteudo_resp = ""
     choices = resp_dados.get("choices")
-    if isinstance(choices, list) and choices:
-        conteudo_resp = str(((choices[0] or {}).get("message") or {}).get("content") or "")
+    if isinstance(choices, list) and choices and isinstance(choices[0], dict):
+        msg_obj = choices[0].get("message")
+        if isinstance(msg_obj, dict):
+            conteudo_resp = str(msg_obj.get("content") or "")
 
-    fidelidade = avaliar_fidelidade_resposta(conteudo_resp, contexto_usuario)
+    consistencia = verificar_consistencia_contextual(conteudo_resp, contexto_usuario)
     resp_dados["grounding"] = {
         "temperature_aplicada": temp_final,
         "max_tokens_aplicado": tokens_final,
-        "fidelidade": fidelidade,
+        "consistencia": consistencia,
     }
     resp_dados["codigo"] = 200
     return resp_dados
@@ -185,16 +257,16 @@ def montar_contexto_processo(dados: Dict[str, Any]) -> str:
         ("Respons\u00e1vel T\u00e9cnico", dados.get("responsavel")),
         ("Card OpenProject", dados.get("cardId")),
     ]
-    linhas = [f"- {rotulo}: {val}" for rotulo, val in campos if val not in (None, "")]
-    return "\n".join(linhas)
+    return "\n".join(f"- {rotulo}: {val}" for rotulo, val in campos if val not in (None, ""))
 
 
 def revisar_processo_ia(
     dados: Dict[str, Any],
-    endpoint: str = "http://127.0.0.1:3001/v1",
+    endpoint: Optional[str] = None,
     model: str = "llama3.2:1b",
     api_key: str = "",
     timeout: int = 20,
+    hosts_permitidos: Optional[Iterable[str]] = None,
 ) -> Dict[str, Any]:
     if not isinstance(dados, dict) or not str(dados.get("idProcesso") or "").strip():
         return {"sucesso": False, "codigo": 400, "erro": "Campo obrigat\u00f3rio 'idProcesso' n\u00e3o informado."}
@@ -227,6 +299,7 @@ def revisar_processo_ia(
         temperature=0.0,
         max_tokens=700,
         timeout=timeout,
+        hosts_permitidos=hosts_permitidos,
     )
 
     if res.get("sucesso") is False:
@@ -234,16 +307,28 @@ def revisar_processo_ia(
 
     choices = res.get("choices") or []
     parecer = ""
-    if choices and isinstance(choices[0], dict):
-        parecer = str(((choices[0].get("message") or {}).get("content")) or "").strip()
+    if isinstance(choices, list) and choices and isinstance(choices[0], dict):
+        msg_obj = choices[0].get("message")
+        if isinstance(msg_obj, dict):
+            parecer = str(msg_obj.get("content") or "").strip()
 
     if not parecer:
         return {"sucesso": False, "codigo": 502, "erro": "O provedor de IA retornou parecer vazio."}
+
+    consistencia = (res.get("grounding") or {}).get("consistencia") or {"consistente": True, "alertas": []}
+    if not consistencia.get("consistente"):
+        return {
+            "sucesso": False,
+            "codigo": 422,
+            "bloqueado_por_inconsistencia": True,
+            "erro": "Parecer bloqueado por conter entidades fora do contexto verificado.",
+            "consistencia": consistencia,
+        }
 
     return {
         "sucesso": True,
         "codigo": 200,
         "parecer": parecer,
         "modelo": res.get("model") or model,
-        "fidelidade": (res.get("grounding") or {}).get("fidelidade"),
+        "consistencia": consistencia,
     }
