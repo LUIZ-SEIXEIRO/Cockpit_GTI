@@ -349,25 +349,34 @@ class LockProcessosSEI:
                 try:
                     with open(self.info_file, "r", encoding="utf-8") as f:
                         info = json.load(f)
+                    if not isinstance(info, dict):
+                        raise RuntimeError(
+                            "Clean Cutover Obrigatório: Metadados de lock.info inválidos. "
+                            "Interrompa todos os processos v9 antes da troca para v10."
+                        )
                     pid = info.get("pid")
                     host = info.get("hostname")
-                    if host and host != self.hostname:
+                    if not isinstance(host, str) or not host.strip() or not isinstance(pid, int) or isinstance(pid, bool) or pid <= 0:
+                        raise RuntimeError(
+                            "Clean Cutover Obrigatório: Metadados incompletos em lock.info (hostname ou PID ausente/inválido). "
+                            "Interrompa todos os processos v9 antes da troca para v10."
+                        )
+                    if host != self.hostname:
                         raise RuntimeError(
                             f"Clean Cutover Obrigatório: Detectado lock SEI legado de outro host ({host}, PID {pid}). "
                             "Interrompa todos os processos v9 antes da troca para v10."
                         )
-                    if host == self.hostname and pid and processo_esta_vivo(pid):
+                    if processo_esta_vivo(pid):
                         raise RuntimeError(
                             f"Clean Cutover Obrigatório: Detectado escritor SEI legado ativo (PID {pid}). "
                             "Interrompa todos os processos v9 antes da troca para v10."
                         )
                     # Processo local comprovadamente morto: limpa lock órfão
-                    if host == self.hostname:
-                        try:
-                            os.unlink(self.info_file)
-                            os.rmdir(self.lock_dir)
-                        except OSError:
-                            pass
+                    try:
+                        os.unlink(self.info_file)
+                        os.rmdir(self.lock_dir)
+                    except OSError:
+                        pass
                 except RuntimeError:
                     raise
                 except Exception as e_info:
@@ -484,6 +493,7 @@ class MotorSEI:
         self.base_url = base_url.rstrip("/")
         self.id_unidade = str(id_unidade)
         self.caminho_sessao = os.path.abspath(caminho_sessao)
+        self._marcador_rollback = self.caminho_sessao + ".rollback_pendente"
         self._mtime_sessao: Optional[float] = None
         self._hash_sessao: Optional[str] = None
         
@@ -509,6 +519,14 @@ class MotorSEI:
         return obter_fingerprint_armazenamento(self.caminho_sessao)
 
     def _sincronizar_sessao_se_modificada(self) -> None:
+        if os.path.exists(self._marcador_rollback):
+            self.sessao.cookies.clear()
+            self._mtime_sessao = None
+            self._hash_sessao = None
+            raise RuntimeError(
+                f"Sessão bloqueada por falha anterior de rollback ({self._marcador_rollback}). "
+                "Recupere o backup ou grave uma nova sessão válida."
+            )
         fp = self._calcular_fingerprint()
         if fp is None:
             if self._mtime_sessao is not None or self._hash_sessao is not None:
@@ -527,6 +545,14 @@ class MotorSEI:
             self.carregar_sessao()
 
     def carregar_sessao(self) -> bool:
+        if os.path.exists(self._marcador_rollback):
+            self.sessao.cookies.clear()
+            self._mtime_sessao = None
+            self._hash_sessao = None
+            raise RuntimeError(
+                f"Sessão bloqueada por falha anterior de rollback ({self._marcador_rollback}). "
+                "Recupere o backup ou grave uma nova sessão válida."
+            )
         if not os.path.exists(self.caminho_sessao):
             self.sessao.cookies.clear()
             self._mtime_sessao = None
@@ -675,6 +701,14 @@ class MotorSEI:
                                 houve_rollback = True
                             except Exception as e_rollback:
                                 falha_rollback = True
+                                try:
+                                    fd_m = os.open(self._marcador_rollback, os.O_CREAT | os.O_WRONLY | os.O_TRUNC, 0o600)
+                                    with os.fdopen(fd_m, "w", encoding="utf-8") as f_m:
+                                        f_m.write(backup_caminho or "")
+                                        f_m.flush()
+                                        os.fsync(f_m.fileno())
+                                except OSError:
+                                    pass
                                 logger.critical(
                                     f"Falha crítica no rollback ({e_rollback}). "
                                     f"Backup da sessão anterior preservado em: {backup_caminho}"
@@ -702,6 +736,12 @@ class MotorSEI:
                             self._mtime_sessao = None
                             self._hash_sessao = None
                         raise
+
+                    if os.path.exists(self._marcador_rollback):
+                        try:
+                            os.unlink(self._marcador_rollback)
+                        except OSError:
+                            pass
 
                     try:
                         self.carregar_sessao()

@@ -611,6 +611,15 @@ except TimeoutError:
         self.assertIn("Clean Cutover Obrigatório", str(ctx_remoto.exception))
         self.assertTrue(os.path.exists(lock_dir))
 
+        # Também deve falhar fechado com metadados incompletos (apenas hostname ou {})
+        for payload_incompleto in ({"hostname": socket.gethostname()}, {}):
+            with open(os.path.join(lock_dir, "lock.info"), "w", encoding="utf-8") as f:
+                json.dump(payload_incompleto, f)
+            with self.assertRaises(RuntimeError) as ctx_inc:
+                motor_v10.salvar_sessao({"PHPSESSID": "sessao_v10"}, timeout=0.5)
+            self.assertIn("Clean Cutover Obrigatório", str(ctx_inc.exception))
+            self.assertTrue(os.path.exists(lock_dir))
+
         # Também deve falhar fechado se .lock existir sem lock.info (mesmo após > 5s)
         os.unlink(os.path.join(lock_dir, "lock.info"))
         os.utime(lock_dir, (time.time() - 60.0, time.time() - 60.0))
@@ -690,6 +699,13 @@ except TimeoutError:
         with open(os.path.join(diretorio, backups[0]), "r", encoding="utf-8") as f:
             dados_backup = json.load(f)
         self.assertEqual(dados_backup["cookies"]["PHPSESSID"], "sessao_anterior_valida")
+
+        # Próxima sincronização/recarga deve impedir o uso do cookie novo não sincronizado até recuperação
+        motor_outro = MotorSEI(caminho_sessao=self.caminho_sessao)
+        self.assertIsNone(motor_outro.sessao.cookies.get("PHPSESSID"))
+        with self.assertRaises(RuntimeError):
+            motor_outro._sincronizar_sessao_se_modificada()
+        self.assertIsNone(motor_outro.sessao.cookies.get("PHPSESSID"))
 
 
 if __name__ == "__main__":
