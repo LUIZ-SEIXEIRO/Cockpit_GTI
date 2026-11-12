@@ -21637,7 +21637,7 @@ html body #view-gestao_agil .kanban-card-modelo .k-status-sei-critico {
             // Sem qualquer bloqueio de CORS, conectando ao Llama 3.2 1B via Tailscale
             try {
                 var ctrl = new AbortController();
-                var tid = setTimeout(function() { ctrl.abort(); }, 12000);
+                var tid = setTimeout(function() { ctrl.abort(); }, 45000);
                 var resBackend = await fetch('/api/v1/ia/revisar_processo', {
                     method: 'POST',
                     headers: obterHeadersComAuth(),

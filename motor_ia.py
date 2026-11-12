@@ -277,7 +277,7 @@ def revisar_processo_ia(
     endpoint: Optional[str] = None,
     model: str = "llama3.2:1b",
     api_key: str = "",
-    timeout: int = 20,
+    timeout: int = 60,
     hosts_permitidos: Optional[Iterable[str]] = None,
 ) -> Dict[str, Any]:
     if not isinstance(dados, dict) or not str(dados.get("idProcesso") or "").strip():

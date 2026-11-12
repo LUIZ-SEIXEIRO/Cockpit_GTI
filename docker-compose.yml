@@ -9,6 +9,12 @@ services:
       - "11434:11434"
     volumes:
       - H:/spaguas/ia-multiagente/ollama_data:/root/.ollama
+    healthcheck:
+      test: ["CMD", "ollama", "list"]
+      interval: 10s
+      timeout: 5s
+      retries: 6
+      start_period: 10s
     environment:
       - COCKPIT_API_TOKEN=${COCKPIT_API_TOKEN:-${API_TOKEN:-}}
       - API_TOKEN=${API_TOKEN:-${COCKPIT_API_TOKEN:-}}
@@ -66,8 +72,10 @@ services:
       - IA_DEFAULT_ENDPOINT=${IA_DEFAULT_ENDPOINT:-}
       - IA_ALLOWED_ENDPOINTS=${IA_ALLOWED_ENDPOINTS:-}
     depends_on:
-      - new-api
-      - ollama
+      new-api:
+        condition: service_started
+      ollama:
+        condition: service_healthy
 
 volumes:
   new-api-data:
