@@ -732,7 +732,7 @@ except TimeoutError:
         with app.test_client() as client:
             with patch.object(main, "motor_sei_instance", self.motor):
                 resp = client.get("/api/v1/sei/status")
-                self.assertNotEqual(resp.status_code, 500)
+                self.assertEqual(resp.status_code, 503)
                 dados = resp.get_json()
                 self.assertIsInstance(dados, dict)
                 self.assertFalse(dados.get("sucesso"))

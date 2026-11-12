@@ -826,6 +826,9 @@ motor_sei_instance = MotorSEI()
 @app.route('/api/v1/sei/status', methods=['GET'])
 def api_v1_sei_status():
     status = motor_sei_instance.validar_sessao()
+    cod = status.get('codigo') if isinstance(status, dict) else None
+    if cod == 503 or (isinstance(status, dict) and status.get('rollback_pendente')):
+        return jsonify(status), 503
     return jsonify(status), 200
 
 @app.route('/api/v1/sei/sessao', methods=['POST'])
@@ -850,7 +853,7 @@ def api_v1_sei_processos():
         return jsonify(resultado), 200
     cod = resultado.get('codigo')
     erro = str(resultado.get('erro', '')).lower()
-    if cod in (400, 404, 429):
+    if cod in (400, 404, 429, 503):
         return jsonify(resultado), cod
     if cod == 403 and not resultado.get('sessao_expirada'):
         return jsonify(resultado), 403
@@ -870,7 +873,7 @@ def api_v1_sei_buscar():
         return jsonify(resultado), 200
     cod = resultado.get('codigo')
     erro = str(resultado.get('erro', '')).lower()
-    if cod in (400, 404, 429):
+    if cod in (400, 404, 429, 503):
         return jsonify(resultado), cod
     if cod == 403 and not resultado.get('sessao_expirada'):
         return jsonify(resultado), 403
