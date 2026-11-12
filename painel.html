@@ -25667,5 +25667,164 @@ window.dispararHomologacaoBackendReal = async function(btn) {
             </div>
         </div>
     </div>
+
+<!-- WIDGET MOTOR SEI 4.1.5 (SA-GTI 110050725) -->
+<div id="cockpit-motor-sei-widget" style="position:fixed;right:20px;bottom:20px;z-index:9999;font-family:system-ui,-apple-system,sans-serif;">
+  <button id="btn-abrir-motor-sei" onclick="window.togglePainelMotorSei()" style="background:#0f172a;color:#f8fafc;border:1px solid #38bdf8;border-radius:999px;padding:10px 16px;font-size:13px;font-weight:600;cursor:pointer;box-shadow:0 8px 24px rgba(0,0,0,0.35);display:flex;align-items:center;gap:8px;">
+    <span id="dot-status-motor-sei" style="width:10px;height:10px;border-radius:50%;background:#94a3b8;display:inline-block;"></span>
+    Motor SEI 4.1.5
+  </button>
+  <div id="modal-motor-sei" style="display:none;position:fixed;right:20px;bottom:70px;width:540px;max-width:92vw;max-height:78vh;overflow:auto;background:#0f172a;color:#e2e8f0;border:1px solid #334155;border-radius:12px;padding:16px;box-shadow:0 18px 48px rgba(0,0,0,0.55);">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;border-bottom:1px solid #1e293b;padding-bottom:8px;">
+      <div>
+        <strong style="font-size:15px;color:#f8fafc;">Motor SEI SP 4.1.5 ? SA-GTI (110050725)</strong>
+        <div id="sei-status-texto" style="font-size:12px;color:#94a3b8;margin-top:2px;">Verificando sess?o...</div>
+      </div>
+      <button onclick="window.togglePainelMotorSei()" style="background:transparent;border:none;color:#94a3b8;font-size:18px;cursor:pointer;">&times;</button>
+    </div>
+
+    <div style="display:flex;gap:8px;margin-bottom:12px;flex-wrap:wrap;">
+      <button onclick="window.atualizarStatusMotorSei()" style="background:#1e293b;color:#e2e8f0;border:1px solid #475569;border-radius:6px;padding:6px 10px;font-size:12px;cursor:pointer;">Atualizar Status</button>
+      <button onclick="window.carregarCaixaMotorSei()" style="background:#0284c7;color:#fff;border:none;border-radius:6px;padding:6px 12px;font-size:12px;font-weight:600;cursor:pointer;">Listar Caixa da Unidade</button>
+      <button onclick="window.toggleFormCookiesSei()" style="background:#1e293b;color:#cbd5e1;border:1px solid #475569;border-radius:6px;padding:6px 10px;font-size:12px;cursor:pointer;">Configurar Sess?o (Cookies)</button>
+    </div>
+
+    <div id="form-cookies-sei" style="display:none;background:#1e293b;padding:10px;border-radius:8px;margin-bottom:12px;">
+      <label style="display:block;font-size:12px;margin-bottom:4px;color:#cbd5e1;">Cookie PHPSESSID do SEI:</label>
+      <div style="display:flex;gap:8px;">
+        <input id="input-phpsessid-sei" type="password" placeholder="Cole o PHPSESSID autenticado" style="flex:1;padding:6px 8px;border-radius:6px;border:1px solid #475569;background:#0f172a;color:#f8fafc;font-size:12px;">
+        <button onclick="window.salvarCookiesMotorSei()" style="background:#10b981;color:#052e16;border:none;border-radius:6px;padding:6px 12px;font-size:12px;font-weight:700;cursor:pointer;">Salvar</button>
+      </div>
+    </div>
+
+    <div style="display:flex;gap:8px;margin-bottom:12px;">
+      <input id="input-termo-busca-sei" type="text" placeholder="N?mero do processo ou termo no SEI..." style="flex:1;padding:8px 10px;border-radius:6px;border:1px solid #475569;background:#1e293b;color:#f8fafc;font-size:13px;" onkeydown="if(event.key==='Enter') window.buscarProcessosMotorSei()">
+      <button onclick="window.buscarProcessosMotorSei()" style="background:#2563eb;color:#fff;border:none;border-radius:6px;padding:8px 14px;font-size:13px;font-weight:600;cursor:pointer;">Buscar</button>
+    </div>
+
+    <div id="resultado-motor-sei" style="font-size:12.5px;color:#cbd5e1;max-height:280px;overflow:auto;"></div>
+  </div>
+</div>
+<script>
+(function() {
+  function escSei(s) {
+    return String(s == null ? '' : s).replace(/[&<>"']/g, function(c) {
+      return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];
+    });
+  }
+
+  window.togglePainelMotorSei = function() {
+    var m = document.getElementById('modal-motor-sei');
+    if (!m) return;
+    var abrir = m.style.display === 'none';
+    m.style.display = abrir ? 'block' : 'none';
+    if (abrir) window.atualizarStatusMotorSei();
+  };
+
+  window.toggleFormCookiesSei = function() {
+    var f = document.getElementById('form-cookies-sei');
+    if (f) f.style.display = f.style.display === 'none' ? 'block' : 'none';
+  };
+
+  window.atualizarStatusMotorSei = async function() {
+    var dot = document.getElementById('dot-status-motor-sei');
+    var txt = document.getElementById('sei-status-texto');
+    try {
+      var r = await fetch('/api/v1/sei/status');
+      var d = await r.json();
+      if (r.status === 503 || d.rollback_pendente) {
+        if (dot) dot.style.background = '#ef4444';
+        if (txt) txt.textContent = 'Bloqueado (rollback pendente): ' + (d.erro || 'verifique o servidor');
+      } else if (d.autenticado) {
+        if (dot) dot.style.background = '#22c55e';
+        if (txt) txt.textContent = 'Sess?o ativa ? Unidade ' + (d.unidade || '110050725');
+      } else {
+        if (dot) dot.style.background = '#f59e0b';
+        if (txt) txt.textContent = 'Sess?o inativa ? configure os cookies para consultar o SEI';
+      }
+    } catch (e) {
+      if (dot) dot.style.background = '#ef4444';
+      if (txt) txt.textContent = 'Erro ao consultar /api/v1/sei/status';
+    }
+  };
+
+  window.salvarCookiesMotorSei = async function() {
+    var val = (document.getElementById('input-phpsessid-sei') || {}).value || '';
+    if (!val.trim()) { alert('Informe o PHPSESSID.'); return; }
+    var out = document.getElementById('resultado-motor-sei');
+    try {
+      var r = await fetch('/api/v1/sei/sessao', {
+        method: 'POST',
+        headers: obterHeadersComAuth(),
+        body: JSON.stringify({ cookies: { PHPSESSID: val.trim() } })
+      });
+      var d = await r.json();
+      if (r.ok && d.sucesso) {
+        document.getElementById('input-phpsessid-sei').value = '';
+        document.getElementById('form-cookies-sei').style.display = 'none';
+        if (out) out.innerHTML = '<div style="color:#4ade80;">Sess?o salva. Validando no SEI...</div>';
+        await window.atualizarStatusMotorSei();
+      } else {
+        if (out) out.innerHTML = '<div style="color:#f87171;">Erro: ' + escSei(d.erro || d.mensagem || r.status) + '</div>';
+      }
+    } catch (e) {
+      if (out) out.innerHTML = '<div style="color:#f87171;">Falha na requisi??o: ' + escSei(e) + '</div>';
+    }
+  };
+
+  function renderListaSei(d) {
+    var out = document.getElementById('resultado-motor-sei');
+    if (!out) return;
+    if (!d.sucesso) {
+      out.innerHTML = '<div style="padding:8px;background:#450a0a;border:1px solid #dc2626;border-radius:6px;color:#fecaca;">' + escSei(d.erro || 'Falha na consulta ao SEI') + '</div>';
+      return;
+    }
+    var lista = d.processos || d.resultados || [];
+    if (!lista.length) {
+      out.innerHTML = '<div style="color:#94a3b8;">Nenhum processo retornado.</div>';
+      return;
+    }
+    out.innerHTML = '<div style="margin-bottom:6px;color:#38bdf8;font-weight:600;">' + lista.length + ' processo(s) encontrado(s)</div>' +
+      lista.map(function(p) {
+        return '<div style="padding:8px;border:1px solid #1e293b;border-radius:6px;margin-bottom:6px;background:#1e293b;">' +
+          '<strong>' + escSei(p.numero || p.id_procedimento || 'Sem n?mero') + '</strong>' +
+          (p.id_procedimento ? ' <span style="color:#94a3b8;font-size:11px;">(ID: ' + escSei(p.id_procedimento) + ')</span>' : '') +
+        '</div>';
+      }).join('');
+  }
+
+  window.carregarCaixaMotorSei = async function() {
+    var out = document.getElementById('resultado-motor-sei');
+    if (out) out.innerHTML = '<div style="color:#38bdf8;">Consultando caixa da unidade no SEI...</div>';
+    try {
+      var r = await fetch('/api/v1/sei/processos', { headers: obterHeadersComAuth() });
+      renderListaSei(await r.json());
+    } catch (e) {
+      if (out) out.innerHTML = '<div style="color:#f87171;">Erro: ' + escSei(e) + '</div>';
+    }
+  };
+
+  window.buscarProcessosMotorSei = async function() {
+    var termo = ((document.getElementById('input-termo-busca-sei') || {}).value || '').trim();
+    if (!termo) { alert('Digite um termo ou n?mero de processo.'); return; }
+    var out = document.getElementById('resultado-motor-sei');
+    if (out) out.innerHTML = '<div style="color:#38bdf8;">Pesquisando no SEI...</div>';
+    try {
+      var r = await fetch('/api/v1/sei/buscar', {
+        method: 'POST',
+        headers: obterHeadersComAuth(),
+        body: JSON.stringify({ termo: termo })
+      });
+      renderListaSei(await r.json());
+    } catch (e) {
+      if (out) out.innerHTML = '<div style="color:#f87171;">Erro: ' + escSei(e) + '</div>';
+    }
+  };
+
+  document.addEventListener('DOMContentLoaded', function() {
+    window.atualizarStatusMotorSei();
+  });
+})();
+</script>
 </body>
 </html>
