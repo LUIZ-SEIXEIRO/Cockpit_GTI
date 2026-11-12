@@ -740,5 +740,31 @@ except TimeoutError:
                 self.assertTrue(dados.get("rollback_pendente"))
 
 
+
+    def test_34_redirecionamento_sip_frmlogin_retorna_401_e_cookie_path_raiz(self):
+        self.motor.salvar_sessao({"PRODSEI": "sessao_sei_sp", "ROUTEID": ".9"})
+        cookies_gravados = list(self.motor.sessao.cookies)
+        self.assertTrue(any(c.name == "PRODSEI" and c.path == "/" for c in cookies_gravados))
+
+        html_login_sip = '<html><body><form id="frmLogin" name="frmLogin" action="login.php" method="post"></form></body></html>'
+        resp_login = MagicMock(
+            status_code=200,
+            text=html_login_sip,
+            url="https://sei.sp.gov.br/sip/login.php?sigla_orgao_sistema=GESP&sigla_sistema=SEI",
+        )
+        with patch.object(self.motor.sessao, "get", return_value=resp_login):
+            self.assertFalse(self.motor.validar_sessao_ativa())
+            res_caixa = self.motor.listar_caixa_unidade()
+            self.assertFalse(res_caixa.get("sucesso"))
+            self.assertEqual(res_caixa.get("codigo"), 401)
+            self.assertTrue(res_caixa.get("sessao_expirada"))
+
+        with patch.object(self.motor.sessao, "post", return_value=resp_login):
+            res_busca = self.motor.buscar_processos("termo")
+            self.assertFalse(res_busca.get("sucesso"))
+            self.assertEqual(res_busca.get("codigo"), 401)
+            self.assertTrue(res_busca.get("sessao_expirada"))
+
+
 if __name__ == "__main__":
     unittest.main()
