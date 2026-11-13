@@ -24970,12 +24970,20 @@ window.dispararHomologacaoBackendReal = async function(btn) {
       if (r.status === 503 || d.rollback_pendente) {
         if (dot) dot.style.background = '#ef4444';
         if (txt) txt.textContent = 'Bloqueado (rollback pendente): ' + (d.erro || 'verifique o servidor');
+      } else if (d.api_oficial && d.api_oficial.pronta) {
+        if (dot) dot.style.background = '#22c55e';
+        if (txt) txt.textContent = 'API Oficial Prodesp Ativa — Unidade ' + (d.api_oficial.id_unidade || '110050725');
+        var fc = document.getElementById('form-cookies-sei');
+        if (fc) fc.style.display = 'none';
       } else if (d.autenticado) {
         if (dot) dot.style.background = '#22c55e';
         if (txt) txt.textContent = 'Sessão ativa — Unidade ' + (d.unidade || '110050725');
       } else {
         if (dot) dot.style.background = '#f59e0b';
-        if (txt) txt.textContent = 'Sessão inativa — configure os cookies para consultar o SEI';
+        var falt = (d.api_oficial && Array.isArray(d.api_oficial.faltantes) && d.api_oficial.faltantes.length)
+          ? ' (API oficial aguarda: ' + d.api_oficial.faltantes.join(', ') + ')'
+          : '';
+        if (txt) txt.textContent = 'Sessão inativa — configure os cookies ou aguarde API oficial' + falt;
       }
     } catch (e) {
       if (dot) dot.style.background = '#ef4444';
@@ -25046,11 +25054,16 @@ window.dispararHomologacaoBackendReal = async function(btn) {
       out.innerHTML = '<div style="color:#94a3b8;">Nenhum processo retornado.</div>';
       return;
     }
-    out.innerHTML = '<div style="margin-bottom:6px;color:#38bdf8;font-weight:600;">' + lista.length + ' processo(s) encontrado(s)</div>' +
+    var tagOrigem = d.origem === 'api_oficial' ? ' <span style="color:#22c55e;font-size:11px;">[API Oficial]</span>' : '';
+    out.innerHTML = '<div style="margin-bottom:6px;color:#38bdf8;font-weight:600;">' + lista.length + ' processo(s) encontrado(s)' + tagOrigem + '</div>' +
       lista.map(function(p) {
+        var proto = p.protocoloProcedimento || p.procedimentoFormatado || p.numero || p.idProcedimento || p.id_procedimento || 'Sem número';
+        var pid = p.idProcedimento || p.id_procedimento || '';
+        var desc = p.tipoProcesso || p.especificacao || '';
         return '<div style="padding:8px;border:1px solid #1e293b;border-radius:6px;margin-bottom:6px;background:#1e293b;">' +
-          '<strong>' + escSei(p.numero || p.id_procedimento || 'Sem número') + '</strong>' +
-          (p.id_procedimento ? ' <span style="color:#94a3b8;font-size:11px;">(ID: ' + escSei(p.id_procedimento) + ')</span>' : '') +
+          '<strong>' + escSei(proto) + '</strong>' +
+          (pid ? ' <span style="color:#94a3b8;font-size:11px;">(ID: ' + escSei(pid) + ')</span>' : '') +
+          (desc ? '<div style="color:#cbd5e1;font-size:11px;margin-top:2px;">' + escSei(desc) + '</div>' : '') +
         '</div>';
       }).join('');
   }

@@ -3,6 +3,9 @@ from urllib.parse import urlsplit
 from functools import wraps
 import hmac
 import os
+import re
+import conector_sei_oficial
+import sys
 import json
 import time
 import socket
@@ -1322,6 +1325,7 @@ def api_v1_obter_documento(doc_id):
 from motor_sei import MotorSEI
 import motor_ia
 import conector_sei_playwright
+sei_oficial_client = conector_sei_oficial.SEIOfficialClient()
 motor_sei_instance = MotorSEI()
 
 
@@ -1361,10 +1365,12 @@ def api_v1_sei_login():
 @app.route('/api/v1/sei/status', methods=['GET'])
 def api_v1_sei_status():
     status = motor_sei_instance.validar_sessao()
+    if isinstance(status, dict):
+        status['api_oficial'] = sei_oficial_client.status_configuracao()
     cod = status.get('codigo') if isinstance(status, dict) else None
     status_publico = {
         campo: status[campo]
-        for campo in ('sucesso', 'codigo', 'ativa', 'sessao_ativa', 'autenticado', 'rollback_pendente', 'unidade')
+        for campo in ('sucesso', 'codigo', 'ativa', 'sessao_ativa', 'autenticado', 'rollback_pendente', 'unidade', 'api_oficial')
         if isinstance(status, dict) and campo in status
     }
     if isinstance(status, dict) and not status.get('sucesso'):
@@ -1394,6 +1400,20 @@ def api_v1_sei_salvar_sessao():
 @app.route('/api/v1/sei/processos', methods=['GET'])
 @requer_autenticacao
 def api_v1_sei_processos():
+    if sei_oficial_client.config.is_ready():
+        try:
+            dados_oficiais = sei_oficial_client.listar_processos_unidade(
+                start=request.args.get('start', 0),
+                limit=request.args.get('limit', 50),
+            )
+            return jsonify({
+                'sucesso': True,
+                'origem': 'api_oficial',
+                'total': dados_oficiais.get('total', 0),
+                'processos': dados_oficiais.get('processos', []),
+            }), 200
+        except conector_sei_oficial.SEIOfficialAPIError as exc:
+            return jsonify({'sucesso': False, 'origem': 'api_oficial', 'erro': str(exc), 'trace_id': exc.trace_id}), (exc.status_code or 502)
     resultado = motor_sei_instance.listar_caixa_unidade()
     if resultado.get('sucesso'):
         return jsonify(resultado), 200
@@ -1432,6 +1452,12 @@ def resposta_erro_sei(resultado, codigo):
 def api_v1_sei_buscar():
     dados = request.get_json(force=True) or {}
     termo = dados.get('termo') or dados.get('query') or ''
+    if sei_oficial_client.config.is_ready() and re.search(r'\d{5,}', str(termo)):
+        try:
+            proc = sei_oficial_client.consultar_processo(str(termo))
+            return jsonify({'sucesso': True, 'origem': 'api_oficial', 'processos': [proc]}), 200
+        except conector_sei_oficial.SEIOfficialAPIError as exc:
+            return jsonify({'sucesso': False, 'origem': 'api_oficial', 'erro': str(exc), 'trace_id': exc.trace_id}), (exc.status_code or 502)
     resultado = motor_sei_instance.buscar_processos(termo=termo)
     if resultado.get('sucesso'):
         return jsonify(resultado), 200
