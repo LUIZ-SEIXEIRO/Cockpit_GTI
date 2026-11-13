@@ -231,9 +231,18 @@ table tbody tr:hover {
     box-shadow: none !important;
     transition: background-color 0.15s ease, border-color 0.15s ease, opacity 0.15s ease !important;
 }
-.btn-primary, button.btn-primary, .subaba-superior-btn.active {
+.btn-primary, button.btn-primary {
     background-color: var(--sagti-accent) !important;
     border: 1px solid var(--sagti-accent) !important;
+    color: #ffffff !important;
+}
+.subaba-superior-btn.active, .barra-subabas-superior .btn-primary.active, .barra-subabas-superior .active {
+    background-color: #e0f2fe !important;
+    border: 1px solid #7dd3fc !important;
+    color: #0369a1 !important;
+}
+.subaba-superior-btn.active .nav-badge, .barra-subabas-superior .active .nav-badge {
+    background-color: var(--sagti-accent) !important;
     color: #ffffff !important;
 }
 .btn-primary:hover, button.btn-primary:hover {
