@@ -2,6 +2,7 @@
 from urllib.parse import urlparse
 from functools import wraps
 import os
+import re
 import conector_sei_oficial
 import sys
 import json
