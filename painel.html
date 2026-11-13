@@ -27,6 +27,30 @@
     <link rel="stylesheet" href="/static/css/components.css">
 </head>
 <body>
+<!-- SAGTI TOPBAR MODELO 3 -->
+<header id="sagti-topbar">
+    <div id="sagti-topbar-tricolor"></div>
+    <div id="sagti-topbar-inner">
+        <div class="sagti-topbar-left">
+            <div class="sagti-brand">
+                <strong>SP-Águas · SA-GTI</strong>
+                <span>Cockpit GTI 360°</span>
+            </div>
+            <nav class="sagti-top-nav" aria-label="Navegação principal">
+                <button type="button" class="sagti-top-nav-btn active" data-eixo="dashboards" onclick="switchTab('dashboards')">Cockpit</button>
+                <button type="button" class="sagti-top-nav-btn" data-eixo="mesa_trabalho" onclick="switchTab('mesa_trabalho')">Mesa de Trabalho</button>
+                <button type="button" class="sagti-top-nav-btn" data-eixo="daily_warroom" onclick="switchTab('daily_warroom')">War Room</button>
+                <button type="button" class="sagti-top-nav-btn" data-eixo="configuracoes" onclick="switchTab('configuracoes')">Configurações</button>
+            </nav>
+        </div>
+        <div class="sagti-topbar-user">
+            <strong>Luiz A. S. Seixeiro</strong>
+            <span class="sagti-user-pill">Super-Admin</span>
+        </div>
+    </div>
+</header>
+<!-- /SAGTI TOPBAR MODELO 3 -->
+
     <!-- BARRA DO MODO GESTÃO À VISTA (TV KIOSK) -->
     <div id="kiosk-bar" style="display: none; background: var(--sagti-surface-alt); color: #ffffff; padding: 8px 20px; align-items: center; justify-content: space-between; font-size: 12px; z-index: 9999; position: fixed; top: 0; left: 0; right: 0; height: 42px; box-shadow: 0 2px 10px rgba(0,0,0,0.35);">
         <div style="display: flex; align-items: center; gap: 12px;">
@@ -6772,6 +6796,32 @@ window.alternarSubConfig = function(modo) {
   document.addEventListener('DOMContentLoaded', function() {
     window.atualizarStatusMotorSei();
   });
+})();
+</script>
+<script id="sagti-topbar-sync">
+(function() {
+    var mapaEixo = {
+        dashboards: 'dashboards', portfolio_openproject: 'dashboards', gestao_glpi: 'dashboards', auditoria: 'dashboards',
+        mesa_trabalho: 'mesa_trabalho', consulta: 'mesa_trabalho', esteira_ia: 'mesa_trabalho', cadernos: 'mesa_trabalho',
+        matriz_raci: 'mesa_trabalho', relatorios_sprints: 'mesa_trabalho', drive_contexto_ia: 'mesa_trabalho',
+        daily_warroom: 'daily_warroom', gestao_agil: 'daily_warroom',
+        configuracoes: 'configuracoes'
+    };
+    function atualizarTopbar(tab) {
+        var eixo = mapaEixo[tab] || 'dashboards';
+        document.querySelectorAll('.sagti-top-nav-btn').forEach(function(btn) {
+            btn.classList.toggle('active', btn.getAttribute('data-eixo') === eixo);
+        });
+    }
+    window.addEventListener('DOMContentLoaded', function() {
+        var origSwitch = window.switchTab;
+        if (typeof origSwitch === 'function') {
+            window.switchTab = function(tab) {
+                atualizarTopbar(tab);
+                return origSwitch.apply(this, arguments);
+            };
+        }
+    });
 })();
 </script>
 </body>

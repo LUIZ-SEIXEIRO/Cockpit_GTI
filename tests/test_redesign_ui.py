@@ -46,7 +46,8 @@ class TestRedesignUI(unittest.TestCase):
 
         self.assertIn("Hallmark", tokens)
         self.assertIn("#f8fafc", tokens)
-        self.assertIn("#0b2545", tokens)
+        self.assertIn("id=\"sagti-topbar\"", html)
+        self.assertIn("#sidebar {\n    display: none !important;", components)
         self.assertIn("#004b87", tokens)
         self.assertIn("#01a75f", tokens)
         self.assertIn("tabular-nums", components)
