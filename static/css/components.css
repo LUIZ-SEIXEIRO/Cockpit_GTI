@@ -222,3 +222,11 @@ button:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-
 #view-esteira_ia [style*="overflow-y:auto"] {
     background: var(--sagti-surface-alt) !important;
 }
+
+/* Fase 3.1: Zebrado claro e rodape de tabelas */
+table tbody tr {
+    background: var(--sagti-surface) !important;
+}
+table tbody tr:nth-child(even) {
+    background: var(--sagti-bg) !important;
+}
