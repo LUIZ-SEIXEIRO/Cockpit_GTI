@@ -1370,7 +1370,7 @@ def api_v1_sei_status():
     cod = status.get('codigo') if isinstance(status, dict) else None
     status_publico = {
         campo: status[campo]
-        for campo in ('sucesso', 'codigo', 'ativa', 'sessao_ativa', 'autenticado', 'rollback_pendente', 'unidade')
+        for campo in ('sucesso', 'codigo', 'ativa', 'sessao_ativa', 'autenticado', 'rollback_pendente', 'unidade', 'api_oficial')
         if isinstance(status, dict) and campo in status
     }
     if isinstance(status, dict) and not status.get('sucesso'):
