@@ -19,26 +19,61 @@ html, body {
     letter-spacing: -0.015em;
 }
 
-/* Sidebar clara institucional (seletores por ID #sidebar) */
+/* Sidebar Bicolor Marinho SP-Aguas (Modelo 2) */
 #sidebar, .sidebar, #sidebar .sidebar-menu, #sidebar .sidebar-footer, #sidebar-supervisor-footer, #sidebar .sidebar-brand {
     background: var(--sagti-sidebar) !important;
     background-image: none !important;
-    color: var(--sagti-text) !important;
-    border-color: var(--sagti-border) !important;
+    color: #ffffff !important;
+    border-color: var(--sagti-sidebar-border) !important;
     backdrop-filter: none !important;
 }
-#sidebar .brand-text h1, #sidebar-supervisor-footer, #sidebar-supervisor-footer strong, #sidebar-supervisor-footer span {
-    color: var(--sagti-text) !important;
+#sidebar {
+    position: relative;
 }
-#sidebar .brand-text p, #sidebar .menu-category, #sidebar .nav-item, #sidebar a {
-    color: var(--sagti-text-muted) !important;
+#sidebar::before {
+    content: "";
+    display: block;
+    height: 4px;
+    width: 100%;
+    background: linear-gradient(to right, #6bbbfa 0% 33.3%, #004b87 33.3% 66.6%, #01a75f 66.6% 100%);
+    flex-shrink: 0;
 }
-#sidebar .nav-item.active, #sidebar .nav-item:hover {
-    background: var(--sagti-accent-soft) !important;
-    color: var(--sagti-accent) !important;
+#sidebar > div, #sidebar-footer, .sidebar-footer {
+    background: var(--sagti-sidebar) !important;
+    color: #ffffff !important;
+    border-color: var(--sagti-sidebar-border) !important;
+}
+#sidebar .brand-text h1, #sidebar-supervisor-footer, #sidebar-supervisor-footer strong {
+    color: #ffffff !important;
+}
+#sidebar .brand-text p, #sidebar .menu-category, #sidebar-supervisor-footer span {
+    color: #94a3b8 !important;
+}
+#sidebar .nav-item, #sidebar a {
+    color: var(--sagti-sidebar-text) !important;
+    border-radius: var(--sagti-radius-sm) !important;
+}
+#sidebar .nav-item:hover {
+    background: var(--sagti-sidebar-hover) !important;
+    color: #ffffff !important;
+}
+#sidebar .nav-item.active {
+    background: var(--sagti-sidebar-active) !important;
+    color: #ffffff !important;
+    border-left: 3px solid var(--sagti-green) !important;
+    font-weight: 700 !important;
 }
 #sidebar .nav-item.active span, #sidebar .nav-item.active i {
-    color: var(--sagti-accent) !important;
+    color: #ffffff !important;
+}
+#sidebar select, #sidebar input {
+    background-color: #133159 !important;
+    color: #ffffff !important;
+    border: 1px solid rgba(255, 255, 255, 0.22) !important;
+}
+#sidebar-user-avatar {
+    background: var(--sagti-green) !important;
+    color: #ffffff !important;
 }
 
 /* Barra Kiosk */
@@ -72,14 +107,18 @@ html, body {
     transform: none !important;
 }
 
-/* Quebra de monotonia em grids de 3 KPIs */
-.kpi-row-3, .kpi-grid-3 {
-    grid-template-columns: minmax(0, 1.35fr) minmax(0, 1fr) minmax(0, 1fr) !important;
+/* KPIs compactos uniformes (Modelo 2) */
+.kpi-card {
+    padding: 14px 16px !important;
 }
-@media (max-width: 960px) {
-    .kpi-row-3, .kpi-grid-3 {
-        grid-template-columns: minmax(0, 1fr) !important;
-    }
+.kpi-val {
+    font-size: 26px !important;
+    font-weight: 800 !important;
+    margin: 4px 0 2px 0 !important;
+}
+.kpi-title {
+    font-size: 11.5px !important;
+    font-weight: 600 !important;
 }
 
 /* Numeros tabulares e hierarquia de KPIs */
@@ -202,16 +241,7 @@ button:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-
     opacity: 0.85;
 }
 
-/* Fase 2.2: Rodape da sidebar e area de chat/contexto do Assistente IA */
-#sidebar > div, #sidebar-footer, .sidebar-footer {
-    background: var(--sagti-sidebar) !important;
-    color: var(--sagti-text) !important;
-    border-color: var(--sagti-border) !important;
-}
-#sidebar-user-avatar {
-    background: var(--sagti-accent) !important;
-    color: #ffffff !important;
-}
+/* Fase 2.2: Area de chat/contexto do Assistente IA */
 #chat-messages {
     background: var(--sagti-surface-alt) !important;
     color: var(--sagti-text) !important;
@@ -223,21 +253,3 @@ button:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-
     background: var(--sagti-surface-alt) !important;
 }
 
-/* Fase 3.1: Zebrado claro e rodape de tabelas */
-table tbody tr {
-    background: var(--sagti-surface) !important;
-}
-table tbody tr:nth-child(even) {
-    background: var(--sagti-bg) !important;
-}
-/* Fase 3.2: Zebrado claro e rodape de tabelas */
-table tbody tr {
-    background: var(--sagti-surface) !important;
-}
-table tbody tr:nth-child(even) {
-    background: var(--sagti-bg) !important;
-}
-.table-footer, .table-card > div:last-child {
-    background: var(--sagti-surface-alt) !important;
-    color: var(--sagti-text-muted) !important;
-}

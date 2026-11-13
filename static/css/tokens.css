@@ -1,8 +1,12 @@
-/* Hallmark · SA-GTI / SP-Aguas · Design Tokens (Claro Institucional)
-   The Floor: todas as cores, raios e tipografia centralizados em :root */
+/* Hallmark · SA-GTI / SP-Aguas · Design Tokens (Modelo 2: Cockpit Bicolor Marinho)
+   The Floor: sidebar #0b2545, area clara #f8fafc, cards #ffffff, acentos #004b87 e #01a75f */
 :root {
     --sagti-bg: #f8fafc;
-    --sagti-sidebar: #ffffff;
+    --sagti-sidebar: #0b2545;
+    --sagti-sidebar-hover: rgba(255, 255, 255, 0.08);
+    --sagti-sidebar-active: rgba(255, 255, 255, 0.12);
+    --sagti-sidebar-border: rgba(255, 255, 255, 0.12);
+    --sagti-sidebar-text: #cbd5e1;
     --sagti-surface: #ffffff;
     --sagti-surface-alt: #f1f5f9;
     --sagti-border: #e2e8f0;
