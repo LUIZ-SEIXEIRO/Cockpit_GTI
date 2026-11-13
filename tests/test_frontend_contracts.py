@@ -4,7 +4,13 @@ import re
 import unittest
 
 
-PAINEL = (Path(__file__).resolve().parents[1] / "painel.html").read_text(encoding="utf-8")
+_ROOT = Path(__file__).resolve().parents[1]
+_JS_DIR = _ROOT / "static" / "js"
+_JS_BUNDLE = "\n".join(
+    f.read_text(encoding="utf-8")
+    for f in sorted(_JS_DIR.glob("*.js"))
+) if _JS_DIR.exists() else ""
+PAINEL = (_ROOT / "painel.html").read_text(encoding="utf-8") + "\n" + _JS_BUNDLE
 FRONTEND_PAINEL = (Path(__file__).resolve().parents[1] / "frontend" / "painel.html").read_text(encoding="utf-8")
 
 
