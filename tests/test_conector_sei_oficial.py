@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 import io
 import json
+import os
 import unittest
 from unittest.mock import patch
 from urllib import error
@@ -121,9 +122,10 @@ class TestConectorSEIOficial(unittest.TestCase):
         cfg_ok = self._config_valida()
         fake_client = sei_api.SEIOfficialClient(cfg_ok)
         client = app_main.app.test_client()
-        headers = {"X-API-Token": app_main.API_TOKEN} if getattr(app_main, "API_TOKEN", "") else {}
+        headers = {"Authorization": "Bearer token-teste-sei"}
 
-        with patch.object(app_main, "sei_oficial_client", fake_client), \
+        with patch.dict(os.environ, {"API_TOKEN": "token-teste-sei"}), \
+             patch.object(app_main, "sei_oficial_client", fake_client), \
              patch.object(fake_client, "listar_processos_unidade", return_value={"total": "2", "processos": [{"idProcedimento": "1"}]}), \
              patch.object(fake_client, "consultar_processo", return_value={"procedimentoFormatado": "137.00010608/2025-63"}):
             r_list = client.get("/api/v1/sei/processos", headers=headers)
