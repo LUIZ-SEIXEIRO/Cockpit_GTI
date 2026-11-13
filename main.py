@@ -23,8 +23,7 @@ from werkzeug.exceptions import HTTPException
 
 app = Flask(
     __name__,
-    static_folder=os.path.join(os.path.dirname(os.path.abspath(__file__)), 'frontend'),
-    static_url_path='/static',
+    static_folder=None,
 )
 app.config['MAX_CONTENT_LENGTH'] = 16 * 1024 * 1024
 app.config['SECRET_KEY'] = os.getenv('COCKPIT_SESSION_SECRET') or None
@@ -325,7 +324,7 @@ def rota_raiz():
 @app.route('/static/<path:filename>')
 def servir_static_assets(filename):
     base = os.path.dirname(os.path.abspath(__file__))
-    for p in (os.path.join(base, 'static'), os.path.abspath('static')):
+    for p in (os.path.join(base, 'static'), os.path.abspath('static'), os.path.join(base, 'frontend'), os.path.abspath('frontend')):
         if os.path.isfile(os.path.join(p, filename)):
             return send_from_directory(p, filename)
     return "Arquivo nao encontrado", 404
