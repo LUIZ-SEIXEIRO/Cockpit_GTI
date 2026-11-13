@@ -43,7 +43,7 @@ html, body {
     color: #ffffff !important;
     border-color: var(--sagti-sidebar-border) !important;
 }
-#sidebar .brand-text h1, #sidebar-supervisor-footer, #sidebar-supervisor-footer strong {
+#sidebar .brand-text h1, #sidebar-supervisor-footer, #sidebar-supervisor-footer *, #sidebar [style*="color: var(--sagti-text)"] {
     color: #ffffff !important;
 }
 #sidebar .brand-text p, #sidebar .menu-category, #sidebar-supervisor-footer span {
