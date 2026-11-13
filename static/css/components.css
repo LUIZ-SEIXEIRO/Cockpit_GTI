@@ -230,3 +230,14 @@ table tbody tr {
 table tbody tr:nth-child(even) {
     background: var(--sagti-bg) !important;
 }
+/* Fase 3.2: Zebrado claro e rodape de tabelas */
+table tbody tr {
+    background: var(--sagti-surface) !important;
+}
+table tbody tr:nth-child(even) {
+    background: var(--sagti-bg) !important;
+}
+.table-footer, .table-card > div:last-child {
+    background: var(--sagti-surface-alt) !important;
+    color: var(--sagti-text-muted) !important;
+}
