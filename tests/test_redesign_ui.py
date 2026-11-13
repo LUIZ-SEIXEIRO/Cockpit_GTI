@@ -11,6 +11,7 @@ class TestRedesignUI(unittest.TestCase):
             html = f.read()
 
         self.assertNotIn('id="crypto-executive-theme"', html)
+        self.assertIn("inicializarGlassmorphismV11() { return;", html)
         self.assertIn('id="sagti-clean-executive-theme"', html)
         self.assertIn("Hallmark", html)
         self.assertIn("#f8fafc", html)

@@ -84,7 +84,10 @@
         }
 
         /* GESTÃO À VISTA OVERLAY */
-        #kiosk-bar {
+        /* Ocultar glows residuais */
+    .ambient-glow, .bg-glow, [class*="glow-orb"] { display: none !important; }
+
+    #kiosk-bar {
             position: fixed;
             top: 0;
             left: 0;
@@ -18223,7 +18226,7 @@ input::placeholder, textarea::placeholder {
         return h;
     }
 
-(function inicializarGlassmorphismV11() {
+(function inicializarGlassmorphismV11() { return; /* Desativado pelo Hallmark Clean Redesign */
     // 1. Aplica tema salvo ou Dark Mode como Default conforme especificação
     var temaSalvo = localStorage.getItem('sagti_theme_v11') || 'dark';
     document.documentElement.setAttribute('data-theme', temaSalvo);
@@ -25069,7 +25072,7 @@ window.dispararHomologacaoBackendReal = async function(btn) {
     </div>
 
     <!-- TELA OFICIAL DE LOGIN E AUTENTICAÇÃO DO COCKPIT SP-ÁGUAS -->
-    <div id="tela-login-overlay" style="display: none; position: fixed; inset: 0; background: radial-gradient(at 12% 18%, rgba(5, 68, 207, 0.45) 0px, transparent 50%), radial-gradient(at 88% 12%, rgba(124, 58, 237, 0.35) 0px, transparent 50%), radial-gradient(at 50% 85%, rgba(14, 165, 233, 0.28) 0px, transparent 50%), #070a12; z-index: 9999999; align-items: center; justify-content: center; padding: 20px;">
+    <div id="tela-login-overlay" style="display: none; position: fixed; inset: 0; background: #f8fafc; z-index: 9999999; align-items: center; justify-content: center; padding: 20px;">
         <div style="background: rgba(11, 15, 25, 0.88); backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px); border: 1px solid rgba(255, 255, 255, 0.14); border-top: 4px solid #0ea5e9; border-radius: 20px; max-width: 440px; width: 100%; padding: 32px 28px; box-shadow: 0 24px 60px rgba(0, 0, 0, 0.85); color: #ffffff; position: relative;">
             
             <!-- Cabeçalho Institucional -->
