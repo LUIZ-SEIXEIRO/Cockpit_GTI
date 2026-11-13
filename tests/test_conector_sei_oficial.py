@@ -109,8 +109,10 @@ class TestConectorSEIOficial(unittest.TestCase):
         import main as app_main
 
         client = app_main.app.test_client()
-        with patch.object(app_main.motor_sei_instance, "validar_sessao", return_value={"sessao_ativa": False}):
-            resp = client.get("/api/v1/sei/status")
+        headers = {"Authorization": "Bearer token-teste-sei"}
+        with patch.dict(os.environ, {"API_TOKEN": "token-teste-sei"}), \
+             patch.object(app_main.motor_sei_instance, "validar_sessao", return_value={"sessao_ativa": False}):
+            resp = client.get("/api/v1/sei/status", headers=headers)
         self.assertEqual(resp.status_code, 200)
         data = resp.get_json()
         self.assertIn("api_oficial", data)
