@@ -1,0 +1,24 @@
+/* Hallmark · SA-GTI / SP-Aguas · Design Tokens (Modelo 2: Cockpit Bicolor Marinho)
+   The Floor: sidebar #0b2545, area clara #f8fafc, cards #ffffff, acentos #004b87 e #01a75f */
+:root {
+    --sagti-bg: #f8fafc;
+    --sagti-sidebar: #0b2545;
+    --sagti-sidebar-hover: rgba(255, 255, 255, 0.08);
+    --sagti-sidebar-active: rgba(255, 255, 255, 0.12);
+    --sagti-sidebar-border: rgba(255, 255, 255, 0.12);
+    --sagti-sidebar-text: #cbd5e1;
+    --sagti-surface: #ffffff;
+    --sagti-surface-alt: #f1f5f9;
+    --sagti-border: #e2e8f0;
+    --sagti-border-strong: #cbd5e1;
+    --sagti-brand-navy: #004b87;
+    --sagti-accent: #0284c7;
+    --sagti-accent-hover: #0369a1;
+    --sagti-accent-soft: #eff6ff;
+    --sagti-green: #01a75f;
+    --sagti-text: #0f172a;
+    --sagti-text-muted: #475569;
+    --sagti-radius: 8px;
+    --sagti-radius-sm: 6px;
+    --sagti-font-sans: 'Inter', 'Segoe UI', system-ui, -apple-system, sans-serif;
+}
