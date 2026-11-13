@@ -167,3 +167,30 @@ button:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-
         transition-duration: 0.01ms !important;
     }
 }
+
+/* Fase 2: Banners institucionais, Kanban e placeholders */
+.page-banner {
+    background: var(--sagti-surface) !important;
+    background-image: none !important;
+    color: var(--sagti-text) !important;
+    border: 1px solid var(--sagti-border) !important;
+    border-left: 4px solid var(--sagti-accent) !important;
+    border-radius: var(--sagti-radius) !important;
+}
+.page-banner h1, .page-banner h2, .page-banner h3, .page-banner p, .page-banner span {
+    color: var(--sagti-text) !important;
+}
+.kanban-card {
+    background: var(--sagti-surface) !important;
+    color: var(--sagti-text) !important;
+    border: 1px solid var(--sagti-border) !important;
+    border-radius: var(--sagti-radius-sm) !important;
+}
+.modal-body {
+    background: var(--sagti-surface) !important;
+    color: var(--sagti-text) !important;
+}
+::placeholder {
+    color: var(--sagti-text-muted) !important;
+    opacity: 0.85;
+}
