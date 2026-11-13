@@ -201,3 +201,24 @@ button:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-
     color: var(--sagti-text-muted) !important;
     opacity: 0.85;
 }
+
+/* Fase 2.2: Rodape da sidebar e area de chat/contexto do Assistente IA */
+#sidebar > div, #sidebar-footer, .sidebar-footer {
+    background: var(--sagti-sidebar) !important;
+    color: var(--sagti-text) !important;
+    border-color: var(--sagti-border) !important;
+}
+#sidebar-user-avatar {
+    background: var(--sagti-accent) !important;
+    color: #ffffff !important;
+}
+#chat-messages {
+    background: var(--sagti-surface-alt) !important;
+    color: var(--sagti-text) !important;
+    border-top: 1px solid var(--sagti-border) !important;
+    border-bottom: 1px solid var(--sagti-border) !important;
+}
+#view-esteira_ia [style*="overflow-y: auto"],
+#view-esteira_ia [style*="overflow-y:auto"] {
+    background: var(--sagti-surface-alt) !important;
+}
