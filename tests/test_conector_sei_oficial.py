@@ -103,5 +103,37 @@ class TestConectorSEIOficial(unittest.TestCase):
         self.assertEqual(tentativa_api["n"], 2)
 
 
+
+    def test_06_rota_status_expoe_diagnostico_api_oficial(self):
+        import main as app_main
+
+        client = app_main.app.test_client()
+        with patch.object(app_main.motor_sei_instance, "validar_sessao", return_value={"sessao_ativa": False}):
+            resp = client.get("/api/v1/sei/status")
+        self.assertEqual(resp.status_code, 200)
+        data = resp.get_json()
+        self.assertIn("api_oficial", data)
+        self.assertIn("pronta", data["api_oficial"])
+
+    def test_07_rotas_processos_e_buscar_usam_api_oficial_quando_configurada(self):
+        import main as app_main
+
+        cfg_ok = self._config_valida()
+        fake_client = sei_api.SEIOfficialClient(cfg_ok)
+        client = app_main.app.test_client()
+        headers = {"X-API-Token": app_main.API_TOKEN} if getattr(app_main, "API_TOKEN", "") else {}
+
+        with patch.object(app_main, "sei_oficial_client", fake_client), \
+             patch.object(fake_client, "listar_processos_unidade", return_value={"total": "2", "processos": [{"idProcedimento": "1"}]}), \
+             patch.object(fake_client, "consultar_processo", return_value={"procedimentoFormatado": "137.00010608/2025-63"}):
+            r_list = client.get("/api/v1/sei/processos", headers=headers)
+            r_find = client.post("/api/v1/sei/buscar", json={"termo": "137.00010608/2025-63"}, headers=headers)
+
+        self.assertEqual(r_list.status_code, 200)
+        self.assertEqual(r_list.get_json()["origem"], "api_oficial")
+        self.assertEqual(r_find.status_code, 200)
+        self.assertEqual(r_find.get_json()["origem"], "api_oficial")
+
+
 if __name__ == "__main__":
     unittest.main()
