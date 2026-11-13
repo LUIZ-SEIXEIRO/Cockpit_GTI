@@ -322,6 +322,15 @@ def rota_raiz():
         return send_from_directory(d, f)
     return "<h2>Cockpit GTI: painel.html não encontrado</h2>", 404
 
+@app.route('/static/<path:filename>')
+def servir_static_assets(filename):
+    base = os.path.dirname(os.path.abspath(__file__))
+    for p in (os.path.join(base, 'static'), os.path.abspath('static')):
+        if os.path.isfile(os.path.join(p, filename)):
+            return send_from_directory(p, filename)
+    return "Arquivo nao encontrado", 404
+
+
 @app.route('/frontend/<path:filename>')
 def servir_estaticos(filename):
     base = os.path.dirname(os.path.abspath(__file__))
