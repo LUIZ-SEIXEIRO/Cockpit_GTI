@@ -132,20 +132,47 @@ class TestMotorIA(unittest.TestCase):
 
     def test_06_rotas_flask_ia_autenticacao_e_bloqueio_ssrf(self):
         with main.app.test_client() as client:
-            with patch.dict(os.environ, {"API_TOKEN": "token_ia_teste"}):
+            with patch.dict(os.environ, {"API_TOKEN": "token_ia_teste"}), \
+                 patch("main.resolver_credencial_ia", return_value=("", "", False)):
                 r_unauth = client.post("/api/v1/ia/revisar_processo", json={"idProcesso": "137.00029841/2026-14"})
                 self.assertEqual(r_unauth.status_code, 401)
 
+                r_pool_unauth = client.get("/api/v1/ia/pool")
+                self.assertEqual(r_pool_unauth.status_code, 401)
+
+                headers_auth = {"Authorization": "Bearer token_ia_teste"}
+                for rota in (
+                    "/api/v1/ia/pool",
+                    "/api/v1/ia/testar_slot",
+                    "/api/v1/ia/chat",
+                    "/api/v1/ia/revisar_processo",
+                ):
+                    with self.subTest(rota=rota, payload="malformado"):
+                        r_malformado = client.post(
+                            rota,
+                            headers=headers_auth,
+                            data='{"',
+                            content_type="application/json",
+                        )
+                        self.assertEqual(r_malformado.status_code, 400)
+                    with self.subTest(rota=rota, payload="não objeto"):
+                        r_nao_objeto = client.post(
+                            rota,
+                            headers=headers_auth,
+                            json=["valor inválido"],
+                        )
+                        self.assertEqual(r_nao_objeto.status_code, 400)
+
                 r_ssrf = client.post(
                     "/api/v1/ia/chat",
-                    headers={"Authorization": "Bearer token_ia_teste"},
+                    headers=headers_auth,
                     json={"endpoint": "http://169.254.169.254/latest", "messages": [{"role": "user", "content": "oi"}]},
                 )
                 self.assertEqual(r_ssrf.status_code, 403)
 
                 r_tipo = client.post(
                     "/api/v1/ia/chat",
-                    headers={"Authorization": "Bearer token_ia_teste"},
+                    headers=headers_auth,
                     json={"endpoint": 123, "messages": [{"role": "user", "content": "oi"}]},
                 )
                 self.assertEqual(r_tipo.status_code, 400)
@@ -156,7 +183,7 @@ class TestMotorIA(unittest.TestCase):
                 })):
                     r_ok = client.post(
                         "/api/v1/ia/revisar_processo",
-                        headers={"Authorization": "Bearer token_ia_teste"},
+                        headers=headers_auth,
                         json={"idProcesso": "137.00029841/2026-14", "especificacao": "SD-WAN"},
                     )
                 self.assertEqual(r_ok.status_code, 200)
@@ -165,7 +192,7 @@ class TestMotorIA(unittest.TestCase):
                 # Regressao: /ia/chat e /ia/testar_slot aceitam host do config_pool_ias.json e bloqueiam externos (403)
                 r_slot_ssrf = client.post(
                     "/api/v1/ia/testar_slot",
-                    headers={"Authorization": "Bearer token_ia_teste"},
+                    headers=headers_auth,
                     json={"endpoint": "http://169.254.169.254/latest", "model": "qwen2.5:14b"},
                 )
                 self.assertEqual(r_slot_ssrf.status_code, 403)
@@ -173,7 +200,7 @@ class TestMotorIA(unittest.TestCase):
                 # POST /api/v1/ia/pool rejeita host fora da allowlist fixa (403)
                 r_pool_evil = client.post(
                     "/api/v1/ia/pool",
-                    headers={"Authorization": "Bearer token_ia_teste"},
+                    headers=headers_auth,
                     json={"ias": {"principal": {"endpoint": "http://evil.example.com/v1"}}},
                 )
                 self.assertEqual(r_pool_evil.status_code, 403)
@@ -182,7 +209,7 @@ class TestMotorIA(unittest.TestCase):
                     self.assertEqual(
                         client.post(
                             "/api/v1/ia/chat",
-                            headers={"Authorization": "Bearer token_ia_teste"},
+                            headers=headers_auth,
                             json={"endpoint": ep_porta_errada, "messages": [{"role": "user", "content": "oi"}]},
                         ).status_code,
                         403,
@@ -190,7 +217,7 @@ class TestMotorIA(unittest.TestCase):
                     self.assertEqual(
                         client.post(
                             "/api/v1/ia/pool",
-                            headers={"Authorization": "Bearer token_ia_teste"},
+                            headers=headers_auth,
                             json={"ias": {"principal": {"endpoint": ep_porta_errada}}},
                         ).status_code,
                         403,
@@ -200,7 +227,7 @@ class TestMotorIA(unittest.TestCase):
                 with patch("urllib.request.urlopen", side_effect=urllib.error.URLError("recusado")):
                     r_slot_err = client.post(
                         "/api/v1/ia/testar_slot",
-                        headers={"Authorization": "Bearer token_ia_teste"},
+                        headers=headers_auth,
                         json={"endpoint": "http://100.103.100.98:3001/v1", "model": "qwen2.5:14b"},
                     )
                     self.assertEqual(r_slot_err.status_code, 502)
@@ -211,14 +238,14 @@ class TestMotorIA(unittest.TestCase):
                 })):
                     r_chat_pool = client.post(
                         "/api/v1/ia/chat",
-                        headers={"Authorization": "Bearer token_ia_teste"},
+                        headers=headers_auth,
                         json={"endpoint": "http://100.103.100.98:3001/v1", "messages": [{"role": "user", "content": "oi"}]},
                     )
                     self.assertEqual(r_chat_pool.status_code, 200)
 
                     r_slot_pool = client.post(
                         "/api/v1/ia/testar_slot",
-                        headers={"Authorization": "Bearer token_ia_teste"},
+                        headers=headers_auth,
                         json={"endpoint": "http://100.103.100.98:3001/v1", "model": "qwen2.5:14b"},
                     )
                     self.assertEqual(r_slot_pool.status_code, 200)

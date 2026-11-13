@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 import json
+import logging
 import math
 import os
 import re
@@ -7,6 +8,8 @@ import urllib.error
 import urllib.request
 from typing import Any, Dict, Iterable, List, Optional, Set
 from urllib.parse import urlparse
+
+logger = logging.getLogger(__name__)
 
 RE_PROCESSO_SEI = re.compile(r"\b\d{3}\.\d{8}/\d{4}-\d{2}\b")
 RE_VALOR_BRL = re.compile(r"R\$\s*\d+(?:\.\d{3})*(?:,\d{2})?")
@@ -199,9 +202,11 @@ def executar_chat_ia(
         endpoint_valido = validar_endpoint_ia(ep_alvo, hosts_permitidos=hosts_permitidos)
         msgs_limpas = sanitizar_mensagens(mensagens)
     except PermissionError as pe:
-        return {"sucesso": False, "codigo": 403, "status": "erro", "mensagem": str(pe)}
+        logger.warning("ia_destination_rejected exception_type=%s", type(pe).__name__)
+        return {"sucesso": False, "codigo": 403, "status": "erro", "mensagem": "Destino de IA não autorizado."}
     except ValueError as ve:
-        return {"sucesso": False, "codigo": 400, "status": "erro", "mensagem": str(ve)}
+        logger.info("ia_request_rejected exception_type=%s", type(ve).__name__)
+        return {"sucesso": False, "codigo": 400, "status": "erro", "mensagem": "Entrada de IA inválida."}
 
     msgs_protegidas = aplicar_guardiao_grounding(msgs_limpas)
     temp_final = normalizar_temperatura(temperature, padrao=0.0)
@@ -231,9 +236,11 @@ def executar_chat_ia(
     except urllib.error.URLError as ue:
         if isinstance(getattr(ue, "reason", None), TimeoutError):
             return {"sucesso": False, "codigo": 504, "status": "erro", "mensagem": "Timeout na comunica\u00e7\u00e3o com o provedor de IA."}
-        return {"sucesso": False, "codigo": 502, "status": "erro", "mensagem": f"Falha de conex\u00e3o com o provedor de IA: {ue.reason}"}
+        logger.warning("ia_provider_connection_failed exception_type=%s", type(ue).__name__)
+        return {"sucesso": False, "codigo": 502, "status": "erro", "mensagem": "Falha de conexão com o provedor de IA."}
     except Exception as e:
-        return {"sucesso": False, "codigo": 502, "status": "erro", "mensagem": f"Erro ao processar resposta do provedor de IA: {e}"}
+        logger.error("ia_provider_response_failed exception_type=%s", type(e).__name__)
+        return {"sucesso": False, "codigo": 502, "status": "erro", "mensagem": "Resposta inválida do provedor de IA."}
 
     if not isinstance(resp_dados, dict):
         return {"sucesso": False, "codigo": 502, "status": "erro", "mensagem": "Resposta inv\u00e1lida do provedor de IA (objeto JSON esperado)."}

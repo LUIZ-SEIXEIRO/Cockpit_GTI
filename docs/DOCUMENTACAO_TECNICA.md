@@ -92,7 +92,7 @@ A infraestrutura de execução local em notebooks ou servidores Windows/Linux (v
 
 | Serviço Docker | Nome do Container | Imagem Base | Portas (`Host:Container`) | Volumes de Persistência | Função Técnica |
 | :--- | :--- | :--- | :---: | :--- | :--- |
-| **`ollama`** | `cockpit-gti-ollama` | `ollama/ollama:latest` | `11434:11434` | `H:/spaguas/ia-multiagente/ollama_data:/root/.ollama` | Servidor de inferência de LLMs locais com `OLLAMA_KEEP_ALIVE=24h` para evitar recarregamento de pesos na memória RAM/VRAM. |
+| **`ollama`** | `cockpit-gti-ollama` | `ollama/ollama:latest` | `11434:11434` | `H:/spaguas/ia-multiagente/ollama_data:/root/.ollama` | Servidor de inferência local; não recebe tokens de API do Cockpit, OpenProject ou GLPI. |
 | **`new-api`** | `cockpit-gti-newapi` | `calciumion/new-api:latest` | `3001:3000` | `new-api-data:/data` (*external volume*) | Gateway centralizador OpenAI-compatível. Gerencia chaves (`sk-...`), permissões de modelos por grupo (`SP - ÁGUAS`) e logs de consumo. |
 | **`cockpit-backend`** | `cockpit-gti-backend` | Build local (`Dockerfile` / `python:3.11-slim`) | `5000:5000` | Código copiado na imagem + `config_pool_ias.json` | Servidor Flask principal, provedor do `painel.html`, motor de telemetria e proxy para IA, OpenProject e GLPI. |
 
@@ -206,7 +206,7 @@ A tabela abaixo serve como guia de referência para desenvolvedores e sustentaç
 
 ## 5. Arquitetura do Backend Flask (`main.py`) e Referência da API REST (`/api/v1/`)
 
-O servidor backend (`main.py` na raiz e espelhado em `backend/main.py`) é construído sobre **Flask** e executa na porta TCP **`5000`**. Todos os endpoints possuem cabeçalhos CORS habilitados (`Access-Control-Allow-Origin: *`) e tratamento resiliente de exceções (retornando payloads JSON padronizados).
+O servidor backend (`main.py` na raiz) é construído sobre **Flask** e executa na porta TCP **`5000`**. O CORS aceita somente origens completas explicitamente permitidas (esquema, host e porta); não há origem padrão ou curingas. As rotas de dados e mutação exigem `Bearer API_TOKEN`, `X-Cockpit-Token` ou `X-API-Key`.
 
 ### Catálogo Completo de Endpoints REST:
 
@@ -227,10 +227,10 @@ O servidor backend (`main.py` na raiz e espelhado em `backend/main.py`) é const
   ```
 
 #### 5.3. `GET /api/v1/ia/pool` e `POST /api/v1/ia/pool`
-* **Descrição:** Lê (`GET`) ou grava (`POST`) o arquivo `config_pool_ias.json`, persistindo em disco as configurações dos 3 slots de IA (modelos, endpoints, API keys, temperatura, limite de tokens e prompts).
+* **Descrição:** Ambos os métodos exigem autenticação. O `GET` mascara chaves; quando ainda não existe configuração privada, a primeira leitura ou gravação migra `config_pool_ias.json` para `data/config_pool_ias.local.json`, arquivo ignorado pelo Git, e mascara campos de segredo remanescentes no modelo versionado. A gravação é atômica e aplica modo `0600` em sistemas POSIX; em Windows, restrinja as ACLs do diretório `data`. JSON malformado ou diferente de objeto retorna `400`; falhas de leitura, corrupção do arquivo ou falhas de gravação retornam `500` e não são convertidas em resposta de sucesso.
 
 #### 5.4. `POST /api/v1/ia/testar_slot`
-* **Descrição:** Endpoint dedicado ao botão **`⚡ Testar este Agente`** da interface. Recebe as credenciais de um slot específico, aplica a função `normalizar_endpoint_ia()` (garantindo o sufixo `/v1` e convertendo `localhost:3001` para `100.103.100.98:3001` quando em container), dispara uma requisição `POST /v1/chat/completions` com um payload mínimo (`"content": "ping"`, `"max_tokens": 10`) e mede a latência exata em milissegundos.
+* **Descrição:** Endpoint autenticado dedicado ao botão **`⚡ Testar este Agente`**. O backend valida e normaliza o endpoint contra a allowlist antes de enviar o teste mínimo ao provedor; o navegador não faz fallback direto nem envia credenciais a outro host. JSON inválido retorna `400`.
 * **Payload de Entrada:**
   ```json
   {
@@ -248,22 +248,36 @@ O servidor backend (`main.py` na raiz e espelhado em `backend/main.py`) é const
     "codigo": 200,
     "codigoHttp": 200,
     "latenciaMs": 142,
-    "latencia_ms": 142,
     "mensagem": "Slot qwen2.5:14b ativo (142ms)!"
   }
   ```
 
 #### 5.5. `POST /api/v1/ia/chat`
-* **Descrição:** Roteia conversas completas, análises de processos SEI e geração de minutas para o slot de IA solicitado (`principal`, `orquestracao` ou `microservicos`), lendo automaticamente as credenciais salvas em `config_pool_ias.json` ou aceitando parâmetros em tempo de execução.
+* **Descrição:** Exige autenticação e roteia conversas e minutas pelo backend para o slot selecionado. O endpoint valida o destino antes de encaminhar credenciais; o painel não tenta provedores nem backends alternativos fora desta rota. JSON malformado ou não-objeto retorna `400`.
+* **Revisão de processo:** `POST /api/v1/ia/revisar_processo` usa o endpoint interno e retorna `422` quando a checagem de consistência detecta itens fora do contexto. O painel diferencia bloqueio de inconsistência de indisponibilidade e não converte falhas em pareceres genéricos.
 
 #### 5.6. `POST /api/v1/openproject/sync_card` e `POST /api/v1/openproject/sync_batch`
-* **Descrição:** Endpoints de integração para sincronização individual de um cartão (`card_id` + `comentario` / dossiê) ou sincronização em lote de múltiplos *Work Packages* com o OpenProject.
+* **Descrição:** Endpoints autenticados de integração individual ou em lote. `sync_card` exige ID inteiro positivo e `comentario`/`descricao` como strings; retorna `400` para entrada inválida, `503` sem token do OpenProject, `502` para falhas de rede/resposta upstream (com `upstreamStatus` quando aplicável), `504` para timeout e `200` em caso de sucesso. `sync_batch` aceita `itens` ou `cards` como lista de objetos; campo presente com tipo inválido retorna `400`, enquanto a ausência dos dois campos equivale a uma lista vazia.
+* **Fluxo humano:** Na gravação individual do painel, a primeira confirmação solicita a análise; o usuário deve revisar a prévia e confirmar novamente. Bloqueio `422`, indisponibilidade da IA ou falha do backend impedem a sincronização e o registro local de sucesso.
 
 #### 5.7. `GET /api/v1/openproject/historico_agendado_v2`
-* **Descrição:** Retorna o histórico auditável de execuções do agendador automático (`registro_execucao_agendada.json`).
+* **Descrição:** Retorna o histórico auditável de execuções do agendador automático (`registro_execucao_agendada.json`) e exige autenticação.
 
 #### 5.8. `GET /api/v1/glpi/tickets`
-* **Descrição:** Retorna o espelho atualizado de chamados técnicos do GLPI 10 a partir do cache estruturado de produção (`glpi_producao_cache.json`).
+* **Descrição:** Retorna dados de chamados do GLPI 10 a partir do cache estruturado ou da API de produção; exige autenticação porque os registros podem conter dados pessoais e operacionais.
+
+#### 5.9. Segurança, privacidade e observabilidade da API
+* As rotas `/api/v1/ia/*`, sincronizações e histórico OpenProject, chamados GLPI e rotas SEI exigem token configurado no servidor e comparação em tempo constante.
+* Tokens de API digitados no painel ficam em `sessionStorage` da aba atual; tokens legados encontrados em `localStorage` são migrados e removidos. Chaves do pool não são mais gravadas no cache local do navegador; a configuração com segredos fica em `data/config_pool_ias.local.json`, fora do Git. O logout remove as credenciais de sessão e sanitiza o cache local do pool. Como o navegador envia Bearer por JavaScript, o token ainda é acessível a scripts executados na origem; `sessionStorage` não substitui uma sessão `HttpOnly`.
+* Respostas da API e do painel usam `Cache-Control: no-store`. As respostas incluem `X-Request-ID`, cabeçalhos anti-sniffing, proteção de enquadramento, política de referenciador e CSP restrita a `frame-ancestors`, `base-uri` e `form-action`. A CSP não aplica `script-src`, pois o painel ainda contém scripts inline; não deve ser interpretada como mitigação completa de XSS.
+* O backend limita o corpo HTTP a 16 MiB. O log de acesso registra identificador de correlação, método, endpoint Flask, status e duração; o log padrão do Werkzeug fica limitado a `WARNING` para evitar registrar a linha de requisição com query string e IP. Não são registrados corpo, query string, cabeçalhos de autenticação, endereço do cliente ou conteúdo de chamados/processos. Erros de integração retornam mensagens sanitizadas; detalhes de exceções e conteúdo upstream não são enviados ao navegador. A rota de status SEI omite caminho local, hash e nomes de cookies.
+* O CORS não habilita credenciais/cookies. Origens institucionais adicionais devem ser configuradas em `ALLOWED_ORIGINS` com esquema, host e porta explícitos. HSTS é enviado somente quando Flask recebe a requisição como HTTPS.
+* Segredos injetados pelo Compose também podem ser visualizados por administradores com acesso ao Docker daemon; limite o acesso ao host, ao arquivo `.env` e ao daemon. A inferência só é exclusivamente local quando o endpoint configurado aponta para New API/Ollama sob controle institucional.
+
+#### 5.10. Verificação automatizada de contratos
+* Execute `python -m pip install -r requirements.txt` e `python -m unittest discover -v tests`.
+* A suíte exercita autenticação, payloads, falhas de persistência, respostas da IA e integração OpenProject com chamadas externas simuladas. Os contratos do painel são verificados estaticamente; nenhum serviço real é chamado.
+* O GitHub Actions executa a mesma suíte em pushes e pull requests para Python 3.11 e 3.12.
 
 ---
 
@@ -335,11 +349,15 @@ $$\text{Aging Líquido (Dias)} = \text{Aging Bruto Total} - \sum \text{Dias em S
 ## 10. Segurança da Informação, RBAC, LGPD e Conformidade (Súmula 269 TCU)
 
 1. **Conformidade com a LGPD (Lei nº 13.709/2018):**
-   * Como toda a inferência de Inteligência Artificial ocorre localmente através dos containers `cockpit-gti-newapi` e `cockpit-gti-ollama`, textos de processos administrativos, nomes de servidores, minutas contratuais e pareceres **permanecem 100% dentro da infraestrutura controlada pelo gestor**, sem compartilhamento com serviços de IA públicos externos.
+   * O tratamento de dados deve respeitar finalidade, necessidade, controle de acesso e retenção institucional. A inferência pode usar Ollama/New API locais, mas o endereço do provedor configurado determina o destino; valide a hospedagem e as condições de tratamento antes de encaminhar dados pessoais ou processuais.
+   * O painel mantém dados operacionais em armazenamento local do navegador para continuidade de uso. Em estações compartilhadas, encerre a sessão e aplique a política institucional de limpeza/retention do perfil; a saída remove o token da API, mas não apaga automaticamente todos os dados de trabalho persistidos.
 2. **Trava Humana de Escrita (*Human-in-the-Loop*):**
    * Nenhuma IA possui permissão para alterar status ou sobrescrever descrições no OpenProject de forma autônoma a partir do chat. Toda ação mutável exige a validação visual do texto pelo servidor e o acionamento manual do botão de confirmação.
 3. **Aderência à Lei Federal nº 14.133/2021 e Súmula 269 do TCU:**
    * Os prompts de sistema das IAs (Slot #1 e Slot #2) e os 29 Cadernos Técnicos embutem nativamente a exigência de métricas objetivas (UST/Pontos de Função), vedação à caracterização de subordinação direta de terceirizados e obrigatoriedade de Matriz de Riscos e IMR.
+4. **Limites de segurança a acompanhar:**
+   * O token do backend é uma credencial Bearer compartilhada, não uma identidade individual; `sessionStorage` limita sua persistência, mas qualquer XSS na mesma origem pode lê-lo. Não use esta autenticação como substituta de SSO/RBAC auditável em produção institucional.
+   * A interface contém scripts inline e persiste dados operacionais em `localStorage`; a CSP atual não restringe a execução de scripts. A adoção de CSP estrita, sessão `HttpOnly` com proteção CSRF e política de retenção por categoria exige refatoração específica antes de expor o painel a redes não confiáveis.
 
 ---
 
