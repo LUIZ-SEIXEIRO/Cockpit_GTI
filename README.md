@@ -9,6 +9,8 @@
 
 > **Centro de Comando Executivo, Instrução Processual SEI!, Gestão de Portfólio OpenProject, Sustentação ITSM/CMDB GLPI 10, Rituais Ágeis e Orquestração de Múltiplas IAs Locais da Gerência de Tecnologia da Informação (SA-GTI) da Agência de Águas do Estado de São Paulo (SP-Águas).**
 
+> **Status de homologação:** esta revisão não aprova o sistema para produção. Indicadores, contagens e alegações funcionais deste README só devem ser tratados como oficiais quando confirmados por fonte de dados auditável. O login web usa um token compartilhado para emitir cookie de sessão; não substitui SSO/IdP, MFA ou autorização RBAC server-side. As telas de administração de usuários e RBAC permanecem desabilitadas até essa integração.
+
 ---
 
 ## 🏛️ Identificação Institucional
@@ -18,9 +20,9 @@
 | **Órgão / Autarquia** | Agência de Águas do Estado de São Paulo (**SP-Águas**) |
 | **Superintendência / Unidade** | Superintendência de Administração — Gerência de Tecnologia da Informação (**SA-GTI**) |
 | **Divisões Técnicas Atendidas** | Divisão de Infraestrutura (**SA-GTI-DIF**) & Divisão de Governança Digital e Sistemas (**SA-GTI-DGD**) |
-| **Idealização, Arquitetura & Governança** | **Luiz Antonio Seixeiro** — Gestor de Projetos Sênior / Governança de TIC (SA-GTI) |
+| **Arquitetura & Governança** | Equipe responsável pela solução |
 | **Repositório Oficial** | [github.com/LUIZ-SEIXEIRO/Cockpit_GTI](https://github.com/LUIZ-SEIXEIRO/Cockpit_GTI) |
-| **Versão de Produção** | **v11.0.0 Oficial** — Arquitetura SPA Dual-Theme + Stack Docker Unificada (`cockpit-gti`) |
+| **Status da versão** | Protótipo em revisão; versão de produção ainda não homologada |
 
 ---
 
@@ -179,15 +181,21 @@ git clone https://github.com/LUIZ-SEIXEIRO/Cockpit_GTI.git H:\Cockpit_GTI
 # 2. Acesse a pasta do projeto
 Set-Location H:\Cockpit_GTI
 
-# 3. Garanta a existência do volume de dados do New API (na primeira execução)
+# 3. Crie o .env local e configure tokens fortes, independentes e não versionados
+Copy-Item .env.example .env
+notepad .env
+
+# 4. Garanta a existência do volume de dados do New API (na primeira execução)
 docker volume create new-api-data
 
-# 4. Construa e inicie a stack unificada (Backend + New API + Ollama)
+# 5. Construa e inicie a stack unificada (Backend + New API + Ollama)
 docker compose up -d --build
 
-# 5. Confirme que os 3 containers estão ativos (Up)
+# 6. Confirme que os 3 containers estão ativos (Up)
 docker compose ps
 ```
+
+`API_TOKEN` e `COCKPIT_SESSION_SECRET` devem receber valores aleatórios fortes diferentes dos exemplos. O login web ficará indisponível sem ambos. Em implantação HTTPS, defina `COCKPIT_SESSION_COOKIE_SECURE=true`; o valor `false` serve apenas para desenvolvimento local HTTP. O Compose atual não inicia MariaDB; a telemetria o identifica como `nao_configurado` até que uma instância e `MARIADB_HOST` sejam provisionados.
 
 ### Acessos Locais:
 * **🌊 Painel Principal do Cockpit GTI:** [http://localhost:5000/](http://localhost:5000/)
@@ -202,13 +210,15 @@ O servidor backend (`main.py` / `backend/main.py`) expõe os seguintes endpoints
 
 | Método | Rota REST | Descrição Técnica |
 | :---: | :--- | :--- |
-| `GET` | `/` ou `/painel` | Serve a aplicação Single-Page Application (`painel.html`). |
-| `GET` | `/api/v1/telemetria` | Verifica em tempo real via socket TCP a saúde dos 5 pilares (`mariadb`, `ollama`, `glpi`, `openproject`, `newapi`). |
-| `GET` / `POST` | `/api/v1/ia/pool` | Exige autenticação (`Bearer API_TOKEN` ou `X-Cockpit-Token`); lê o pool com chaves mascaradas ou salva a configuração em `config_pool_ias.json`. |
+| `GET` | `/` ou `/painel` | Serve a aplicação Single-Page Application (`painel.html`) somente após validação da sessão web. |
+| `GET` / `POST` / `DELETE` | `/api/v1/session` | Consulta, cria (token de acesso) ou encerra a sessão em cookie `HttpOnly`, `SameSite=Strict`, com validade de até oito horas. |
+| `GET` | `/api/v1/telemetria` | Verifica conectividade TCP dos serviços nos endpoints configurados; MariaDB permanece `false`/não configurado enquanto não houver `MARIADB_HOST`. |
+| `GET` / `POST` | `/api/v1/ia/pool` | Exige autenticação por token de API ou sessão web; lê o pool com chaves mascaradas ou salva a configuração local do backend. |
 | `POST` | `/api/v1/ia/testar_slot` | Exige autenticação e testa o slot pelo backend, que valida a allowlist do endpoint; retorna status e latência (`latenciaMs`). Não há chamada direta do navegador ao provedor. |
 | `POST` | `/api/v1/ia/chat` | Exige autenticação e encaminha conversas, análises e minutas pelo gateway do backend; falha do gateway não aciona provedores alternativos no navegador. |
 | `POST` | `/api/v1/openproject/sync_card` | Exige autenticação. No fluxo do painel, a gravação só é oferecida após análise consistente, prévia para revisão humana e confirmação explícita. |
-| `GET` | `/api/v1/openproject/historico_agendado_v2` | Retorna o log auditável das sincronizações automáticas executadas (`registro_execucao_agendada.json`). |
+| `GET` | `/api/v1/openproject/historico_agendado` | Exige autenticação; retorna somente registros encontrados no backend e informa quando não há histórico configurado. |
+| `GET` | `/api/v1/processos` | Exige autenticação; lê o acervo SEI do arquivo local configurado e retorna `503` quando a fonte não está disponível. |
 | `GET` | `/api/v1/glpi/tickets` | Retorna a fila de chamados técnicos e dados do cache de produção do GLPI 10 (`glpi_producao_cache.json`). |
 
 ---

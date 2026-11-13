@@ -5,6 +5,7 @@ import unittest
 
 
 PAINEL = (Path(__file__).resolve().parents[1] / "painel.html").read_text(encoding="utf-8")
+FRONTEND_PAINEL = (Path(__file__).resolve().parents[1] / "frontend" / "painel.html").read_text(encoding="utf-8")
 
 
 class TestFrontendContracts(unittest.TestCase):
@@ -47,33 +48,59 @@ class TestFrontendContracts(unittest.TestCase):
         self.assertIn("apiKey: chaveConfigurada ? cfg.apiKey : ''", PAINEL)
         self.assertIn("key === '***' || key === 'sk-CHAVE-SANITIZADA-INSTITUCIONAL'", PAINEL)
 
-    def test_api_token_is_tab_scoped_and_removed_on_logout(self):
-        self.assertIn("sessionStorage.setItem('cockpit_token', t)", PAINEL)
+    def test_web_session_uses_server_cookie_without_storing_api_token(self):
         self.assertIn("window.obterTokenCockpitSeguro = function()", PAINEL)
         self.assertIn("localStorage.removeItem('cockpit_token')", PAINEL)
         self.assertNotIn("localStorage.setItem('cockpit_token'", PAINEL)
-        self.assertIn("window.removerSegredosPoolLocal = function(pool)", PAINEL)
-        self.assertIn("window.persistirPoolLocalSemSegredos(pool)", PAINEL)
-        self.assertNotIn("localStorage.setItem('newapi_token'", PAINEL)
-        self.assertIn("sessionStorage.setItem('newapi_token', limpo)", PAINEL)
-        self.assertNotIn(
-            "localStorage.setItem(window.STORAGE_KEY_POOL_3_IAS, JSON.stringify(pool))",
-            PAINEL,
-        )
+        self.assertNotIn("sessionStorage.setItem('cockpit_token'", PAINEL)
+        self.assertNotIn("Authorization'] = 'Bearer ' + token", PAINEL)
+        self.assertIn("fetch('/api/v1/session', { cache: 'no-store' })", PAINEL)
+        self.assertIn("fetch('/api/v1/session', { method: 'DELETE'", PAINEL)
+        self.assertNotIn("spaguas2026", PAINEL)
+        self.assertNotIn("admin123", PAINEL)
 
-        logout_start = PAINEL.index("window.executarLogoutSistema = function")
-        logout_end = PAINEL.index("window.verificarAutenticacaoCockpit = function", logout_start)
-        logout = PAINEL[logout_start:logout_end]
-        self.assertIn("localStorage.removeItem('cockpit_token')", logout)
-        self.assertIn("localStorage.removeItem('newapi_token')", logout)
-        self.assertIn("localStorage.removeItem('sagti_openproject_token')", logout)
-        self.assertIn("sessionStorage.clear()", logout)
+    def test_frontend_copy_uses_same_cookie_session_contract(self):
+        self.assertIn("fetch('/api/v1/session', { cache: 'no-store' })", FRONTEND_PAINEL)
+        self.assertIn("fetch('/api/v1/session', { method: 'DELETE'", FRONTEND_PAINEL)
+        self.assertNotIn("localStorage.getItem('cockpit_token')", FRONTEND_PAINEL)
+        self.assertNotIn("Authorization'] = 'Bearer ' + token", FRONTEND_PAINEL)
+        self.assertNotIn("spaguas2026", FRONTEND_PAINEL)
+
+    def test_openproject_history_has_no_demo_fallback(self):
+        start = PAINEL.index("window.abrirModalLogsSincronizacaoOp = async function")
+        end = PAINEL.index("var motores = window.motoresVarredura", start)
+        history_loader = PAINEL[start:end]
+        self.assertIn("fetch('/api/v1/openproject/historico_agendado'", history_loader)
+        self.assertNotIn("sagti_op_historico_agendado", history_loader)
+        self.assertNotIn("A8F9B2C4", PAINEL)
+        self.assertNotIn("179,", history_loader)
 
     def test_sei_status_request_sends_api_authentication(self):
         self.assertIn(
             "fetch('/api/v1/sei/status', { headers: obterHeadersComAuth() })",
             PAINEL,
         )
+
+    def test_connector_healthcheck_uses_backend_status_without_demo_fallback(self):
+        for painel in (PAINEL, FRONTEND_PAINEL):
+            start = painel.index("window.executarHealthcheckGeral = async function")
+            end = painel.index("window.restaurarTudoConfig = function", start)
+            healthcheck = painel[start:end]
+
+            for endpoint in (
+                "/api/v1/glpi/status",
+                "/api/v1/mariadb/status",
+                "/api/v1/openproject/status",
+                "/api/v1/newapi/status",
+            ):
+                self.assertIn(endpoint, healthcheck)
+            self.assertIn("r.ok && body.ok === true", healthcheck)
+            self.assertNotIn("localhost:8000", healthcheck)
+            self.assertNotIn("Base Local Auditada", healthcheck)
+
+    def test_glpi_alert_filter_handles_missing_optional_fields(self):
+        self.assertIn("String(t && t.urgencia || '')", PAINEL)
+        self.assertIn("String(t && t.status || '')", PAINEL)
 
     def test_external_connector_script_is_closed_before_inline_code(self):
         self.assertIn(

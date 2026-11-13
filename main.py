@@ -14,7 +14,8 @@ import tempfile
 import uuid
 import urllib.request
 import urllib.error
-from flask import Flask, request, jsonify, send_from_directory, g, has_request_context
+from datetime import timedelta
+from flask import Flask, request, jsonify, send_from_directory, g, has_request_context, redirect, session
 from werkzeug.exceptions import HTTPException
 
 app = Flask(
@@ -23,6 +24,11 @@ app = Flask(
     static_url_path='/static',
 )
 app.config['MAX_CONTENT_LENGTH'] = 16 * 1024 * 1024
+app.config['SECRET_KEY'] = os.getenv('COCKPIT_SESSION_SECRET') or None
+app.config['SESSION_COOKIE_HTTPONLY'] = True
+app.config['SESSION_COOKIE_SAMESITE'] = 'Strict'
+app.config['SESSION_COOKIE_SECURE'] = os.getenv('COCKPIT_SESSION_COOKIE_SECURE', 'true').lower() in ('true', '1')
+app.config['PERMANENT_SESSION_LIFETIME'] = timedelta(hours=8)
 logging.getLogger('werkzeug').setLevel(logging.WARNING)
 
 
@@ -104,7 +110,9 @@ ROTAS_AUTENTICADAS = {
     '/api/v1/openproject/sync_card',
     '/api/v1/openproject/sync_batch',
     '/api/v1/openproject/historico_agendado_v2',
+    '/api/v1/openproject/historico_agendado',
     '/api/v1/glpi/tickets',
+    '/api/v1/processos',
     '/api/v1/sei/status',
     '/api/v1/sei/sessao',
     '/api/v1/sei/processos',
@@ -121,6 +129,10 @@ def token_configurado():
     return bool(obter_token_servidor())
 
 
+def sessao_autenticada():
+    return bool(os.getenv('COCKPIT_SESSION_SECRET')) and session.get('cockpit_authenticated') is True
+
+
 def obter_token_servidor():
     return (os.getenv('COCKPIT_API_TOKEN') or '').strip() or (os.getenv('API_TOKEN') or '').strip()
 
@@ -133,10 +145,12 @@ def requisicao_autenticada():
     esquema, separador, credencial = auth_header.partition(' ')
     bearer = credencial.strip() if separador and esquema.lower() == 'bearer' else ''
     token_fornecido = bearer or request.headers.get('X-Cockpit-Token', '').strip() or request.headers.get('X-API-Key', '').strip()
-    return bool(token_fornecido) and hmac.compare_digest(
-        token_fornecido.encode('utf-8'),
-        token_esperado.encode('utf-8'),
-    )
+    return (
+        bool(token_fornecido) and hmac.compare_digest(
+            token_fornecido.encode('utf-8'),
+            token_esperado.encode('utf-8'),
+        )
+    ) or sessao_autenticada()
 
 
 def registrar_falha_operacional(evento, excecao):
@@ -172,6 +186,39 @@ def checar_porta(host, porta, timeout=0.8):
     except Exception:
         return False
 
+
+def obter_alvo_url_servico(variavel, padrao):
+    try:
+        endpoint = os.getenv(variavel) or padrao
+        parsed = urlsplit(endpoint)
+        if parsed.scheme not in ('http', 'https') or not parsed.hostname:
+            return '', None
+        porta = parsed.port or (443 if parsed.scheme == 'https' else 80)
+        return parsed.hostname, porta
+    except (TypeError, ValueError):
+        return '', None
+
+
+def checar_alvo_servico(host, porta):
+    if not host or not porta:
+        return False
+    return checar_porta(host, porta)
+
+
+def status_servico(servico, host, porta):
+    if not host or not porta:
+        return jsonify({
+            'servico': servico,
+            'status': 'nao_configurado',
+            'ok': False,
+        }), 200
+    ok = checar_alvo_servico(host, porta)
+    return jsonify({
+        'servico': servico,
+        'status': 'online' if ok else 'offline',
+        'ok': ok,
+    }), 200
+
 # -------------------------------------------------------------------------
 # SEGURANÇA, PRIVACIDADE E OBSERVABILIDADE
 # -------------------------------------------------------------------------
@@ -206,7 +253,7 @@ def aplicar_controles_de_resposta(response):
     response.headers['Content-Security-Policy'] = "frame-ancestors 'self'; base-uri 'self'; form-action 'self'"
     response.headers['Cross-Origin-Resource-Policy'] = 'same-origin'
 
-    if request.path.startswith('/api/') or request.path in ('/', '/painel', '/frontend/painel.html'):
+    if request.path.startswith('/api/') or request.path in ('/', '/painel', '/frontend/painel.html', '/static/painel.html'):
         response.headers['Cache-Control'] = 'no-store'
     if request.is_secure:
         response.headers['Strict-Transport-Security'] = 'max-age=31536000'
@@ -238,6 +285,10 @@ def iniciar_requisicao_e_autenticar():
         if origin and not validar_origem_estrita(origin):
             return jsonify({'sucesso': False, 'mensagem': 'Origem não autorizada.'}), 403
         return '', 204
+
+    if request.path in ('/', '/painel', '/frontend/painel.html', '/static/painel.html') or request.path.startswith('/frontend/'):
+        if not sessao_autenticada():
+            return redirect('/login', code=303)
 
     if request.path in ROTAS_AUTENTICADAS:
         if not token_configurado():
@@ -276,6 +327,93 @@ def servir_estaticos(filename):
         if os.path.exists(os.path.join(p, filename)):
             return send_from_directory(p, filename)
     return "Arquivo não encontrado", 404
+
+
+@app.route('/login', methods=['GET'])
+def rota_login():
+    if sessao_autenticada():
+        return redirect('/', code=303)
+    return '''<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Acesso institucional — Cockpit GTI</title>
+  <style>
+    *{box-sizing:border-box}body{margin:0;min-height:100vh;display:grid;place-items:center;padding:24px;
+    background:#f1f5f9;color:#0f172a;font:16px system-ui,sans-serif}
+    main{width:min(100%,420px);padding:28px;background:#fff;border:1px solid #cbd5e1;border-radius:8px}
+    h1{margin:0 0 8px;font-size:1.35rem}p{color:#475569;line-height:1.5}
+    label{display:block;margin:20px 0 6px;font-weight:650}
+    input,button{width:100%;padding:11px;border:1px solid #94a3b8;border-radius:6px;font:inherit}
+    button{margin-top:14px;background:#0544cf;color:#fff;border-color:#0544cf;font-weight:700;cursor:pointer}
+    #erro{min-height:1.5em;color:#b91c1c}
+  </style>
+</head>
+<body>
+  <main>
+    <h1>Cockpit GTI — acesso restrito</h1>
+    <p>Informe o token de acesso configurado pelo administrador. A sessão expira após oito horas.</p>
+    <form id="login">
+      <label for="token">Token institucional</label>
+      <input id="token" name="token" type="password" autocomplete="current-password" required>
+      <p id="erro" role="alert"></p>
+      <button type="submit">Entrar</button>
+    </form>
+  </main>
+  <script>
+    document.getElementById('login').addEventListener('submit', async function(event) {
+      event.preventDefault();
+      const erro = document.getElementById('erro');
+      erro.textContent = '';
+      try {
+        const response = await fetch('/api/v1/session', {
+          method: 'POST',
+          headers: {'Content-Type': 'application/json'},
+          body: JSON.stringify({token: document.getElementById('token').value})
+        });
+        if (!response.ok) throw new Error('Acesso negado ou autenticação indisponível.');
+        window.location.replace('/');
+      } catch (error) {
+        erro.textContent = error.message || 'Não foi possível iniciar a sessão.';
+      }
+    });
+  </script>
+</body>
+</html>'''
+
+
+@app.route('/api/v1/session', methods=['GET', 'POST', 'DELETE'])
+def api_v1_session():
+    if request.method == 'GET':
+        return jsonify({'authenticated': sessao_autenticada()}), 200
+    if request.method == 'DELETE':
+        if not os.getenv('COCKPIT_SESSION_SECRET'):
+            return jsonify({
+                'sucesso': False,
+                'mensagem': 'Autenticação web indisponível: configure COCKPIT_SESSION_SECRET.',
+            }), 503
+        session.clear()
+        return jsonify({'authenticated': False}), 200
+
+    if not os.getenv('COCKPIT_SESSION_SECRET'):
+        return jsonify({
+            'sucesso': False,
+            'mensagem': 'Autenticação web indisponível: configure COCKPIT_SESSION_SECRET.',
+        }), 503
+    token_esperado = obter_token_servidor()
+    dados = request.get_json(silent=True)
+    token_fornecido = dados.get('token') if isinstance(dados, dict) else None
+    if not token_esperado or not isinstance(token_fornecido, str) or not hmac.compare_digest(
+        token_fornecido.encode('utf-8'),
+        token_esperado.encode('utf-8'),
+    ):
+        return jsonify({'sucesso': False, 'mensagem': 'Credencial inválida.'}), 401
+
+    session.clear()
+    session['cockpit_authenticated'] = True
+    session.permanent = True
+    return jsonify({'authenticated': True}), 200
 
 def validar_endpoints_payload_pool(dados):
     ias = dados.get('ias') if isinstance(dados, dict) else dados
@@ -363,41 +501,54 @@ def garantir_pool_privado_migrado():
 # -------------------------------------------------------------------------
 @app.route('/api/v1/telemetria', methods=['GET'])
 def rota_telemetria():
+    mariadb_host = (os.getenv('MARIADB_HOST') or os.getenv('DB_HOST') or '').strip()
+    try:
+        mariadb_port = int(os.getenv('MARIADB_PORT') or os.getenv('DB_PORT') or '3306')
+    except ValueError:
+        mariadb_port = None
+    ollama = obter_alvo_url_servico('OLLAMA_URL', 'http://ollama:11434')
+    glpi = obter_alvo_url_servico('GLPI_URL', 'https://glpi.spaguas.sp.gov.br')
+    openproject = obter_alvo_url_servico('OPENPROJECT_URL', 'https://openproject.spaguas.sp.gov.br')
+    new_api = obter_alvo_url_servico('NEW_API_URL', 'http://new-api:3000/v1')
     status = {
-        'mariadb': checar_porta('127.0.0.1', 3306),
-        'ollama': checar_porta('127.0.0.1', 11434) or checar_porta('ollama', 11434),
-        'glpi': checar_porta('10.199.43.26', 443) or checar_porta('127.0.0.1', 8088),
-        'openproject': checar_porta('143.107.108.115', 443) or checar_porta('127.0.0.1', 8090),
-        'newapi': checar_porta('127.0.0.1', 3001) or checar_porta('100.103.100.98', 3001) or checar_porta('new-api', 3000)
+        'mariadb': checar_alvo_servico(mariadb_host, mariadb_port),
+        'ollama': checar_alvo_servico(*ollama),
+        'glpi': checar_alvo_servico(*glpi),
+        'openproject': checar_alvo_servico(*openproject),
+        'newapi': checar_alvo_servico(*new_api),
     }
     return jsonify(status), 200
 
 @app.route('/api/v1/mariadb/status', methods=['GET'])
 def mariadb_status():
-    ok = checar_porta('127.0.0.1', 3306)
-    return jsonify({'servico': 'mariadb', 'status': 'online' if ok else 'offline', 'ok': ok}), 200
+    host = (os.getenv('MARIADB_HOST') or os.getenv('DB_HOST') or '').strip()
+    try:
+        porta = int(os.getenv('MARIADB_PORT') or os.getenv('DB_PORT') or '3306')
+    except ValueError:
+        porta = None
+    return status_servico('mariadb', host, porta)
 
 @app.route('/api/v1/ia/status', methods=['GET'])
 @app.route('/api/v1/newapi/status', methods=['GET'])
 def ia_status():
-    ok = checar_porta('127.0.0.1', 3001) or checar_porta('100.103.100.98', 3001) or checar_porta('new-api', 3000)
-    return jsonify({'servico': 'new-api', 'status': 'online' if ok else 'offline', 'ok': ok}), 200
+    host, porta = obter_alvo_url_servico('NEW_API_URL', 'http://new-api:3000/v1')
+    return status_servico('new-api', host, porta)
 
 @app.route('/api/v1/ollama/status', methods=['GET'])
 def ollama_status():
-    ok = checar_porta('127.0.0.1', 11434) or checar_porta('ollama', 11434)
-    return jsonify({'servico': 'ollama', 'status': 'online' if ok else 'offline', 'ok': ok}), 200
+    host, porta = obter_alvo_url_servico('OLLAMA_URL', 'http://ollama:11434')
+    return status_servico('ollama', host, porta)
 
 @app.route('/api/v1/glpi/status', methods=['GET'])
 def glpi_status():
-    ok = checar_porta('10.199.43.26', 443) or checar_porta('127.0.0.1', 8088)
-    return jsonify({'servico': 'glpi', 'status': 'online' if ok else 'offline', 'ok': ok}), 200
+    host, porta = obter_alvo_url_servico('GLPI_URL', 'https://glpi.spaguas.sp.gov.br')
+    return status_servico('glpi', host, porta)
 
 @app.route('/api/v1/openproject/status', methods=['GET'])
 @app.route('/api/v1/openproject/sync_status', methods=['GET'])
 def openproject_status():
-    ok = checar_porta('143.107.108.115', 443) or checar_porta('127.0.0.1', 8090)
-    return jsonify({'servico': 'openproject', 'status': 'online' if ok else 'offline', 'ok': ok}), 200
+    host, porta = obter_alvo_url_servico('OPENPROJECT_URL', 'https://openproject.spaguas.sp.gov.br')
+    return status_servico('openproject', host, porta)
 
 # -------------------------------------------------------------------------
 # 2. GESTÃO DO POOL MULTI-IA
@@ -1014,15 +1165,64 @@ def api_v1_op_sync_batch():
 
 
 @app.route('/api/v1/openproject/historico_agendado_v2', methods=['GET'])
+@app.route('/api/v1/openproject/historico_agendado', methods=['GET'])
 def api_v1_op_historico():
     for c in ['registro_execucao_agendada.json', 'data/registro_execucao_agendada.json']:
         if os.path.exists(c):
             try:
                 with open(c, 'r', encoding='utf-8') as f:
-                    return jsonify(json.load(f))
-            except Exception:
-                pass
-    return jsonify({'sucesso': True, 'historico': []}), 200
+                    historico = json.load(f)
+                if isinstance(historico, list):
+                    return jsonify({'sucesso': True, 'historico': historico}), 200
+                if isinstance(historico, dict) and isinstance(historico.get('historico'), list):
+                    return jsonify(historico), 200
+                return jsonify({
+                    'sucesso': False,
+                    'mensagem': 'O histórico de execução possui formato inválido.',
+                }), 500
+            except (OSError, json.JSONDecodeError) as erro:
+                return resposta_erro_interno(
+                    'openproject_history_read_failed',
+                    erro,
+                    'Não foi possível carregar o histórico de execução.',
+                )
+    return jsonify({
+        'sucesso': False,
+        'historico': [],
+        'mensagem': 'Ainda não há histórico de execução registrado.',
+    }), 200
+
+
+@app.route('/api/v1/processos', methods=['GET'])
+def api_v1_processos():
+    caminho = os.getenv(
+        'COCKPIT_PROCESSOS_FILE',
+        os.path.join(os.path.dirname(os.path.abspath(__file__)), 'data', 'processos.json'),
+    )
+    try:
+        with open(caminho, 'r', encoding='utf-8') as arquivo:
+            processos = json.load(arquivo)
+    except FileNotFoundError:
+        return jsonify({
+            'sucesso': False,
+            'mensagem': 'Acervo SEI não configurado neste ambiente.',
+        }), 503
+    except (OSError, json.JSONDecodeError) as erro:
+        return resposta_erro_interno(
+            'sei_processos_file_read_failed',
+            erro,
+            'Não foi possível carregar o acervo SEI.',
+        )
+    if not isinstance(processos, list):
+        return jsonify({
+            'sucesso': False,
+            'mensagem': 'O acervo SEI possui formato inválido.',
+        }), 500
+    return jsonify({
+        'sucesso': True,
+        'total': len(processos),
+        'processos': processos,
+    }), 200
 
 # -------------------------------------------------------------------------
 # 4. CONECTOR GLPI 10 (LEITURA ESTRUTURADA DE TICKETS E ATIVOS)

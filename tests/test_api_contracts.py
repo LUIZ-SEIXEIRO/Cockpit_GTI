@@ -80,6 +80,39 @@ class TestApiContracts(unittest.TestCase):
         self.assertEqual(denied.status_code, 403)
         self.assertNotIn("Access-Control-Allow-Origin", denied.headers)
 
+    def test_service_telemetry_uses_configured_endpoints_and_marks_unconfigured(self):
+        unconfigured = self.client.get("/api/v1/mariadb/status")
+        self.assertEqual(unconfigured.status_code, 200)
+        self.assertEqual(unconfigured.get_json()["status"], "nao_configurado")
+
+        with patch.dict(os.environ, {
+            "MARIADB_HOST": "db.internal",
+            "MARIADB_PORT": "3307",
+            "OLLAMA_URL": "http://ollama.internal:11434",
+            "GLPI_URL": "https://glpi.internal:8443",
+            "OPENPROJECT_URL": "https://openproject.internal",
+            "NEW_API_URL": "http://new-api.internal:3000/v1",
+        }), patch("main.checar_porta", return_value=True) as check_port:
+            response = self.client.get("/api/v1/telemetria")
+
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.get_json(), {
+            "mariadb": True,
+            "ollama": True,
+            "glpi": True,
+            "openproject": True,
+            "newapi": True,
+        })
+        targets = [call.args[:2] for call in check_port.call_args_list]
+        for expected in (
+            ("db.internal", 3307),
+            ("ollama.internal", 11434),
+            ("glpi.internal", 8443),
+            ("openproject.internal", 443),
+            ("new-api.internal", 3000),
+        ):
+            self.assertIn(expected, targets)
+
     def test_request_body_size_limit_returns_json_error(self):
         limite_anterior = main.app.config["MAX_CONTENT_LENGTH"]
         main.app.config["MAX_CONTENT_LENGTH"] = 32
@@ -102,6 +135,7 @@ class TestApiContracts(unittest.TestCase):
         routes = (
             "/api/v1/glpi/tickets",
             "/api/v1/openproject/historico_agendado_v2",
+            "/api/v1/processos",
             "/api/v1/sei/status",
         )
         with patch.dict(os.environ, {"COCKPIT_API_TOKEN": "", "API_TOKEN": ""}):
@@ -110,6 +144,64 @@ class TestApiContracts(unittest.TestCase):
                     response = self.client.get(path)
                     self.assertEqual(response.status_code, 401)
                     self.assertFalse(response.get_json()["sucesso"])
+
+    def test_web_session_requires_configured_secret_and_valid_token(self):
+        config_secret = main.app.config["SECRET_KEY"]
+        secure_cookie = main.app.config["SESSION_COOKIE_SECURE"]
+        main.app.config["SECRET_KEY"] = "session-contract-test-secret"
+        main.app.config["SESSION_COOKIE_SECURE"] = False
+        try:
+            with patch.dict(os.environ, {
+                "COCKPIT_SESSION_SECRET": "session-contract-test-secret",
+                "COCKPIT_API_TOKEN": self.token,
+                "API_TOKEN": "",
+            }):
+                invalid = self.client.post("/api/v1/session", json={"token": "wrong"})
+                self.assertEqual(invalid.status_code, 401)
+
+                valid = self.client.post("/api/v1/session", json={"token": self.token})
+                self.assertEqual(valid.status_code, 200)
+                self.assertIn("HttpOnly", valid.headers["Set-Cookie"])
+                self.assertIn("SameSite=Strict", valid.headers["Set-Cookie"])
+                self.assertNotIn("Secure", valid.headers["Set-Cookie"])
+                painel = self.client.get("/")
+                try:
+                    self.assertEqual(painel.status_code, 200)
+                finally:
+                    painel.close()
+
+                with patch.dict(os.environ, {
+                    "COCKPIT_PROCESSOS_FILE": os.path.join(tempfile.gettempdir(), "cockpit-missing-processos.json"),
+                }):
+                    protected = self.client.get("/api/v1/processos")
+                self.assertEqual(protected.status_code, 503)
+
+                logout = self.client.delete("/api/v1/session")
+                self.assertEqual(logout.status_code, 200)
+                painel_apos_logout = self.client.get("/")
+                try:
+                    self.assertEqual(painel_apos_logout.status_code, 303)
+                finally:
+                    painel_apos_logout.close()
+        finally:
+            main.app.config["SECRET_KEY"] = config_secret
+            main.app.config["SESSION_COOKIE_SECURE"] = secure_cookie
+
+    def test_all_panel_routes_redirect_without_web_session(self):
+        routes = ("/", "/painel", "/frontend/painel.html", "/static/painel.html")
+        for path in routes:
+            with self.subTest(path=path):
+                response = self.client.get(path)
+                try:
+                    self.assertEqual(response.status_code, 303)
+                    self.assertEqual(response.headers["Location"], "/login")
+                finally:
+                    response.close()
+
+    def test_web_session_is_unavailable_without_session_secret(self):
+        with patch.dict(os.environ, {"COCKPIT_SESSION_SECRET": "", "COCKPIT_API_TOKEN": self.token}):
+            response = self.client.post("/api/v1/session", json={"token": self.token})
+        self.assertEqual(response.status_code, 503)
 
     def test_authenticated_sei_status_does_not_disclose_storage_details(self):
         private_path = "/srv/cockpit/data/sessao_sei.json"
