@@ -1,0 +1,169 @@
+/* Hallmark · SA-GTI / SP-Aguas · Componentes & Layout Base
+   Zero gradientes AI-slop, zero glassmorphism, tabular-nums e focus-visible */
+
+html, body {
+    overflow-x: clip !important;
+    background: var(--sagti-bg) !important;
+    color: var(--sagti-text) !important;
+    font-family: var(--sagti-font-sans) !important;
+    -webkit-font-smoothing: antialiased;
+}
+
+.main-content, .app-shell, .tab-view {
+    background: var(--sagti-bg) !important;
+    color: var(--sagti-text) !important;
+}
+
+.tab-view h1, .tab-view h2, .tab-view h3 {
+    color: var(--sagti-text) !important;
+    letter-spacing: -0.015em;
+}
+
+/* Sidebar clara institucional */
+.sidebar, aside#sidebar {
+    background: var(--sagti-sidebar) !important;
+    color: var(--sagti-text) !important;
+    border-right: 1px solid var(--sagti-border) !important;
+    backdrop-filter: none !important;
+}
+.sidebar .nav-item, .sidebar a, .sidebar button {
+    color: var(--sagti-text-muted) !important;
+}
+.sidebar .nav-item.active, .sidebar .nav-item:hover {
+    background: var(--sagti-accent-soft) !important;
+    color: var(--sagti-accent) !important;
+}
+
+/* Barra Kiosk */
+#kiosk-bar {
+    background: var(--sagti-accent) !important;
+    color: #ffffff !important;
+    border-bottom: 2px solid var(--sagti-green) !important;
+}
+
+/* Superficies solidas com borda nitida */
+.card, .kpi-card, .kpi-card.hero, .panel, .chart-card, .table-card, .modal-content, .kanban-col, .filter-bar {
+    background: var(--sagti-surface) !important;
+    background-image: none !important;
+    color: var(--sagti-text) !important;
+    border: 1px solid var(--sagti-border) !important;
+    border-radius: var(--sagti-radius) !important;
+    box-shadow: 0 1px 2px rgba(15, 23, 42, 0.04) !important;
+    backdrop-filter: none !important;
+}
+
+.table-card .chart-card {
+    box-shadow: none !important;
+}
+
+.kpi-card.hero {
+    border-left: 4px solid var(--sagti-accent) !important;
+}
+
+.card:hover, .kpi-card:hover, .table-card:hover {
+    border-color: var(--sagti-border-strong) !important;
+    transform: none !important;
+}
+
+/* Quebra de monotonia em grids de 3 KPIs */
+.kpi-row-3, .kpi-grid-3 {
+    grid-template-columns: minmax(0, 1.35fr) minmax(0, 1fr) minmax(0, 1fr) !important;
+}
+@media (max-width: 960px) {
+    .kpi-row-3, .kpi-grid-3 {
+        grid-template-columns: minmax(0, 1fr) !important;
+    }
+}
+
+/* Numeros tabulares e hierarquia de KPIs */
+.kpi-val, .kpi-value, .kpi-number, table td, table th, .badge, .pill-tag {
+    font-variant-numeric: tabular-nums !important;
+}
+.kpi-val {
+    color: var(--sagti-text) !important;
+    letter-spacing: -0.02em;
+}
+.kpi-title {
+    color: var(--sagti-text-muted) !important;
+    text-transform: none !important;
+    letter-spacing: normal !important;
+}
+
+/* Cabecalhos de secao e modais */
+.chart-header, .table-header-bar, .modal-header {
+    background: var(--sagti-surface-alt) !important;
+    background-image: none !important;
+    color: var(--sagti-accent) !important;
+    border-bottom: 1px solid var(--sagti-border) !important;
+}
+.table-header-title, .modal-header h2, .modal-header h3 {
+    color: var(--sagti-text) !important;
+}
+
+/* Tabelas editoriais limpas (Hallmark Floor: sem uppercase com tracking) */
+table {
+    border-collapse: collapse !important;
+    background: var(--sagti-surface) !important;
+}
+table thead th {
+    background: var(--sagti-surface-alt) !important;
+    color: var(--sagti-text-muted) !important;
+    font-size: 12px !important;
+    font-weight: 600 !important;
+    letter-spacing: normal !important;
+    text-transform: none !important;
+    border-bottom: 1px solid var(--sagti-border-strong) !important;
+}
+table tbody td {
+    color: var(--sagti-text) !important;
+}
+table tbody tr {
+    border-bottom: 1px solid var(--sagti-border) !important;
+}
+table tbody tr:hover {
+    background: var(--sagti-surface-alt) !important;
+}
+
+/* Botoes institucionais */
+.btn, button.btn-primary, button.btn-secondary {
+    background-image: none !important;
+    border-radius: var(--sagti-radius-sm) !important;
+    font-weight: 600 !important;
+    box-shadow: none !important;
+    transition: background-color 0.15s ease, border-color 0.15s ease, opacity 0.15s ease !important;
+}
+.btn-primary, button.btn-primary, .subaba-superior-btn.active {
+    background-color: var(--sagti-accent) !important;
+    border: 1px solid var(--sagti-accent) !important;
+    color: #ffffff !important;
+}
+.btn-primary:hover, button.btn-primary:hover {
+    background-color: var(--sagti-accent-hover) !important;
+}
+.btn-secondary, button.btn-secondary {
+    background-color: var(--sagti-surface) !important;
+    border: 1px solid var(--sagti-border-strong) !important;
+    color: var(--sagti-text) !important;
+}
+.btn-secondary:hover, button.btn-secondary:hover {
+    background-color: var(--sagti-surface-alt) !important;
+}
+
+/* Inputs e foco acessivel */
+input, select, textarea {
+    background-color: var(--sagti-surface) !important;
+    border: 1px solid var(--sagti-border-strong) !important;
+    border-radius: var(--sagti-radius-sm) !important;
+    color: var(--sagti-text) !important;
+}
+button:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-visible, a:focus-visible {
+    outline: 2px solid var(--sagti-accent) !important;
+    outline-offset: 2px !important;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+        animation-duration: 0.01ms !important;
+        transition-duration: 0.01ms !important;
+    }
+}
