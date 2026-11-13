@@ -10,22 +10,23 @@ class TestRedesignUI(unittest.TestCase):
         with open(caminho, "r", encoding="utf-8") as f:
             html = f.read()
 
+        self.assertNotIn('id="crypto-executive-theme"', html)
         self.assertIn('id="sagti-clean-executive-theme"', html)
         self.assertIn("Hallmark", html)
+        self.assertIn("#f8fafc", html)
+        self.assertIn("#004b87", html)
+        self.assertIn("#01a75f", html)
         self.assertIn("tabular-nums", html)
         self.assertIn("overflow-x: clip !important;", html)
         self.assertIn("background-image: none !important;", html)
 
-        # Sem gradientes roxos/rosa de IA
         for cor_slop in ("#4f46e5", "#7c3aed", "#8b5cf6", "#ec4899", "#4c1d95", "#4338ca"):
             self.assertNotIn(cor_slop, html.lower(), f"Cor AI-slop residual encontrada: {cor_slop}")
 
-        # Bloco do tema nao pode usar transition: all
         bloco = re.search(r'<style id="sagti-clean-executive-theme">.*?</style>', html, re.S)
         self.assertIsNotNone(bloco)
         self.assertNotIn("transition: all", bloco.group(0))
 
-        # Contratos criticos preservados
         for marcador in (
             'id="cockpit-motor-sei-widget"',
             'id="input-usuario-sei-pw"',

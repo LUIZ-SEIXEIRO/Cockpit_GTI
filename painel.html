@@ -963,736 +963,23 @@ th.th-sortable-v9:hover {
 </style>
 
 
-    <style id="crypto-executive-theme">
-    /* ==========================================================
-       CRYPTO / FINTECH DARK EXECUTIVE DESIGN SYSTEM (V11)
-       Harmonização Total de Contraste, Filtros e Modais
-       ========================================================== */
-    :root {
-        --crypto-bg: #070a12;
-        --crypto-sidebar: #090d16;
-        --crypto-card: rgba(15, 23, 42, 0.75);
-        --crypto-card-hover: rgba(22, 32, 54, 0.88);
-        --crypto-border: 1px solid rgba(255, 255, 255, 0.08);
-        --crypto-radius: 18px;
-        --crypto-accent-blue: #0ea5e9;
-        --crypto-accent-cyan: #38bdf8;
-        --crypto-accent-emerald: #10b981;
-        --crypto-accent-amber: #f59e0b;
-        --crypto-text-title: #ffffff;
-        --crypto-text-sub: #94a3b8;
-    }
-
-    /* 1. ELIMINAR BANNERS SUPERIORES COMPLETAMENTE */
-    #executive-top-header,
-    .page-banner,
-    #dash-banner-principal,
-    #glpi-banner-principal {
-        display: none !important;
-    }
-
-    /* 2. SCROLLBARS DARK MINIMALISTAS */
-    * {
-        scrollbar-width: thin !important;
-        scrollbar-color: rgba(255, 255, 255, 0.16) transparent !important;
-    }
-    ::-webkit-scrollbar {
-        width: 5px !important;
-        height: 5px !important;
-    }
-    ::-webkit-scrollbar-track {
-        background: transparent !important;
-    }
-    ::-webkit-scrollbar-thumb {
-        background: rgba(255, 255, 255, 0.16) !important;
-        border-radius: 6px !important;
-    }
-    ::-webkit-scrollbar-thumb:hover {
-        background: rgba(56, 189, 248, 0.45) !important;
-    }
-
-    /* 3. SIDEBAR LIMPA & SEM SCROLLBAR */
-    #sidebar {
-        background: var(--crypto-sidebar) !important;
-        border-right: 1px solid rgba(255, 255, 255, 0.07) !important;
-        box-shadow: 4px 0 24px rgba(0, 0, 0, 0.4) !important;
-        overflow-y: hidden !important;
-    }
-    #sidebar .sidebar-menu {
-        overflow-y: auto !important;
-        scrollbar-width: none !important;
-    }
-    #sidebar .sidebar-menu::-webkit-scrollbar {
-        display: none !important;
-    }
-    #sidebar .menu-category {
-        display: none !important;
-    }
-
-    #sidebar .nav-item[data-tab="portfolio_openproject"],
-    #sidebar .nav-item[data-tab="tracks_sagti"],
-    #sidebar .nav-item[data-tab="pdtic_eixos"],
-    #sidebar .nav-item[data-tab="gestao_glpi"],
-    #sidebar .nav-item[data-tab="visao_estrategica"],
-    #sidebar .nav-item[data-tab="gestao_agil"],
-    #sidebar .nav-item[data-tab="consulta"],
-    #sidebar .nav-item[data-tab="fixados"],
-    #sidebar .nav-item[data-tab="auditoria"],
-    #sidebar .nav-item[data-tab="esteira_ia"],
-    #sidebar .nav-item[data-tab="cadernos"] {
-        display: none !important;
-    }
-
-    #sidebar .nav-item {
-        border-radius: 8px !important;
-        padding: 10px 14px !important;
-        margin-bottom: 4px !important;
-        color: #94a3b8 !important;
-        font-weight: 500 !important;
-        font-size: 13px !important;
-        display: flex !important;
-        align-items: center !important;
-        justify-content: flex-start !important;
-        transition: background-color 0.15s ease , border-color 0.15s ease , opacity 0.15s ease !important;
-        background: transparent !important;
-        border-left: 3px solid transparent !important;
-        cursor: pointer !important;
-    }
-
-    #sidebar .nav-item:hover {
-        background: rgba(255, 255, 255, 0.04) !important;
-        color: #ffffff !important;
-    }
-
-    #sidebar .nav-item.active {
-        color: #ffffff !important;
-        font-weight: 700 !important;
-        background: rgba(56, 189, 248, 0.08) !important;
-        border-left: 3px solid #38bdf8 !important;
-    }
-
-    #sidebar .nav-item .nav-item-left {
-        display: flex !important;
-        align-items: center !important;
-        gap: 10px !important;
-    }
-
-    #sidebar .nav-item .nav-icon {
-        font-size: 15px !important;
-        opacity: 0.85 !important;
-    }
-
-    #sidebar .nav-item.active .nav-icon {
-        opacity: 1 !important;
-    }
-
-    #sidebar .nav-item.active {
-        background: linear-gradient(135deg, #0284c7 0%, #0ea5e9 100%) !important;
-        color: #ffffff !important;
-        font-weight: 700 !important;
-        box-shadow: 0 4px 18px rgba(14, 165, 233, 0.38), inset 0 1px 0 rgba(255, 255, 255, 0.25) !important;
-        border: 1px solid rgba(56, 189, 248, 0.4) !important;
-    }
-
-    #sidebar .nav-item.active .nav-badge {
-        background: rgba(255, 255, 255, 0.25) !important;
-        color: #ffffff !important;
-        font-weight: 800 !important;
-        border: 1px solid rgba(255, 255, 255, 0.3) !important;
-    }
-
-    #sidebar .nav-item:not(.active) .nav-badge {
-        background: rgba(255, 255, 255, 0.06) !important;
-        color: #8a99ad !important;
-        border: 1px solid rgba(255, 255, 255, 0.08) !important;
-    }
-
-    /* 4. CARDS DE MÉTRICAS (ESTILO CRYPTO DASHBOARD - ALTO CONTRASTE) */
-    .kpi-row {
-        display: grid !important;
-        gap: 16px !important;
-        margin-bottom: 22px !important;
-    }
-
-    .kpi-card {
-        background: rgba(15, 23, 42, 0.75) !important;
-        backdrop-filter: blur(16px) !important;
-        -webkit-backdrop-filter: blur(16px) !important;
-        border: 1px solid rgba(255, 255, 255, 0.09) !important;
-        border-radius: 18px !important;
-        padding: 18px 20px !important;
-        box-shadow: 0 8px 26px rgba(0, 0, 0, 0.35) !important;
-        border-left: 1px solid rgba(255, 255, 255, 0.09) !important;
-        display: flex !important;
-        flex-direction: column !important;
-        justify-content: space-between !important;
-        min-height: 105px !important;
-        transition: background-color 0.25s ease , border-color 0.25s ease , opacity 0.25s ease !important;
-    }
-
-    .kpi-card:hover {
-        transform: translateY(-2px) !important;
-        border-color: rgba(56, 189, 248, 0.45) !important;
-        box-shadow: 0 12px 34px rgba(0, 0, 0, 0.45) !important;
-    }
-
-    .kpi-card .kpi-val,
-    .kpi-card div[style*="font-size:32px"],
-    .kpi-card div[style*="font-size: 32px"] {
-        color: #ffffff !important;
-        font-weight: 800 !important;
-        font-size: 32px !important;
-        line-height: 1.1 !important;
-        text-shadow: 0 2px 10px rgba(0, 0, 0, 0.5) !important;
-    }
-
-    .kpi-card .kpi-title,
-    .kpi-card div[style*="font-weight:700"],
-    .kpi-card div[style*="font-weight: 700"] {
-        color: #cbd5e1 !important;
-        font-size: 11.5px !important;
-        font-weight: 700 !important;
-        letter-spacing: 0.3px !important;
-    }
-
-    .kpi-card span,
-    .kpi-card small,
-    .kpi-card span[style*="color:#64748b"],
-    .kpi-card span[style*="color:#bfdbfe"] {
-        color: #94a3b8 !important;
-        font-size: 11px !important;
-    }
-
-    /* 5. OS 3 CARDS DO TRACKS SA-GTI (#view-tracks_sagti) */
-    #view-tracks_sagti .table-card[style*="border-left"],
-    #view-tracks_sagti .table-card {
-        background: rgba(15, 23, 42, 0.78) !important;
-        border: 1px solid rgba(255, 255, 255, 0.09) !important;
-        border-radius: 18px !important;
-        box-shadow: 0 8px 26px rgba(0, 0, 0, 0.35) !important;
-        padding: 18px 20px !important;
-    }
-
-    #view-tracks_sagti .table-card div[style*="font-size:14px"],
-    #view-tracks_sagti .table-card div[style*="font-size: 14px"] {
-        color: #ffffff !important;
-        font-weight: 800 !important;
-        margin-bottom: 8px !important;
-    }
-
-    #view-tracks_sagti .table-card p {
-        color: #cbd5e1 !important;
-        line-height: 1.5 !important;
-    }
-
-    #view-tracks_sagti .table-card div[style*="Lastro"],
-    #view-tracks_sagti .table-card div[style*="background:#e0f2fe"],
-    #view-tracks_sagti .table-card div[style*="background:#dbeafe"],
-    #view-tracks_sagti .table-card div[style*="background:#ede9fe"] {
-        background: rgba(14, 165, 233, 0.16) !important;
-        color: #38bdf8 !important;
-        border: 1px solid rgba(56, 189, 248, 0.35) !important;
-        border-radius: 8px !important;
-        font-weight: 700 !important;
-    }
-
-    /* 6. OS 8 CARDS DE KPIS DO PDTIC (#grid-kpis-pdtic-oficial) */
-    #grid-kpis-pdtic-oficial > div {
-        background: rgba(15, 23, 42, 0.8) !important;
-        border: 1px solid rgba(255, 255, 255, 0.09) !important;
-        border-left: 4px solid #38bdf8 !important;
-        border-radius: 14px !important;
-        padding: 12px 14px !important;
-        box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3) !important;
-    }
-
-    #grid-kpis-pdtic-oficial > div > div:nth-child(1) {
-        color: #38bdf8 !important;
-        font-weight: 800 !important;
-        font-size: 10.5px !important;
-        letter-spacing: 0.5px !important;
-    }
-
-    #grid-kpis-pdtic-oficial > div > div:nth-child(2) {
-        color: #ffffff !important;
-        font-weight: 700 !important;
-        font-size: 12.5px !important;
-        margin: 6px 0 !important;
-    }
-
-    #grid-kpis-pdtic-oficial > div > div:nth-child(3) {
-        color: #94a3b8 !important;
-        font-size: 11px !important;
-        line-height: 1.4 !important;
-    }
-
-    /* 7. CONTRASTE GLOBAL PARA TÍTULOS DE SEÇÃO */
-    div[style*="color:#0f2d59"],
-    div[style*="color: #0f2d59"],
-    span[style*="color:#0f2d59"],
-    strong[style*="color:#0f2d59"],
-    div[style*="color:#002d5a"],
-    h3[style*="color:#002d5a"],
-    div[style*="color:#1e293b"],
-    div[style*="color:#334155"],
-    div[style*="color:#1e1b4b"],
-    span[style*="color:#1e1b4b"],
-    .table-header-title {
-        color: #ffffff !important;
-        font-weight: 800 !important;
-        letter-spacing: 0.3px !important;
-    }
-
-    div[style*="color:#475569"],
-    span[style*="color:#475569"],
-    div[style*="color:#64748b"],
-    span[style*="color:#64748b"] {
-        color: #94a3b8 !important;
-    }
-
-    div[style*="color:#0369a1"],
-    span[style*="color:#0369a1"],
-    div[style*="color:#0284c7"],
-    span[style*="color:#0284c7"],
-    span[style*="color:#0284c7"] {
-        color: #38bdf8 !important;
-    }
-
-    /* 8. CONTRASTE EM TODAS AS TABELAS */
-    .table-card {
-        background: rgba(15, 23, 42, 0.75) !important;
-        backdrop-filter: blur(16px) !important;
-        -webkit-backdrop-filter: blur(16px) !important;
-        border: 1px solid rgba(255, 255, 255, 0.08) !important;
-        border-radius: 18px !important;
-        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3) !important;
-        overflow: hidden !important;
-    }
-    .table-header-bar {
-        background: rgba(255, 255, 255, 0.03) !important;
-        border-bottom: 1px solid rgba(255, 255, 255, 0.06) !important;
-        padding: 14px 18px !important;
-    }
-    table th {
-        background: rgba(15, 23, 42, 0.95) !important;
-        color: #94a3b8 !important;
-        font-size: 11px !important;
-        font-weight: 800 !important;
-        text-transform: uppercase !important;
-        letter-spacing: 0.5px !important;
-        padding: 12px 14px !important;
-        border-bottom: 1px solid rgba(255, 255, 255, 0.1) !important;
-    }
-    table td {
-        background: rgba(15, 23, 42, 0.5) !important;
-        color: #e2e8f0 !important;
-        padding: 12px 14px !important;
-        font-size: 12.5px !important;
-        border-bottom: 1px solid rgba(255, 255, 255, 0.05) !important;
-    }
-    table tbody tr[style*="background:#f0fdf4"],
-    table tbody tr[style*="background: #f0fdf4"],
-    table tbody tr {
-        background: transparent !important;
-    }
-    table tr:hover td {
-        background: rgba(30, 41, 59, 0.7) !important;
-    }
-    table td a,
-    table td a span,
-    table td strong,
-    table td[style*="monospace"] {
-        color: #38bdf8 !important;
-        text-decoration: none !important;
-        font-weight: 700 !important;
-    }
-
-    table td span[style*="background:#dbeafe"],
-    table td span[style*="background:#ede9fe"],
-    table td span[style*="background:#dcfce7"],
-    table td span[style*="background: #dbeafe"],
-    table td span[style*="background: #ede9fe"],
-    table td span[style*="background: #dcfce7"] {
-        background: rgba(255, 255, 255, 0.08) !important;
-        color: #e2e8f0 !important;
-        border: 1px solid rgba(255, 255, 255, 0.16) !important;
-        border-radius: 6px !important;
-    }
-
-    /* 9. CONTRASTE NOS GRÁFICOS APEXCHARTS */
-    .apexcharts-legend-text {
-        color: #cbd5e1 !important;
-        font-size: 11.5px !important;
-        font-weight: 600 !important;
-    }
-    .apexcharts-datalabel,
-    .apexcharts-pie-label,
-    text.apexcharts-text {
-        fill: #ffffff !important;
-        font-weight: 800 !important;
-    }
-    .apexcharts-text tspan {
-        fill: #cbd5e1 !important;
-    }
-    .apexcharts-yaxis-label,
-    .apexcharts-xaxis-label,
-    text.apexcharts-yaxis-label,
-    text.apexcharts-xaxis-label {
-        fill: #cbd5e1 !important;
-        font-size: 11px !important;
-        font-weight: 600 !important;
-    }
-    .apexcharts-gridline {
-        stroke: rgba(255, 255, 255, 0.08) !important;
-    }
-
-    .chart-card {
-        background: rgba(15, 23, 42, 0.72) !important;
-        backdrop-filter: blur(16px) !important;
-        -webkit-backdrop-filter: blur(16px) !important;
-        border: 1px solid rgba(255, 255, 255, 0.08) !important;
-        border-radius: 18px !important;
-        box-shadow: 0 8px 30px rgba(0, 0, 0, 0.35) !important;
-        overflow: hidden !important;
-    }
-    .chart-header {
-        background: rgba(255, 255, 255, 0.04) !important;
-        border-bottom: 1px solid rgba(255, 255, 255, 0.06) !important;
-        color: #ffffff !important;
-        font-weight: 700 !important;
-    }
-
-    /* 10. GRID DE FILTROS DO ACERVO SEI (FIM DO BLOCO BRANCO) */
-    .filter-grid {
-        background: rgba(15, 23, 42, 0.6) !important;
-        border-bottom: 1px solid rgba(255, 255, 255, 0.08) !important;
-        padding: 16px 20px !important;
-        border-radius: 16px 16px 0 0 !important;
-    }
-
-    .filter-group label {
-        color: #94a3b8 !important;
-        font-weight: 700 !important;
-        font-size: 11px !important;
-        letter-spacing: 0.5px !important;
-        text-transform: uppercase !important;
-        margin-bottom: 4px !important;
-    }
-
-    .filter-group select,
-    .filter-group input {
-        background: rgba(11, 15, 25, 0.85) !important;
-        border: 1px solid rgba(255, 255, 255, 0.12) !important;
-        border-radius: 8px !important;
-        padding: 8px 12px !important;
-        font-size: 12px !important;
-        color: #ffffff !important;
-        outline: none !important;
-    }
-
-    .filter-group select:focus,
-    .filter-group input:focus {
-        border-color: #38bdf8 !important;
-        box-shadow: 0 0 10px rgba(56, 189, 248, 0.25) !important;
-    }
-
-    .filter-group input::placeholder {
-        color: #64748b !important;
-    }
-
-    .filter-group select option {
-        background: #0f172a !important;
-        color: #ffffff !important;
-    }
-
-    /* 11. FORMULÁRIOS, LABELS & DROPDOWNS EM GERAL */
-    label,
-    .form-label,
-    label[style*="color:#475569"],
-    label[style*="color:#64748b"] {
-        color: #94a3b8 !important;
-        font-weight: 700 !important;
-        font-size: 11px !important;
-        letter-spacing: 0.4px !important;
-        text-transform: uppercase !important;
-    }
-
-    select,
-    input[type="text"],
-    select[style*="color:#002d5a"],
-    input[style*="color:#002d5a"] {
-        background: rgba(15, 23, 42, 0.85) !important;
-        color: #ffffff !important;
-        border: 1px solid rgba(255, 255, 255, 0.12) !important;
-        border-radius: 8px !important;
-        padding: 6px 10px !important;
-        font-size: 12px !important;
-    }
-    select option {
-        background: #0f172a !important;
-        color: #ffffff !important;
-    }
-    input::placeholder {
-        color: #64748b !important;
-    }
-
-    /* 12. MODAIS DARK GLASSMORPHISM (FIM DO FUNDO BRANCO QUE LAVAVA O TEXTO) */
-    .modal-card {
-        background: #0b0f19 !important;
-        border: 1px solid rgba(255, 255, 255, 0.12) !important;
-        border-radius: 18px !important;
-        box-shadow: 0 20px 50px rgba(0, 0, 0, 0.75) !important;
-        color: #ffffff !important;
-    }
-
-    .modal-header {
-        background: rgba(255, 255, 255, 0.04) !important;
-        border-bottom: 1px solid rgba(255, 255, 255, 0.08) !important;
-        color: #ffffff !important;
-    }
-
-    .modal-header h3 {
-        color: #ffffff !important;
-    }
-
-    .modal-body {
-        background: #0b0f19 !important;
-        color: #e2e8f0 !important;
-    }
-
-    .modal-body div[style*="background"],
-    .modal-body div[style*="background:#ffffff"],
-    .modal-body div[style*="background: #ffffff"],
-    .modal-body div[style*="background:#f8fafc"],
-    .modal-body div[style*="background: #f8fafc"] {
-        background: rgba(15, 23, 42, 0.75) !important;
-        border: 1px solid rgba(255, 255, 255, 0.08) !important;
-        color: #e2e8f0 !important;
-        border-radius: 12px !important;
-    }
-
-    .modal-body strong,
-    .modal-body h3,
-    .modal-body h4 {
-        color: #ffffff !important;
-    }
-
-    .modal-body span,
-    .modal-body p {
-        color: #cbd5e1 !important;
-    }
-
-    .modal-body a.btn,
-    .modal-body button.btn {
-        color: #ffffff !important;
-    }
-
-    .modal-footer {
-        background: #0f172a !important;
-        border-top: 1px solid rgba(255, 255, 255, 0.08) !important;
-    }
-
-    /* 13. CONTÊINERES CLAROS & PÍLULAS */
-    div[style*="background: white"],
-    div[style*="background:white"],
-    div[style*="background: #ffffff"],
-    div[style*="background:#ffffff"] {
-        background: rgba(15, 23, 42, 0.6) !important;
-        border: 1px solid rgba(255, 255, 255, 0.08) !important;
-        border-radius: 14px !important;
-    }
-
-    .subaba-eixo1-btn, .pill-filtro-dash, .pill-filtro-farol, .pill-cfg, .subtab-conector-btn {
-        border-radius: 9999px !important;
-        padding: 7px 16px !important;
-        font-size: 11.5px !important;
-        font-weight: 600 !important;
-        transition: background-color 0.2s ease , border-color 0.2s ease , opacity 0.2s ease !important;
-        border: 1px solid rgba(255, 255, 255, 0.1) !important;
-        cursor: pointer !important;
-    }
-    .subaba-eixo1-btn.active, .pill-filtro-dash.active, .pill-filtro-farol.active, .pill-cfg.active, .subtab-conector-btn.active,
-    .btn-primary.subaba-eixo1-btn, .btn-primary.pill-filtro-farol, .btn-primary.pill-filtro-dash, .btn-primary.pill-cfg, .btn-primary.subtab-conector-btn {
-        background: linear-gradient(135deg, #0284c7 0%, #0ea5e9 100%) !important;
-        color: #ffffff !important;
-        font-weight: 700 !important;
-        border: 1px solid rgba(56, 189, 248, 0.6) !important;
-        box-shadow: 0 4px 18px rgba(14, 165, 233, 0.42), inset 0 1px 0 rgba(255, 255, 255, 0.25) !important;
-    }
-    .subaba-eixo1-btn:not(.active):not(.btn-primary), 
-    .pill-filtro-dash:not(.active):not(.btn-primary), 
-    .pill-filtro-farol:not(.active):not(.btn-primary), 
-    .pill-cfg:not(.active):not(.btn-primary),
-    .subtab-conector-btn:not(.active):not(.btn-primary),
-    .btn-secondary.subaba-eixo1-btn, .btn-secondary.pill-filtro-farol, .btn-secondary.pill-filtro-dash, .btn-secondary.pill-cfg, .btn-secondary.subtab-conector-btn {
-        background: rgba(15, 23, 42, 0.65) !important;
-        color: #94a3b8 !important;
-        border: 1px solid rgba(255, 255, 255, 0.08) !important;
-        box-shadow: none !important;
-    }
-    .subaba-eixo1-btn:not(.active):not(.btn-primary):hover, 
-    .pill-filtro-dash:not(.active):not(.btn-primary):hover, 
-    .pill-filtro-farol:not(.active):not(.btn-primary):hover, 
-    .pill-cfg:not(.active):not(.btn-primary):hover,
-    .subtab-conector-btn:not(.active):not(.btn-primary):hover {
-        background: rgba(255, 255, 255, 0.08) !important;
-        color: #ffffff !important;
-        border: 1px solid rgba(255, 255, 255, 0.22) !important;
-    }
-
-    /* Ocultar card invasivo do buscador DOE-SP */
-    #card-buscador-motor1-doesp {
-        display: none !important;
-    }
-    #card-motores-unificados-v9,
-    #card-motores-unificados-v9 table,
-    #card-motores-unificados-v9 div {
-        background: transparent !important;
-    }
-    #tbody-motores-unificados-v9 tr td {
-        background: rgba(15, 23, 42, 0.6) !important;
-        color: #ffffff !important;
-        border-bottom: 1px solid rgba(255, 255, 255, 0.06) !important;
-        padding: 12px 14px !important;
-    }
-    #tbody-motores-unificados-v9 tr:hover td {
-        background: rgba(30, 41, 59, 0.75) !important;
-    }
-
-    /* ==========================================================
-       MODAL DE SONDAGEM REAL DOS MOTORES (#modal-sonda-real-v9)
-       ========================================================== */
-    #modal-sonda-real-v9 {
-        background: rgba(0, 0, 0, 0.75) !important;
-        backdrop-filter: blur(12px) !important;
-        -webkit-backdrop-filter: blur(12px) !important;
-    }
-    #modal-sonda-real-v9 > div {
-        background: #0b0f19 !important;
-        border: 1px solid rgba(255, 255, 255, 0.12) !important;
-        border-top: 4px solid #0ea5e9 !important;
-        border-radius: 18px !important;
-        box-shadow: 0 24px 60px rgba(0, 0, 0, 0.85) !important;
-        color: #ffffff !important;
-    }
-    #modal-sonda-real-v9 h3 {
-        color: #ffffff !important;
-        font-weight: 800 !important;
-    }
-    #modal-sonda-real-v9 div[style*="color:#64748b"],
-    #modal-sonda-real-v9 div[style*="color: #64748b"] {
-        color: #94a3b8 !important;
-    }
-    #modal-sonda-real-v9 table {
-        background: transparent !important;
-        border-collapse: collapse !important;
-    }
-    #modal-sonda-real-v9 table thead tr {
-        background: rgba(15, 23, 42, 0.95) !important;
-    }
-    #modal-sonda-real-v9 table thead th {
-        color: #94a3b8 !important;
-        font-size: 11px !important;
-        font-weight: 800 !important;
-        text-transform: uppercase !important;
-        border-bottom: 1px solid rgba(255, 255, 255, 0.1) !important;
-        padding: 10px 12px !important;
-    }
-    #modal-sonda-real-v9 table tbody tr td {
-        background: rgba(15, 23, 42, 0.6) !important;
-        color: #f1f5f9 !important;
-        border-bottom: 1px solid rgba(255, 255, 255, 0.06) !important;
-        padding: 12px 12px !important;
-        font-size: 12px !important;
-    }
-    #modal-sonda-real-v9 table tbody tr:hover td {
-        background: rgba(30, 41, 59, 0.8) !important;
-    }
-    #modal-sonda-real-v9 table tbody td a,
-    #modal-sonda-real-v9 table tbody td[style*="monospace"] {
-        color: #38bdf8 !important;
-        font-weight: 700 !important;
-    }
-    #modal-sonda-real-v9 .btn-secondary {
-        background: rgba(255, 255, 255, 0.08) !important;
-        border: 1px solid rgba(255, 255, 255, 0.15) !important;
-        color: #ffffff !important;
-        border-radius: 8px !important;
-        padding: 6px 14px !important;
-        font-weight: 700 !important;
-    }
-    #modal-sonda-real-v9 .btn-secondary:hover {
-        background: rgba(255, 255, 255, 0.15) !important;
-        border-color: #38bdf8 !important;
-        color: #38bdf8 !important;
-    }
-
-    /* Ajustes de contraste para a tabela de rotinas de varredura */
-    #tbody-motores-varredura tr {
-        border-bottom: 1px solid rgba(255, 255, 255, 0.08) !important;
-    }
-    #tbody-motores-varredura strong {
-        color: #ffffff !important;
-    }
-    #tbody-motores-varredura td {
-        color: #cbd5e1 !important;
-    }
-    #tbody-motores-varredura td div {
-        color: #94a3b8 !important;
-    }
-    /* BARRAS DE NAVEGAÇÃO SUPERIOR DO EIXO (ELEGÂNCIA & SEM BARRA DE ROLAGEM) */
-    .barra-subabas-superior {
-        display: flex;
-        flex-wrap: wrap;
-        align-items: center;
-        gap: 8px;
-        margin-bottom: 18px;
-        padding: 8px 12px;
-        background: rgba(15, 23, 42, 0.75);
-        backdrop-filter: blur(16px);
-        -webkit-backdrop-filter: blur(16px);
-        border: 1px solid rgba(255, 255, 255, 0.1);
-        border-radius: 12px;
-        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.35);
-        overflow: hidden; /* Remove barra de rolagem lateral */
-    }
-
-    .subaba-superior-btn {
-        display: inline-flex;
-        align-items: center;
-        gap: 6px;
-        padding: 6px 12px;
-        border-radius: 8px;
-        font-size: 11.5px;
-        font-weight: 700;
-        cursor: pointer;
-        white-space: nowrap;
-        transition: background-color 0.2s cubic-bezier(0.4, 0, 0.2, 1), border-color 0.2s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-        flex: 1 1 auto; /* Distribui proporcionalmente */
-        justify-content: center;
-        max-width: fit-content;
-    }
-
-    .subaba-superior-btn:hover {
-        transform: translateY(-1px);
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
-    }
-</style>
+    
     <style id="sagti-clean-executive-theme">
-    /* Hallmark · SA-GTI / SP-Aguas · Executive Clean Redesign (The Floor)
-       No purple-blue gradients, no card-in-card, no tracked uppercase labels, tabular-nums, focus-visible */
+    /* Hallmark · SA-GTI / SP-Aguas · Claro Institucional Editorial (The Floor)
+       Fundo #f8fafc, superficies #ffffff, bordas #e2e8f0, acentos #004b87 e #01a75f */
     :root {
-        --sagti-bg: #0b1120;
-        --sagti-sidebar: #090e1a;
-        --sagti-surface: #111827;
-        --sagti-surface-alt: #162032;
-        --sagti-border: #1e293b;
-        --sagti-border-strong: #334155;
-        --sagti-accent: #0284c7;
-        --sagti-accent-hover: #0369a1;
-        --sagti-text: #f8fafc;
-        --sagti-text-muted: #94a3b8;
-        --sagti-radius: 10px;
+        --sagti-bg: #f8fafc;
+        --sagti-sidebar: #ffffff;
+        --sagti-surface: #ffffff;
+        --sagti-surface-alt: #f1f5f9;
+        --sagti-border: #e2e8f0;
+        --sagti-border-strong: #cbd5e1;
+        --sagti-accent: #004b87;
+        --sagti-accent-hover: #003866;
+        --sagti-green: #01a75f;
+        --sagti-text: #0f172a;
+        --sagti-text-muted: #475569;
+        --sagti-radius: 8px;
     }
 
     html, body {
@@ -1703,34 +990,55 @@ th.th-sortable-v9:hover {
         -webkit-font-smoothing: antialiased;
     }
 
-    .main-content, .app-shell {
+    .main-content, .app-shell, .tab-view {
         background: var(--sagti-bg) !important;
-        color: var(--sagti-text);
+        color: var(--sagti-text) !important;
+    }
+
+    .tab-view h1, .tab-view h2, .tab-view h3 {
+        color: var(--sagti-text) !important;
+        letter-spacing: -0.015em;
     }
 
     .sidebar, aside#sidebar {
         background: var(--sagti-sidebar) !important;
+        color: var(--sagti-text) !important;
         border-right: 1px solid var(--sagti-border) !important;
         backdrop-filter: none !important;
     }
-
-    #kiosk-bar {
-        background: var(--sagti-sidebar) !important;
-        border-bottom: 1px solid var(--sagti-border-strong) !important;
+    .sidebar .nav-item, .sidebar a, .sidebar button {
+        color: var(--sagti-text-muted) !important;
+    }
+    .sidebar .nav-item.active, .sidebar .nav-item:hover {
+        background: #eff6ff !important;
+        color: var(--sagti-accent) !important;
     }
 
-    /* Superficies solidas, sem glassmorphism nem gradientes decorativos */
+    #kiosk-bar {
+        background: var(--sagti-accent) !important;
+        color: #ffffff !important;
+        border-bottom: 2px solid var(--sagti-green) !important;
+    }
+
+    /* Superficies claras com borda nitida, sem glassmorphism nem sombras pesadas */
     .card, .kpi-card, .kpi-card.hero, .panel, .chart-card, .table-card, .modal-content, .kanban-col {
         background: var(--sagti-surface) !important;
         background-image: none !important;
+        color: var(--sagti-text) !important;
         border: 1px solid var(--sagti-border) !important;
         border-radius: var(--sagti-radius) !important;
-        box-shadow: 0 1px 2px rgba(0, 0, 0, 0.25) !important;
+        box-shadow: 0 1px 2px rgba(15, 23, 42, 0.04) !important;
         backdrop-filter: none !important;
     }
 
+    /* Evita card-dentro-de-card pesado */
+    .table-card .chart-card {
+        box-shadow: none !important;
+        border-color: var(--sagti-border) !important;
+    }
+
     .kpi-card.hero {
-        border-left: 3px solid var(--sagti-accent) !important;
+        border-left: 4px solid var(--sagti-accent) !important;
     }
 
     .card:hover, .kpi-card:hover, .table-card:hover {
@@ -1738,17 +1046,7 @@ th.th-sortable-v9:hover {
         transform: none !important;
     }
 
-    /* Quebra de monotonia em grids de 3 KPIs: destaque funcional no primeiro card */
-    .kpi-row-3, .kpi-grid-3 {
-        grid-template-columns: minmax(0, 1.35fr) minmax(0, 1fr) minmax(0, 1fr) !important;
-    }
-    @media (max-width: 960px) {
-        .kpi-row-3, .kpi-grid-3 {
-            grid-template-columns: minmax(0, 1fr) !important;
-        }
-    }
-
-    /* Numeros tabulares alinhados nos seletores reais (.kpi-val, .kpi-title) */
+    /* Numeros tabulares e contraste institucional */
     .kpi-val, .kpi-value, .kpi-number, table td, table th, .badge, .pill-tag {
         font-variant-numeric: tabular-nums !important;
     }
@@ -1760,12 +1058,23 @@ th.th-sortable-v9:hover {
         color: var(--sagti-text-muted) !important;
     }
 
-    /* Tabelas executivas sem caixa alta com tracking (Hallmark Floor) */
+    .chart-header, .table-header-bar, .modal-header {
+        background: var(--sagti-surface-alt) !important;
+        background-image: none !important;
+        color: var(--sagti-accent) !important;
+        border-bottom: 1px solid var(--sagti-border) !important;
+    }
+    .table-header-title {
+        color: var(--sagti-text) !important;
+    }
+
+    /* Tabelas editoriais limpas */
     table {
         border-collapse: collapse !important;
+        background: var(--sagti-surface) !important;
     }
     table thead th {
-        background: var(--sagti-sidebar) !important;
+        background: var(--sagti-surface-alt) !important;
         color: var(--sagti-text-muted) !important;
         font-size: 12px !important;
         font-weight: 600 !important;
@@ -1773,32 +1082,25 @@ th.th-sortable-v9:hover {
         text-transform: none !important;
         border-bottom: 1px solid var(--sagti-border-strong) !important;
     }
+    table tbody td {
+        color: var(--sagti-text) !important;
+    }
     table tbody tr {
         border-bottom: 1px solid var(--sagti-border) !important;
     }
     table tbody tr:hover {
-        background: var(--sagti-surface-alt) !important;
+        background: #f1f5f9 !important;
     }
 
-    .table-header-bar, .modal-header {
-        background: var(--sagti-surface-alt) !important;
-        background-image: none !important;
-        border-bottom: 1px solid var(--sagti-border-strong) !important;
-    }
-
-    /* Botoes sobrios sem transition: background-color e sem gradiente roxo */
-    .btn, button.btn-primary, button.btn-secondary {
-        background-image: none , border-color e sem gradiente roxo */
-    .btn, button.btn-primary, button.btn-secondary {
-        background-image: none , opacity e sem gradiente roxo */
+    /* Botoes institucionais SP-Aguas */
     .btn, button.btn-primary, button.btn-secondary {
         background-image: none !important;
-        border-radius: 7px !important;
+        border-radius: 6px !important;
         font-weight: 600 !important;
         box-shadow: none !important;
         transition: background-color 0.15s ease, border-color 0.15s ease, opacity 0.15s ease !important;
     }
-    .btn-primary, button.btn-primary {
+    .btn-primary, button.btn-primary, .subaba-superior-btn.active {
         background-color: var(--sagti-accent) !important;
         border: 1px solid var(--sagti-accent) !important;
         color: #ffffff !important;
@@ -1806,9 +1108,17 @@ th.th-sortable-v9:hover {
     .btn-primary:hover, button.btn-primary:hover {
         background-color: var(--sagti-accent-hover) !important;
     }
+    .btn-secondary, button.btn-secondary {
+        background-color: var(--sagti-surface) !important;
+        border: 1px solid var(--sagti-border-strong) !important;
+        color: var(--sagti-text) !important;
+    }
+    .btn-secondary:hover, button.btn-secondary:hover {
+        background-color: var(--sagti-surface-alt) !important;
+    }
 
     input, select, textarea {
-        background-color: var(--sagti-bg) !important;
+        background-color: var(--sagti-surface) !important;
         border: 1px solid var(--sagti-border-strong) !important;
         border-radius: 6px !important;
         color: var(--sagti-text) !important;
