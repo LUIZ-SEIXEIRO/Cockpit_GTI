@@ -71,14 +71,11 @@
         }
         .btn-toggle-sidebar:hover {
             background: rgba(255,255,255,0.25);
-            color: var(--sagti-text);
+            color: #ffffff;
         }
 
         /* GESTÃO À VISTA OVERLAY */
-        /* Ocultar glows residuais */
-    .ambient-glow, .bg-glow, [class*="glow-orb"] { display: none !important; }
-
-    #kiosk-bar {
+        #kiosk-bar {
             position: fixed;
             top: 0;
             left: 0;
@@ -107,7 +104,7 @@
         /* SIDEBAR */
         #sidebar {
             width: var(--sidebar-width);
-            background: var(--sagti-surface);
+            background: var(--sagti-surface-alt);
             color: #f1f5f9;
             display: flex;
             flex-direction: column;
@@ -119,7 +116,7 @@
 
         .sidebar-brand {
             padding: 16px 20px;
-            background: var(--sagti-surface);
+            background: var(--sagti-surface-alt);
             display: flex;
             align-items: center;
             gap: 12px;
@@ -169,7 +166,7 @@
         }
 
         .nav-item:hover {
-            background: var(--sagti-surface);
+            background: var(--sagti-surface-alt);
             color: var(--sagti-text);
         }
 
@@ -190,7 +187,7 @@
             font-weight: 600;
             padding: 2px 7px;
             border-radius: 10px;
-            background: var(--sagti-surface);
+            background: var(--sagti-surface-alt);
             color: #94a3b8;
         }
 
@@ -515,7 +512,7 @@
         .modal-overlay {
             position: fixed;
             top: 0; left: 0; right: 0; bottom: 0;
-            background: var(--sagti-surface);
+            background: var(--sagti-surface-alt);
             display: none;
             align-items: center;
             justify-content: center;
@@ -675,7 +672,7 @@
         #ai-drawer-overlay {
             position: fixed;
             top: 0; left: 0; right: 0; bottom: 0;
-            background: var(--sagti-surface);
+            background: var(--sagti-surface-alt);
             z-index: 1050;
             display: none;
             opacity: 0;
@@ -922,7 +919,7 @@ th.th-sortable-v9:hover {
 
     /* Barra Integrada da Mesa de Trabalho (Eixo 2) */
     .mesa-toolbar-integrada {
-        background: var(--sagti-surface) !important;
+        background: var(--sagti-surface-alt) !important;
         
         border: 1px solid rgba(255, 255, 255, 0.14) !important;
         border-radius: 12px !important;

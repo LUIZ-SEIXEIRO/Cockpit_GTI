@@ -65,7 +65,7 @@
             '<span style="font-size:18px;font-weight:800;color:' + cor + ';background:rgba(255,255,255,0.05);' +
             'padding:4px 10px;border-radius:8px;border:1px solid rgba(255,255,255,0.08);">' + total + ' proc.</span></div>' +
             '<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:12px 0;text-align:center;' +
-            'background:var(--sagti-surface);padding:8px;border-radius:8px;">' +
+            'background:var(--sagti-surface-alt);padding:8px;border-radius:8px;">' +
             '<div><div style="font-size:10px;color:#94a3b8;">CONTRATAÇÃO</div>' +
             '<div style="font-size:13px;font-weight:800;color:var(--sagti-accent);">' + est + '</div></div>' +
             '<div><div style="font-size:10px;color:#94a3b8;">ROTINA OP.</div>' +
@@ -95,12 +95,12 @@
         h += '<p style="margin:6px 0 0 0;font-size:13px;color:#cbd5e1;">Período de Apuração: ' +
              '<strong style="color:var(--sagti-accent);">Competência Novembro/2026</strong> • ' +
              '<strong>179 Processos Administrativos Monitorados em 3 Macrofluxos</strong></p></div>';
-        h += '<div style="background:var(--sagti-surface);border:1px solid rgba(255,255,255,0.1);' +
+        h += '<div style="background:var(--sagti-surface-alt);border:1px solid rgba(255,255,255,0.1);' +
              'border-radius:8px;padding:6px 12px;font-size:11.5px;color:#94a3b8;font-family:monospace;">' +
              'Status: <strong style="color:#4ade80;">Base SEI Higienizada (UPSERT)</strong></div></div></div>';
 
         // SECAO 1
-        h += '<div style="background:var(--sagti-surface);border:1px solid rgba(255,255,255,0.08);' +
+        h += '<div style="background:var(--sagti-surface-alt);border:1px solid rgba(255,255,255,0.08);' +
              'border-radius:12px;padding:20px;margin-bottom:20px;">';
         h += '<h3 style="margin:0 0 14px 0;font-size:15px;color:var(--sagti-text);font-weight:700;">' +
              '📊 1. Sumário Executivo &amp; Termômetro de Criticidade do Acervo SEI-SP (179 Processos)</h3>';
@@ -124,7 +124,7 @@
              'conciliação documental entre o SEI-SP, o barramento SOE e os quadros do OpenProject.</p></div>';
 
         // SECAO 2
-        h += '<div style="background:var(--sagti-surface);border:1px solid rgba(255,255,255,0.08);' +
+        h += '<div style="background:var(--sagti-surface-alt);border:1px solid rgba(255,255,255,0.08);' +
              'border-radius:12px;padding:20px;margin-bottom:20px;">';
         h += '<h3 style="margin:0 0 14px 0;font-size:15px;color:var(--sagti-text);font-weight:700;">' +
              '🧩 2. Decomposição por Eixo de Gestão (Macrofluxo Operacional SA-GTI)</h3>';
@@ -141,7 +141,7 @@
              '</div></div>';
 
         // SECAO 3
-        h += '<div style="background:var(--sagti-surface);border:1px solid rgba(255,255,255,0.08);' +
+        h += '<div style="background:var(--sagti-surface-alt);border:1px solid rgba(255,255,255,0.08);' +
              'border-radius:12px;padding:20px;margin-bottom:20px;">';
         h += '<h3 style="margin:0 0 14px 0;font-size:15px;color:var(--sagti-text);font-weight:700;">' +
              '📂 3. Distribuição Taxonômica pelos Buckets Canônicos do OpenProject</h3>';
@@ -171,7 +171,7 @@
              '</tbody></table></div>';
 
         // SECAO 4
-        h += '<div style="background:var(--sagti-surface);border:1px solid rgba(255,255,255,0.08);' +
+        h += '<div style="background:var(--sagti-surface-alt);border:1px solid rgba(255,255,255,0.08);' +
              'border-left:4px solid #ef4444;border-radius:12px;padding:20px;margin-bottom:20px;">';
         h += '<div style="display:flex;justify-content:space-between;align-items:center;' +
              'margin-bottom:14px;flex-wrap:wrap;gap:8px;">' +
@@ -217,7 +217,7 @@
              '</tbody></table></div>';
 
         // SECAO 5
-        h += '<div style="background:var(--sagti-surface);border:1px solid rgba(255,255,255,0.08);' +
+        h += '<div style="background:var(--sagti-surface-alt);border:1px solid rgba(255,255,255,0.08);' +
              'border-radius:12px;padding:20px;margin-bottom:20px;">';
         h += '<h3 style="margin:0 0 14px 0;font-size:15px;color:var(--sagti-text);font-weight:700;">' +
              '👥 5. Distribuição Nominal da Força de Trabalho Técnica &amp; Parecer de Governança</h3>';

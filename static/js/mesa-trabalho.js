@@ -113,7 +113,7 @@
         var div = document.createElement('div');
         div.id = 'modal-relatorio-ritual-mesa';
         div.style.cssText = 'position:fixed;inset:0;background:var(--sagti-surface-alt);z-index:99999;display:flex;align-items:center;justify-content:center;padding:20px;';
-        div.innerHTML = '<div style="background:var(--sagti-surface);border:1px solid rgba(56,189,248,0.35);border-top:4px solid #0ea5e9;border-radius:16px;max-width:680px;width:100%;padding:24px;color:var(--sagti-text);box-shadow:0 24px 60px rgba(0,0,0,0.85);">' +
+        div.innerHTML = '<div style="background:var(--sagti-surface-alt);border:1px solid rgba(56,189,248,0.35);border-top:4px solid #0ea5e9;border-radius:16px;max-width:680px;width:100%;padding:24px;color:var(--sagti-text);box-shadow:0 24px 60px rgba(0,0,0,0.85);">' +
             '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;">' +
                 '<span style="background:rgba(56,189,248,0.15);color:var(--sagti-accent);padding:4px 10px;border-radius:8px;font-size:11.5px;font-weight:800;">' + rel.tipoLabel + ' • ' + rel.data + '</span>' +
                 '<button type="button" onclick="document.getElementById(\'modal-relatorio-ritual-mesa\').remove()" style="background:transparent;border:none;color:#94a3b8;font-size:18px;cursor:pointer;">✖</button>' +
@@ -448,18 +448,16 @@
         revisarCardComIa2Orquestracao: async function(proc, cardOpExistente) {
             var payloadBase = window.openProjectOrchestrator.gerarPayloadEnriquecido(proc, cardOpExistente);
             var idProc = proc ? proc.ID_Processo : '';
-            var espec = proc ? (proc.Especificacao || proc.Tipo_Processo || 'Demanda de TIC homologada SA-GTI') : '';
+            var espec = proc ? (proc.Especificacao || proc.Tipo_Processo || 'Demanda de TIC sob governança SA-GTI') : '';
             var respNom = proc ? (proc.Responsavel_Tecnico || 'SA-GTI') : 'SA-GTI';
             var cardIdFinal = cardOpExistente ? cardOpExistente.id : (idProc.split('.')[1] ? idProc.split('.')[1].split('/')[0] : '1498');
 
-            var parecerTexto = null;
-            var modeloUsado = 'llama3.2:1b';
-
-            // 1. Tenta chamada direta ao Backend Proxy local (:5000/api/v1/ia/revisar_processo)
-            // Sem qualquer bloqueio de CORS, conectando ao Llama 3.2 1B via Tailscale
+            var parecerTexto = '';
+            var modeloUsado = '';
+            var tid = null;
             try {
                 var ctrl = new AbortController();
-                var tid = setTimeout(function() { ctrl.abort(); }, 45000);
+                tid = setTimeout(function() { ctrl.abort(); }, 65000);
                 var resBackend = await fetch('/api/v1/ia/revisar_processo', {
                     method: 'POST',
                     headers: obterHeadersComAuth(),
@@ -480,54 +478,61 @@
                 clearTimeout(tid);
                 var dadosIa = null;
                 try { dadosIa = await resBackend.json(); } catch (_) {}
-                if (resBackend.ok && dadosIa && dadosIa.sucesso && dadosIa.parecer && !(dadosIa.consistencia && dadosIa.consistencia.consistente === false)) {
-                    parecerTexto = dadosIa.parecer.trim();
-                    modeloUsado = dadosIa.modelo || 'llama3.2:1b';
-                } else if (resBackend.status === 422 || (dadosIa && dadosIa.bloqueado_por_inconsistencia)) {
-                    modeloUsado = 'Bloqueio de Consistência (SA-GTI)';
-                    parecerTexto = '[BLOQUEADO POR INCONSISTÊNCIA DE CONTEXTO] ' + ((dadosIa && dadosIa.erro) || 'A resposta da IA citou dados fora do contexto verificado. Revisão manual obrigatória.');
+                if (resBackend.status === 422 || (dadosIa && (
+                    dadosIa.bloqueado_por_inconsistencia ||
+                    (dadosIa.consistencia && dadosIa.consistencia.consistente === false)
+                ))) {
+                    var erroBloqueio = new Error((dadosIa && dadosIa.erro) || 'Parecer bloqueado por inconsistência de contexto. Revisão humana obrigatória.');
+                    erroBloqueio.code = 'IA_INCONSISTENTE';
+                    throw erroBloqueio;
                 }
+                if (!resBackend.ok || !dadosIa || dadosIa.sucesso !== true ||
+                    typeof dadosIa.parecer !== 'string' || !dadosIa.parecer.trim() ||
+                    !dadosIa.consistencia || dadosIa.consistencia.consistente !== true) {
+                    var erroIndisponivel = new Error((dadosIa && (dadosIa.erro || dadosIa.mensagem)) || 'A revisão de IA não foi concluída com consistência confirmada.');
+                    erroIndisponivel.code = 'IA_INDISPONIVEL';
+                    throw erroIndisponivel;
+                }
+                parecerTexto = dadosIa.parecer.trim();
+                modeloUsado = dadosIa.modelo || 'modelo não informado';
             } catch(e) {
-                console.log('Backend proxy offline ou em fallback local:', e);
-            }
-
-            // Fallback cognitivo contextual exclusivo para este processo
-            if (!parecerTexto) {
-                modeloUsado = 'llama3.2:1b (Motor Analítico Local)';
-                parecerTexto = 'O processo administrativo SEI ' + idProc + ' tem como objeto "' + espec + '". ' +
-                    'Demanda de TIC atribuída à equipe técnica (' + respNom + ') sob governança da SA-GTI.\n\n' +
-                    'Sob a ótica da Lei Federal nº 14.133/2021 e do PDTIC 2027-2030, a instrução atende aos requisitos formais ' +
-                    'de planejamento, justificativa da necessidade e compatibilidade com o catálogo de serviços.\n\n' +
-                    'Recomendação da IA 2: Homologar os artefatos técnicos, mantendo a rastreabilidade do processo no OpenProject e no SEI-SP.';
+                clearTimeout(tid);
+                if (e && (e.code === 'IA_INCONSISTENTE' || e.code === 'IA_INDISPONIVEL')) throw e;
+                var erroFalha = new Error(e && e.name === 'AbortError'
+                    ? 'Tempo limite excedido ao revisar o processo.'
+                    : 'Falha ao consultar o gateway autenticado de IA.');
+                erroFalha.code = 'IA_INDISPONIVEL';
+                throw erroFalha;
             }
 
             // Injeta o Parecer da IA 2 no corpo do Dossiê Técnico
             var carimboData = new Date().toLocaleDateString('pt-BR') + ' às ' + new Date().toLocaleTimeString('pt-BR');
-            var trechoParecer = '\n\n## 🤖 2. Parecer & Análise Crítica da IA 2 (' + modeloUsado + ')\n> *Homologação emitida em ' + carimboData + ':*\n' + parecerTexto + '\n';
+            var trechoParecer = '\n\n## 🤖 2. Análise preliminar da IA (' + modeloUsado + ')\n> *Gerada em ' + carimboData + '. Não constitui homologação; exige revisão humana.*\n' + parecerTexto + '\n';
 
-            if (payloadBase.descricao.indexOf('## 🤖 2. Parecer') === -1) {
+            if (payloadBase.descricao.indexOf('## 🤖 2. ') === -1) {
                 payloadBase.descricao = payloadBase.descricao.replace('## 📁 2. Repositório', trechoParecer + '\n## 📁 3. Repositório');
             } else {
-                payloadBase.descricao = payloadBase.descricao.replace(/## 🤖 2\. Parecer[\s\S]*?(?=## 📁)/, trechoParecer + '\n');
+                payloadBase.descricao = payloadBase.descricao.replace(/## 🤖 2\.[\s\S]*?(?=## 📁)/, trechoParecer + '\n');
             }
 
             // Injeta no Comentário de Atividade ("O que mudou")
             payloadBase.comentario = '🔄 **[Cockpit GTI] Registro de Governança & Sincronização — ' + carimboData + '**\n\n' +
-                '🤖 **Parecer Analítico da IA 2 (' + modeloUsado + '):**\n' +
-                '• Processo Administrativo SEI ' + idProc + ' homologado com base no PDTIC 2027-2030 e Lei Federal nº 14.133/2021.\n' +
+                '🤖 **Análise preliminar da IA (' + modeloUsado + '), sujeita à revisão humana:**\n' +
+                '• Processo Administrativo SEI ' + idProc + ' analisado com base nos dados fornecidos ao sistema; não é uma homologação.\n' +
                 '• Objeto: ' + espec + '\n' +
                 '• Análise: ' + parecerTexto.split('\n')[0] + '\n\n' +
                 '📌 **O que mudou nesta atualização:**\n' +
                 '• **Dossiê Técnico Enriquecido:** Carga abrangente de metadados, análise da IA 2 e repositório probatório de links.\n' +
-                '• **Aging Líquido & Poréns:** Recálculo homologado de prazos processuais (Aging Líquido: ' + (proc ? (proc.Aging_Liquido_Dias || proc.Dias_Ultima_Mov || '0') : '0') + ' dias).\n' +
+                '• **Aging Líquido & Poréns:** Dados de prazo registrados (Aging Líquido: ' + (proc ? (proc.Aging_Liquido_Dias || proc.Dias_Ultima_Mov || '0') : '0') + ' dias).\n' +
                 '• **Matriz RACI Atualizada:** Validação nominal de papéis (Gestor da Demanda: Luiz Antonio Seixeiro / Executor: ' + respNom + ').\n' +
                 '• **Status do Card:** ' + (payloadBase.status || '🚀 Em progresso') + ' | Criticidade: ' + (proc ? (proc.Farol_Criticidade || '🟢 4 - Fluxo Normal') : '🟢 4 - Fluxo Normal') + '.\n\n' +
                 '👤 **Responsável pela Atualização:** ' + (window.obterUsuarioSessaoAtual ? window.obterUsuarioSessaoAtual().nome : 'Luiz Antonio Seixeiro') + ' (SA-GTI / Governança)\n' +
-                '🤖 **Auditoria Cognitiva:** IA 2 (' + modeloUsado + ')';
+                '🤖 **Auditoria Cognitiva:** IA (' + modeloUsado + '); validação humana pendente.';
 
             payloadBase.revisadoPorIa2 = true;
             payloadBase.modeloIa2 = modeloUsado;
             payloadBase.parecerIa2 = parecerTexto;
+            payloadBase.consistenciaIa2 = true;
             return payloadBase;
         },
 
@@ -719,11 +724,15 @@
         },
 
         // ENVIO REAL VIA PROXY DO SERVIDOR FLASK LOCAL (/api/v1/openproject/sync_card)
-        // Contorna 100% o bloqueio de CORS do navegador e grava diretamente no servidor do OpenProject
+        // A escrita deve passar pelo backend e exigir revisão consistente concluída.
         enviarAtualizacaoCardApiSilencioso: async function(cardId, payload, idProcesso) {
+            if (!payload || payload.revisadoPorIa2 !== true || payload.consistenciaIa2 !== true || !payload.parecerIa2) {
+                throw new Error('Gravação bloqueada: revisão de IA consistente não concluída.');
+            }
+
+            var resProxy;
             try {
-                // 1. Tenta via Proxy Backend Python local (:5000) - Sem bloqueio CORS!
-                var resProxy = await fetch('/api/v1/openproject/sync_card', {
+                resProxy = await fetch('/api/v1/openproject/sync_card', {
                     method: 'POST',
                     headers: obterHeadersComAuth(),
                     body: JSON.stringify({
@@ -731,70 +740,24 @@
                         idProcesso: idProcesso || '',
                         assunto: payload.assunto,
                         descricao: payload.descricao,
-                        comentario: payload.comentario,
-                        token: localStorage.getItem('sagti_openproject_token') || ''
+                        comentario: payload.comentario
                     })
                 });
-                if (resProxy.ok) {
-                    var dataProxy = await resProxy.json();
-                    console.log('✅ [Proxy Backend] Card #' + cardId + ' resposta:', dataProxy);
-                    if (dataProxy.gravadoRemoto) {
-                        alert('✅ Card #' + cardId + ' GRAVADO COM SUCESSO NO OPENPROJECT!\n\n• Dossiê Técnico de Governança atualizado.\n• Comentário de Atividade publicado na timeline.\n• Status HTTP: ' + (dataProxy.statusHttp || 200));
-                    } else if (dataProxy.erro) {
-                        alert('⚠️ Aviso ao gravar Card #' + cardId + ':\n\n' + dataProxy.erro);
-                    }
-                    return dataProxy;
-                } else {
-                    alert('⚠️ Erro HTTP ' + resProxy.status + ' ao comunicar com o Backend Flask (:5000).\n\nExecute no PowerShell: python atualizar_e_reiniciar_cockpit.py')
-                }
             } catch(e) {
-                console.log('Aviso proxy local:', e);
+                throw new Error('Falha ao comunicar com o backend de sincronização OpenProject.');
             }
 
-            // 2. Fallback direto via navegador (caso proxy ainda não esteja ativo)
-            var endpoint = (localStorage.getItem('sagti_openproject_url') || 'https://projetos.spaguas.sp.gov.br/api/v3').replace(/\/$/, '');
-            var token = (localStorage.getItem('sagti_openproject_token') || '').trim();
-            var urlCard = endpoint + '/work_packages/' + cardId;
-
+            var dataProxy = null;
             try {
-                var headers = { 'Content-Type': 'application/json' };
-                if (token) headers['Authorization'] = 'Basic ' + btoa('apikey:' + token);
-
-                fetch(urlCard, {
-                    method: 'GET',
-                    headers: headers,
-                    credentials: 'include'
-                }).then(function(res) {
-                    if (res.ok) {
-                        return res.json().then(function(data) {
-                            var lockVer = (data && typeof data.lockVersion !== 'undefined') ? data.lockVersion : 1;
-                            var bodyEnvio = {
-                                lockVersion: lockVer,
-                                description: { raw: payload.descricao }
-                            };
-                            if (payload.comentario) {
-                                bodyEnvio.comment = { raw: payload.comentario };
-                            }
-                            return fetch(urlCard, {
-                                method: 'PATCH',
-                                headers: headers,
-                                credentials: 'include',
-                                body: JSON.stringify(bodyEnvio)
-                            }).then(function() {
-                                if (payload.comentario) {
-                                    return fetch(urlCard + '/activities', {
-                                        method: 'POST',
-                                        headers: headers,
-                                        credentials: 'include',
-                                        body: JSON.stringify({ comment: { raw: payload.comentario } })
-                                    }).catch(function(){});
-                                }
-                            });
-                        });
-                    }
-                }).catch(function() {});
-            } catch(e) {}
-            return { sucesso: true, modo: 'local' };
+                dataProxy = await resProxy.json();
+            } catch(e) {
+                throw new Error('O backend retornou uma resposta inválida ao sincronizar com OpenProject.');
+            }
+            if (!resProxy.ok || !dataProxy || dataProxy.sucesso !== true) {
+                throw new Error((dataProxy && (dataProxy.mensagem || dataProxy.erro)) || ('Falha HTTP ' + resProxy.status + ' ao sincronizar o card.'));
+            }
+            console.log('✅ [Proxy Backend] Card #' + cardId + ' resposta:', dataProxy);
+            return dataProxy;
         }
     };
 
@@ -983,60 +946,51 @@
         if (modalAntigo) modalAntigo.remove();
 
         var historico = [];
+        var erroHistorico = '';
         try {
-            var res = await fetch('/api/v1/openproject/historico_agendado');
-            if (res.ok) {
-                var j = await res.json();
-                if (j && Array.isArray(j.historico) && j.historico.length > 0) {
-                    historico = j.historico;
-                }
+            var res = await fetch('/api/v1/openproject/historico_agendado', {
+                headers: obterHeadersComAuth(),
+                cache: 'no-store'
+            });
+            var j = await res.json();
+            if (!res.ok || j.sucesso !== true || !Array.isArray(j.historico)) {
+                throw new Error(j.mensagem || ('HTTP ' + res.status));
             }
-        } catch(e) {}
-
-        if (historico.length === 0) {
-            try {
-                historico = JSON.parse(localStorage.getItem('sagti_op_historico_agendado') || '[]');
-            } catch(e) {}
-        }
-
-        if (historico.length === 0) {
-            historico = [
-                {
-                    timestamp: new Date().toLocaleDateString('pt-BR') + ' às ' + new Date().toLocaleTimeString('pt-BR'),
-                    modo: 'Agendado (Motor 3 — OpenProject 14)',
-                    status: 'SUCESSO',
-                    status_http: 200,
-                    cards_processados: 179,
-                    cards_transmitidos_op: 2,
-                    modelo_ia2: 'llama3.2:1b',
-                    comprovante_hash: 'A8F9B2C4'
-                }
-            ];
+            historico = j.historico;
+        } catch(e) {
+            erroHistorico = e.message || 'Falha ao carregar o histórico.';
+            console.error('[Cockpit] Falha ao carregar histórico OpenProject:', erroHistorico);
         }
 
         var motores = window.motoresVarredura || [];
-        var mot3 = motores.find(function(m) { return m.id === 'mot-3' || m.id === 'openproject_14'; }) || { freq: 'Diario as 03:00', status: 'ativo' };
+        var mot3 = motores.find(function(m) { return m.id === 'mot-3' || m.id === 'openproject_14'; }) || { freq: 'Não configurada', status: 'indisponível' };
 
-        var linhasTabela = historico.map(function(item) {
+        var escaparHistoricoHtml = function(valor) {
+            return String(valor == null ? '' : valor).replace(/[&<>"']/g, function(caractere) {
+                return {'&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'}[caractere];
+            });
+        };
+        var linhasTabela = historico.length ? historico.map(function(item) {
             return '<tr style="border-bottom:1px solid rgba(255,255,255,0.06);">' +
-                '<td style="padding:10px 12px;font-family:monospace;color:var(--sagti-accent);font-weight:700;">' + (item.timestamp || '—') + '</td>' +
-                '<td style="padding:10px 12px;color:var(--sagti-text);">' + (item.modo || 'Agendado') + '</td>' +
-                '<td style="padding:10px 12px;text-align:center;color:#34d399;font-weight:700;">' + (item.cards_processados || 179) + ' cards</td>' +
-                '<td style="padding:10px 12px;text-align:center;"><span style="background:rgba(16,185,129,0.25);color:#34d399;border:1px solid #10b981;padding:2px 8px;border-radius:10px;font-size:10px;font-weight:700;">🟢 ' + (item.status || 'SUCESSO (200)') + '</span></td>' +
-                '<td style="padding:10px 12px;font-family:monospace;color:#cbd5e1;font-size:10.5px;">' + (item.modelo_ia2 || 'llama3.2:1b') + '</td>' +
-                '<td style="padding:10px 12px;font-family:monospace;color:#a855f7;font-size:10px;">#' + (item.comprovante_hash || 'PROV-OK') + '</td>' +
+                '<td style="padding:10px 12px;font-family:monospace;color:var(--sagti-accent);font-weight:700;">' + escaparHistoricoHtml(item.timestamp || '—') + '</td>' +
+                '<td style="padding:10px 12px;color:var(--sagti-text);">' + escaparHistoricoHtml(item.modo || 'Agendado') + '</td>' +
+                '<td style="padding:10px 12px;text-align:center;color:#334155;font-weight:700;">' + (Number.isFinite(Number(item.cards_processados)) ? Number(item.cards_processados) : 0) + ' cards</td>' +
+                '<td style="padding:10px 12px;text-align:center;"><span style="padding:2px 8px;border:1px solid #cbd5e1;font-size:10px;font-weight:700;">' + escaparHistoricoHtml(item.status || 'Status não informado') + '</span></td>' +
+                '<td style="padding:10px 12px;font-family:monospace;color:#475569;font-size:10.5px;">' + escaparHistoricoHtml(item.modelo_ia2 || '—') + '</td>' +
+                '<td style="padding:10px 12px;font-family:monospace;color:#475569;font-size:10px;">' + escaparHistoricoHtml(item.comprovante_hash || '—') + '</td>' +
             '</tr>';
-        }).join('');
+        }).join('') : '<tr><td colspan="6" style="padding:18px;text-align:center;color:#64748b;">' +
+            escaparHistoricoHtml(erroHistorico || 'Nenhuma execução registrada.') + '</td></tr>';
 
         var divModal = document.createElement('div');
         divModal.id = 'modal-logs-sincronizacao-op';
         divModal.style.cssText = 'position:fixed;inset:0;background:var(--sagti-surface-alt);z-index:999999;display:flex;align-items:center;justify-content:center;padding:16px;';
-        divModal.innerHTML = '<div style="background:var(--sagti-surface);border:1px solid rgba(16,185,129,0.45);border-top:4px solid #10b981;border-radius:16px;max-width:920px;width:100%;max-height:90vh;overflow-y:auto;padding:24px;color:#f8fafc;box-shadow:0 24px 60px rgba(0,0,0,0.95);">' +
+        divModal.innerHTML = '<div style="background:var(--sagti-surface-alt);border:1px solid rgba(16,185,129,0.45);border-top:4px solid #10b981;border-radius:16px;max-width:920px;width:100%;max-height:90vh;overflow-y:auto;padding:24px;color:#f8fafc;box-shadow:0 24px 60px rgba(0,0,0,0.95);">' +
             '<div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:14px;">' +
                 '<div>' +
                     '<span style="background:rgba(16,185,129,0.25);color:#34d399;padding:3px 10px;border-radius:6px;font-size:11px;font-weight:800;">COMPROVAÇÃO DE AUDITORIA & REGISTRO AGENDADO</span>' +
                     '<h3 style="margin:6px 0 2px 0;font-size:18px;color:var(--sagti-text);">📜 Histórico de Sincronizações do Motor 3 (OpenProject 14)</h3>' +
-                    '<div style="font-size:12px;color:#94a3b8;">Evidência formal de execução autônoma conforme parametrização na Matriz de Motores do Cockpit.</div>' +
+                    '<div style="font-size:12px;color:#94a3b8;">' + (erroHistorico ? 'Não foi possível consultar a evidência registrada.' : historico.length ? 'Registros retornados pelo backend.' : 'Nenhuma execução registrada pelo backend.') + '</div>' +
                 '</div>' +
                 '<button type="button" onclick="document.getElementById(\'modal-logs-sincronizacao-op\').remove()" style="background:none;border:none;color:#94a3b8;font-size:22px;cursor:pointer;">✖</button>' +
             '</div>' +
@@ -1044,7 +998,7 @@
             '<div style="display:grid;grid-template-columns:repeat(3, 1fr);gap:12px;margin-bottom:16px;">' +
                 '<div style="background:rgba(2,6,23,0.7);padding:12px;border-radius:8px;border:1px solid rgba(255,255,255,0.08);">' +
                     '<span style="font-size:11px;color:#94a3b8;">Frequência Programada (Motor 3):</span><br>' +
-                    '<strong style="color:var(--sagti-accent);font-size:13px;">' + (mot3.freq || 'Diário às 03:00') + '</strong>' +
+                    '<strong style="color:var(--sagti-accent);font-size:13px;">' + window.escapeHtml(mot3.freq || 'Não configurada') + '</strong>' +
                 '</div>' +
                 '<div style="background:rgba(2,6,23,0.7);padding:12px;border-radius:8px;border:1px solid rgba(255,255,255,0.08);">' +
                     '<span style="font-size:11px;color:#94a3b8;">Total de Execuções Auditadas:</span><br>' +
@@ -1058,7 +1012,7 @@
 
             '<div style="max-height:360px;overflow-y:auto;border:1px solid rgba(255,255,255,0.1);border-radius:8px;margin-bottom:16px;">' +
                 '<table style="width:100%;border-collapse:collapse;font-size:11.5px;">' +
-                    '<thead style="background:var(--sagti-surface);position:sticky;top:0;color:var(--sagti-accent);border-bottom:1px solid rgba(255,255,255,0.1);">' +
+                    '<thead style="background:var(--sagti-surface-alt);position:sticky;top:0;color:var(--sagti-accent);border-bottom:1px solid rgba(255,255,255,0.1);">' +
                         '<tr>' +
                             '<th style="padding:10px 12px;text-align:left;">Data / Hora</th>' +
                             '<th style="padding:10px 12px;text-align:left;">Modo de Operação</th>' +
@@ -1094,7 +1048,7 @@
         var cardIdFinal = cardOp ? cardOp.id : (idProcesso.split('.')[1] ? idProcesso.split('.')[1].split('/')[0] : '1497');
 
         var textoCardAtual = cardOp
-            ? ('<div style="background:var(--sagti-surface);padding:12px;border-radius:8px;font-size:11.5px;color:#cbd5e1;line-height:1.5;">' +
+            ? ('<div style="background:var(--sagti-surface-alt);padding:12px;border-radius:8px;font-size:11.5px;color:#cbd5e1;line-height:1.5;">' +
                 '<strong>#ID no OpenProject:</strong> <span style="color:var(--sagti-accent);font-size:13px;font-weight:800;">#' + cardOp.id + '</span> ' +
                 '<a href="https://projetos.spaguas.sp.gov.br/work_packages/' + cardOp.id + '" target="_blank" rel="noopener noreferrer" style="color:#34d399;text-decoration:none;font-weight:700;margin-left:8px;" title="Abrir card no navegador">↗ Abrir no OpenProject</a><br>' +
                 '<strong>Assunto Atual:</strong> ' + window.escapeHtml(cardOp.assunto || '') + '<br>' +
@@ -1103,7 +1057,7 @@
                 '<strong>Projeto Atual:</strong> ' + (cardOp.projeto || 'SA-GTI') + '<br>' +
                 '<div style="margin-top:8px;color:#34d399;font-weight:700;">🟢 Card existente vinculado para gravação (Card #' + cardOp.id + ')</div>' +
                '</div>')
-            : ('<div style="background:var(--sagti-surface);padding:12px;border-radius:8px;font-size:11.5px;color:#fbbf24;line-height:1.5;">' +
+            : ('<div style="background:var(--sagti-surface-alt);padding:12px;border-radius:8px;font-size:11.5px;color:#fbbf24;line-height:1.5;">' +
                 '<strong>⚠️ Nenhum Card Ativo Encontrado no OpenProject</strong><br>' +
                 '<span style="font-size:11px;color:#94a3b8;">Este processo SEI ainda não possui card vinculado.</span><br>' +
                 '<div style="margin-top:8px;color:#0284c7;font-weight:700;">➕ Será executado o provisionamento de nova Tarefa no Cockpit</div>' +
@@ -1112,7 +1066,7 @@
         var divModal = document.createElement('div');
         divModal.id = 'modal-diff-orquestrador-op';
         divModal.style.cssText = 'position:fixed;inset:0;background:var(--sagti-surface-alt);z-index:999999;display:flex;align-items:center;justify-content:center;padding:16px;';
-        divModal.innerHTML = '<div style="background:var(--sagti-surface);border:1px solid rgba(2,132,199,0.5);border-top:4px solid #0ea5e9;border-radius:16px;max-width:980px;width:100%;max-height:92vh;overflow-y:auto;padding:24px;color:var(--sagti-text);box-shadow:0 24px 60px rgba(0,0,0,0.95);">' +
+        divModal.innerHTML = '<div style="background:var(--sagti-surface-alt);border:1px solid rgba(2,132,199,0.5);border-top:4px solid #0ea5e9;border-radius:16px;max-width:980px;width:100%;max-height:92vh;overflow-y:auto;padding:24px;color:var(--sagti-text);box-shadow:0 24px 60px rgba(0,0,0,0.95);">' +
             '<div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:14px;">' +
                 '<div>' +
                     '<span style="background:rgba(14,165,233,0.25);color:var(--sagti-accent);padding:3px 10px;border-radius:6px;font-size:11px;font-weight:800;">VALIDAÇÃO PRÉVIA DE CARGA (SAFE DIFF VIEW)</span>' +
@@ -1176,7 +1130,7 @@
             '</div>' +
 
             '<div style="display:flex;justify-content:space-between;align-items:center;border-top:1px solid rgba(255,255,255,0.1);padding-top:14px;flex-wrap:wrap;gap:10px;">' +
-                '<div style="font-size:11px;color:#94a3b8;">⚡ Sincronização via Proxy Backend e persistência local. Sem necessidade de token.</div>' +
+                '<div style="font-size:11px;color:#94a3b8;">⚡ Revisão prévia e gravação autenticada pelo backend.</div>' +
                 '<div style="display:flex;gap:8px;">' +
                     '<button type="button" class="btn btn-secondary" onclick="document.getElementById(\'modal-diff-orquestrador-op\').remove()" style="padding:7px 14px;font-size:12px;">Cancelar</button>' +
                     '<button type="button" class="btn btn-secondary" onclick="window.copiarDossieMarkdownParaClipboard(\'' + idProcesso + '\')" style="padding:7px 14px;font-size:12px;color:var(--sagti-accent);font-weight:700;">📋 Copiar Dossiê</button>' +
@@ -1197,8 +1151,21 @@
         if (!p) return;
 
         var cardOp = window.openProjectOrchestrator.localizarCardPorSEI(idProcesso);
-        var payload = window.openProjectOrchestrator.gerarPayloadEnriquecido(p, cardOp);
+        var payload = null;
         var pacotes = (typeof window.OP_PACOTES_OFICIAIS !== 'undefined' && Array.isArray(window.OP_PACOTES_OFICIAIS)) ? window.OP_PACOTES_OFICIAIS : [];
+        var preDossie = document.getElementById('diff-dossie-pre-view');
+        var preComentario = document.getElementById('diff-comentario-pre-view');
+        var revisaoPendente = window._revisaoIaPendenteOpenProject;
+        var revisaoAindaValida = revisaoPendente &&
+            revisaoPendente.idProcesso === idProcesso &&
+            Date.now() - revisaoPendente.criadoEm <= 300000 &&
+            revisaoPendente.payload &&
+            preDossie && preDossie.textContent === revisaoPendente.payload.descricao &&
+            preComentario && preComentario.textContent === revisaoPendente.payload.comentario;
+        if (!revisaoAindaValida) {
+            window._revisaoIaPendenteOpenProject = null;
+            revisaoPendente = null;
+        }
 
         var agora = new Date();
         var dataStr = agora.toLocaleDateString('pt-BR') + ' ' + agora.toLocaleTimeString('pt-BR');
@@ -1210,8 +1177,77 @@
         var btnConfirmar = document.getElementById('btn-confirmar-gravacao-op');
         if (btnConfirmar) {
             btnConfirmar.disabled = true;
+        }
+
+        if (!revisaoPendente) {
+            if (btnConfirmar) {
+                btnConfirmar.innerHTML = '<span>⏳</span> Revisando o processo...';
+            }
+            try {
+                payload = await window.openProjectOrchestrator.revisarCardComIa2Orquestracao(p, cardOp);
+            } catch(err) {
+                if (btnConfirmar) {
+                    btnConfirmar.disabled = false;
+                    btnConfirmar.innerHTML = '⚠️ Revisão não concluída — tentar novamente';
+                }
+                var motivoRevisao = err && err.message ? err.message : 'A revisão de IA não foi concluída.';
+                if (err && err.code === 'IA_INCONSISTENTE') {
+                    alert('Gravação bloqueada por inconsistência de contexto.\n\n' + motivoRevisao + '\n\nNenhuma gravação foi enviada ao OpenProject.');
+                } else {
+                    alert('Gravação cancelada: o serviço de IA está indisponível ou não confirmou consistência.\n\n' + motivoRevisao + '\n\nNenhuma gravação foi enviada ao OpenProject.');
+                }
+                return;
+            }
+
+            if (!preDossie || !preComentario) {
+                if (btnConfirmar) {
+                    btnConfirmar.disabled = false;
+                    btnConfirmar.innerHTML = '⚠️ Prévia indisponível — tentar novamente';
+                }
+                alert('Gravação cancelada: não foi possível exibir o parecer para revisão humana.');
+                return;
+            }
+            preDossie.textContent = payload.descricao;
+            preComentario.textContent = payload.comentario;
+            window._revisaoIaPendenteOpenProject = {
+                idProcesso: idProcesso,
+                payload: payload,
+                criadoEm: Date.now()
+            };
+            if (btnConfirmar) {
+                btnConfirmar.disabled = false;
+                btnConfirmar.innerHTML = '✅ Confirmar após revisão humana';
+            }
+            alert('A análise preliminar foi gerada e passou pela verificação de consistência. Revise o dossiê e o comentário exibidos; clique novamente em “Confirmar após revisão humana” somente se autorizar a gravação.');
+            return;
+        }
+
+        payload = revisaoPendente.payload;
+        if (btnConfirmar) {
+            btnConfirmar.disabled = true;
             btnConfirmar.innerHTML = '<span>⏳</span> Gravando no OpenProject...';
         }
+
+        if (!window.confirm('Confirma que revisou o parecer preliminar e autoriza a gravação no OpenProject?')) {
+            if (btnConfirmar) {
+                btnConfirmar.disabled = false;
+                btnConfirmar.innerHTML = '✅ Confirmar após revisão humana';
+            }
+            return;
+        }
+
+        var resultadoSync;
+        try {
+            resultadoSync = await window.openProjectOrchestrator.enviarAtualizacaoCardApiSilencioso(cardIdFinal, payload, idProcesso);
+        } catch(err) {
+            if (btnConfirmar) {
+                btnConfirmar.disabled = false;
+                btnConfirmar.innerHTML = '⚠️ Falha na gravação — tentar novamente';
+            }
+            alert('Falha ao gravar no OpenProject.\n\n' + (err && err.message ? err.message : 'O backend não confirmou a operação.') + '\n\nNenhuma confirmação de sucesso foi registrada.');
+            return;
+        }
+        window._revisaoIaPendenteOpenProject = null;
 
         // 1. Atualiza o objeto do card
         if (cardOp) {
@@ -1259,9 +1295,6 @@
             localStorage.setItem('sagti_op_ultima_sync_auto', Date.now().toString());
         } catch(e) {}
 
-        // 3. Envia ao Proxy Backend Python (:5000) para escrita real no servidor do OpenProject
-        await window.openProjectOrchestrator.enviarAtualizacaoCardApiSilencioso(cardIdFinal, payload, idProcesso);
-
         // 4. Copia automaticamente o Dossiê para a área de transferência
         if (typeof navigator !== "undefined" && navigator.clipboard && navigator.clipboard.writeText) {
             navigator.clipboard.writeText(payload.descricao).catch(function(){});
@@ -1278,7 +1311,7 @@
             assunto: payload.assunto,
             usuario: usuarioLogado,
             dataHora: dataStr,
-            statusHttp: 200,
+            statusHttp: resultadoSync.statusHttp || 200,
             resultado: 'Gravação concluída com sucesso (Dossiê Abrangente e Comentário enviados).'
         });
         try { localStorage.setItem('sagti_op_orquestracoes_log', JSON.stringify(logOrquestracao.slice(0, 50))); } catch(e) {}
@@ -1434,7 +1467,7 @@
         div.id = 'modal-editar-relatorio-ritual';
         div.style.cssText = 'position:fixed;inset:0;background:var(--sagti-surface-alt);z-index:99999;display:flex;align-items:center;justify-content:center;padding:20px;animation:fadeIn 0.2s ease-in-out;';
 
-        div.innerHTML = '<div style="background:var(--sagti-surface);border:1px solid rgba(56,189,248,0.4);border-top:4px solid #38bdf8;border-radius:14px;max-width:680px;width:100%;padding:22px 24px;color:var(--sagti-text);box-shadow:0 24px 60px rgba(0,0,0,0.9);max-height:90vh;overflow-y:auto;">' +
+        div.innerHTML = '<div style="background:var(--sagti-surface-alt);border:1px solid rgba(56,189,248,0.4);border-top:4px solid #38bdf8;border-radius:14px;max-width:680px;width:100%;padding:22px 24px;color:var(--sagti-text);box-shadow:0 24px 60px rgba(0,0,0,0.9);max-height:90vh;overflow-y:auto;">' +
             '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;">' +
                 '<div style="display:flex;align-items:center;gap:8px;">' +
                     '<span style="font-size:18px;">' + (isEdicao ? '✏️' : '➕') + '</span>' +
@@ -1447,7 +1480,7 @@
                 '<div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px;">' +
                     '<div>' +
                         '<label style="display:block;font-size:11px;font-weight:700;color:#94a3b8;margin-bottom:4px;text-transform:uppercase;">Tipo do Ritual:</label>' +
-                        '<select id="edit-rel-tipo" style="width:100%;padding:8px 10px;background:var(--sagti-surface);border:1px solid rgba(255,255,255,0.15);border-radius:6px;color:var(--sagti-text);font-size:12px;outline:none;">' +
+                        '<select id="edit-rel-tipo" style="width:100%;padding:8px 10px;background:var(--sagti-surface-alt);border:1px solid rgba(255,255,255,0.15);border-radius:6px;color:var(--sagti-text);font-size:12px;outline:none;">' +
                             '<option value="daily" ' + (tipoVal === 'daily' ? 'selected' : '') + '>⏱️ Ata Daily Scrum</option>' +
                             '<option value="sprint" ' + (tipoVal === 'sprint' ? 'selected' : '') + '>🏃 Snapshot da Sprint</option>' +
                             '<option value="sprint_report" ' + (tipoVal === 'sprint_report' ? 'selected' : '') + '>🏃 Sprint Report</option>' +
@@ -1457,23 +1490,23 @@
                     '</div>' +
                     '<div>' +
                         '<label style="display:block;font-size:11px;font-weight:700;color:#94a3b8;margin-bottom:4px;text-transform:uppercase;">Data do Ritual (DD/MM/AAAA):</label>' +
-                        '<input type="text" id="edit-rel-data" value="' + window.escapeHtml(dataVal) + '" required style="width:100%;padding:8px 10px;background:var(--sagti-surface);border:1px solid rgba(255,255,255,0.15);border-radius:6px;color:var(--sagti-text);font-size:12px;outline:none;">' +
+                        '<input type="text" id="edit-rel-data" value="' + window.escapeHtml(dataVal) + '" required style="width:100%;padding:8px 10px;background:var(--sagti-surface-alt);border:1px solid rgba(255,255,255,0.15);border-radius:6px;color:var(--sagti-text);font-size:12px;outline:none;">' +
                     '</div>' +
                 '</div>' +
 
                 '<div style="margin-bottom:12px;">' +
                     '<label style="display:block;font-size:11px;font-weight:700;color:#94a3b8;margin-bottom:4px;text-transform:uppercase;">Título & Escopo Operacional:</label>' +
-                    '<input type="text" id="edit-rel-titulo" value="' + window.escapeHtml(tituloVal) + '" required placeholder="Ex: Ata da Daily Scrum (15 min) — SA-GTI Coordenação" style="width:100%;padding:8px 10px;background:var(--sagti-surface);border:1px solid rgba(255,255,255,0.15);border-radius:6px;color:var(--sagti-text);font-size:12px;outline:none;">' +
+                    '<input type="text" id="edit-rel-titulo" value="' + window.escapeHtml(tituloVal) + '" required placeholder="Ex: Ata da Daily Scrum (15 min) — SA-GTI Coordenação" style="width:100%;padding:8px 10px;background:var(--sagti-surface-alt);border:1px solid rgba(255,255,255,0.15);border-radius:6px;color:var(--sagti-text);font-size:12px;outline:none;">' +
                 '</div>' +
 
                 '<div style="margin-bottom:12px;">' +
                     '<label style="display:block;font-size:11px;font-weight:700;color:#94a3b8;margin-bottom:4px;text-transform:uppercase;">Destaques & Principais Deliberações (Resumo na Tabela):</label>' +
-                    '<textarea id="edit-rel-destaque" rows="2" required placeholder="Pauta resumida, entregas e bloqueios tratados..." style="width:100%;padding:8px 10px;background:var(--sagti-surface);border:1px solid rgba(255,255,255,0.15);border-radius:6px;color:var(--sagti-text);font-size:12px;outline:none;resize:vertical;">' + window.escapeHtml(destaqueVal) + '</textarea>' +
+                    '<textarea id="edit-rel-destaque" rows="2" required placeholder="Pauta resumida, entregas e bloqueios tratados..." style="width:100%;padding:8px 10px;background:var(--sagti-surface-alt);border:1px solid rgba(255,255,255,0.15);border-radius:6px;color:var(--sagti-text);font-size:12px;outline:none;resize:vertical;">' + window.escapeHtml(destaqueVal) + '</textarea>' +
                 '</div>' +
 
                 '<div style="margin-bottom:12px;">' +
                     '<label style="display:block;font-size:11px;font-weight:700;color:#94a3b8;margin-bottom:4px;text-transform:uppercase;">Status do Ritual:</label>' +
-                    '<select id="edit-rel-status" style="width:100%;padding:8px 10px;background:var(--sagti-surface);border:1px solid rgba(255,255,255,0.15);border-radius:6px;color:var(--sagti-text);font-size:12px;outline:none;">' +
+                    '<select id="edit-rel-status" style="width:100%;padding:8px 10px;background:var(--sagti-surface-alt);border:1px solid rgba(255,255,255,0.15);border-radius:6px;color:var(--sagti-text);font-size:12px;outline:none;">' +
                         '<option value="Realizada" ' + (statusVal === 'Realizada' ? 'selected' : '') + '>🟢 Realizada</option>' +
                         '<option value="Em Execução" ' + (statusVal === 'Em Execução' ? 'selected' : '') + '>🔵 Em Execução</option>' +
                         '<option value="Ativo na Mesa" ' + (statusVal === 'Ativo na Mesa' ? 'selected' : '') + '>🟢 Ativo na Mesa</option>' +
@@ -1485,7 +1518,7 @@
 
                 '<div style="margin-bottom:16px;">' +
                     '<label style="display:block;font-size:11px;font-weight:700;color:#94a3b8;margin-bottom:4px;text-transform:uppercase;">Conteúdo Integral / Dossiê (Visualizado no Modal):</label>' +
-                    '<textarea id="edit-rel-conteudo" rows="6" placeholder="Texto completo da ata, tópicos debatidos, encaminhamentos e decisões..." style="width:100%;padding:10px 12px;background:var(--sagti-surface);border:1px solid rgba(255,255,255,0.15);border-radius:6px;color:var(--sagti-text);font-size:12px;font-family:monospace;outline:none;resize:vertical;line-height:1.5;">' + window.escapeHtml(conteudoVal) + '</textarea>' +
+                    '<textarea id="edit-rel-conteudo" rows="6" placeholder="Texto completo da ata, tópicos debatidos, encaminhamentos e decisões..." style="width:100%;padding:10px 12px;background:var(--sagti-surface-alt);border:1px solid rgba(255,255,255,0.15);border-radius:6px;color:var(--sagti-text);font-size:12px;font-family:monospace;outline:none;resize:vertical;line-height:1.5;">' + window.escapeHtml(conteudoVal) + '</textarea>' +
                 '</div>' +
 
                 '<div style="display:flex;justify-content:flex-end;gap:10px;align-items:center;border-top:1px solid rgba(255,255,255,0.1);padding-top:14px;">' +
@@ -2002,7 +2035,7 @@
         var divModal = document.createElement('div');
         divModal.id = 'modal-raci-criar-estruturado';
         divModal.style.cssText = 'position:fixed;inset:0;background:var(--sagti-surface-alt);z-index:99999;display:flex;align-items:center;justify-content:center;padding:16px;';
-        divModal.innerHTML = '<div style="background:var(--sagti-surface);border:1px solid rgba(139,92,246,0.45);border-top:4px solid #0284c7;border-radius:16px;max-width:1100px;width:100%;max-height:94vh;overflow-y:auto;padding:26px;color:#f8fafc;box-shadow:0 24px 60px rgba(0,0,0,0.95);">' +
+        divModal.innerHTML = '<div style="background:var(--sagti-surface-alt);border:1px solid rgba(139,92,246,0.45);border-top:4px solid #0284c7;border-radius:16px;max-width:1100px;width:100%;max-height:94vh;overflow-y:auto;padding:26px;color:#f8fafc;box-shadow:0 24px 60px rgba(0,0,0,0.95);">' +
             '<div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:16px;">' +
                 '<div>' +
                     '<span style="background:rgba(139,92,246,0.25);color:#c084fc;padding:3px 10px;border-radius:6px;font-size:11px;font-weight:800;letter-spacing:0.5px;">CONSTRUTOR ESTRUTURADO DE MATRIZ RACI</span>' +
@@ -2017,17 +2050,17 @@
                 '<div style="display:flex;flex-direction:column;gap:10px;">' +
                     '<div>' +
                         '<label style="display:block;font-size:11px;color:#c084fc;font-weight:700;margin-bottom:4px;">Título da Matriz / Fluxo de Aprovação:</label>' +
-                        '<input type="text" id="builder-raci-titulo" value="' + window.escapeHtml(window.raciBuilderState.titulo || '') + '" placeholder="Ex: Instrução de Contratação de Nuvem (Lei 14.133)" style="width:100%;box-sizing:border-box;padding:8px 12px;background:var(--sagti-surface);border:1px solid rgba(255,255,255,0.15);color:var(--sagti-text);border-radius:8px;font-size:12px;outline:none;">' +
+                        '<input type="text" id="builder-raci-titulo" value="' + window.escapeHtml(window.raciBuilderState.titulo || '') + '" placeholder="Ex: Instrução de Contratação de Nuvem (Lei 14.133)" style="width:100%;box-sizing:border-box;padding:8px 12px;background:var(--sagti-surface-alt);border:1px solid rgba(255,255,255,0.15);color:var(--sagti-text);border-radius:8px;font-size:12px;outline:none;">' +
                     '</div>' +
                     '<div>' +
                         '<label style="display:block;font-size:11px;color:#c084fc;font-weight:700;margin-bottom:4px;">Descrição &amp; Finalidade Institucional:</label>' +
-                        '<input type="text" id="builder-raci-desc" value="' + window.escapeHtml(window.raciBuilderState.descricao || '') + '" placeholder="Ex: Segregação formal de responsabilidades entre demandante, governança e fiscalização." style="width:100%;box-sizing:border-box;padding:8px 12px;background:var(--sagti-surface);border:1px solid rgba(255,255,255,0.15);color:var(--sagti-text);border-radius:8px;font-size:12px;outline:none;">' +
+                        '<input type="text" id="builder-raci-desc" value="' + window.escapeHtml(window.raciBuilderState.descricao || '') + '" placeholder="Ex: Segregação formal de responsabilidades entre demandante, governança e fiscalização." style="width:100%;box-sizing:border-box;padding:8px 12px;background:var(--sagti-surface-alt);border:1px solid rgba(255,255,255,0.15);color:var(--sagti-text);border-radius:8px;font-size:12px;outline:none;">' +
                     '</div>' +
                 '</div>' +
                 '<div>' +
                     '<label style="display:block;font-size:11px;color:var(--sagti-accent);font-weight:700;margin-bottom:4px;">Vincular a uma Demanda (Opcional):</label>' +
-                    '<input type="text" id="builder-raci-vinculo" value="' + window.escapeHtml(window.raciBuilderState.vinculo || '') + '" placeholder="Ex: 137.00029841/2026-14 ou OP#1232" style="width:100%;box-sizing:border-box;padding:8px 12px;background:var(--sagti-surface);border:1px solid rgba(255,255,255,0.15);color:var(--sagti-text);border-radius:8px;font-size:12px;outline:none;margin-bottom:8px;">' +
-                    '<select id="builder-raci-tipovinculo" style="width:100%;box-sizing:border-box;padding:7px 10px;background:var(--sagti-surface);border:1px solid rgba(255,255,255,0.15);color:var(--sagti-text);border-radius:8px;font-size:11.5px;outline:none;">' +
+                    '<input type="text" id="builder-raci-vinculo" value="' + window.escapeHtml(window.raciBuilderState.vinculo || '') + '" placeholder="Ex: 137.00029841/2026-14 ou OP#1232" style="width:100%;box-sizing:border-box;padding:8px 12px;background:var(--sagti-surface-alt);border:1px solid rgba(255,255,255,0.15);color:var(--sagti-text);border-radius:8px;font-size:12px;outline:none;margin-bottom:8px;">' +
+                    '<select id="builder-raci-tipovinculo" style="width:100%;box-sizing:border-box;padding:7px 10px;background:var(--sagti-surface-alt);border:1px solid rgba(255,255,255,0.15);color:var(--sagti-text);border-radius:8px;font-size:11.5px;outline:none;">' +
                         '<option value="SEI" ' + (window.raciBuilderState.tipoVinculo === 'SEI' ? 'selected' : '') + '>Processo SEI</option>' +
                         '<option value="OpenProject" ' + (window.raciBuilderState.tipoVinculo === 'OpenProject' ? 'selected' : '') + '>Pacote OpenProject</option>' +
                         '<option value="GLPI" ' + (window.raciBuilderState.tipoVinculo === 'GLPI' ? 'selected' : '') + '>Chamado GLPI</option>' +
@@ -2052,7 +2085,7 @@
                     }).join('') +
                 '</div>' +
                 '<div style="display:flex;gap:8px;align-items:center;">' +
-                    '<input type="text" id="builder-raci-extra-user" placeholder="Adicionar outro usuário / colaborador (ex: Procurador Consultoria Jurídica, Preposto Fábrica)..." style="flex:1;padding:6px 10px;background:var(--sagti-surface);border:1px solid rgba(255,255,255,0.15);color:var(--sagti-text);border-radius:6px;font-size:11.5px;outline:none;">' +
+                    '<input type="text" id="builder-raci-extra-user" placeholder="Adicionar outro usuário / colaborador (ex: Procurador Consultoria Jurídica, Preposto Fábrica)..." style="flex:1;padding:6px 10px;background:var(--sagti-surface-alt);border:1px solid rgba(255,255,255,0.15);color:var(--sagti-text);border-radius:6px;font-size:11.5px;outline:none;">' +
                     '<button type="button" class="btn btn-secondary" onclick="window.raciBuilderAddUsuarioExtra()" style="padding:6px 12px;font-size:11px;white-space:nowrap;">➕ Incluir Usuário</button>' +
                 '</div>' +
             '</div>' +
@@ -2125,12 +2158,12 @@
         etapas.forEach(function(et, eIdx) {
             html += '<tr style="border-bottom:1px solid rgba(255,255,255,0.06);background:' + (eIdx % 2 === 0 ? 'rgba(15,23,42,0.4)' : 'rgba(30,41,59,0.25)') + ';">' +
                 '<td style="padding:6px 10px;">' +
-                    '<input type="text" onchange="window.raciBuilderUpdateEtapaNome(' + eIdx + ', this.value)" value="' + window.escapeHtml(et.nome) + '" placeholder="Nome da etapa..." style="width:100%;box-sizing:border-box;padding:6px 10px;background:var(--sagti-surface);border:1px solid rgba(255,255,255,0.15);color:var(--sagti-text);border-radius:6px;font-size:11.5px;outline:none;">' +
+                    '<input type="text" onchange="window.raciBuilderUpdateEtapaNome(' + eIdx + ', this.value)" value="' + window.escapeHtml(et.nome) + '" placeholder="Nome da etapa..." style="width:100%;box-sizing:border-box;padding:6px 10px;background:var(--sagti-surface-alt);border:1px solid rgba(255,255,255,0.15);color:var(--sagti-text);border-radius:6px;font-size:11.5px;outline:none;">' +
                 '</td>';
 
             usuarios.forEach(function(u) {
                 var papelAtual = (et.papeisPorUsuario && et.papeisPorUsuario[u]) ? et.papeisPorUsuario[u] : '';
-                var bgStyle = 'background:var(--sagti-surface);color:#94a3b8;border:1px solid rgba(255,255,255,0.15);';
+                var bgStyle = 'background:var(--sagti-surface-alt);color:#94a3b8;border:1px solid rgba(255,255,255,0.15);';
                 if (papelAtual === 'R') bgStyle = 'background:rgba(14,165,233,0.3);color:var(--sagti-accent);border:1px solid #0284c7;font-weight:800;';
                 else if (papelAtual === 'A') bgStyle = 'background:rgba(234,179,8,0.35);color:#facc15;border:1px solid #eab308;font-weight:800;';
                 else if (papelAtual === 'C') bgStyle = 'background:rgba(168,85,247,0.3);color:#c084fc;border:1px solid #9333ea;font-weight:700;';
@@ -2871,7 +2904,7 @@ window.renderizarTabelaMesa = function() {
             }).slice(0, 15);
 
             html = candidatos.map(function(p) {
-                return '<div style="background:var(--sagti-surface);border:1px solid rgba(255,255,255,0.08);border-left:3px solid #0ea5e9;border-radius:6px;padding:7px 9px;font-size:11px;display:flex;justify-content:space-between;align-items:center;gap:6px;">' +
+                return '<div style="background:var(--sagti-surface-alt);border:1px solid rgba(255,255,255,0.08);border-left:3px solid #0ea5e9;border-radius:6px;padding:7px 9px;font-size:11px;display:flex;justify-content:space-between;align-items:center;gap:6px;">' +
                     '<div style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap;flex:1;">' +
                         '<strong style="color:var(--sagti-accent);font-family:monospace;">' + p.ID_Processo + '</strong><br>' +
                         '<span style="color:#cbd5e1;font-size:10.5px;">' + (p.Especificacao || p.Tipo_Processo || '') + '</span>' +
@@ -2889,7 +2922,7 @@ window.renderizarTabelaMesa = function() {
 
             html = candidatosOp.map(function(op) {
                 var chave = 'OP#' + op.id;
-                return '<div style="background:var(--sagti-surface);border:1px solid rgba(255,255,255,0.08);border-left:3px solid #f59e0b;border-radius:6px;padding:7px 9px;font-size:11px;display:flex;justify-content:space-between;align-items:center;gap:6px;">' +
+                return '<div style="background:var(--sagti-surface-alt);border:1px solid rgba(255,255,255,0.08);border-left:3px solid #f59e0b;border-radius:6px;padding:7px 9px;font-size:11px;display:flex;justify-content:space-between;align-items:center;gap:6px;">' +
                     '<div style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap;flex:1;">' +
                         '<strong style="color:#fbbf24;font-family:monospace;">#' + op.id + '</strong> <span style="font-size:9.5px;color:#94a3b8;">(' + (op.tipo || 'Projeto') + ')</span><br>' +
                         '<span style="color:#cbd5e1;font-size:10.5px;">' + (op.assunto || '') + '</span>' +
@@ -2907,7 +2940,7 @@ window.renderizarTabelaMesa = function() {
 
             html = candidatosGlpi.map(function(t) {
                 var chave = 'GLPI#' + t.id;
-                return '<div style="background:var(--sagti-surface);border:1px solid rgba(255,255,255,0.08);border-left:3px solid #0284c7;border-radius:6px;padding:7px 9px;font-size:11px;display:flex;justify-content:space-between;align-items:center;gap:6px;">' +
+                return '<div style="background:var(--sagti-surface-alt);border:1px solid rgba(255,255,255,0.08);border-left:3px solid #0284c7;border-radius:6px;padding:7px 9px;font-size:11px;display:flex;justify-content:space-between;align-items:center;gap:6px;">' +
                     '<div style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap;flex:1;">' +
                         '<strong style="color:#c084fc;font-family:monospace;">#' + t.id + '</strong> <span style="font-size:9.5px;color:#94a3b8;">(' + (t.cat || 'Suporte') + ')</span><br>' +
                         '<span style="color:#cbd5e1;font-size:10.5px;">' + (t.titulo || '') + '</span>' +
@@ -2994,7 +3027,7 @@ window.renderizarTabelaMesa = function() {
                 var opId = String(chave).replace(/^OP#/, '');
                 var op = pacotesOP.find(function(p) { return String(p.id) === String(opId); }) || { id: opId, assunto: 'Pacote OpenProject #' + opId, tipo: 'Projeto', status: 'Em progresso', atrib: 'SA-GTI' };
                 var urlOp = 'https://projetos.spaguas.sp.gov.br/work_packages/' + op.id;
-                return '<div class="kpi-card" style="border-left: 4px solid #f59e0b; padding: 12px 16px; background: var(--sagti-surface);">' +
+                return '<div class="kpi-card" style="border-left: 4px solid #f59e0b; padding: 12px 16px; background: var(--sagti-surface-alt);">' +
                     '<div style="display: flex; justify-content: space-between; align-items: center;">' +
                         '<div style="display:flex;align-items:center;gap:8px;">' +
                             '<span style="cursor:pointer;font-size:14px;color:' + starCor + ';" onclick="window.toggleFixado(\'' + chave + '\')" title="Acompanhar">' + starIco + '</span>' +
@@ -3021,7 +3054,7 @@ window.renderizarTabelaMesa = function() {
                 var gId = String(chave).replace(/^GLPI#/, '').split('_')[0];
                 var t = baseGLPI.find(function(item) { return String(item.id) === String(gId); }) || { id: gId, titulo: 'Chamado GLPI #' + gId, status: 'Pendente', tecnico: 'SA-GTI' };
                 var linkGlpi = 'https://atendimento.spaguas.sp.gov.br/front/ticket.form.php?id=' + t.id;
-                return '<div class="kpi-card" style="border-left: 4px solid #0284c7; padding: 12px 16px; background: var(--sagti-surface);">' +
+                return '<div class="kpi-card" style="border-left: 4px solid #0284c7; padding: 12px 16px; background: var(--sagti-surface-alt);">' +
                     '<div style="display: flex; justify-content: space-between; align-items: center;">' +
                         '<div style="display:flex;align-items:center;gap:8px;">' +
                             '<span style="cursor:pointer;font-size:14px;color:' + starCor + ';" onclick="window.toggleFixado(\'' + chave + '\')" title="Acompanhar">' + starIco + '</span>' +
@@ -3046,7 +3079,7 @@ window.renderizarTabelaMesa = function() {
             // CASO 3: PROCESSO SEI
             var p = baseSEI.find(function(item) { return item.ID_Processo === chave; });
             if (!p) return '';
-            return '<div class="kpi-card" style="border-left: 4px solid #0544cf; padding: 12px 16px; background: var(--sagti-surface);">' +
+            return '<div class="kpi-card" style="border-left: 4px solid #0544cf; padding: 12px 16px; background: var(--sagti-surface-alt);">' +
                 '<div style="display: flex; justify-content: space-between; align-items: center;">' +
                     '<div style="display:flex;align-items:center;gap:8px;">' +
                         '<span style="cursor:pointer;font-size:14px;color:' + starCor + ';" onclick="window.toggleFixado(\'' + p.ID_Processo + '\')" title="Acompanhar">' + starIco + '</span>' +
@@ -3071,565 +3104,18 @@ window.renderizarTabelaMesa = function() {
 
     
     // =========================================================================
-    // 5. MÓDULO DE GESTÃO DE USUÁRIOS, ATRIBUIÇÃO DE PERFIS RBAC E AUTENTICAÇÃO / LOGIN
-    window.USUARIOS_PADRAO_COCKPIT = [
-        { id: 'usr_01', nome: 'Luiz Antonio Seixeiro', email: 'luiz.seixeiro@spaguas.sp.gov.br', senha: 'spaguas2026', unidade: 'SA-GTI (Sede)', perfil: 'Super-Admin', status: 'Ativo', ultimoAcesso: '05/11/2026 11:45' },
-        { id: 'usr_02', nome: 'Marcos Tadeu Yamamoto', email: 'marcos.yamamoto@spaguas.sp.gov.br', senha: 'spaguas2026', unidade: 'DIF - Infraestrutura', perfil: 'Gestor', status: 'Ativo', ultimoAcesso: '05/11/2026 09:30' },
-        { id: 'usr_03', nome: 'Diego Monteiro', email: 'diego.monteiro@spaguas.sp.gov.br', senha: 'spaguas2026', unidade: 'DGD - Governança', perfil: 'Gestor', status: 'Ativo', ultimoAcesso: '05/11/2026 10:12' },
-        { id: 'usr_04', nome: 'Rafael Frossard Piteri', email: 'rafael.piteri@spaguas.sp.gov.br', senha: 'spaguas2026', unidade: 'DIF - Infraestrutura', perfil: 'Analista', status: 'Ativo', ultimoAcesso: '04/11/2026 16:50' },
-        { id: 'usr_05', nome: 'Alessandro Delbue Silva', email: 'alessandro.silva@spaguas.sp.gov.br', senha: 'spaguas2026', unidade: 'DIF - Redes', perfil: 'Analista', status: 'Ativo', ultimoAcesso: '04/11/2026 14:20' },
-        { id: 'usr_06', nome: 'Denise Costa Santana', email: 'denise.santana@spaguas.sp.gov.br', senha: 'spaguas2026', unidade: 'Superintendência SA', perfil: 'Demandante', status: 'Ativo', ultimoAcesso: '03/11/2026 17:05' }
-    ];
-
-    window.obterUsuariosCadastrados = function() {
-        var salvos = null;
-        try { salvos = JSON.parse(localStorage.getItem('sagti_usuarios_cockpit_v11') || 'null'); } catch(e) {}
-        if (!Array.isArray(salvos) || salvos.length === 0) {
-            salvos = window.USUARIOS_PADRAO_COCKPIT.slice();
-            try { localStorage.setItem('sagti_usuarios_cockpit_v11', JSON.stringify(salvos)); } catch(e) {}
-        }
-        return salvos;
-    };
-
-    window.renderizarTabelaUsuarios = function() {
-        var tbody = document.getElementById('tbody-usuarios-cadastrados');
-        var badge = document.getElementById('badge-total-usuarios');
-        var busca = (document.getElementById('busca-usuarios-input') ? document.getElementById('busca-usuarios-input').value : '').toLowerCase().trim();
-        if (!tbody) return;
-
-        var lista = window.obterUsuariosCadastrados();
-        if (busca) {
-            lista = lista.filter(function(u) {
-                return (u.nome + ' ' + u.email + ' ' + u.unidade + ' ' + u.perfil + ' ' + u.status).toLowerCase().indexOf(busca) !== -1;
-            });
-        }
-
-        if (badge) badge.innerText = lista.length + ' Usuários Cadastrados';
-
-        if (lista.length === 0) {
-            tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;padding:30px;color:#94a3b8;">Nenhum usuário encontrado para este filtro.</td></tr>';
-            return;
-        }
-
-        var badgePerfil = {
-            'Super-Admin': '<span class="pill-tag" style="background:rgba(234,179,8,0.2);color:#facc15;border:1px solid rgba(234,179,8,0.4);font-weight:800;font-size:11px;padding:3px 8px;border-radius:12px;">👑 Super-Admin</span>',
-            'Gestor': '<span class="pill-tag" style="background:rgba(14,165,233,0.2);color:var(--sagti-accent);border:1px solid rgba(14,165,233,0.4);font-weight:700;font-size:11px;padding:3px 8px;border-radius:12px;">👔 Gestor de TIC</span>',
-            'Analista': '<span class="pill-tag" style="background:rgba(139,92,246,0.2);color:#c084fc;border:1px solid rgba(139,92,246,0.4);font-weight:700;font-size:11px;padding:3px 8px;border-radius:12px;">💻 Analista de TIC</span>',
-            'Demandante': '<span class="pill-tag" style="background:rgba(148,163,184,0.2);color:#cbd5e1;border:1px solid rgba(148,163,184,0.4);font-weight:700;font-size:11px;padding:3px 8px;border-radius:12px;">🏛️ Demandante</span>'
-        };
-
-        tbody.innerHTML = lista.map(function(u) {
-            var iniciais = u.nome.split(' ').map(function(n) { return n[0]; }).slice(0, 2).join('').toUpperCase();
-            var statusBadge = u.status === 'Ativo' 
-                ? '<span style="background:rgba(16,185,129,0.2);color:#34d399;font-weight:700;font-size:10.5px;padding:2px 8px;border-radius:10px;">🟢 Ativo</span>'
-                : '<span style="background:rgba(239,68,68,0.2);color:#f87171;font-weight:700;font-size:10.5px;padding:2px 8px;border-radius:10px;">🔴 Inativo</span>';
-
-            return '<tr style="border-bottom: 1px solid rgba(255,255,255,0.06);">' +
-                '<td style="padding:11px 12px;">' +
-                    '<div style="display:flex;align-items:center;gap:10px;">' +
-                        '<div style="width:32px;height:32px;border-radius:50%;background:var(--sagti-accent);display:flex;align-items:center;justify-content:center;font-weight:800;font-size:11px;color:#fff;flex-shrink:0;">' + iniciais + '</div>' +
-                        '<div>' +
-                            '<strong style="color:var(--sagti-text);font-size:12.5px;display:block;">' + u.nome + '</strong>' +
-                            '<span style="color:#94a3b8;font-size:11px;">' + u.email + '</span>' +
-                        '</div>' +
-                    '</div>' +
-                '</td>' +
-                '<td style="padding:11px 12px;color:#cbd5e1;">' + u.unidade + '</td>' +
-                '<td style="padding:11px 12px;text-align:center;">' + (badgePerfil[u.perfil] || u.perfil) + '</td>' +
-                '<td style="padding:11px 12px;text-align:center;">' + statusBadge + '</td>' +
-                '<td style="padding:11px 12px;text-align:center;color:#94a3b8;font-family:monospace;font-size:11px;">' + (u.ultimoAcesso || 'Recente') + '</td>' +
-                '<td style="padding:11px 12px;text-align:center;white-space:nowrap;">' +
-                    '<button type="button" class="btn btn-secondary" onclick="window.abrirModalEditarUsuario(\'' + u.id + '\')" style="padding:3px 8px;font-size:11px;margin-right:6px;" title="Editar Dados e Perfil">✏️ Editar</button>' +
-                    '<button type="button" class="btn btn-secondary" onclick="window.alternarLoginUsuarioSimulado(\'' + u.id + '\')" style="padding:3px 8px;font-size:11px;margin-right:6px;color:var(--sagti-accent);" title="Alternar Sessão para este Colaborador">👤 Alternar</button>' +
-                    '<button type="button" class="btn btn-secondary" onclick="window.excluirUsuarioCockpit(\'' + u.id + '\')" style="padding:3px 8px;font-size:11px;color:#f87171;" title="Excluir Usuário">🗑️</button>' +
-                '</td>' +
-            '</tr>';
-        }).join('');
-    };
-
-    window.abrirModalNovoUsuario = function() {
-        var modal = document.getElementById('modal-crud-usuario');
-        var form = document.getElementById('form-crud-usuario');
-        if (!modal || !form) return;
-        form.reset();
-        document.getElementById('usuario-id-hidden').value = '';
-        document.getElementById('modal-usuario-titulo').innerHTML = '👤 Cadastrar Novo Usuário do Cockpit';
-        document.getElementById('usuario-senha-input').value = 'spaguas2026';
-        modal.style.display = 'flex';
-        document.getElementById('usuario-nome-input').focus();
-    };
-
-    window.abrirModalEditarUsuario = function(idUsr) {
-        var modal = document.getElementById('modal-crud-usuario');
-        if (!modal) return;
-        var lista = window.obterUsuariosCadastrados();
-        var u = lista.find(function(item) { return item.id === idUsr; });
-        if (!u) return;
-
-        document.getElementById('usuario-id-hidden').value = u.id;
-        document.getElementById('usuario-nome-input').value = u.nome;
-        document.getElementById('usuario-email-input').value = u.email;
-        document.getElementById('usuario-diretoria-input').value = u.unidade;
-        document.getElementById('usuario-perfil-input').value = u.perfil;
-        document.getElementById('usuario-status-input').value = u.status;
-        document.getElementById('usuario-senha-input').value = u.senha || 'spaguas2026';
-        document.getElementById('modal-usuario-titulo').innerHTML = '✏️ Editar Usuário & Atribuição de Perfil';
-        modal.style.display = 'flex';
-    };
-
-    window.fecharModalUsuario = function() {
-        var modal = document.getElementById('modal-crud-usuario');
-        if (modal) modal.style.display = 'none';
-    };
-
-    window.salvarUsuarioForm = function(ev) {
-        if (ev && ev.preventDefault) ev.preventDefault();
-        var id = document.getElementById('usuario-id-hidden').value;
-        var nome = document.getElementById('usuario-nome-input').value.trim();
-        var email = document.getElementById('usuario-email-input').value.trim();
-        var unidade = document.getElementById('usuario-diretoria-input').value;
-        var perfil = document.getElementById('usuario-perfil-input').value;
-        var status = document.getElementById('usuario-status-input').value;
-        var senha = (document.getElementById('usuario-senha-input').value || '').trim() || 'spaguas2026';
-
-        if (!nome || !email) {
-            alert('Por favor, informe o nome e o e-mail do colaborador.');
-            return;
-        }
-
-        var lista = window.obterUsuariosCadastrados();
-        if (id) {
-            var idx = lista.findIndex(function(u) { return u.id === id; });
-            if (idx !== -1) {
-                lista[idx].nome = nome;
-                lista[idx].email = email;
-                lista[idx].unidade = unidade;
-                lista[idx].perfil = perfil;
-                lista[idx].status = status;
-                lista[idx].senha = senha;
-            }
-        } else {
-            var novo = {
-                id: 'usr_' + Date.now(),
-                nome: nome,
-                email: email,
-                senha: senha,
-                unidade: unidade,
-                perfil: perfil,
-                status: status,
-                ultimoAcesso: 'Nunca acessou'
-            };
-            lista.push(novo);
-        }
-
-        try { localStorage.setItem('sagti_usuarios_cockpit_v11', JSON.stringify(lista)); } catch(e) {}
-        window.fecharModalUsuario();
-        window.renderizarTabelaUsuarios();
-        alert('✅ Usuário "' + nome + '" salvo com sucesso com perfil atrelado: ' + perfil + '!');
-    };
-
-    window.excluirUsuarioCockpit = function(idUsr) {
-        var lista = window.obterUsuariosCadastrados();
-        var u = lista.find(function(item) { return item.id === idUsr; });
-        if (!u) return;
-
-        if (u.perfil === 'Super-Admin' && lista.filter(function(x) { return x.perfil === 'Super-Admin'; }).length <= 1) {
-            alert('Atenção: Não é permitido excluir o único Super-Admin do sistema!');
-            return;
-        }
-
-        if (confirm('Deseja realmente excluir o usuário "' + u.nome + '" (' + u.email + ')?')) {
-            lista = lista.filter(function(item) { return item.id !== idUsr; });
-            try { localStorage.setItem('sagti_usuarios_cockpit_v11', JSON.stringify(lista)); } catch(e) {}
-            window.renderizarTabelaUsuarios();
-        }
-    };
-
-    window.restaurarUsuariosPadrao = function() {
-        if (confirm('Deseja restaurar a lista padrão de colaboradores da SA-GTI?')) {
-            var padrao = window.USUARIOS_PADRAO_COCKPIT.slice();
-            try { localStorage.setItem('sagti_usuarios_cockpit_v11', JSON.stringify(padrao)); } catch(e) {}
-            window.renderizarTabelaUsuarios();
-        }
-    };
-
-    // Alternar Sessão Ativa / Simulação de Colaborador
-    window.alternarLoginUsuarioSimulado = function(idUsr) {
-        var lista = window.obterUsuariosCadastrados();
-        var u = lista.find(function(item) { return item.id === idUsr; });
-        if (!u) return;
-        window.aplicarSessaoUsuario(u);
-        alert('👤 Sessão comutada para: ' + u.nome + ' (' + u.perfil + '). Permissões RBAC aplicadas!');
-    };
-
-
-    // =========================================================================
-    // GERENCIAMENTO DINÂMICO DE MÚLTIPLOS PERFIS POR USUÁRIO (RBAC)
-    // =========================================================================
-    window.trocarPerfilAtivoUsuarioMultiplo = function(novoPerfil) {
-        if (!novoPerfil) return;
-
-        window.perfilAtivo = novoPerfil;
-        try { localStorage.setItem('sagti_perfil_ativo', novoPerfil); } catch(e) {}
-
-        var u = null;
-        try { u = JSON.parse(localStorage.getItem('sagti_usuario_sessao_atual') || 'null'); } catch(e) {}
-        if (u) {
-            u.perfilAtivo = novoPerfil;
-            u.perfil = novoPerfil;
-            try { localStorage.setItem('sagti_usuario_sessao_atual', JSON.stringify(u)); } catch(e) {}
-        }
-
-        if (typeof window.aplicarPermissoesPerfil === 'function') {
-            window.aplicarPermissoesPerfil(novoPerfil);
-        }
-
-        var icones = {
-            'Super-Admin': '👑',
-            'Gestor': '👔',
-            'Analista': '💻',
-            'Demandante': '🏛️'
-        };
-        var elIco = document.getElementById('sidebar-user-role-icon');
-        var elTxt = document.getElementById('sidebar-user-role-text');
-        var elRole = document.getElementById('sidebar-user-role');
-        if (elIco) elIco.innerText = icones[novoPerfil] || '👤';
-        if (elTxt) elTxt.innerText = novoPerfil;
-        if (elRole && !elTxt) {
-            elRole.innerHTML = '<span>' + (icones[novoPerfil] || '👤') + '</span> ' + novoPerfil;
-        }
-
-        if (typeof window.renderizarMeusProcessosMesa === 'function') {
-            window.renderizarMeusProcessosMesa();
-        }
-
-        var divToast = document.createElement('div');
-        divToast.style.cssText = 'position:fixed;bottom:24px;left:24px;background:var(--sagti-surface);border:1px solid #38bdf8;border-left:4px solid #0ea5e9;border-radius:8px;padding:12px 18px;color:var(--sagti-text);font-size:12.5px;font-weight:700;z-index:999999;box-shadow:0 8px 24px rgba(0,0,0,0.6);display:flex;align-items:center;gap:8px;animation:fadeIn 0.2s ease-in-out;';
-        divToast.innerHTML = '<span>' + (icones[novoPerfil] || '🎭') + '</span> Perfil comutado para <strong>' + novoPerfil + '</strong>. Permissões RBAC atualizadas!';
-        document.body.appendChild(divToast);
-        setTimeout(function() { divToast.remove(); }, 3500);
-    };
-
-    window.popularSeletorPerfisHabilitados = function(u) {
-        var sel = document.getElementById('select-perfil-ativo');
-        if (!sel) return;
-
-        var perfisHabilitados = (u && Array.isArray(u.perfisHabilitados) && u.perfisHabilitados.length > 0)
-            ? u.perfisHabilitados
-            : ((u && (u.perfil === 'Super-Admin' || (u.email && u.email.indexOf('luiz.seixeiro') !== -1)))
-                ? ['Super-Admin', 'Gestor', 'Analista', 'Demandante']
-                : (u ? [u.perfil] : ['Super-Admin']));
-
-        var perfilAtual = (u && (u.perfilAtivo || u.perfil)) || window.perfilAtivo || 'Super-Admin';
-        if (perfisHabilitados.indexOf(perfilAtual) === -1) {
-            perfisHabilitados.unshift(perfilAtual);
-        }
-
-        var icones = {
-            'Super-Admin': '👑 Super-Admin',
-            'Gestor': '👔 Gestor (SA-GTI)',
-            'Analista': '💻 Analista de TIC',
-            'Demandante': '🏛️ Demandante (Bacias)'
-        };
-
-        sel.innerHTML = perfisHabilitados.map(function(p) {
-            var label = icones[p] || ('👤 ' + p);
-            var isSel = (p === perfilAtual) ? ' selected' : '';
-            return '<option value="' + p + '"' + isSel + '>' + label + '</option>';
-        }).join('');
-
-        var elIco = document.getElementById('sidebar-user-role-icon');
-        var elTxt = document.getElementById('sidebar-user-role-text');
-        var elRole = document.getElementById('sidebar-user-role');
-        if (elIco) elIco.innerText = icones[perfilAtual] ? icones[perfilAtual].split(' ')[0] : '👑';
-        if (elTxt) elTxt.innerText = perfilAtual;
-        if (elRole && !elTxt) {
-            elRole.innerHTML = '<span>' + (icones[perfilAtual] ? icones[perfilAtual].split(' ')[0] : '👑') + '</span> ' + perfilAtual;
-        }
-    };
-
-    window.aplicarSessaoUsuario = function(u) {
-        if (!u) return;
-        var elNome = document.getElementById('sidebar-user-name');
-        var elRole = document.getElementById('sidebar-user-role');
-        var elAvatar = document.getElementById('sidebar-user-avatar');
-
-        if (elNome) elNome.innerText = u.nome;
-        if (elRole) {
-            var icon = u.perfil === 'Super-Admin' ? '👑' : (u.perfil === 'Gestor' ? '👔' : (u.perfil === 'Analista' ? '💻' : '🏛️'));
-            elRole.innerHTML = '<span>' + icon + '</span> ' + u.perfil;
-        }
-        if (elAvatar) {
-            elAvatar.innerText = u.nome.split(' ').map(function(n) { return n[0]; }).slice(0, 2).join('').toUpperCase();
-        }
-
-        window.perfilAtivo = u.perfil;
-        try {
-            localStorage.setItem('sagti_usuario_sessao_atual', JSON.stringify(u));
-            localStorage.setItem('sagti_autenticado', 'true');
-        } catch(e) {}
-
-        if (typeof window.carregarPermissoesPerfil === 'function') {
-            window.carregarPermissoesPerfil(u.perfil);
-        }
-        if (typeof window.popularSeletorPerfisHabilitados === 'function') {
-            window.popularSeletorPerfisHabilitados(u);
-        }
-    };
-
-    // 6. TELA E FLUXO DE LOGIN COM CREDENCIAIS REAIS
-    window.popularSelectLogin = function() {
-        var sel = document.getElementById('login-usuario-select');
-        if (!sel) return;
-        var usuarios = window.obterUsuariosCadastrados();
-        sel.innerHTML = usuarios.map(function(u) {
-            var ehLuiz = (u.email && u.email.indexOf('luiz.seixeiro') !== -1);
-            return '<option value="' + u.email + '" data-nome="' + u.nome + '"' + (ehLuiz ? ' selected' : '') + '>' +
-                u.nome + ' (' + u.perfil + ' &bull; ' + (u.unidade || 'SA-GTI') + ')</option>';
-        }).join('');
-        window.preencherEmailLogin();
-    };
-
-    window.preencherEmailLogin = function() {
-        var sel = document.getElementById('login-usuario-select');
-        var inpEmail = document.getElementById('login-email-input');
-        if (!sel || !inpEmail) return;
-        if (sel.value && sel.value !== 'outro') {
-            inpEmail.value = sel.value;
-        } else if (sel.value === 'outro') {
-            inpEmail.value = '';
-            inpEmail.focus();
-        }
-    };
-
-    window.toggleMostrarSenhaLogin = function() {
-        var inp = document.getElementById('login-senha-input');
-        if (!inp) return;
-        inp.type = (inp.type === 'password') ? 'text' : 'password';
-    };
-
-    window.abrirTelaLogin = function(mensagemErro) {
-        var overlay = document.getElementById('tela-login-overlay');
-        if (!overlay) return;
-        window.popularSelectLogin();
-
-        var alerta = document.getElementById('login-alerta-erro');
-        if (alerta) {
-            if (mensagemErro) {
-                alerta.innerText = mensagemErro;
-                alerta.style.display = 'block';
-            } else {
-                alerta.style.display = 'none';
-            }
-        }
-
-        var inpSenha = document.getElementById('login-senha-input');
-        if (inpSenha) inpSenha.value = 'spaguas2026';
-
-        // Tenta pré-selecionar o último usuário salvo ou o Super-Admin Luiz
-        var ultimo = null;
-        try { ultimo = JSON.parse(localStorage.getItem('sagti_usuario_sessao_atual') || 'null'); } catch(e) {}
-        var emailPadrao = (ultimo && ultimo.email) ? ultimo.email : 'luiz.seixeiro@spaguas.sp.gov.br';
-
-        var sel = document.getElementById('login-usuario-select');
-        if (sel) {
-            sel.value = emailPadrao;
-            window.preencherEmailLogin();
-        }
-
-        overlay.style.display = 'flex';
-        if (inpSenha) inpSenha.focus();
-    };
-
-    window.fecharTelaLogin = function() {
-        var overlay = document.getElementById('tela-login-overlay');
-        if (overlay) overlay.style.display = 'none';
-    };
-
-    
-    window.loginRapidoLuiz = function() {
-        var sel = document.getElementById('login-usuario-select');
-        var inpEmail = document.getElementById('login-email-input');
-        var inpSenha = document.getElementById('login-senha-input');
-        if (sel) sel.value = 'luiz.seixeiro@spaguas.sp.gov.br';
-        if (inpEmail) inpEmail.value = 'luiz.seixeiro@spaguas.sp.gov.br';
-        if (inpSenha) inpSenha.value = 'spaguas2026';
-        window.submeterLoginCockpit();
-    };
-
-    window.submeterLoginCockpit = function(ev) {
-        if (ev && ev.preventDefault) ev.preventDefault();
-        var email = (document.getElementById('login-email-input') ? document.getElementById('login-email-input').value : '').toLowerCase().trim();
-        var senha = (document.getElementById('login-senha-input') ? document.getElementById('login-senha-input').value : '').trim();
-
-        var alerta = document.getElementById('login-alerta-erro');
-
-        if (!email) {
-            var selEl = document.getElementById('login-usuario-select');
-            email = (selEl ? selEl.value : '') || 'luiz.seixeiro@spaguas.sp.gov.br';
-        }
-        if (!senha) {
-            senha = 'spaguas2026';
-        }
-
-        var usuarios = window.obterUsuariosCadastrados();
-        var usr = usuarios.find(function(u) {
-            return u.email.toLowerCase() === email;
-        });
-
-        // Autenticação: Aceita a senha cadastrada no objeto ou a senha padrão oficial 'spaguas2026' ou 'admin123'
-        var senhaValida = false;
-        if (usr) {
-            var senhaEsperada = usr.senha || 'spaguas2026';
-            if (senha === senhaEsperada || senha === 'spaguas2026' || senha === 'admin123') {
-                senhaValida = true;
-            }
-        } else if (email.indexOf('@spaguas.sp.gov.br') !== -1 && (senha === 'spaguas2026' || senha === 'admin123')) {
-            // Cria usuário dinâmico para colaborador SP-Águas
-            usr = {
-                id: 'usr_' + Date.now(),
-                nome: email.split('@')[0].replace('.', ' ').toUpperCase(),
-                email: email,
-                unidade: 'SA-GTI',
-                perfil: 'Analista',
-                status: 'Ativo',
-                senha: senha
-            };
-            usuarios.push(usr);
-            try { localStorage.setItem('sagti_usuarios_cockpit_v11', JSON.stringify(usuarios)); } catch(e) {}
-            senhaValida = true;
-        }
-
-        if (!senhaValida || !usr) {
-            if (alerta) {
-                alerta.innerText = '❌ Credenciais inválidas! Verifique o e-mail e a senha informados.';
-                alerta.style.display = 'block';
-            }
-            var inpSenha = document.getElementById('login-senha-input');
-            if (inpSenha) {
-                inpSenha.value = '';
-                inpSenha.focus();
-            }
-            return;
-        }
-
-        if (usr.status === 'Inativo') {
-            if (alerta) {
-                alerta.innerText = '⛔ Conta inativa. Entre em contato com a governança da SA-GTI.';
-                alerta.style.display = 'block';
-            }
-            return;
-        }
-
-        // Sucesso na autenticação
-        usr.ultimoAcesso = new Date().toLocaleDateString('pt-BR') + ' ' + new Date().toLocaleTimeString('pt-BR').slice(0, 5);
-        try { localStorage.setItem('sagti_usuarios_cockpit_v11', JSON.stringify(usuarios)); } catch(e) {}
-
-        window.aplicarSessaoUsuario(usr);
-        window.fecharTelaLogin();
-    };
-
-    // 7. ROTINA OFICIAL DE LOGOUT DO COCKPIT
-    window.executarLogoutSistema = function() {
-        if (confirm('Deseja realmente encerrar sua sessão e sair do Cockpit SP-Águas (SA-GTI)?')) {
-            try {
-                localStorage.setItem('sagti_autenticado', 'false');
-                sessionStorage.clear();
-            } catch(e) {}
-
-            var modalExistente = document.getElementById('modal-logout-confirm');
-            if (modalExistente) modalExistente.remove();
-
-            var modalLogout = document.createElement('div');
-            modalLogout.id = 'modal-logout-confirm';
-            modalLogout.style.cssText = 'position:fixed;inset:0;background:rgba(9,13,22,0.96);z-index:999999;display:flex;align-items:center;justify-content:center;padding:20px;';
-            modalLogout.innerHTML = '<div style="background:#0b0f19;border:1px solid rgba(56,189,248,0.3);border-top:4px solid #ef4444;border-radius:18px;max-width:440px;width:100%;padding:28px;text-align:center;box-shadow:0 24px 60px rgba(0,0,0,0.9);color:#ffffff;">' +
-                '<div style="font-size:42px;margin-bottom:12px;">🔒</div>' +
-                '<h3 style="margin:0 0 8px 0;font-size:18px;color:var(--sagti-text);">Sessão Encerrada com Sucesso</h3>' +
-                '<p style="font-size:12.5px;color:#94a3b8;line-height:1.5;margin-bottom:20px;">Você foi desconectado do Cockpit GTI de forma segura. Todas as credenciais locais e buffers da sessão foram liberados.</p>' +
-                '<button type="button" class="btn btn-primary" onclick="document.getElementById(\'modal-logout-confirm\').remove(); window.abrirTelaLogin();" style="padding:10px 24px;font-size:13px;font-weight:700;background:var(--sagti-surface-alt);border-radius:8px;cursor:pointer;">🔑 Conectar Novamente</button>' +
-            '</div>';
-            document.body.appendChild(modalLogout);
-        }
-    };
-
-    window.verificarAutenticacaoCockpit = function() {
-        var authStatus = localStorage.getItem('sagti_autenticado');
-        if (authStatus === 'false') {
-            window.abrirTelaLogin();
-            return;
-        }
-
-        // Se for a primeira inicialização ou já autenticado, aplica o usuário ativo
-        var uSalvo = null;
-        try { uSalvo = JSON.parse(localStorage.getItem('sagti_usuario_sessao_atual') || 'null'); } catch(e) {}
-        if (!uSalvo) {
-            uSalvo = window.USUARIOS_PADRAO_COCKPIT[0]; // Luiz Seixeiro
-            window.aplicarSessaoUsuario(uSalvo);
-        } else {
-            window.aplicarSessaoUsuario(uSalvo);
-        }
-    };
+    // Administração de usuários e RBAC exigem integração server-side com um IdP institucional.
+    window.USUARIOS_PADRAO_COCKPIT = [];
+    window.obterUsuariosCadastrados = function() { return []; };
+    window.renderizarTabelaUsuarios = function() {};
+    window.carregarPermissoes = function() { return false; };
+    window.aplicarPermissoesPerfil = function() { return false; };
+    window.atualizarCadernosTematicosAutomatico = function() { return 0; };
 
     // =========================================================================
     // ROTINA DE ATUALIZAÇÃO AUTOMÁTICA DOS CADERNOS TEMÁTICOS VIA MOTORES DE BUSCA
     // =========================================================================
-    window.atualizarCadernosTematicosAutomatico = function(novosCriterios) {
-        if (!window.cadernos || !Array.isArray(window.cadernos)) {
-            if (typeof window.carregarCadernos === 'function') window.carregarCadernos();
-        }
-        var listaCadernos = window.cadernos || [];
-        var atualizacoesFeitas = 0;
-        var dataHoje = new Date().toLocaleDateString('pt-BR');
-
-        // Critérios padrão detectados pelos motores se não forem passados
-        var criterios = novosCriterios || [
-            {
-                cadernoId: 'cad_01_lei14133',
-                criterio: 'Decreto Estadual nº 67.689/2023 & Acórdão TCU - Salvaguarda da Súmula 269: veda remuneração de TIC exclusivamente por homem-hora, impondo medição vinculada a resultados (UST/PF) e retenção cautelar por glosa de IMR.',
-                origem: 'Diário Oficial do Estado (DOE-SP) & Tribunal de Contas da União'
-            },
-            {
-                cadernoId: 'cad_02_regimento',
-                criterio: 'Deliberação SP-Águas nº 21/2026 (Art. 42 a 58): Atribuição regimental exclusiva da SA-GTI para governança do PDTIC 2027-2030, gestão do catálogo de APIs e fiscalização técnica dos contratos de nuvem e links SD-WAN.',
-                origem: 'Portal Institucional SP-Águas & DOE-SP'
-            },
-            {
-                cadernoId: 'cad_03_governanca',
-                criterio: 'Plano de Contratações Anual (PCA 2027): Integração obrigatória de 31 iniciativas prioritárias de TIC ao barramento PNCP/SIASG com código UASG 262101.',
-                origem: 'Portal Nacional de Contratações Públicas (PNCP)'
-            }
-        ];
-
-        criterios.forEach(function(item) {
-            var cad = listaCadernos.find(function(c) { return c.id === item.cadernoId; });
-            if (cad) {
-                var notaAtualizacao = '\n\n> 🔔 **ATUALIZAÇÃO AUTOMÁTICA PELO MOTOR DE BUSCA (Sondagem ' + dataHoje + '):**\n' +
-                    '> **Origem:** ' + item.origem + '\n' +
-                    '> **Novo Critério Homologado:** ' + item.criterio;
-
-                if ((cad.conteudo || '').indexOf(item.criterio.slice(0, 30)) === -1) {
-                    cad.conteudo = (cad.conteudo || '') + notaAtualizacao;
-                    cad.ultimaAtualizacao = dataHoje;
-                    cad.versao = (cad.versao || '1.0') + ' (Atualizado via Motor)';
-                    atualizacoesFeitas++;
-                }
-            }
-        });
-
-        if (atualizacoesFeitas > 0) {
-            try {
-                localStorage.setItem('sagti_cadernos_v4_5', JSON.stringify(listaCadernos));
-                localStorage.setItem('sagti_cadernos_v4', JSON.stringify(listaCadernos));
-            } catch(e) {}
-
-            if (typeof window.renderizarListaCadernos === 'function') window.renderizarListaCadernos();
-            if (typeof window.renderizarCadernosHubIA === 'function') window.renderizarCadernosHubIA();
-
-            console.log('✅ ' + atualizacoesFeitas + ' Cadernos Temáticos atualizados automaticamente com novos critérios normativos!');
-        }
-        return atualizacoesFeitas;
-    };
+    window.atualizarCadernosTematicosAutomatico = function() { return 0; };
 
     function init() {
         window.atualizarContadoresCustodiaMesa();
@@ -3639,8 +3125,6 @@ window.renderizarTabelaMesa = function() {
     if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init);
     else init();
     
-    // Inicializa o Agendador Horário de Sincronização do OpenProject
-    try { window.iniciarAgendadorSincronizacaoHorariaOpenProject(); } catch(e) { console.error(e); }
     window.addEventListener('load', init);
 })();
 
@@ -3649,44 +3133,7 @@ window.renderizarTabelaMesa = function() {
 // MÓDULO: DRIVE DE CONTEXTO CORPORATIVO — REPOSITÓRIO PDF PARA POOL DE IAS
 // =========================================================================
 (function() {
-    window.PDFS_PADRAO_DRIVE_SAGTI = [
-        {
-            id: 'doc_dec_68220',
-            nome: 'Decreto_Estadual_68220_2023_TR_IMR_TIC.pdf',
-            categoria: 'Normativos',
-            tamanhoBytes: 2202009,
-            tamanhoFormatado: '2.1 MB',
-            dataUpload: '09/11/2026',
-            paginas: 24,
-            resumo: 'Regulamenta o Termo de Referência (TR), cálculo de IMR, faixas de glosa de 2% a 10% e vedações de contratação sem entregáveis conforme Lei 14.133/2021 no Estado de São Paulo.',
-            origem: 'CANONICO_HOMOLOGADO',
-            status: 'INDEXADO_RAG'
-        },
-        {
-            id: 'doc_pdtic_2027_2030',
-            nome: 'PDTIC_2027_2030_Metas_Diretrizes_SAGTI.pdf',
-            categoria: 'Governança',
-            tamanhoBytes: 3565158,
-            tamanhoFormatado: '3.4 MB',
-            dataUpload: '09/11/2026',
-            paginas: 48,
-            resumo: 'Plano Diretor de TIC da SP-Águas (PDTIC 2027-2030): Marcos de modernização, migração cloud, FinOps, IA e interoperabilidade com ANA e DAEE.',
-            origem: 'CANONICO_HOMOLOGADO',
-            status: 'INDEXADO_RAG'
-        },
-        {
-            id: 'doc_deliberacao_21',
-            nome: 'Deliberacao_21_Regimento_Interno_SPAguas.pdf',
-            categoria: 'Normativos',
-            tamanhoBytes: 1887436,
-            tamanhoFormatado: '1.8 MB',
-            dataUpload: '09/11/2026',
-            paginas: 18,
-            resumo: 'Regimento Interno da SP-Águas: Atribuições e competências regimentais da Subsecretaria de Tecnologia da Informação (SA-GTI), segregação de funções e governança.',
-            origem: 'CANONICO_HOMOLOGADO',
-            status: 'INDEXADO_RAG'
-        }
-    ];
+    window.PDFS_PADRAO_DRIVE_SAGTI = [];
 
     window.documentosDrivePdf = [];
 
@@ -3699,7 +3146,11 @@ window.renderizarTabelaMesa = function() {
                 if (salvo) {
                     var parsed = JSON.parse(salvo);
                     if (Array.isArray(parsed) && parsed.length > 0) {
-                        window.documentosDrivePdf = parsed;
+                        var idsDemonstrativos = ['doc_dec_68220', 'doc_pdtic_2027_2030', 'doc_deliberacao_21'];
+                        window.documentosDrivePdf = parsed
+                            .filter(function(doc) { return doc && idsDemonstrativos.indexOf(doc.id) === -1; })
+                            .map(function(doc) { return Object.assign({}, doc, { status: 'metadata_only' }); });
+                        localStorage.setItem(CHAVE_STORAGE, JSON.stringify(window.documentosDrivePdf));
                     } else {
                         carregar = true;
                     }
@@ -3767,10 +3218,10 @@ window.renderizarTabelaMesa = function() {
         });
 
         if (filtrados.length === 0) {
-            container.innerHTML = '<div style="grid-column: 1 / -1; background: var(--sagti-surface); border: 1px dashed rgba(255,255,255,0.15); border-radius: 10px; padding: 32px; text-align: center; color: #94a3b8;">' +
+            container.innerHTML = '<div style="grid-column: 1 / -1; background: var(--sagti-surface-alt); border: 1px dashed rgba(255,255,255,0.15); border-radius: 10px; padding: 32px; text-align: center; color: #94a3b8;">' +
                 '<div style="font-size: 28px; margin-bottom: 6px;">📂</div>' +
                 '<strong style="color: var(--sagti-text); font-size: 13.5px;">Nenhum documento PDF localizado com os filtros atuais.</strong>' +
-                '<div style="font-size: 12px; margin-top: 4px;">Clique no botão <strong>➕ Adicionar Documento PDF</strong> acima para incluir novos arquivos.</div>' +
+                '<div style="font-size: 12px; margin-top: 4px;">A ingestão de arquivos não está disponível nesta versão.</div>' +
             '</div>';
             return;
         }
@@ -3782,7 +3233,7 @@ window.renderizarTabelaMesa = function() {
             else if (doc.categoria === 'Contratação') corBadge = '#10b981';
             else if (doc.categoria === 'Upload') corBadge = '#0369a1';
 
-            return '<div style="background: var(--sagti-surface); border: 1px solid rgba(255,255,255,0.1); border-radius: 10px; padding: 16px; display: flex; flex-direction: column; justify-content: space-between; border-left: 4px solid #0369a1; box-shadow: 0 4px 14px rgba(0,0,0,0.25); transition: transform 0.15s ease;">' +
+            return '<div style="background: var(--sagti-surface-alt); border: 1px solid rgba(255,255,255,0.1); border-radius: 10px; padding: 16px; display: flex; flex-direction: column; justify-content: space-between; border-left: 4px solid #0369a1; box-shadow: 0 4px 14px rgba(0,0,0,0.25); transition: transform 0.15s ease;">' +
                 '<div>' +
                     '<div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 8px;">' +
                         '<span style="background: rgba(236,72,153,0.15); color: #f472b6; border: 1px solid rgba(236,72,153,0.3); padding: 2px 8px; border-radius: 6px; font-size: 10px; font-weight: 800;">📄 PDF</span>' +
@@ -3868,53 +3319,9 @@ window.renderizarTabelaMesa = function() {
         window.adicionarArquivosPdfAoDrive(dt.files);
     };
 
-    window.adicionarArquivosPdfAoDrive = function(fileList) {
-        var adicionados = 0;
-        var rejeitados = [];
-
-        for (var i = 0; i < fileList.length; i++) {
-            var f = fileList[i];
-            if (!window.validarArquivoEstritamentePdf(f)) {
-                rejeitados.push(f.name);
-                continue;
-            }
-
-            var idUnico = 'pdf_up_' + Date.now() + '_' + Math.random().toString(36).substr(2, 6);
-            var tamanhoBytes = f.size || 0;
-            var tamanhoMb = (tamanhoBytes / (1024 * 1024)).toFixed(2) + ' MB';
-            if (tamanhoBytes < 1024 * 1024) {
-                tamanhoMb = (tamanhoBytes / 1024).toFixed(1) + ' KB';
-            }
-
-            var novoDoc = {
-                id: idUnico,
-                nome: f.name,
-                categoria: 'Upload',
-                tamanhoBytes: tamanhoBytes,
-                tamanhoFormatado: tamanhoMb,
-                dataUpload: new Date().toLocaleDateString('pt-BR'),
-                paginas: Math.max(1, Math.round(tamanhoBytes / 85000)), // Estimativa inteligente de páginas
-                resumo: 'Documento homologado pelo usuário e carregado no Drive para enriquecimento de contexto RAG das IAs (IA 1 & IA 2).',
-                origem: 'UPLOAD_USUARIO',
-                status: 'INDEXADO_RAG'
-            };
-
-            window.documentosDrivePdf.unshift(novoDoc);
-            adicionados++;
-        }
-
-        if (adicionados > 0) {
-            window.salvarDocumentosDrivePdf();
-            if (typeof mostrarNotificacao === 'function') {
-                mostrarNotificacao('Drive de Contexto IA', adicionados + ' documento(s) PDF adicionado(s) com sucesso ao contexto das IAs!', 'success');
-            } else {
-                alert('✅ ' + adicionados + ' arquivo(s) PDF adicionado(s) ao Drive de Contexto e indexado(s) para o Pool de IAs!');
-            }
-        }
-
-        if (rejeitados.length > 0) {
-            alert('⚠️ AVISO DE RESTRIÇÃO DE FORMATO:\n\nOs seguintes arquivos foram REJEITADOS porque não estão no formato PDF:\n• ' + rejeitados.join('\n• ') + '\n\nO Drive de Contexto das IAs aceita estritamente arquivos com extensão .PDF.');
-        }
+    window.adicionarArquivosPdfAoDrive = function() {
+        alert('A ingestão de PDFs não está disponível: o conteúdo não é enviado nem indexado no backend.');
+        return false;
     };
 
     window.excluirDocumentoDrivePdf = function(id) {
@@ -3940,7 +3347,7 @@ window.renderizarTabelaMesa = function() {
         if (!modal) {
             modal = document.createElement('div');
             modal.id = 'modal-visualizador-drive-pdf';
-            modal.style.cssText = 'position:fixed;inset:0;background:var(--sagti-surface);z-index:99999;display:flex;align-items:flex-start;justify-content:center;padding:24px 16px;overflow-y:auto;box-sizing:border-box;';
+            modal.style.cssText = 'position:fixed;inset:0;background:var(--sagti-surface-alt);z-index:99999;display:flex;align-items:flex-start;justify-content:center;padding:24px 16px;overflow-y:auto;box-sizing:border-box;';
             modal.onclick = function(e) {
                 if (e.target === modal) modal.style.display = 'none';
             };
@@ -3967,13 +3374,13 @@ window.renderizarTabelaMesa = function() {
                     '<div style="font-size:11px;color:#6b21a8;font-weight:700;">DATA DE INGESTÃO</div>' +
                     '<div style="font-size:16px;font-weight:800;color:#0284c7;">' + doc.dataUpload + '</div>' +
                 '</div>' +
-                '<div style="background:#f0fdf4;border:1px solid #bbf7d0;border-radius:8px;padding:10px;">' +
-                    '<div style="font-size:11px;color:#166534;font-weight:700;">STATUS NO RAG</div>' +
-                    '<div style="font-size:16px;font-weight:800;color:#15803d;">🟢 Ativo no Pool</div>' +
+                '<div style="background:#fff7ed;border:1px solid #fed7aa;border-radius:8px;padding:10px;">' +
+                        '<div style="font-size:11px;color:#9a3412;font-weight:700;">STATUS DE INGESTÃO</div>' +
+                        '<div style="font-size:14px;font-weight:800;color:#9a3412;">Metadados locais; não indexado</div>' +
                 '</div>' +
             '</div>' +
             '<div style="background:#f8fafc;border:1px solid #e2e8f0;border-radius:8px;padding:14px;margin-bottom:16px;">' +
-                '<strong style="font-size:12px;color:#0f172a;">Extrato de Contexto Ingerido para as IAs:</strong>' +
+                '<strong style="font-size:12px;color:#0f172a;">Metadados informados (não verificados nem indexados):</strong>' +
                 '<p style="font-size:12px;color:#334155;margin:8px 0 0 0;line-height:1.5;">' + window.escapeHtml(doc.resumo) + '</p>' +
             '</div>' +
             '<div style="display:flex;justify-content:space-between;align-items:center;border-top:1px solid #e2e8f0;padding-top:14px;">' +
@@ -3986,59 +3393,23 @@ window.renderizarTabelaMesa = function() {
         '</div>';
     };
 
-    window.baixarDocumentoDrivePdf = function(id) {
-        var doc = (window.documentosDrivePdf || []).find(function(d) { return d.id === id; });
-        if (!doc) return;
-        var blob = new Blob(["%PDF-1.4\n% SP-Aguas SA-GTI Documento Oficial do Drive de Contexto: " + doc.nome + "\n% Tamanho: " + doc.tamanhoFormatado + "\n% " + doc.resumo], { type: "application/pdf" });
-        var url = URL.createObjectURL(blob);
-        var a = document.createElement("a");
-        a.href = url;
-        a.download = doc.nome;
-        document.body.appendChild(a);
-        a.click();
-        document.body.removeChild(a);
-        URL.revokeObjectURL(url);
+    window.baixarDocumentoDrivePdf = function() {
+        alert('O conteúdo do PDF não é armazenado neste sistema e não pode ser baixado.');
+        return false;
     };
 
     window.sincronizarDriveComIas = function() {
-        var total = (window.documentosDrivePdf || []).length;
-        if (typeof definirEstadoMascote === 'function') {
-            definirEstadoMascote('thinking', 'Sincronizando ' + total + ' PDFs no contexto das IAs...');
-            setTimeout(function() {
-                definirEstadoMascote('success', 'Contexto do Drive 100% atualizado!');
-                setTimeout(function() { definirEstadoMascote('idle', 'Vigilante'); }, 2500);
-            }, 900);
-        }
-        if (typeof mostrarNotificacao === 'function') {
-            mostrarNotificacao('Contexto Sincronizado', total + ' documentos PDF indexados com sucesso para IA 1 (Copiloto) e IA 2 (Governança).', 'success');
-        } else {
-            alert('🔄 Sincronização Concluída!\n\nOs ' + total + ' documentos em PDF do Drive foram reindexados e estão ativos no contexto das IAs.');
-        }
+        alert('A indexação RAG server-side ainda não está implementada.');
+        return false;
     };
 
     window.restaurarPdfsPadraoDrive = function() {
-        if (confirm('Deseja restaurar os 3 documentos PDF canônicos da SP-Águas no Drive de Contexto?')) {
-            window.carregarDocumentosDrivePdf(true);
-            if (typeof mostrarNotificacao === 'function') {
-                mostrarNotificacao('Padrões Restaurados', '3 documentos canônicos em PDF restaurados no Drive de Contexto.', 'info');
-            } else {
-                alert('🔁 Padrões restaurados com sucesso!');
-            }
-        }
+        alert('Não há documentos institucionais padrão verificados para restaurar.');
+        return false;
     };
 
     // Função global que fornece o contexto documental do Drive para as IAs
-    window.obterContextoDocumentosDriveIA = function() {
-        var docs = window.documentosDrivePdf || [];
-        if (!docs.length) return '';
-        var linhas = docs.map(function(d, i) {
-            return '• PDF #' + (i + 1) + ' [' + d.categoria + ']: "' + d.nome + '" (' + d.tamanhoFormatado + ') &mdash; Diretrizes: ' + d.resumo;
-        });
-        return '\n\n[DOCUMENTOS EM PDF NO DRIVE DE CONTEXTO HOMOLOGADOS PELO USUÁRIO (RAG LOCAL)]:\n' +
-            'O usuário disponibilizou os seguintes arquivos PDF oficiais no seu Drive para serem considerados como contexto primordial pelas IAs (IA 1 e IA 2):\n' +
-            linhas.join('\n') + '\n' +
-            'Sempre que a pergunta ou demanda envolver estes temas normativos ou contratuais, considere as diretrizes destes documentos como verdade oficial.';
-    };
+    window.obterContextoDocumentosDriveIA = function() { return ''; };
 
     // Inicialização automática ao carregar o documento
     if (document.readyState === 'loading') {
@@ -4089,7 +3460,7 @@ window.executarRevisaoHomologacaoAcervoCompleto = function() {
     if (!modal) {
         modal = document.createElement('div');
         modal.id = 'modal-revisao-acervo-completo';
-        modal.style.cssText = 'position:fixed;inset:0;background:var(--sagti-surface);z-index:99999;display:flex;align-items:flex-start;justify-content:center;padding:24px 16px;overflow-y:auto;box-sizing:border-box;';
+        modal.style.cssText = 'position:fixed;inset:0;background:var(--sagti-surface-alt);z-index:99999;display:flex;align-items:flex-start;justify-content:center;padding:24px 16px;overflow-y:auto;box-sizing:border-box;';
         modal.onclick = function(e) {
             if (e.target === modal) window.fecharModalRevisaoAcervo();
         };
@@ -4154,7 +3525,7 @@ window.executarRevisaoHomologacaoAcervoCompleto = function() {
                     '<span>📡 Streaming do Laudo de Sincronização em Tempo Real:</span>' +
                     '<span id="status-spinner-sync" style="color:#047857;">🟢 Executando...</span>' +
                 '</div>' +
-                '<pre id="terminal-log-acervo" style="background:var(--sagti-surface);color:var(--sagti-accent);border:1px solid rgba(255,255,255,0.1);border-radius:8px;padding:12px;font-family:monospace;font-size:11px;max-height:180px;overflow-y:auto;white-space:pre-wrap;margin:0;line-height:1.45;">Conectando ao log do servidor...</pre>' +
+                '<pre id="terminal-log-acervo" style="background:var(--sagti-surface-alt);color:var(--sagti-accent);border:1px solid rgba(255,255,255,0.1);border-radius:8px;padding:12px;font-family:monospace;font-size:11px;max-height:180px;overflow-y:auto;white-space:pre-wrap;margin:0;line-height:1.45;">Conectando ao log do servidor...</pre>' +
             '</div>' +
         '</div>' +
 
@@ -4162,7 +3533,7 @@ window.executarRevisaoHomologacaoAcervoCompleto = function() {
             '<div>' +
                 '<strong style="font-size:12px;color:#1e293b;">Opção 2: Execução Direta no Terminal (PowerShell)</strong>' +
                 '<div style="font-size:11px;color:#64748b;margin-top:2px;">Execute manualmente no console do Windows para acompanhar cada token em tempo real:</div>' +
-                '<code style="background:var(--sagti-surface);color:var(--sagti-accent);padding:3px 8px;border-radius:4px;font-size:11.5px;display:inline-block;margin-top:4px;">python sincronizar_openproject_backend.py --todos</code>' +
+                '<code style="background:var(--sagti-surface-alt);color:var(--sagti-accent);padding:3px 8px;border-radius:4px;font-size:11.5px;display:inline-block;margin-top:4px;">python sincronizar_openproject_backend.py --todos</code>' +
             '</div>' +
             '<button type="button" onclick="window.copiarComandoTerminalOp()" style="background:#ffffff;color:#0f172a;border:1px solid #cbd5e1;border-radius:6px;padding:7px 14px;font-size:11.5px;font-weight:700;cursor:pointer;">' +
                 '📋 Copiar Comando' +

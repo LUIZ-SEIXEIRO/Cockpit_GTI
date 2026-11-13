@@ -55,11 +55,11 @@
         h += '<p style="margin:6px 0 0 0;font-size:13px;color:#cbd5e1;">Período de Apuração: ' +
              '<strong style="color:var(--sagti-accent);">Competência Novembro/2026</strong> • ' +
              '<strong>500 Pacotes de Trabalho em 29 Projetos Oficiais</strong></p></div>';
-        h += '<div style="background:var(--sagti-surface);border:1px solid rgba(255,255,255,0.1);' +
+        h += '<div style="background:var(--sagti-surface-alt);border:1px solid rgba(255,255,255,0.1);' +
              'border-radius:8px;padding:6px 12px;font-size:11.5px;color:#94a3b8;font-family:monospace;">' +
              'Status: <strong style="color:#4ade80;">100% Homologado (OpenProject v14)</strong></div></div></div>';
 
-        h += '<div style="background:var(--sagti-surface);border:1px solid rgba(255,255,255,0.08);' +
+        h += '<div style="background:var(--sagti-surface-alt);border:1px solid rgba(255,255,255,0.08);' +
              'border-radius:12px;padding:20px;margin-bottom:20px;">';
         h += '<h3 style="margin:0 0 14px 0;font-size:15px;color:var(--sagti-text);font-weight:700;">' +
              '📊 1. Sumário Executivo &amp; Volumetria Consolidada do Portfólio</h3>';
@@ -76,7 +76,7 @@
              'sustentação operacional da autarquia, consolidando <strong>500 pacotes de trabalho</strong> em ' +
              '<strong>29 projetos estratégicos</strong> sob governança da SA-GTI.</p></div>';
 
-        h += '<div style="background:var(--sagti-surface);border:1px solid rgba(255,255,255,0.08);' +
+        h += '<div style="background:var(--sagti-surface-alt);border:1px solid rgba(255,255,255,0.08);' +
              'border-left:4px solid #10b981;border-radius:12px;padding:20px;margin-bottom:20px;">';
         h += '<h3 style="margin:0 0 14px 0;font-size:15px;color:#ffffff;font-weight:700;">' +
              '👤 2. Carteira Tática sob Responsabilidade Nominal Direta (Luiz Antonio Seixeiro — 4 Pacotes)</h3>';
@@ -102,7 +102,7 @@
                      'Entregável / Tarefa', '#86efac', '✔️ Concluído', 'pill-green') +
              '</tbody></table></div>';
 
-        h += '<div style="background:var(--sagti-surface);border:1px solid rgba(255,255,255,0.08);' +
+        h += '<div style="background:var(--sagti-surface-alt);border:1px solid rgba(255,255,255,0.08);' +
              'border-radius:12px;padding:20px;margin-bottom:20px;">';
         h += '<h3 style="margin:0 0 14px 0;font-size:15px;color:var(--sagti-text);font-weight:700;">' +
              '🧭 3. Alinhamento ao PDTIC 2027–2030: Decomposição pelos 5 Eixos Estratégicos (35 Iniciativas)</h3>';
@@ -114,7 +114,7 @@
              cardEixo('EIXO 5', 'Cultura Digital & IA', 'Cockpit GTI, agentes IA multissistêmicos e rituais ágeis.', '5 Iniciativas', '#c084fc') +
              '</div></div>';
 
-        h += '<div style="background:var(--sagti-surface);border:1px solid rgba(255,255,255,0.08);' +
+        h += '<div style="background:var(--sagti-surface-alt);border:1px solid rgba(255,255,255,0.08);' +
              'border-radius:12px;padding:20px;margin-bottom:20px;">';
         h += '<h3 style="margin:0 0 14px 0;font-size:15px;color:var(--sagti-text);font-weight:700;">' +
              '⚡ 4. Tracks Contratuais SA-GTI (97 Pacotes) &amp; Parecer Conclusivo de Governança</h3>';

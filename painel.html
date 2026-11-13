@@ -22,6 +22,14 @@
 <!-- ESTILOS GLASSMORPHISM SAAS DARK MODE (DEFAULT) + AURORA GLOW -->
 <!-- ======================================================== -->
 
+
+
+
+
+
+
+
+    
     <link rel="stylesheet" href="/static/css/base-legado.css">
     <link rel="stylesheet" href="/static/css/tokens.css">
     <link rel="stylesheet" href="/static/css/components.css">
@@ -33,14 +41,14 @@
     <div id="sagti-topbar-inner">
         <div class="sagti-topbar-left">
             <div class="sagti-brand">
-                <strong>SP-Águas · SA-GTI</strong>
-                <span>Cockpit GTI 360°</span>
+                <strong>SP-?guas ? SA-GTI</strong>
+                <span>Cockpit GTI 360?</span>
             </div>
-            <nav class="sagti-top-nav" aria-label="Navegação principal">
+            <nav class="sagti-top-nav" aria-label="Navega??o principal">
                 <button type="button" class="sagti-top-nav-btn active" data-eixo="dashboards" onclick="switchTab('dashboards')">Cockpit</button>
                 <button type="button" class="sagti-top-nav-btn" data-eixo="mesa_trabalho" onclick="switchTab('mesa_trabalho')">Mesa de Trabalho</button>
                 <button type="button" class="sagti-top-nav-btn" data-eixo="daily_warroom" onclick="switchTab('daily_warroom')">War Room</button>
-                <button type="button" class="sagti-top-nav-btn" data-eixo="configuracoes" onclick="switchTab('configuracoes')">Configurações</button>
+                <button type="button" class="sagti-top-nav-btn" data-eixo="configuracoes" onclick="switchTab('configuracoes')">Configura??es</button>
             </nav>
         </div>
         <div class="sagti-topbar-user">
@@ -149,14 +157,9 @@
                         LS
                     </div>
                     <div style="flex: 1; min-width: 0; line-height: 1.3;">
-                        <div id="sidebar-user-name" style="font-size: 12px; font-weight: 700; color: var(--sagti-text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">Luiz A. S. Seixeiro</div>
+                        <div id="sidebar-user-name" style="font-size: 12px; font-weight: 700; color: var(--sagti-text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">Sessão institucional</div>
                         <div style="display: flex; align-items: center; margin-top: 1px;">
-                            <select id="select-perfil-ativo" onchange="window.trocarPerfilAtivoUsuarioMultiplo(this.value)" style="background: transparent; border: none; color: var(--sagti-accent); font-size: 10.5px; font-weight: 600; outline: none; cursor: pointer; padding: 0; max-width: 135px; text-overflow: ellipsis;">
-                                <option value="Super-Admin" selected>👑 Super-Admin</option>
-                                <option value="Gestor">👔 Gestor</option>
-                                <option value="Analista">💻 Analista</option>
-                                <option value="Demandante">🏛️ Demandante</option>
-                            </select>
+                            <span id="select-perfil-ativo" style="color:#94a3b8;font-size:10.5px;">Perfil não atribuído</span>
                         </div>
                     </div>
                 </div>
@@ -171,7 +174,7 @@
                 <select id="select-diretoria-spaguas">
                     <option value="todas" selected>Toda a SP-Águas (Consolidado)</option>
                 </select>
-                <div id="sidebar-user-role"><span id="sidebar-user-role-icon">👑</span> <span id="sidebar-user-role-text">Super-Admin</span></div>
+                <div id="sidebar-user-role"><span id="sidebar-user-role-text">Perfil não atribuído</span></div>
             </div>
         </div>
     </div>
@@ -1304,16 +1307,16 @@
                     </p>
                 </div>
                 <div style="display: flex; gap: 8px; align-items: center; flex-wrap: wrap;">
-                    <button type="button" onclick="window.exportarAtaDailyPDF ? window.exportarAtaDailyPDF() : window.copiarAtaDaily()" style="background: var(--sagti-surface); border: 1px solid rgba(56, 189, 248, 0.4); color: var(--sagti-text); padding: 7px 14px; border-radius: 8px; font-weight: 700; font-size: 12px; cursor: pointer; display: inline-flex; align-items: center; gap: 6px; box-shadow: 0 2px 6px rgba(0,0,0,0.25); transition: background-color 0.2s ease, border-color 0.2s ease, opacity 0.2s ease;" onmouseover="this.style.background='rgba(56,189,248,0.15)';this.style.borderColor='#38bdf8';" onmouseout="this.style.background='rgba(15,23,42,0.85)';this.style.borderColor='rgba(56,189,248,0.4)';">
+                    <button type="button" onclick="window.exportarAtaDailyPDF ? window.exportarAtaDailyPDF() : window.copiarAtaDaily()" style="background: var(--sagti-surface-alt); border: 1px solid rgba(56, 189, 248, 0.4); color: var(--sagti-text); padding: 7px 14px; border-radius: 8px; font-weight: 700; font-size: 12px; cursor: pointer; display: inline-flex; align-items: center; gap: 6px; box-shadow: 0 2px 6px rgba(0,0,0,0.25); transition: background-color 0.2s ease, border-color 0.2s ease, opacity 0.2s ease;" onmouseover="this.style.background='rgba(56,189,248,0.15)';this.style.borderColor='#38bdf8';" onmouseout="this.style.background='rgba(15,23,42,0.85)';this.style.borderColor='rgba(56,189,248,0.4)';">
                         <span style="font-size: 13px;">📄</span> <span>Exportar Ata em PDF A4</span>
                     </button>
-                    <button type="button" onclick="copiarAtaDaily()" style="background: var(--sagti-surface); border: 1px solid rgba(255, 255, 255, 0.15); color: var(--sagti-text); padding: 7px 14px; border-radius: 8px; font-weight: 700; font-size: 12px; cursor: pointer; display: inline-flex; align-items: center; gap: 6px; box-shadow: 0 2px 6px rgba(0,0,0,0.25); transition: background-color 0.2s ease, border-color 0.2s ease, opacity 0.2s ease;" onmouseover="this.style.background='rgba(255,255,255,0.12)';" onmouseout="this.style.background='rgba(15,23,42,0.85)';">
+                    <button type="button" onclick="copiarAtaDaily()" style="background: var(--sagti-surface-alt); border: 1px solid rgba(255, 255, 255, 0.15); color: var(--sagti-text); padding: 7px 14px; border-radius: 8px; font-weight: 700; font-size: 12px; cursor: pointer; display: inline-flex; align-items: center; gap: 6px; box-shadow: 0 2px 6px rgba(0,0,0,0.25); transition: background-color 0.2s ease, border-color 0.2s ease, opacity 0.2s ease;" onmouseover="this.style.background='rgba(255,255,255,0.12)';" onmouseout="this.style.background='rgba(15,23,42,0.85)';">
                         <span style="font-size: 13px;">📋</span> <span>Copiar Resumo</span>
                     </button>
-                    <button type="button" onclick="window.dispararAtaDailyEmail()" style="background: var(--sagti-surface); border: 1px solid rgba(139, 92, 246, 0.4); color: var(--sagti-text); padding: 7px 14px; border-radius: 8px; font-weight: 700; font-size: 12px; cursor: pointer; display: inline-flex; align-items: center; gap: 6px; box-shadow: 0 2px 6px rgba(0,0,0,0.25); transition: background-color 0.2s ease, border-color 0.2s ease, opacity 0.2s ease;" onmouseover="this.style.background='rgba(139,92,246,0.15)';this.style.borderColor='#a78bfa';" onmouseout="this.style.background='rgba(15,23,42,0.85)';this.style.borderColor='rgba(139,92,246,0.4)';">
+                    <button type="button" onclick="window.dispararAtaDailyEmail()" style="background: var(--sagti-surface-alt); border: 1px solid rgba(139, 92, 246, 0.4); color: var(--sagti-text); padding: 7px 14px; border-radius: 8px; font-weight: 700; font-size: 12px; cursor: pointer; display: inline-flex; align-items: center; gap: 6px; box-shadow: 0 2px 6px rgba(0,0,0,0.25); transition: background-color 0.2s ease, border-color 0.2s ease, opacity 0.2s ease;" onmouseover="this.style.background='rgba(139,92,246,0.15)';this.style.borderColor='#a78bfa';" onmouseout="this.style.background='rgba(15,23,42,0.85)';this.style.borderColor='rgba(139,92,246,0.4)';">
                         <span style="font-size: 13px;">📨</span> <span>Disparar Resumo por E-mail</span>
                     </button>
-                    <button type="button" onclick="window.registrarAtaOpenProject()" style="background: var(--sagti-surface); border: 1px solid rgba(16, 185, 129, 0.4); color: var(--sagti-text); padding: 7px 14px; border-radius: 8px; font-weight: 700; font-size: 12px; cursor: pointer; display: inline-flex; align-items: center; gap: 6px; box-shadow: 0 2px 6px rgba(0,0,0,0.25); transition: background-color 0.2s ease, border-color 0.2s ease, opacity 0.2s ease;" onmouseover="this.style.background='rgba(16,185,129,0.15)';this.style.borderColor='#34d399';" onmouseout="this.style.background='rgba(15,23,42,0.85)';this.style.borderColor='rgba(16,185,129,0.4)';">
+                    <button type="button" onclick="window.registrarAtaOpenProject()" style="background: var(--sagti-surface-alt); border: 1px solid rgba(16, 185, 129, 0.4); color: var(--sagti-text); padding: 7px 14px; border-radius: 8px; font-weight: 700; font-size: 12px; cursor: pointer; display: inline-flex; align-items: center; gap: 6px; box-shadow: 0 2px 6px rgba(0,0,0,0.25); transition: background-color 0.2s ease, border-color 0.2s ease, opacity 0.2s ease;" onmouseover="this.style.background='rgba(16,185,129,0.15)';this.style.borderColor='#34d399';" onmouseout="this.style.background='rgba(15,23,42,0.85)';this.style.borderColor='rgba(16,185,129,0.4)';">
                         <span style="font-size: 13px;">🏗️</span> <span>Registrar no OpenProject</span>
                     </button>
                 </div>
@@ -1349,14 +1352,14 @@
 
                     <!-- Seletor Rápido: Puxar Demanda dos 3 Backlogs para a Pauta de Hoje -->
                     <div class="table-card" style="box-shadow: 0 4px 14px rgba(0,0,0,0.15);">
-                        <div class="table-header-bar" style="background: var(--sagti-surface); border-bottom: 1px solid rgba(255,255,255,0.08); padding: 10px 14px;">
+                        <div class="table-header-bar" style="background: var(--sagti-surface-alt); border-bottom: 1px solid rgba(255,255,255,0.08); padding: 10px 14px;">
                             <div class="table-header-title" style="font-size: 12.5px; color: var(--sagti-text); display: flex; align-items: center; gap: 6px;">
                                 📥 <span>Puxar Demandas p/ Pauta</span>
                             </div>
                         </div>
                         <div style="padding: 10px;">
                             <!-- Abas dos 3 Backlogs na Daily -->
-                            <div style="display: flex; gap: 4px; margin-bottom: 8px; background: var(--sagti-surface-alt); padding: 3px; border-radius: 6px; border: 1px solid rgba(255,255,255,0.08); overflow-x: auto;">
+                            <div style="display: flex; gap: 4px; margin-bottom: 8px; background: rgba(2,6,23,0.5); padding: 3px; border-radius: 6px; border: 1px solid rgba(255,255,255,0.08); overflow-x: auto;">
                                 <button type="button" class="btn btn-primary pill-pauta-bkt active" id="btn-pauta-bkt-sei" onclick="window.alternarAbaPautaDaily('sei')" style="padding: 4px 8px; font-size: 10.5px; border-radius: 4px; font-weight: 700; white-space: nowrap;">
                                     📁 SEI (<span id="count-pauta-bkt-sei">179</span>)
                                 </button>
@@ -1432,7 +1435,7 @@
 
                     <!-- PARTICIPANTES DA DAILY & ENVIO AUTOMÁTICO DE RESUMO -->
                     <div class="table-card">
-                        <div class="table-header-bar" style="background: var(--sagti-surface); display: flex; justify-content: space-between; align-items: center; padding: 12px 18px; border-bottom: 1px solid rgba(255,255,255,0.08);">
+                        <div class="table-header-bar" style="background: var(--sagti-surface-alt); display: flex; justify-content: space-between; align-items: center; padding: 12px 18px; border-bottom: 1px solid rgba(255,255,255,0.08);">
                             <div class="table-header-title" style="color: var(--sagti-text); font-size: 13px;">👥 Participantes Presentes no Ritual da Daily</div>
                             <span style="font-size: 11px; color: var(--sagti-accent); font-weight: 600;">Disparo e registro sincronizados nos atalhos superiores ↗</span>
                         </div>
@@ -1613,7 +1616,7 @@
                         </div>
                     </div>
 
-                    <div style="display: flex; gap: 8px; overflow-x: auto; padding: 10px 14px; background: var(--sagti-surface); border-top: 1px solid rgba(255, 255, 255, 0.1); align-items: center;">
+                    <div style="display: flex; gap: 8px; overflow-x: auto; padding: 10px 14px; background: var(--sagti-surface-alt); border-top: 1px solid rgba(255, 255, 255, 0.1); align-items: center;">
                         <span style="font-size: 11.5px; font-weight: 700; color: #94a3b8; white-space: nowrap;">⚡ Ações Rápidas de Governança:</span>
                         <button type="button" class="btn btn-secondary pill-tag" onclick="window.dispararElaboracaoArtefatoDireta('dfd')" style="padding: 5px 14px; font-size: 11.5px; cursor: pointer; border-radius: 8px; background: var(--sagti-surface-alt); border: 1px solid #38bdf8; color: var(--sagti-accent); font-weight: 700; white-space: nowrap; display: inline-flex; align-items: center; gap: 6px; box-shadow: 0 2px 6px rgba(2,132,199,0.25);" title="Elaborar Documento de Formalização de Demanda (DFD)">
                             📄 Elaborar DFD
@@ -1957,8 +1960,8 @@
                 </div>
 
                 <!-- TABELA PRINCIPAL DA CENTRAL RACI -->
-                <div class="table-card" style="background: var(--sagti-surface);  border: 1px solid rgba(255,255,255,0.1); border-radius: 12px; overflow: hidden; box-shadow: 0 8px 24px rgba(0,0,0,0.3); margin-bottom: 24px;">
-                    <div class="table-header-bar" style="display: flex; justify-content: space-between; align-items: center; padding: 12px 18px; background: var(--sagti-surface); border-bottom: 1px solid rgba(255,255,255,0.08); flex-wrap: wrap; gap: 10px;">
+                <div class="table-card" style="background: var(--sagti-surface-alt);  border: 1px solid rgba(255,255,255,0.1); border-radius: 12px; overflow: hidden; box-shadow: 0 8px 24px rgba(0,0,0,0.3); margin-bottom: 24px;">
+                    <div class="table-header-bar" style="display: flex; justify-content: space-between; align-items: center; padding: 12px 18px; background: var(--sagti-surface-alt); border-bottom: 1px solid rgba(255,255,255,0.08); flex-wrap: wrap; gap: 10px;">
                         <div style="display: flex; align-items: center; gap: 8px;">
                             <span style="font-size: 13px; font-weight: 700; color: var(--sagti-text);">Catálogo de Fluxos Decisórios &amp; Matrizes de Governança Nominal</span>
                             <span id="raci-badge-count-tabela" class="pill-tag pill-blue" style="font-size: 10.5px;">3 Modelos</span>
@@ -2047,8 +2050,8 @@
                 </div>
 
                 <!-- TABELA PRINCIPAL DE RELATÓRIOS -->
-                <div class="table-card" style="background: var(--sagti-surface);  border: 1px solid rgba(255,255,255,0.1); border-radius: 12px; overflow: hidden; box-shadow: 0 8px 24px rgba(0,0,0,0.3); margin-bottom: 24px;">
-                    <div class="table-header-bar" style="display: flex; justify-content: space-between; align-items: center; padding: 12px 18px; background: var(--sagti-surface); border-bottom: 1px solid rgba(255,255,255,0.08); flex-wrap: wrap; gap: 10px;">
+                <div class="table-card" style="background: var(--sagti-surface-alt);  border: 1px solid rgba(255,255,255,0.1); border-radius: 12px; overflow: hidden; box-shadow: 0 8px 24px rgba(0,0,0,0.3); margin-bottom: 24px;">
+                    <div class="table-header-bar" style="display: flex; justify-content: space-between; align-items: center; padding: 12px 18px; background: var(--sagti-surface-alt); border-bottom: 1px solid rgba(255,255,255,0.08); flex-wrap: wrap; gap: 10px;">
                         <div style="display: flex; align-items: center; gap: 8px;">
                             <span style="font-size: 13px; font-weight: 700; color: var(--sagti-text);">Acervo Oficial de Atas e Checkpoints Operacionais</span>
                             <span id="rel-badge-count-tabela" class="pill-tag pill-blue" style="font-size: 10.5px;">5 Rituais</span>
@@ -2101,17 +2104,17 @@
                             <span>🗂️</span> DRIVE DE CONTEXTO CORPORATIVO — REPOSITÓRIO PDF PARA POOL DE IAS
                         </h3>
                         <p style="margin: 0; font-size: 12px; color: #cbd5e1;">
-                            Custódia e controle de documentos em formato PDF para enriquecimento contextual obrigatório das IAs (IA 1 - Copiloto 360° &amp; IA 2 - Governança OpenProject). <strong>Somente arquivos .PDF são permitidos.</strong>
+                            A ingestão de conteúdo PDF no backend/RAG ainda não está disponível. Metadados locais não são enviados às IAs.
                         </p>
                     </div>
                     <div style="display: flex; gap: 8px; flex-wrap: wrap;">
                         <button type="button" class="btn btn-primary" onclick="window.acionarSeletorUploadPdfDrive()" style="display: inline-flex; align-items: center; gap: 6px; padding: 8px 16px; font-weight: 800; background: #0369a1; border-color: #db2777; box-shadow: 0 4px 14px rgba(236,72,153,0.35); cursor: pointer;">
                             ➕ Adicionar Documento PDF
                         </button>
-                        <button type="button" class="btn btn-secondary" onclick="window.sincronizarDriveComIas()" style="display: inline-flex; align-items: center; gap: 6px; padding: 8px 14px; font-size: 12px; font-weight: 700; color: #cbd5e1;" title="Forçar reindexação imediata no contexto de IA 1 e IA 2">
+                        <button type="button" class="btn btn-secondary" onclick="window.sincronizarDriveComIas()" style="display: inline-flex; align-items: center; gap: 6px; padding: 8px 14px; font-size: 12px; font-weight: 700; color: #cbd5e1;" title="Indisponível: ingestão RAG não implementada">
                             🔄 Sincronizar Contexto IA
                         </button>
-                        <button type="button" class="btn btn-secondary" onclick="window.restaurarPdfsPadraoDrive()" style="display: inline-flex; align-items: center; gap: 6px; padding: 8px 12px; font-size: 12px; color: #94a3b8;" title="Restaurar os 3 PDFs canônicos homologados">
+                        <button type="button" class="btn btn-secondary" onclick="window.restaurarPdfsPadraoDrive()" style="display: inline-flex; align-items: center; gap: 6px; padding: 8px 12px; font-size: 12px; color: #94a3b8;" title="Não há documentos padrão verificados">
                             🔁 Restaurar Padrões
                         </button>
                     </div>
@@ -2121,18 +2124,18 @@
                 <div class="kpi-row" style="grid-template-columns: repeat(4, 1fr); margin-bottom: 20px; gap: 14px;">
                     <div class="kpi-card" style="border-left: 4px solid #0369a1;">
                         <div class="kpi-title">📄 Documentos PDF Ativos</div>
-                        <div class="kpi-val" id="kpi-drive-total-docs" style="color: #f472b6;">3</div>
-                        <span style="font-size: 11px; color: #94a3b8; margin-top: 4px;">Indexados no Contexto IA</span>
+                        <div class="kpi-val" id="kpi-drive-total-docs" style="color: #f472b6;">0</div>
+                        <span style="font-size: 11px; color: #94a3b8; margin-top: 4px;">Metadados locais apenas</span>
                     </div>
                     <div class="kpi-card" style="border-left: 4px solid #0284c7;">
                         <div class="kpi-title">💾 Espaço Utilizado</div>
-                        <div class="kpi-val" id="kpi-drive-total-size" style="color: #a78bfa;">7.3 MB</div>
-                        <span style="font-size: 11px; color: #94a3b8; margin-top: 4px;">Armazenamento no Drive</span>
+                        <div class="kpi-val" id="kpi-drive-total-size" style="color: #a78bfa;">0 MB</div>
+                        <span style="font-size: 11px; color: #94a3b8; margin-top: 4px;">Arquivos não armazenados</span>
                     </div>
                     <div class="kpi-card" style="border-left: 4px solid #10b981;">
                         <div class="kpi-title">🤖 Ingestão no RAG das IAs</div>
-                        <div class="kpi-val" id="kpi-drive-status-rag" style="color: #34d399;">100%</div>
-                        <span style="font-size: 11px; color: #94a3b8; margin-top: 4px;">Alimentando IA 1 e IA 2</span>
+                        <div class="kpi-val" id="kpi-drive-status-rag" style="color: #64748b;">Desativado</div>
+                        <span style="font-size: 11px; color: #94a3b8; margin-top: 4px;">Ingestão RAG indisponível</span>
                     </div>
                     <div class="kpi-card hero" style="background: var(--sagti-surface-alt);">
                         <div class="kpi-title">⚖️ Política de Formato</div>
@@ -2152,15 +2155,15 @@
                 </div>
 
                 <!-- TABELA / GRADE DE DOCUMENTOS CUSTODIADOS -->
-                <div class="table-card" style="background: var(--sagti-surface);  border: 1px solid rgba(255,255,255,0.1); border-radius: 12px; overflow: hidden; box-shadow: 0 8px 24px rgba(0,0,0,0.3); margin-bottom: 24px;">
-                    <div class="table-header-bar" style="display: flex; justify-content: space-between; align-items: center; padding: 12px 18px; background: var(--sagti-surface); border-bottom: 1px solid rgba(255,255,255,0.08); flex-wrap: wrap; gap: 10px;">
+                <div class="table-card" style="background: var(--sagti-surface-alt);  border: 1px solid rgba(255,255,255,0.1); border-radius: 12px; overflow: hidden; box-shadow: 0 8px 24px rgba(0,0,0,0.3); margin-bottom: 24px;">
+                    <div class="table-header-bar" style="display: flex; justify-content: space-between; align-items: center; padding: 12px 18px; background: var(--sagti-surface-alt); border-bottom: 1px solid rgba(255,255,255,0.08); flex-wrap: wrap; gap: 10px;">
                         <div style="display: flex; align-items: center; gap: 8px;">
                             <span style="font-size: 13px; font-weight: 700; color: var(--sagti-text);">Acervo Oficial de PDFs para Contexto das IAs</span>
                             <span id="badge-total-drive-lista" class="pill-tag pill-blue" style="font-size: 11px; font-weight: 700; background: rgba(236,72,153,0.2); color: #f472b6; border: 1px solid rgba(236,72,153,0.4);">3 Documentos</span>
                         </div>
                         <div style="display: flex; gap: 8px; align-items: center;">
-                            <input type="text" id="filtro-busca-drive-pdf" placeholder="Filtrar PDFs por nome..." oninput="window.filtrarDocumentosDrivePdf()" style="background: var(--sagti-surface); border: 1px solid rgba(255,255,255,0.15); color: var(--sagti-text); padding: 5px 10px; border-radius: 6px; font-size: 11.5px; width: 220px; outline: none;">
-                            <select id="filtro-cat-drive-pdf" onchange="window.filtrarDocumentosDrivePdf()" style="background: var(--sagti-surface); border: 1px solid rgba(255,255,255,0.15); color: var(--sagti-text); padding: 5px 8px; border-radius: 6px; font-size: 11.5px; outline: none;">
+                            <input type="text" id="filtro-busca-drive-pdf" placeholder="Filtrar PDFs por nome..." oninput="window.filtrarDocumentosDrivePdf()" style="background: var(--sagti-surface-alt); border: 1px solid rgba(255,255,255,0.15); color: var(--sagti-text); padding: 5px 10px; border-radius: 6px; font-size: 11.5px; width: 220px; outline: none;">
+                            <select id="filtro-cat-drive-pdf" onchange="window.filtrarDocumentosDrivePdf()" style="background: var(--sagti-surface-alt); border: 1px solid rgba(255,255,255,0.15); color: var(--sagti-text); padding: 5px 8px; border-radius: 6px; font-size: 11.5px; outline: none;">
                                 <option value="TODOS">Todas as Categorias</option>
                                 <option value="Normativos">Normativos &amp; Decretos</option>
                                 <option value="Contratação">Contratação &amp; TR</option>
@@ -2624,7 +2627,7 @@
             <div id="view-gestao_glpi" class="tab-view">
 
             <!-- SELETOR DE SUB-ABAS OFICIAL GLPI (DESIGN SYSTEM SP-ÁGUAS V11) -->
-            <div id="barra-subabas-glpi" style="display: flex; gap: 8px; margin-bottom: 16px; background: var(--sagti-surface); padding: 8px 12px; border-radius: 10px; border: 1px solid rgba(255,255,255,0.08); align-items: center; flex-wrap: wrap;">
+            <div id="barra-subabas-glpi" style="display: flex; gap: 8px; margin-bottom: 16px; background: var(--sagti-surface-alt); padding: 8px 12px; border-radius: 10px; border: 1px solid rgba(255,255,255,0.08); align-items: center; flex-wrap: wrap;">
                 <button type="button" id="btn-glpi-subaba-operacional" class="btn btn-primary active" onclick="window.alternarSubAbaGlpi('operacional')" style="background: var(--sagti-accent); color: #ffffff; font-weight: 700; font-size: 12px; padding: 7px 16px; border-radius: 8px; border: 1px solid rgba(56,189,248,0.5); cursor: pointer; display: inline-flex; align-items: center; gap: 6px; box-shadow: 0 2px 8px rgba(2,132,199,0.3);">
                     <span>📊</span> Fila Operacional &amp; Métricas (15)
                 </button>
@@ -2875,7 +2878,7 @@
                         <div style="font-size:11px; color:#94a3b8; margin-top:3px;">Filtro ativo: Status é Não solucionado • Atualizado em tempo real com links diretos</div>
                     </div>
                     <div style="display:flex; align-items:center; gap:8px;">
-                        <input type="text" id="glpi-busca-tabela-real" oninput="window.filtrarChamadosReaisGlpi(this.value)" placeholder="Buscar por ID, solicitante, técnico, assunto..." style="background:var(--sagti-surface); border:1px solid rgba(255,255,255,0.15); color:var(--sagti-text); font-size:11.5px; padding:6px 12px; border-radius:8px; width:260px;">
+                        <input type="text" id="glpi-busca-tabela-real" oninput="window.filtrarChamadosReaisGlpi(this.value)" placeholder="Buscar por ID, solicitante, técnico, assunto..." style="background:var(--sagti-surface-alt); border:1px solid rgba(255,255,255,0.15); color:var(--sagti-text); font-size:11.5px; padding:6px 12px; border-radius:8px; width:260px;">
                     </div>
                 </div>
 
@@ -3203,29 +3206,29 @@
                     </div>
 
                     <!-- CARD LATERAL DIREITO: COMPUTADORES POR TIPO (ESTILO GLPI OFICIAL) -->
-                    <div style="background: var(--sagti-surface); border: 1px solid rgba(255,255,255,0.1); border-radius: 10px; padding: 16px; display: flex; flex-direction: column; justify-content: space-between; box-shadow: 0 4px 16px rgba(0,0,0,0.3);">
+                    <div style="background: var(--sagti-surface-alt); border: 1px solid rgba(255,255,255,0.1); border-radius: 10px; padding: 16px; display: flex; flex-direction: column; justify-content: space-between; box-shadow: 0 4px 16px rgba(0,0,0,0.3);">
                         <div style="font-size: 12px; font-weight: 800; color: var(--sagti-accent); text-transform: uppercase; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center;">
                             <span>💻 Computadores por Tipo</span>
                             <span style="font-size: 11px; color: #94a3b8;">Total: 443</span>
                         </div>
                         <div style="display: flex; flex-direction: column; gap: 8px;">
-                            <div style="display: flex; justify-content: space-between; align-items: center; background: var(--sagti-surface); padding: 8px 12px; border-radius: 6px; border-left: 3px solid #38bdf8;">
+                            <div style="display: flex; justify-content: space-between; align-items: center; background: var(--sagti-surface-alt); padding: 8px 12px; border-radius: 6px; border-left: 3px solid #38bdf8;">
                                 <span style="font-size: 12px; color: var(--sagti-text); font-weight: 600;">Desktop</span>
                                 <span style="font-size: 14px; font-weight: 800; color: var(--sagti-accent);">316 <small style="font-size: 10px; color: #94a3b8;">(71.3%)</small></span>
                             </div>
-                            <div style="display: flex; justify-content: space-between; align-items: center; background: var(--sagti-surface); padding: 8px 12px; border-radius: 6px; border-left: 3px solid #0ea5e9;">
+                            <div style="display: flex; justify-content: space-between; align-items: center; background: var(--sagti-surface-alt); padding: 8px 12px; border-radius: 6px; border-left: 3px solid #0ea5e9;">
                                 <span style="font-size: 12px; color: var(--sagti-text); font-weight: 600;">Notebook</span>
                                 <span style="font-size: 14px; font-weight: 800; color: #0ea5e9;">88 <small style="font-size: 10px; color: #94a3b8;">(19.9%)</small></span>
                             </div>
-                            <div style="display: flex; justify-content: space-between; align-items: center; background: var(--sagti-surface); padding: 8px 12px; border-radius: 6px; border-left: 3px solid #10b981;">
+                            <div style="display: flex; justify-content: space-between; align-items: center; background: var(--sagti-surface-alt); padding: 8px 12px; border-radius: 6px; border-left: 3px solid #10b981;">
                                 <span style="font-size: 12px; color: #e2e8f0; font-weight: 600;">Hyper-V (VMs)</span>
                                 <span style="font-size: 14px; font-weight: 800; color: #10b981;">23 <small style="font-size: 10px; color: #94a3b8;">(5.2%)</small></span>
                             </div>
-                            <div style="display: flex; justify-content: space-between; align-items: center; background: var(--sagti-surface); padding: 8px 12px; border-radius: 6px; border-left: 3px solid #f59e0b;">
+                            <div style="display: flex; justify-content: space-between; align-items: center; background: var(--sagti-surface-alt); padding: 8px 12px; border-radius: 6px; border-left: 3px solid #f59e0b;">
                                 <span style="font-size: 12px; color: var(--sagti-text); font-weight: 600;">All in One</span>
                                 <span style="font-size: 14px; font-weight: 800; color: #f59e0b;">4 <small style="font-size: 10px; color: #94a3b8;">(0.9%)</small></span>
                             </div>
-                            <div style="display: flex; justify-content: space-between; align-items: center; background: var(--sagti-surface); padding: 8px 12px; border-radius: 6px; border-left: 3px solid #0284c7;">
+                            <div style="display: flex; justify-content: space-between; align-items: center; background: var(--sagti-surface-alt); padding: 8px 12px; border-radius: 6px; border-left: 3px solid #0284c7;">
                                 <span style="font-size: 12px; color: #e2e8f0; font-weight: 600;">Rack Mount Chassis</span>
                                 <span style="font-size: 14px; font-weight: 800; color: #c084fc;">3 <small style="font-size: 10px; color: #94a3b8;">(0.7%)</small></span>
                             </div>
@@ -3236,7 +3239,7 @@
                 <!-- 3. GRÁFICOS OFICIAIS DO GLPI DE ATIVOS (COMPUTADORES, PROCESSADORES E MEMÓRIAS) -->
                 <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; margin-bottom: 20px;">
                     <!-- Gráfico 1: Computadores por Tipo -->
-                    <div class="chart-card" style="background: var(--sagti-surface); border: 1px solid rgba(255,255,255,0.1); border-radius: 10px; padding: 16px;">
+                    <div class="chart-card" style="background: var(--sagti-surface-alt); border: 1px solid rgba(255,255,255,0.1); border-radius: 10px; padding: 16px;">
                         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
                             <strong style="font-size: 13px; color: var(--sagti-text); display: flex; align-items: center; gap: 6px;">
                                 <span>💻</span> Computadores por Tipo
@@ -3247,7 +3250,7 @@
                     </div>
 
                     <!-- Gráfico 2: Processador itens por tipo -->
-                    <div class="chart-card" style="background: var(--sagti-surface); border: 1px solid rgba(255,255,255,0.1); border-radius: 10px; padding: 16px;">
+                    <div class="chart-card" style="background: var(--sagti-surface-alt); border: 1px solid rgba(255,255,255,0.1); border-radius: 10px; padding: 16px;">
                         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
                             <strong style="font-size: 13px; color: var(--sagti-text); display: flex; align-items: center; gap: 6px;">
                                 <span>⚙️</span> Número de Processador itens por tipo
@@ -3258,7 +3261,7 @@
                     </div>
 
                     <!-- Gráfico 3: Memória itens por tipo -->
-                    <div class="chart-card" style="background: var(--sagti-surface); border: 1px solid rgba(255,255,255,0.1); border-radius: 10px; padding: 16px;">
+                    <div class="chart-card" style="background: var(--sagti-surface-alt); border: 1px solid rgba(255,255,255,0.1); border-radius: 10px; padding: 16px;">
                         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
                             <strong style="font-size: 13px; color: var(--sagti-text); display: flex; align-items: center; gap: 6px;">
                                 <span>💾</span> Número de Memória itens por tipo
@@ -3270,15 +3273,15 @@
                 </div>
 
                 <!-- 4. TABELA CMDB DE ATIVOS HOMOLOGADOS (FILTRÁVEL E DETALHADA) -->
-                <div class="table-card" style="background: var(--sagti-surface); border: 1px solid rgba(255,255,255,0.1); border-radius: 10px; overflow: hidden; box-shadow: 0 4px 16px rgba(0,0,0,0.3);">
-                    <div class="table-header-bar" style="background: var(--sagti-surface); padding: 12px 18px; border-bottom: 1px solid rgba(255,255,255,0.08); display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;">
+                <div class="table-card" style="background: var(--sagti-surface-alt); border: 1px solid rgba(255,255,255,0.1); border-radius: 10px; overflow: hidden; box-shadow: 0 4px 16px rgba(0,0,0,0.3);">
+                    <div class="table-header-bar" style="background: var(--sagti-surface-alt); padding: 12px 18px; border-bottom: 1px solid rgba(255,255,255,0.08); display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;">
                         <div style="display: flex; align-items: center; gap: 8px;">
                             <strong style="font-size: 13px; color: var(--sagti-text);">Inventário CMDB de Equipamentos &amp; Estações de Trabalho</strong>
                             <span class="pill-tag pill-blue" style="font-size: 10.5px; background: rgba(56,189,248,0.15); color: var(--sagti-accent); border: 1px solid rgba(56,189,248,0.3);">443 Computadores &bull; 436 Monitores</span>
                         </div>
                         <div style="display: flex; gap: 8px; align-items: center;">
-                            <input type="text" id="filtro-busca-cmdb-glpi" placeholder="Buscar por hostname, patrimônio ou usuário..." oninput="window.filtrarTabelaCmdbGlpi()" style="background: var(--sagti-surface); border: 1px solid rgba(255,255,255,0.15); color: var(--sagti-text); padding: 5px 10px; border-radius: 6px; font-size: 11.5px; width: 280px; outline: none;">
-                            <select id="filtro-cat-cmdb-glpi" onchange="window.filtrarTabelaCmdbGlpi()" style="background: var(--sagti-surface); border: 1px solid rgba(255,255,255,0.15); color: var(--sagti-text); padding: 5px 8px; border-radius: 6px; font-size: 11.5px; outline: none;">
+                            <input type="text" id="filtro-busca-cmdb-glpi" placeholder="Buscar por hostname, patrimônio ou usuário..." oninput="window.filtrarTabelaCmdbGlpi()" style="background: var(--sagti-surface-alt); border: 1px solid rgba(255,255,255,0.15); color: var(--sagti-text); padding: 5px 10px; border-radius: 6px; font-size: 11.5px; width: 280px; outline: none;">
+                            <select id="filtro-cat-cmdb-glpi" onchange="window.filtrarTabelaCmdbGlpi()" style="background: var(--sagti-surface-alt); border: 1px solid rgba(255,255,255,0.15); color: var(--sagti-text); padding: 5px 8px; border-radius: 6px; font-size: 11.5px; outline: none;">
                                 <option value="TODOS">Todos os Ativos</option>
                                 <option value="Desktop">Desktop (316)</option>
                                 <option value="Notebook">Notebook (88)</option>
@@ -3292,7 +3295,7 @@
                     <div style="overflow-x: auto;">
                         <table style="width: 100%; border-collapse: collapse; font-size: 12px;">
                             <thead>
-                                <tr style="background: var(--sagti-surface); color: #94a3b8; text-align: left;">
+                                <tr style="background: var(--sagti-surface-alt); color: #94a3b8; text-align: left;">
                                     <th style="padding: 10px 14px; border-bottom: 1px solid rgba(255,255,255,0.08);">Patrimônio / Hostname</th>
                                     <th style="padding: 10px 14px; border-bottom: 1px solid rgba(255,255,255,0.08);">Tipo</th>
                                     <th style="padding: 10px 14px; border-bottom: 1px solid rgba(255,255,255,0.08);">Fabricante / Modelo</th>
@@ -3335,7 +3338,7 @@
                             </p>
                         </div>
                         <div style="display: flex; flex-direction: column; align-items: flex-end; gap: 8px;">
-                            <div style="background: var(--sagti-surface); border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; padding: 6px 12px; font-size: 11.5px; color: #94a3b8; font-family: monospace;">
+                            <div style="background: var(--sagti-surface-alt); border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; padding: 6px 12px; font-size: 11.5px; color: #94a3b8; font-family: monospace;">
                                 <span>Status: </span><strong style="color: #4ade80;">100% Auditado (274 Válidos)</strong>
                             </div>
                             <div style="font-size: 11px; color: #64748b;" id="relatorio-glpi-atualizado-em">
@@ -3356,25 +3359,25 @@
 
                     <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-bottom: 12px;">
                         <!-- KPI 1 -->
-                        <div style="background: var(--sagti-surface); border: 1px solid rgba(56,189,248,0.25); border-top: 3px solid #38bdf8; border-radius: 10px; padding: 14px 16px;">
+                        <div style="background: var(--sagti-surface-alt); border: 1px solid rgba(56,189,248,0.25); border-top: 3px solid #38bdf8; border-radius: 10px; padding: 14px 16px;">
                             <div style="font-size: 11.5px; font-weight: 700; color: #94a3b8; text-transform: uppercase; margin-bottom: 4px;">Chamados Abertos</div>
                             <div style="font-size: 28px; font-weight: 800; color: var(--sagti-accent); line-height: 1.1;">274</div>
                             <div style="font-size: 11.5px; color: #64748b; margin-top: 4px;">01 a 29/10 (excluído #1508 teste)</div>
                         </div>
                         <!-- KPI 2 -->
-                        <div style="background: var(--sagti-surface); border: 1px solid rgba(16,185,129,0.25); border-top: 3px solid #10b981; border-radius: 10px; padding: 14px 16px;">
+                        <div style="background: var(--sagti-surface-alt); border: 1px solid rgba(16,185,129,0.25); border-top: 3px solid #10b981; border-radius: 10px; padding: 14px 16px;">
                             <div style="font-size: 11.5px; font-weight: 700; color: #94a3b8; text-transform: uppercase; margin-bottom: 4px;">Solucionados</div>
                             <div style="font-size: 28px; font-weight: 800; color: #4ade80; line-height: 1.1;">265</div>
                             <div style="font-size: 11.5px; color: #10b981; margin-top: 4px; font-weight: 600;">96,7% de taxa de resolução</div>
                         </div>
                         <!-- KPI 3 -->
-                        <div style="background: var(--sagti-surface); border: 1px solid rgba(14,165,233,0.25); border-top: 3px solid #0ea5e9; border-radius: 10px; padding: 14px 16px;">
+                        <div style="background: var(--sagti-surface-alt); border: 1px solid rgba(14,165,233,0.25); border-top: 3px solid #0ea5e9; border-radius: 10px; padding: 14px 16px;">
                             <div style="font-size: 11.5px; font-weight: 700; color: #94a3b8; text-transform: uppercase; margin-bottom: 4px;">SLA de Solução</div>
                             <div style="font-size: 28px; font-weight: 800; color: var(--sagti-accent); line-height: 1.1;">94,7%</div>
                             <div style="font-size: 11.5px; color: #94a3b8; margin-top: 4px;">251 de 265 no prazo estipulado</div>
                         </div>
                         <!-- KPI 4 -->
-                        <div style="background: var(--sagti-surface); border: 1px solid rgba(239,68,68,0.3); border-top: 3px solid #ef4444; border-radius: 10px; padding: 14px 16px;">
+                        <div style="background: var(--sagti-surface-alt); border: 1px solid rgba(239,68,68,0.3); border-top: 3px solid #ef4444; border-radius: 10px; padding: 14px 16px;">
                             <div style="font-size: 11.5px; font-weight: 700; color: #f87171; text-transform: uppercase; margin-bottom: 4px;">Backlog Ativo Residual</div>
                             <div style="font-size: 28px; font-weight: 800; color: #f87171; line-height: 1.1;">9</div>
                             <div style="font-size: 11.5px; color: #ef4444; margin-top: 4px; font-weight: 600;">5 sem técnico atribuído • Todos vencidos</div>
@@ -3383,25 +3386,25 @@
 
                     <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px;">
                         <!-- KPI 5 -->
-                        <div style="background: var(--sagti-surface); border: 1px solid rgba(255,255,255,0.08); border-top: 3px solid #818cf8; border-radius: 10px; padding: 14px 16px;">
+                        <div style="background: var(--sagti-surface-alt); border: 1px solid rgba(255,255,255,0.08); border-top: 3px solid #818cf8; border-radius: 10px; padding: 14px 16px;">
                             <div style="font-size: 11.5px; font-weight: 700; color: #94a3b8; text-transform: uppercase; margin-bottom: 4px;">TMS Mediano (Solução)</div>
                             <div style="font-size: 28px; font-weight: 800; color: #a5b4fc; line-height: 1.1;">15 min</div>
                             <div style="font-size: 11.5px; color: #64748b; margin-top: 4px;">Tempo corrido (atendimento típico)</div>
                         </div>
                         <!-- KPI 6 -->
-                        <div style="background: var(--sagti-surface); border: 1px solid rgba(255,255,255,0.08); border-top: 3px solid #f59e0b; border-radius: 10px; padding: 14px 16px;">
+                        <div style="background: var(--sagti-surface-alt); border: 1px solid rgba(255,255,255,0.08); border-top: 3px solid #f59e0b; border-radius: 10px; padding: 14px 16px;">
                             <div style="font-size: 11.5px; font-weight: 700; color: #94a3b8; text-transform: uppercase; margin-bottom: 4px;">Percentil 90 (P90)</div>
                             <div style="font-size: 28px; font-weight: 800; color: #fcd34d; line-height: 1.1;">44,5 h</div>
                             <div style="font-size: 11.5px; color: #64748b; margin-top: 4px;">90% dos casos resolvidos até esse tempo</div>
                         </div>
                         <!-- KPI 7 -->
-                        <div style="background: var(--sagti-surface); border: 1px solid rgba(255,255,255,0.08); border-top: 3px solid #06b6d4; border-radius: 10px; padding: 14px 16px;">
+                        <div style="background: var(--sagti-surface-alt); border: 1px solid rgba(255,255,255,0.08); border-top: 3px solid #06b6d4; border-radius: 10px; padding: 14px 16px;">
                             <div style="font-size: 11.5px; font-weight: 700; color: #94a3b8; text-transform: uppercase; margin-bottom: 4px;">Respostas Satisfação</div>
                             <div style="font-size: 28px; font-weight: 800; color: #22d3ee; line-height: 1.1;">25</div>
                             <div style="font-size: 11.5px; color: #64748b; margin-top: 4px;">10,0% de cobertura sobre os fechados</div>
                         </div>
                         <!-- KPI 8 -->
-                        <div style="background: var(--sagti-surface); border: 1px solid rgba(16,185,129,0.3); border-top: 3px solid #10b981; border-radius: 10px; padding: 14px 16px;">
+                        <div style="background: var(--sagti-surface-alt); border: 1px solid rgba(16,185,129,0.3); border-top: 3px solid #10b981; border-radius: 10px; padding: 14px 16px;">
                             <div style="font-size: 11.5px; font-weight: 700; color: #94a3b8; text-transform: uppercase; margin-bottom: 4px;">Nota Média de Satisfação</div>
                             <div style="font-size: 28px; font-weight: 800; color: #4ade80; line-height: 1.1;">5,0 / 5,0</div>
                             <div style="font-size: 11.5px; color: #10b981; margin-top: 4px; font-weight: 600;">100% de avaliações nota máxima</div>
@@ -3410,7 +3413,7 @@
                 </div>
 
                 <!-- CARD DE LEITURA EXECUTIVA E VALIDAÇÃO -->
-                <div style="background: var(--sagti-surface); border: 1px solid rgba(255,255,255,0.08); border-radius: 10px; padding: 16px 20px; margin-bottom: 24px;">
+                <div style="background: var(--sagti-surface-alt); border: 1px solid rgba(255,255,255,0.08); border-radius: 10px; padding: 16px 20px; margin-bottom: 24px;">
                     <div style="display: flex; gap: 16px; align-items: flex-start; flex-wrap: wrap;">
                         <div style="flex: 2; min-width: 320px;">
                             <h5 style="margin: 0 0 8px 0; font-size: 13.5px; font-weight: 700; color: var(--sagti-accent); text-transform: uppercase; letter-spacing: 0.05em;">
@@ -3420,7 +3423,7 @@
                                 A operação registrou <strong>274 chamados válidos</strong> no período analisado e <strong>265 soluções</strong>, resultando em taxa de resolução de <strong>96,7%</strong>. O SLA de solução foi cumprido em <strong>94,7%</strong> dos chamados finalizados (251/265). O volume residual é baixo, porém concentrado em risco: os <strong>9 chamados ainda ativos</strong> possuem prazo exportado vencido e 5 não apresentam técnico nominal. A mediana de solução foi de <strong>15 minutos</strong>, enquanto o P90 chegou a <strong>44,5 horas</strong>, mostrando uma parcela menor de casos de longa duração. <em>Computadores e Periféricos</em> lidera a demanda com 27,4%. A satisfação foi máxima nas 25 respostas recebidas, com cobertura de 10% dos fechados.
                             </p>
                         </div>
-                        <div style="flex: 1; min-width: 260px; background: var(--sagti-surface); border: 1px solid rgba(255,255,255,0.06); border-radius: 8px; padding: 12px 14px;">
+                        <div style="flex: 1; min-width: 260px; background: var(--sagti-surface-alt); border: 1px solid rgba(255,255,255,0.06); border-radius: 8px; padding: 12px 14px;">
                             <div style="font-size: 12px; font-weight: 700; color: #f59e0b; margin-bottom: 4px;">🔍 Validação do Fechamento</div>
                             <div style="font-size: 12px; color: #94a3b8; line-height: 1.5;">
                                 A lista bruta continha 275 registros. O chamado <strong>#1508</strong> foi auditado e formalmente excluído como registro de teste técnico. A base oficial homologada é de exatamente <strong>274 chamados válidos</strong>.
@@ -3432,7 +3435,7 @@
                 <!-- 2. PANORAMA GERAL & EVOLUÇÃO (PÁGINA 3) -->
                 <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 24px;">
                     <!-- TABELA DE STATUS GERAL -->
-                    <div style="background: var(--sagti-surface); border: 1px solid rgba(255,255,255,0.08); border-radius: 10px; padding: 18px;">
+                    <div style="background: var(--sagti-surface-alt); border: 1px solid rgba(255,255,255,0.08); border-radius: 10px; padding: 18px;">
                         <h4 style="margin: 0 0 14px 0; font-size: 14.5px; font-weight: 700; color: var(--sagti-text); display: flex; align-items: center; gap: 8px;">
                             <span>📈</span> Panorama Geral e Status Operacional (Página 3)
                         </h4>
@@ -3485,7 +3488,7 @@
                     </div>
 
                     <!-- EVOLUÇÃO E PICOS DE ABERTURA -->
-                    <div style="background: var(--sagti-surface); border: 1px solid rgba(255,255,255,0.08); border-radius: 10px; padding: 18px; display: flex; flex-direction: column; justify-content: space-between;">
+                    <div style="background: var(--sagti-surface-alt); border: 1px solid rgba(255,255,255,0.08); border-radius: 10px; padding: 18px; display: flex; flex-direction: column; justify-content: space-between;">
                         <div>
                             <h4 style="margin: 0 0 14px 0; font-size: 14.5px; font-weight: 700; color: var(--sagti-text); display: flex; align-items: center; gap: 8px;">
                                 <span>📅</span> Picos de Abertura &amp; Ritmo Operacional
@@ -3508,7 +3511,7 @@
                                 </div>
                             </div>
                         </div>
-                        <div style="background: var(--sagti-surface); border-left: 3px solid #38bdf8; border-radius: 6px; padding: 12px 14px;">
+                        <div style="background: var(--sagti-surface-alt); border-left: 3px solid #38bdf8; border-radius: 6px; padding: 12px 14px;">
                             <div style="font-size: 12px; font-weight: 700; color: var(--sagti-accent); margin-bottom: 2px;">💡 Insight Operacional</div>
                             <div style="font-size: 12px; color: #cbd5e1; line-height: 1.5;">
                                 O saldo final dos chamados abertos no período é <strong>9</strong>, exatamente o número de chamados ativos na base. As maiores concentrações ocorrem às terças e quartas-feiras logo após início de expediente.
@@ -3518,7 +3521,7 @@
                 </div>
 
                 <!-- 3. EQUIPE TÉCNICA OFICIAL (PÁGINA 4) -->
-                <div style="background: var(--sagti-surface); border: 1px solid rgba(255,255,255,0.08); border-radius: 10px; padding: 18px; margin-bottom: 24px;">
+                <div style="background: var(--sagti-surface-alt); border: 1px solid rgba(255,255,255,0.08); border-radius: 10px; padding: 18px; margin-bottom: 24px;">
                     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px; flex-wrap: wrap; gap: 8px;">
                         <div>
                             <h4 style="margin: 0; font-size: 14.5px; font-weight: 700; color: var(--sagti-text); display: flex; align-items: center; gap: 8px;">
@@ -3536,7 +3539,7 @@
                     <div style="overflow-x: auto;">
                         <table style="width: 100%; border-collapse: collapse; font-size: 12.5px;">
                             <thead>
-                                <tr style="border-bottom: 2px solid rgba(255,255,255,0.1); background: var(--sagti-surface); text-align: left;">
+                                <tr style="border-bottom: 2px solid rgba(255,255,255,0.1); background: var(--sagti-surface-alt); text-align: left;">
                                     <th style="padding: 10px 12px; color: #94a3b8;">Técnico</th>
                                     <th style="padding: 10px 12px; color: #94a3b8; text-align: center;">Atrib.</th>
                                     <th style="padding: 10px 12px; color: #94a3b8; text-align: center;">Soluc.</th>
@@ -3612,13 +3615,13 @@
                         </table>
                     </div>
 
-                    <div style="margin-top: 12px; background: var(--sagti-surface); border-left: 3px solid #f59e0b; border-radius: 6px; padding: 10px 14px; font-size: 12px; color: #cbd5e1; line-height: 1.5;">
+                    <div style="margin-top: 12px; background: var(--sagti-surface-alt); border-left: 3px solid #f59e0b; border-radius: 6px; padding: 10px 14px; font-size: 12px; color: #cbd5e1; line-height: 1.5;">
                         <strong style="color: #f59e0b;">Regra de Equipe &amp; Interpretação:</strong> A análise por técnico considera exclusivamente os três profissionais do time oficial de suporte. Os 28 registros atribuídos a terceiros e os 8 sem técnico permanecem nos totais gerais. O volume bruto não reflete ranking de produtividade direta, dado que complexidade, categorias e dependências externas impactam a carteira individual.
                     </div>
                 </div>
 
                 <!-- 4. CATEGORIAS DE ATENDIMENTO (PÁGINA 5) -->
-                <div style="background: var(--sagti-surface); border: 1px solid rgba(255,255,255,0.08); border-radius: 10px; padding: 18px; margin-bottom: 24px;">
+                <div style="background: var(--sagti-surface-alt); border: 1px solid rgba(255,255,255,0.08); border-radius: 10px; padding: 18px; margin-bottom: 24px;">
                     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px; flex-wrap: wrap; gap: 8px;">
                         <div>
                             <h4 style="margin: 0; font-size: 14.5px; font-weight: 700; color: var(--sagti-text); display: flex; align-items: center; gap: 8px;">
@@ -3633,7 +3636,7 @@
                     <div style="overflow-x: auto; margin-bottom: 14px;">
                         <table style="width: 100%; border-collapse: collapse; font-size: 12.5px;">
                             <thead>
-                                <tr style="border-bottom: 2px solid rgba(255,255,255,0.1); background: var(--sagti-surface); text-align: left;">
+                                <tr style="border-bottom: 2px solid rgba(255,255,255,0.1); background: var(--sagti-surface-alt); text-align: left;">
                                     <th style="padding: 10px 12px; color: #94a3b8;">Grupo / Categoria</th>
                                     <th style="padding: 10px 12px; color: #94a3b8; text-align: center;">Volume</th>
                                     <th style="padding: 10px 12px; color: #94a3b8; text-align: center;">Part. (%)</th>
@@ -3728,7 +3731,7 @@
                 <!-- 5. LOCALIZAÇÕES, TIPO E PRIORIDADE (PÁGINA 6) -->
                 <div style="display: grid; grid-template-columns: 1fr 2fr; gap: 16px; margin-bottom: 24px;">
                     <!-- BLOCOS / LOCALIZAÇÃO -->
-                    <div style="background: var(--sagti-surface); border: 1px solid rgba(255,255,255,0.08); border-radius: 10px; padding: 18px; display: flex; flex-direction: column; justify-content: space-between;">
+                    <div style="background: var(--sagti-surface-alt); border: 1px solid rgba(255,255,255,0.08); border-radius: 10px; padding: 18px; display: flex; flex-direction: column; justify-content: space-between;">
                         <div>
                             <h4 style="margin: 0 0 12px 0; font-size: 14.5px; font-weight: 700; color: var(--sagti-text); display: flex; align-items: center; gap: 8px;">
                                 <span>🏢</span> Distribuição por Blocos (Página 6)
@@ -3760,20 +3763,20 @@
                                 </tbody>
                             </table>
                         </div>
-                        <div style="background: var(--sagti-surface); border-radius: 6px; padding: 10px; font-size: 11.5px; color: #94a3b8; line-height: 1.4;">
+                        <div style="background: var(--sagti-surface-alt); border-radius: 6px; padding: 10px; font-size: 11.5px; color: #94a3b8; line-height: 1.4;">
                             <strong style="color: #cbd5e1;">Limitação:</strong> Base de localização possui 271 chamados agregados sem ID individual, impossibilitando cálculo auditável de SLA por andar nesta versão.
                         </div>
                     </div>
 
                     <!-- TIPO E PRIORIDADE -->
-                    <div style="background: var(--sagti-surface); border: 1px solid rgba(255,255,255,0.08); border-radius: 10px; padding: 18px;">
+                    <div style="background: var(--sagti-surface-alt); border: 1px solid rgba(255,255,255,0.08); border-radius: 10px; padding: 18px;">
                         <h4 style="margin: 0 0 12px 0; font-size: 14.5px; font-weight: 700; color: var(--sagti-text); display: flex; align-items: center; gap: 8px;">
                             <span>🎯</span> Classificação por Tipo &amp; Prioridade (Página 6)
                         </h4>
                         <div style="overflow-x: auto;">
                             <table style="width: 100%; border-collapse: collapse; font-size: 12px;">
                                 <thead>
-                                    <tr style="border-bottom: 2px solid rgba(255,255,255,0.1); background: var(--sagti-surface); text-align: left;">
+                                    <tr style="border-bottom: 2px solid rgba(255,255,255,0.1); background: var(--sagti-surface-alt); text-align: left;">
                                         <th style="padding: 8px 10px; color: #94a3b8;">Recorte</th>
                                         <th style="padding: 8px 10px; color: #94a3b8; text-align: center;">Vol.</th>
                                         <th style="padding: 8px 10px; color: #94a3b8; text-align: center;">Part.</th>
@@ -3852,7 +3855,7 @@
                 </div>
 
                 <!-- 6. SLA DE SOLUÇÃO E TEMPOS DETALHADOS (PÁGINA 7) -->
-                <div style="background: var(--sagti-surface); border: 1px solid rgba(255,255,255,0.08); border-radius: 10px; padding: 18px; margin-bottom: 24px;">
+                <div style="background: var(--sagti-surface-alt); border: 1px solid rgba(255,255,255,0.08); border-radius: 10px; padding: 18px; margin-bottom: 24px;">
                     <h4 style="margin: 0 0 14px 0; font-size: 14.5px; font-weight: 700; color: var(--sagti-text); display: flex; align-items: center; gap: 8px;">
                         <span>⏱️</span> SLA de Solução e Dinâmica Temporal de Atendimento (Página 7)
                     </h4>
@@ -3913,7 +3916,7 @@
                             </tbody>
                         </table>
 
-                        <div style="background: var(--sagti-surface); border-radius: 8px; padding: 14px; font-size: 12px; color: #cbd5e1; line-height: 1.55; display: flex; flex-direction: column; justify-content: space-between;">
+                        <div style="background: var(--sagti-surface-alt); border-radius: 8px; padding: 14px; font-size: 12px; color: #cbd5e1; line-height: 1.55; display: flex; flex-direction: column; justify-content: space-between;">
                             <div>
                                 <strong style="color: var(--sagti-accent); display: block; margin-bottom: 4px;">Regra Canônica de SLA &amp; Alerta de Outliers:</strong>
                                 O SLA oficial utiliza o vencimento parametrizado exportado pelo GLPI, o qual incorpora calendários úteis e pausas de pendência. Os tempos de solução são apresentados em horas corridas. A média aritmética de 15,2h é distorcida por casos de alta complexidade; a <strong>mediana de 15 minutos</strong> reflete com exatidão a agilidade do atendimento de primeiro nível.
@@ -3926,7 +3929,7 @@
                 </div>
 
                 <!-- 7. BACKLOG ATIVO & OS 9 CHAMADOS CRÍTICOS (PÁGINA 8) -->
-                <div style="background: var(--sagti-surface); border: 1px solid rgba(239,68,68,0.3); border-radius: 10px; padding: 18px; margin-bottom: 24px;">
+                <div style="background: var(--sagti-surface-alt); border: 1px solid rgba(239,68,68,0.3); border-radius: 10px; padding: 18px; margin-bottom: 24px;">
                     <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 14px; flex-wrap: wrap; gap: 10px;">
                         <div>
                             <h4 style="margin: 0; font-size: 15px; font-weight: 800; color: #f87171; display: flex; align-items: center; gap: 8px;">
@@ -3972,7 +3975,7 @@
                     <div style="overflow-x: auto;">
                         <table style="width: 100%; border-collapse: collapse; font-size: 12px;">
                             <thead>
-                                <tr style="border-bottom: 2px solid rgba(255,255,255,0.1); background: var(--sagti-surface); text-align: left;">
+                                <tr style="border-bottom: 2px solid rgba(255,255,255,0.1); background: var(--sagti-surface-alt); text-align: left;">
                                     <th style="padding: 8px 10px; color: #94a3b8;">ID</th>
                                     <th style="padding: 8px 10px; color: #94a3b8;">Status</th>
                                     <th style="padding: 8px 10px; color: #94a3b8;">Prioridade</th>
@@ -4072,7 +4075,7 @@
                 <!-- 8. SATISFAÇÃO & LIMITAÇÕES METODOLÓGICAS (PÁGINA 9) -->
                 <div style="display: grid; grid-template-columns: 1fr 2fr; gap: 16px; margin-bottom: 24px;">
                     <!-- PESQUISA DE SATISFAÇÃO -->
-                    <div style="background: var(--sagti-surface); border: 1px solid rgba(255,255,255,0.08); border-radius: 10px; padding: 18px; display: flex; flex-direction: column; justify-content: space-between;">
+                    <div style="background: var(--sagti-surface-alt); border: 1px solid rgba(255,255,255,0.08); border-radius: 10px; padding: 18px; display: flex; flex-direction: column; justify-content: space-between;">
                         <div>
                             <h4 style="margin: 0 0 12px 0; font-size: 14.5px; font-weight: 700; color: var(--sagti-text); display: flex; align-items: center; gap: 8px;">
                                 <span>⭐</span> Pesquisa de Satisfação (Página 9)
@@ -4086,19 +4089,19 @@
                                 Cobertura amostral: <strong>10,0% dos chamados fechados</strong> (25 de 249). Os IDs e técnicos avaliados foram conferidos e validados nominalmente.
                             </div>
                         </div>
-                        <div style="background: var(--sagti-surface); border-radius: 6px; padding: 10px; font-size: 11.5px; color: #94a3b8; line-height: 1.4; margin-top: 10px;">
+                        <div style="background: var(--sagti-surface-alt); border-radius: 6px; padding: 10px; font-size: 11.5px; color: #94a3b8; line-height: 1.4; margin-top: 10px;">
                             <strong style="color: #cbd5e1;">Leitura Técnica:</strong> O resultado reflete excelente percepção dos usuários atendidos, mas deve ser analisado conjuntamente com a taxa de adesão de 10%.
                         </div>
                     </div>
 
                     <!-- LIMITAÇÕES METODOLÓGICAS DA BASE GLPI -->
-                    <div style="background: var(--sagti-surface); border: 1px solid rgba(255,255,255,0.08); border-radius: 10px; padding: 18px;">
+                    <div style="background: var(--sagti-surface-alt); border: 1px solid rgba(255,255,255,0.08); border-radius: 10px; padding: 18px;">
                         <h4 style="margin: 0 0 12px 0; font-size: 14.5px; font-weight: 700; color: var(--sagti-text); display: flex; align-items: center; gap: 8px;">
                             <span>⚠️</span> Limitações Metodológicas &amp; Auditoria de Dados (Página 9)
                         </h4>
                         <table style="width: 100%; border-collapse: collapse; font-size: 12px;">
                             <thead>
-                                <tr style="border-bottom: 2px solid rgba(255,255,255,0.1); background: var(--sagti-surface); text-align: left;">
+                                <tr style="border-bottom: 2px solid rgba(255,255,255,0.1); background: var(--sagti-surface-alt); text-align: left;">
                                     <th style="padding: 8px 10px; color: #94a3b8;">Tema</th>
                                     <th style="padding: 8px 10px; color: #94a3b8;">Situação na Exportação</th>
                                     <th style="padding: 8px 10px; color: #94a3b8;">Impacto no Relatório</th>
@@ -4149,7 +4152,7 @@
                     <div style="overflow-x: auto; margin-bottom: 16px;">
                         <table style="width: 100%; border-collapse: collapse; font-size: 12.5px;">
                             <thead>
-                                <tr style="border-bottom: 2px solid rgba(255,255,255,0.1); background: var(--sagti-surface); text-align: left;">
+                                <tr style="border-bottom: 2px solid rgba(255,255,255,0.1); background: var(--sagti-surface-alt); text-align: left;">
                                     <th style="padding: 10px 12px; color: #94a3b8; width: 80px; text-align: center;">Prioridade</th>
                                     <th style="padding: 10px 12px; color: #94a3b8; width: 45%;">Ação Estratégica</th>
                                     <th style="padding: 10px 12px; color: #94a3b8;">Indicador de Sucesso</th>
@@ -4194,7 +4197,7 @@
                     </div>
 
                     <!-- METODOLOGIA CANÔNICA E STATUS -->
-                    <div style="background: var(--sagti-surface); border: 1px solid rgba(255,255,255,0.06); border-radius: 8px; padding: 12px 16px; font-size: 11.5px; color: #94a3b8; line-height: 1.5;">
+                    <div style="background: var(--sagti-surface-alt); border: 1px solid rgba(255,255,255,0.06); border-radius: 8px; padding: 12px 16px; font-size: 11.5px; color: #94a3b8; line-height: 1.5;">
                         <strong style="color: #cbd5e1;">Metodologia Resumida de Auditoria:</strong> Fonte oficial: exportação direta por chamado do GLPI conferida com ST-Dashboard. Taxa de resolução: solucionados ÷ abertos (265 ÷ 274 = 96,7%). SLA canônico: 251 no prazo ÷ 265 finalizados = 94,7%. Tempo de solução medido em horas corridas. Equipe avaliada: Leonardo, Thais e Paulo.
                     </div>
                 </div>
@@ -4231,7 +4234,7 @@
                         <!-- SUB-PAINEL: 👥 GESTÃO COMPLETA DE USUÁRIOS & ATRIBUIÇÃO DE PERFIS -->
             <div id="subview-cfg-usuarios" class="subview-cfg" style="display: block;">
                 <div class="table-card" style="margin-bottom: 20px;">
-                    <div class="table-header-bar" style="background: var(--sagti-surface); padding: 12px 18px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;">
+                    <div class="table-header-bar" style="background: var(--sagti-surface-alt); padding: 12px 18px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;">
                         <div>
                             <strong style="font-size: 14px; color: var(--sagti-text); display: flex; align-items: center; gap: 8px;">
                                 👥 Gestão de Usuários do Cockpit (Cadastro, Edição &amp; Atribuição de Perfis)
@@ -4259,7 +4262,7 @@
                         <div style="overflow-x: auto;">
                             <table style="width: 100%; border-collapse: collapse; font-size: 12px;">
                                 <thead>
-                                    <tr style="background: var(--sagti-surface); color: #94a3b8; font-size: 11px; text-transform: uppercase;">
+                                    <tr style="background: var(--sagti-surface-alt); color: #94a3b8; font-size: 11px; text-transform: uppercase;">
                                         <th style="padding: 11px 12px; text-align: left;">Colaborador / E-mail</th>
                                         <th style="padding: 11px 12px; text-align: left;">Diretoria / Unidade</th>
                                         <th style="padding: 11px 12px; text-align: center;">Perfil RBAC Atrelado</th>
@@ -4497,7 +4500,7 @@
                 <div id="subcon-painel-matriz" class="subcon-painel" style="display:block;">
                     <div class="table-card" id="card-motores-unificados-v9" style="margin-bottom:20px; border-top: 4px solid #0ea5e9;">
                         <!-- CABEÇALHO CONSOLIDADO -->
-                        <div class="table-header-bar" style="display:flex; justify-content:space-between; align-items:center; padding:15px 18px; flex-wrap:wrap; gap:12px; border-bottom:1px solid rgba(255,255,255,0.08); background:var(--sagti-surface);">
+                        <div class="table-header-bar" style="display:flex; justify-content:space-between; align-items:center; padding:15px 18px; flex-wrap:wrap; gap:12px; border-bottom:1px solid rgba(255,255,255,0.08); background:var(--sagti-surface-alt);">
                             <div>
                                 <div class="table-header-title" style="font-size:14px; font-weight:800; color:var(--sagti-text); display:flex; align-items:center; gap:8px;">
                                     <span>📡 MATRIZ UNIFICADA DE CONECTORES &amp; VARREDURAS DE TIC</span>
@@ -4517,7 +4520,7 @@
                         <div style="overflow-x:auto;">
                             <table style="width:100%; border-collapse:collapse; font-size:12px;">
                                 <thead>
-                                    <tr style="background:var(--sagti-surface); color:#94a3b8; border-bottom:1px solid rgba(255,255,255,0.1);">
+                                    <tr style="background:var(--sagti-surface-alt); color:#94a3b8; border-bottom:1px solid rgba(255,255,255,0.1);">
                                         <th style="padding:12px 14px; text-align:left;">Motor / Barramento</th>
                                         <th style="padding:12px 14px; text-align:left;">Endpoint Oficial / Alvo</th>
                                         <th style="padding:12px 14px; text-align:left;">Status da Sonda HTTP</th>
@@ -4555,19 +4558,19 @@
                             <div class="kpi-card" style="padding:16px; border-radius:14px; min-height:auto;">
                                 <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
                                     <strong style="font-size:13px; color:var(--sagti-text);">🏢 Instância do GLPI 10</strong>
-                                    <span id="status-srv-glpi" style="background:rgba(16,185,129,0.2); color:#34d399; font-size:10.5px; padding:3px 8px; border-radius:10px; font-weight:700;">🟢 Online (203 Tickets)</span>
+                                    <span id="status-srv-glpi" style="background:rgba(148,163,184,0.2); color:#cbd5e1; font-size:10.5px; padding:3px 8px; border-radius:10px; font-weight:700;">⚪ Não verificado</span>
                                 </div>
                                 <label for="cfg-endpoint-glpi-url" style="font-size:11px; color:#94a3b8; display:block; margin-bottom:3px;">Endpoint REST API:</label>
                                 <input type="text" id="cfg-endpoint-glpi-url" value="https://atendimento.spaguas.sp.gov.br/apirest.php" autocomplete="off" style="width:100%; margin-bottom:10px; font-family:monospace;">
                                 <label for="cfg-endpoint-glpi-apptoken" style="font-size:11px; color:#94a3b8; display:block; margin-bottom:3px;">App-Token:</label>
-                                <input type="password" id="cfg-endpoint-glpi-apptoken" value="inFWbPyUBAXMVSN9kmPQPtCveBIGO6WBryr0RHC9" autocomplete="new-password" style="width:100%; font-family:monospace;">
+                                <input type="password" id="cfg-endpoint-glpi-apptoken" value="" autocomplete="new-password" style="width:100%; font-family:monospace;">
                             </div>
 
                             <!-- OPENPROJECT 14 -->
                             <div class="kpi-card" style="padding:16px; border-radius:14px; min-height:auto;">
                                 <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
                                     <strong style="font-size:13px; color:var(--sagti-text);">📋 Instância do OpenProject 14</strong>
-                                    <span id="status-srv-openproject" style="background:rgba(16,185,129,0.2); color:#34d399; font-size:10.5px; padding:3px 8px; border-radius:10px; font-weight:700;">🟢 Online (500 WPs)</span>
+                                    <span id="status-srv-openproject" style="background:rgba(148,163,184,0.2); color:#cbd5e1; font-size:10.5px; padding:3px 8px; border-radius:10px; font-weight:700;">⚪ Não verificado</span>
                                 </div>
                                 <label for="cfg-endpoint-op-url" style="font-size:11px; color:#94a3b8; display:block; margin-bottom:3px;">Endpoint API v3:</label>
                                 <input type="text" id="cfg-endpoint-op-url" value="https://projetos.spaguas.sp.gov.br/api/v3" autocomplete="off" style="width:100%; margin-bottom:10px; font-family:monospace;">
@@ -4579,7 +4582,7 @@
                             <div class="kpi-card" style="padding:16px; border-radius:14px; min-height:auto;">
                                 <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
                                     <strong style="font-size:13px; color:var(--sagti-text);">🤖 Gateway New API (:3001) / Ollama</strong>
-                                    <span id="status-srv-newapi" style="background:rgba(16,185,129,0.2); color:#34d399; font-size:10.5px; padding:3px 8px; border-radius:10px; font-weight:700;">🟢 Online (Motor IA)</span>
+                                    <span id="status-srv-newapi" style="background:rgba(148,163,184,0.2); color:#cbd5e1; font-size:10.5px; padding:3px 8px; border-radius:10px; font-weight:700;">⚪ Não verificado</span>
                                 </div>
                                 <label for="cfg-endpoint-newapi-url" style="font-size:11px; color:#94a3b8; display:block; margin-bottom:3px;">Endpoint OpenAI-Compatible:</label>
                                 <input type="text" id="cfg-endpoint-newapi-url" value="http://localhost:3001/v1" onchange="localStorage.setItem('newapi_base_url', this.value)" autocomplete="off" style="width:100%; margin-bottom:10px; font-family:monospace;">
@@ -4591,7 +4594,7 @@
                             <div class="kpi-card" style="padding:16px; border-radius:14px; min-height:auto;">
                                 <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
                                     <strong style="font-size:13px; color:var(--sagti-text);">🗄️ Base de Dados MariaDB 10.11</strong>
-                                    <span id="status-srv-mariadb" style="background:rgba(16,185,129,0.2); color:#34d399; font-size:10.5px; padding:3px 8px; border-radius:10px; font-weight:700;">🟢 Online (glpidb Ativa)</span>
+                                    <span id="status-srv-mariadb" style="background:rgba(148,163,184,0.2); color:#cbd5e1; font-size:10.5px; padding:3px 8px; border-radius:10px; font-weight:700;">⚪ Não verificado</span>
                                 </div>
                                 <label for="cfg-endpoint-db-host" style="font-size:11px; color:#94a3b8; display:block; margin-bottom:3px;">Host / Porta:</label>
                                 <input type="text" id="cfg-endpoint-db-host" value="localhost:3306" autocomplete="off" style="width:100%; margin-bottom:10px; font-family:monospace;">
@@ -4677,7 +4680,7 @@
 
                     <div style="padding: 18px 20px;">
                         <!-- BARRA DE DIAGNÓSTICO E AUTO-FAILOVER -->
-                        <div style="background: var(--sagti-surface); border: 1px solid rgba(255,255,255,0.1); border-left: 4px solid #0284c7; border-radius: 10px; padding: 14px 18px; margin-bottom: 18px;">
+                        <div style="background: var(--sagti-surface-alt); border: 1px solid rgba(255,255,255,0.1); border-left: 4px solid #0284c7; border-radius: 10px; padding: 14px 18px; margin-bottom: 18px;">
                             <div style="font-size: 12px; color: #cbd5e1; line-height: 1.5; flex: 1; min-width: 280px;">
                                 <strong style="color: var(--sagti-accent);">🛠️ Painel de Governança de Agentes da SA-GTI:</strong><br>
                                 Ajuste as instruções especializadas de cada agente para calibrar o comportamento da IA às necessidades da sua diretoria. As alterações são aplicadas instantaneamente no chat e nos pareceres.
@@ -4690,7 +4693,7 @@
                         <div style="display: grid; grid-template-columns: repeat(2, minmax(420px, 1fr)); gap: 20px;">
 
                             <!-- CARD 1: IA 1 — CONVERSAÇÃO & COPILOTO EXECUTIVO 360° -->
-                            <div class="card-config-agente" style="background: var(--sagti-surface); border: 1px solid rgba(56,189,248,0.3); border-top: 4px solid #0284c7; border-radius: 12px; padding: 18px; display: flex; flex-direction: column; gap: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.3);">
+                            <div class="card-config-agente" style="background: var(--sagti-surface-alt); border: 1px solid rgba(56,189,248,0.3); border-top: 4px solid #0284c7; border-radius: 12px; padding: 18px; display: flex; flex-direction: column; gap: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.3);">
                                 <div style="display: flex; justify-content: space-between; align-items: center;">
                                     <span style="font-size: 11px; font-weight: 800; text-transform: uppercase; color: var(--sagti-accent); background: rgba(14,165,233,0.18); border: 1px solid rgba(56,189,248,0.35); padding: 3px 10px; border-radius: 10px;">🧠 Slot #1 &bull; Diálogo &amp; Copiloto 360°</span>
                                     <span id="badge-status-ia-principal" style="font-size: 10.5px; font-weight: 700; background: rgba(16,185,129,0.2); color: #34d399; border: 1px solid #10b981; padding: 2px 8px; border-radius: 8px;">🟢 Ativo</span>
@@ -4730,15 +4733,15 @@
                                 <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px;">
                                     <div>
                                         <label style="font-size: 10px; color: #94a3b8; text-transform: uppercase; font-weight: 700; display: block;">Temp:</label>
-                                        <input type="number" id="cfg-ia1-temp" min="0" max="1" step="0.1" value="0.0" style="width: 100%; box-sizing: border-box; padding: 4px; border-radius: 4px; border: 1px solid rgba(255,255,255,0.14); background: var(--sagti-surface); color: var(--sagti-text); font-size: 11px;">
+                                        <input type="number" id="cfg-ia1-temp" min="0" max="1" step="0.1" value="0.0" style="width: 100%; box-sizing: border-box; padding: 4px; border-radius: 4px; border: 1px solid rgba(255,255,255,0.14); background: var(--sagti-surface-alt); color: var(--sagti-text); font-size: 11px;">
                                     </div>
                                     <div>
                                         <label style="font-size: 10px; color: #94a3b8; text-transform: uppercase; font-weight: 700; display: block;">Max Tok:</label>
-                                        <input type="number" id="cfg-ia1-maxtokens" value="1024" style="width: 100%; box-sizing: border-box; padding: 4px; border-radius: 4px; border: 1px solid rgba(255,255,255,0.14); background: var(--sagti-surface); color: var(--sagti-text); font-size: 11px;">
+                                        <input type="number" id="cfg-ia1-maxtokens" value="1024" style="width: 100%; box-sizing: border-box; padding: 4px; border-radius: 4px; border: 1px solid rgba(255,255,255,0.14); background: var(--sagti-surface-alt); color: var(--sagti-text); font-size: 11px;">
                                     </div>
                                     <div>
                                         <label style="font-size: 10px; color: #94a3b8; text-transform: uppercase; font-weight: 700; display: block;">Timeout (s):</label>
-                                        <input type="number" id="cfg-ia1-timeout" value="15" style="width: 100%; box-sizing: border-box; padding: 4px; border-radius: 4px; border: 1px solid rgba(255,255,255,0.14); background: var(--sagti-surface); color: var(--sagti-text); font-size: 11px;">
+                                        <input type="number" id="cfg-ia1-timeout" value="15" style="width: 100%; box-sizing: border-box; padding: 4px; border-radius: 4px; border: 1px solid rgba(255,255,255,0.14); background: var(--sagti-surface-alt); color: var(--sagti-text); font-size: 11px;">
                                     </div>
                                 </div>
 
@@ -4749,7 +4752,7 @@
                             </div>
 
                             <!-- CARD 2: IA 2 — GOVERNANÇA & ESCRITA NO OPENPROJECT -->
-                            <div class="card-config-agente" style="background: var(--sagti-surface); border: 1px solid rgba(168,85,247,0.3); border-top: 4px solid #0284c7; border-radius: 12px; padding: 18px; display: flex; flex-direction: column; gap: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.3);">
+                            <div class="card-config-agente" style="background: var(--sagti-surface-alt); border: 1px solid rgba(168,85,247,0.3); border-top: 4px solid #0284c7; border-radius: 12px; padding: 18px; display: flex; flex-direction: column; gap: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.3);">
                                 <div style="display: flex; justify-content: space-between; align-items: center;">
                                     <span style="font-size: 11px; font-weight: 800; text-transform: uppercase; color: #c084fc; background: rgba(168,85,247,0.18); border: 1px solid rgba(168,85,247,0.35); padding: 3px 10px; border-radius: 10px;">🧭 Slot #2 &bull; Governança &amp; Escrita OpenProject</span>
                                     <span id="badge-status-ia-orquestracao" style="font-size: 10.5px; font-weight: 700; background: rgba(16,185,129,0.2); color: #34d399; border: 1px solid #10b981; padding: 2px 8px; border-radius: 8px;">🟢 Ativo</span>
@@ -4789,15 +4792,15 @@
                                 <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px;">
                                     <div>
                                         <label style="font-size: 10px; color: #94a3b8; text-transform: uppercase; font-weight: 700; display: block;">Temp:</label>
-                                        <input type="number" id="cfg-ia2-temp" min="0" max="1" step="0.1" value="0.0" style="width: 100%; box-sizing: border-box; padding: 4px; border-radius: 4px; border: 1px solid rgba(255,255,255,0.14); background: var(--sagti-surface); color: var(--sagti-text); font-size: 11px;">
+                                        <input type="number" id="cfg-ia2-temp" min="0" max="1" step="0.1" value="0.0" style="width: 100%; box-sizing: border-box; padding: 4px; border-radius: 4px; border: 1px solid rgba(255,255,255,0.14); background: var(--sagti-surface-alt); color: var(--sagti-text); font-size: 11px;">
                                     </div>
                                     <div>
                                         <label style="font-size: 10px; color: #94a3b8; text-transform: uppercase; font-weight: 700; display: block;">Max Tok:</label>
-                                        <input type="number" id="cfg-ia2-maxtokens" value="1024" style="width: 100%; box-sizing: border-box; padding: 4px; border-radius: 4px; border: 1px solid rgba(255,255,255,0.14); background: var(--sagti-surface); color: var(--sagti-text); font-size: 11px;">
+                                        <input type="number" id="cfg-ia2-maxtokens" value="1024" style="width: 100%; box-sizing: border-box; padding: 4px; border-radius: 4px; border: 1px solid rgba(255,255,255,0.14); background: var(--sagti-surface-alt); color: var(--sagti-text); font-size: 11px;">
                                     </div>
                                     <div>
                                         <label style="font-size: 10px; color: #94a3b8; text-transform: uppercase; font-weight: 700; display: block;">Timeout (s):</label>
-                                        <input type="number" id="cfg-ia2-timeout" value="15" style="width: 100%; box-sizing: border-box; padding: 4px; border-radius: 4px; border: 1px solid rgba(255,255,255,0.14); background: var(--sagti-surface); color: var(--sagti-text); font-size: 11px;">
+                                        <input type="number" id="cfg-ia2-timeout" value="15" style="width: 100%; box-sizing: border-box; padding: 4px; border-radius: 4px; border: 1px solid rgba(255,255,255,0.14); background: var(--sagti-surface-alt); color: var(--sagti-text); font-size: 11px;">
                                     </div>
                                 </div>
 
@@ -4962,7 +4965,7 @@
 
                 <!-- 3. CONTEÚDO 1: MANUAL DO USUÁRIO -->
                 <div id="subview-doc-usuario" class="doc-subview" style="display: block; animation: fadeIn 0.3s ease;">
-                    <div style="background: var(--sagti-surface); border: 1px solid rgba(255,255,255,0.1); border-radius: 12px; padding: 28px 32px; color: var(--sagti-text); line-height: 1.7; box-shadow: 0 8px 24px rgba(0,0,0,0.3);">
+                    <div style="background: var(--sagti-surface-alt); border: 1px solid rgba(255,255,255,0.1); border-radius: 12px; padding: 28px 32px; color: var(--sagti-text); line-height: 1.7; box-shadow: 0 8px 24px rgba(0,0,0,0.3);">
                         <h3 style="color: var(--sagti-accent); font-size: 18px; margin: 0 0 16px 0; border-bottom: 1px solid rgba(56,189,248,0.3); padding-bottom: 8px;">
                             📘 Manual do Usuário — Cockpit Executivo &amp; Operacional SA-GTI
                         </h3>
@@ -5004,7 +5007,7 @@
 
                 <!-- 4. CONTEÚDO 2: DOCUMENTAÇÃO TÉCNICA -->
                 <div id="subview-doc-tecnica" class="doc-subview" style="display: none; animation: fadeIn 0.3s ease;">
-                    <div style="background: var(--sagti-surface); border: 1px solid rgba(255,255,255,0.1); border-radius: 12px; padding: 28px 32px; color: var(--sagti-text); line-height: 1.7; box-shadow: 0 8px 24px rgba(0,0,0,0.3);">
+                    <div style="background: var(--sagti-surface-alt); border: 1px solid rgba(255,255,255,0.1); border-radius: 12px; padding: 28px 32px; color: var(--sagti-text); line-height: 1.7; box-shadow: 0 8px 24px rgba(0,0,0,0.3);">
                         <h3 style="color: var(--sagti-accent); font-size: 18px; margin: 0 0 16px 0; border-bottom: 1px solid rgba(56,189,248,0.3); padding-bottom: 8px;">
                             ⚙️ Documentação Técnica — Arquitetura, Engenharia &amp; Conectores
                         </h3>
@@ -5059,12 +5062,12 @@ python sincronizar_openproject_backend.py --card 1498</pre>
 
                 <!-- 5. CONTEÚDO 3: REPOSITÓRIO GITHUB & ESTRUTURA -->
                 <div id="subview-doc-github" class="doc-subview" style="display: none; animation: fadeIn 0.3s ease;">
-                    <div style="background: var(--sagti-surface); border: 1px solid rgba(255,255,255,0.1); border-radius: 12px; padding: 28px 32px; color: var(--sagti-text); line-height: 1.7; box-shadow: 0 8px 24px rgba(0,0,0,0.3);">
+                    <div style="background: var(--sagti-surface-alt); border: 1px solid rgba(255,255,255,0.1); border-radius: 12px; padding: 28px 32px; color: var(--sagti-text); line-height: 1.7; box-shadow: 0 8px 24px rgba(0,0,0,0.3);">
                         <h3 style="color: var(--sagti-accent); font-size: 18px; margin: 0 0 16px 0; border-bottom: 1px solid rgba(56,189,248,0.3); padding-bottom: 8px;">
                             🐙 Repositório GitHub &amp; Estrutura do Projeto Base
                         </h3>
 
-                        <div style="background: var(--sagti-surface); border: 1px solid rgba(56,189,248,0.3); border-radius: 8px; padding: 16px 20px; margin-bottom: 20px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px;">
+                        <div style="background: var(--sagti-surface-alt); border: 1px solid rgba(56,189,248,0.3); border-radius: 8px; padding: 16px 20px; margin-bottom: 20px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px;">
                             <div>
                                 <strong style="color: var(--sagti-text); font-size: 13.5px;">URL Oficial do Projeto:</strong><br>
                                 <code style="color: var(--sagti-accent); font-size: 12.5px;">https://github.com/LUIZ-SEIXEIRO/cockpit-gti-spaguas</code>
@@ -5101,7 +5104,7 @@ cockpit-gti-spaguas/
                 </div>
                 <!-- 6. CONTEÚDO 4: APRESENTAÇÃO EXECUTIVA (README.MD) -->
                 <div id="subview-doc-readme" class="doc-subview" style="display: none; animation: fadeIn 0.3s ease;">
-                    <div style="background: var(--sagti-surface); border: 1px solid rgba(255,255,255,0.1); border-radius: 12px; padding: 28px 32px; color: var(--sagti-text); line-height: 1.7; box-shadow: 0 8px 24px rgba(0,0,0,0.3);">
+                    <div style="background: var(--sagti-surface-alt); border: 1px solid rgba(255,255,255,0.1); border-radius: 12px; padding: 28px 32px; color: var(--sagti-text); line-height: 1.7; box-shadow: 0 8px 24px rgba(0,0,0,0.3);">
                         <div style="padding:20px;text-align:center;color:var(--sagti-accent);font-size:13px;">⏳ Carregando README.md executivo...</div>
                     </div>
                 </div>
@@ -5466,7 +5469,8 @@ cockpit-gti-spaguas/
     </div>
 
     <script src="/static/js/cockpit-core.js"></script>
-    <script src="/static/conector_api.js">
+    <script src="/static/conector_api.js"></script>
+    <script>
     window.abrirModalManualGovernanca = function() {
         document.getElementById('modal-manual-governanca').style.display = 'flex';
     };
@@ -5658,10 +5662,7 @@ cockpit-gti-spaguas/
 
 <script>
     function obterHeadersComAuth(extras = {}) {
-        const token = window.__COCKPIT_TOKEN__ || localStorage.getItem('cockpit_token') || '';
-        const h = { 'Content-Type': 'application/json', ...extras };
-        if (token) h['Authorization'] = 'Bearer ' + token;
-        return h;
+        return { 'Content-Type': 'application/json', ...extras };
     }
 
 function processarArquivosSelecionados(files) {
@@ -5770,10 +5771,7 @@ function abrirModalRegrasSEI() {
 
 <script>
     function obterHeadersComAuth(extras = {}) {
-        const token = window.__COCKPIT_TOKEN__ || localStorage.getItem('cockpit_token') || '';
-        const h = { 'Content-Type': 'application/json', ...extras };
-        if (token) h['Authorization'] = 'Bearer ' + token;
-        return h;
+        return { 'Content-Type': 'application/json', ...extras };
     }
 
 window.arquivosSEISelecionados = [];
@@ -5864,10 +5862,7 @@ function dispararProcessamentoSEI() {
 
 <script>
     function obterHeadersComAuth(extras = {}) {
-        const token = window.__COCKPIT_TOKEN__ || localStorage.getItem('cockpit_token') || '';
-        const h = { 'Content-Type': 'application/json', ...extras };
-        if (token) h['Authorization'] = 'Bearer ' + token;
-        return h;
+        return { 'Content-Type': 'application/json', ...extras };
     }
 
 // SOBRESCRITA OFICIAL DE ALTERNARSUBOCNFIG COM DISPLAY IMPORTANT E AUTO-SCROLL
@@ -5912,10 +5907,7 @@ window.alternarSubConfig = function(modo) {
 
 <script>
     function obterHeadersComAuth(extras = {}) {
-        const token = window.__COCKPIT_TOKEN__ || localStorage.getItem('cockpit_token') || '';
-        const h = { 'Content-Type': 'application/json', ...extras };
-        if (token) h['Authorization'] = 'Bearer ' + token;
-        return h;
+        return { 'Content-Type': 'application/json', ...extras };
     }
 
 window.alternarSubConfig = function(modo) {
@@ -5976,13 +5968,10 @@ window.alternarSubConfig = function(modo) {
 
 <script>
     function obterHeadersComAuth(extras = {}) {
-        const token = window.__COCKPIT_TOKEN__ || localStorage.getItem('cockpit_token') || '';
-        const h = { 'Content-Type': 'application/json', ...extras };
-        if (token) h['Authorization'] = 'Bearer ' + token;
-        return h;
+        return { 'Content-Type': 'application/json', ...extras };
     }
 
-(function inicializarGlassmorphismV11() { return; /* Desativado pelo Hallmark Clean Redesign */
+(function inicializarGlassmorphismV11() { return;
     // 1. Aplica tema salvo ou Dark Mode como Default conforme especificação
     var temaSalvo = localStorage.getItem('sagti_theme_v11') || 'dark';
     document.documentElement.setAttribute('data-theme', temaSalvo);
@@ -6065,10 +6054,7 @@ window.alternarSubConfig = function(modo) {
 
 <script>
     function obterHeadersComAuth(extras = {}) {
-        const token = window.__COCKPIT_TOKEN__ || localStorage.getItem('cockpit_token') || '';
-        const h = { 'Content-Type': 'application/json', ...extras };
-        if (token) h['Authorization'] = 'Bearer ' + token;
-        return h;
+        return { 'Content-Type': 'application/json', ...extras };
     }
 
 (function() {
@@ -6095,10 +6081,7 @@ window.alternarSubConfig = function(modo) {
 
 <script>
     function obterHeadersComAuth(extras = {}) {
-        const token = window.__COCKPIT_TOKEN__ || localStorage.getItem('cockpit_token') || '';
-        const h = { 'Content-Type': 'application/json', ...extras };
-        if (token) h['Authorization'] = 'Bearer ' + token;
-        return h;
+        return { 'Content-Type': 'application/json', ...extras };
     }
 
 (function() {
@@ -6123,10 +6106,7 @@ window.alternarSubConfig = function(modo) {
 
 <script>
     function obterHeadersComAuth(extras = {}) {
-        const token = window.__COCKPIT_TOKEN__ || localStorage.getItem('cockpit_token') || '';
-        const h = { 'Content-Type': 'application/json', ...extras };
-        if (token) h['Authorization'] = 'Bearer ' + token;
-        return h;
+        return { 'Content-Type': 'application/json', ...extras };
     }
 
 (function() {
@@ -6262,10 +6242,7 @@ window.alternarSubConfig = function(modo) {
 
 <script>
     function obterHeadersComAuth(extras = {}) {
-        const token = window.__COCKPIT_TOKEN__ || localStorage.getItem('cockpit_token') || '';
-        const h = { 'Content-Type': 'application/json', ...extras };
-        if (token) h['Authorization'] = 'Bearer ' + token;
-        return h;
+        return { 'Content-Type': 'application/json', ...extras };
     }
 
 (function() {
@@ -6466,137 +6443,15 @@ window.alternarSubConfig = function(modo) {
 
 <script id="script-correcao-mesa-v11" src="/static/js/mesa-trabalho.js"></script>
 
-    <!-- MODAL DE CADASTRO / EDIÇÃO DE USUÁRIO -->
-    <div id="modal-crud-usuario" style="display: none; position: fixed; inset: 0; background: var(--sagti-surface-alt);  z-index: 99999; align-items: center; justify-content: center; padding: 20px;">
-        <div style="background: #0b0f19; border: 1px solid rgba(56,189,248,0.4); border-top: 4px solid #0ea5e9; border-radius: 16px; max-width: 540px; width: 100%; color: var(--sagti-text); box-shadow: 0 24px 60px rgba(0,0,0,0.85); overflow: hidden;">
-            <div style="padding: 14px 20px; background: var(--sagti-surface); border-bottom: 1px solid rgba(255,255,255,0.08); display: flex; justify-content: space-between; align-items: center;">
-                <strong id="modal-usuario-titulo" style="font-size: 14.5px; color: var(--sagti-text); display: flex; align-items: center; gap: 8px;">
-                    👤 Cadastrar Novo Usuário
-                </strong>
-                <button type="button" onclick="window.fecharModalUsuario()" style="background: transparent; border: none; color: #94a3b8; font-size: 18px; cursor: pointer;">✖</button>
-            </div>
-            <form id="form-crud-usuario" onsubmit="window.salvarUsuarioForm(event)" style="padding: 20px; display: flex; flex-direction: column; gap: 14px;">
-                <input type="hidden" id="usuario-id-hidden" value="">
-                <div>
-                    <label style="display: block; font-size: 11px; font-weight: 700; color: #94a3b8; text-transform: uppercase; margin-bottom: 4px;">Nome Completo:</label>
-                    <input type="text" id="usuario-nome-input" required placeholder="Ex: Luiz Antonio Seixeiro" style="width: 100%; box-sizing: border-box; padding: 8px 12px; border-radius: 6px; border: 1px solid rgba(255,255,255,0.15); background: rgba(255,255,255,0.06); color: var(--sagti-text); font-size: 12.5px; outline: none;">
-                </div>
-                <div style="display: grid; grid-template-columns: 1.2fr 1fr; gap: 12px;">
-                    <div>
-                        <label style="display: block; font-size: 11px; font-weight: 700; color: #94a3b8; text-transform: uppercase; margin-bottom: 4px;">E-mail Institucional:</label>
-                        <input type="email" id="usuario-email-input" required placeholder="usuario@spaguas.sp.gov.br" style="width: 100%; box-sizing: border-box; padding: 8px 12px; border-radius: 6px; border: 1px solid rgba(255,255,255,0.15); background: rgba(255,255,255,0.06); color: var(--sagti-text); font-size: 12.5px; outline: none;">
-                    </div>
-                    <div>
-                        <label style="display: block; font-size: 11px; font-weight: 700; color: #94a3b8; text-transform: uppercase; margin-bottom: 4px;">Unidade / Diretoria:</label>
-                        <select id="usuario-diretoria-input" style="width: 100%; box-sizing: border-box; padding: 8px 10px; border-radius: 6px; border: 1px solid rgba(255,255,255,0.15); background: var(--sagti-surface); color: var(--sagti-text); font-size: 12.5px;">
-                            <option value="SA-GTI (Sede)">SA-GTI (Sede)</option>
-                            <option value="DIF - Infraestrutura">DIF - Infraestrutura</option>
-                            <option value="DGD - Governança">DGD - Governança</option>
-                            <option value="Superintendência SA">Superintendência SA</option>
-                            <option value="Bacia Médio Tietê (BMT)">Bacia Médio Tietê (BMT)</option>
-                            <option value="Bacia Paraíba do Sul (BPS)">Bacia Paraíba do Sul (BPS)</option>
-                            <option value="Bacia Pardo / Mogi (BPM)">Bacia Pardo / Mogi (BPM)</option>
-                            <option value="Bacia Baixo Tietê (BBT)">Bacia Baixo Tietê (BBT)</option>
-                        </select>
-                    </div>
-                </div>
-                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
-                    <div>
-                        <label style="display: block; font-size: 11px; font-weight: 700; color: #94a3b8; text-transform: uppercase; margin-bottom: 4px;">Perfil RBAC Atrelado:</label>
-                        <select id="usuario-perfil-input" style="width: 100%; box-sizing: border-box; padding: 8px 10px; border-radius: 6px; border: 1px solid rgba(56,189,248,0.4); background: var(--sagti-surface); color: var(--sagti-accent); font-weight: 700; font-size: 12.5px;">
-                            <option value="Super-Admin">👑 Super-Admin (Acesso Total)</option>
-                            <option value="Gestor">👔 Gestor de TIC</option>
-                            <option value="Analista">💻 Analista de TIC</option>
-                            <option value="Demandante">🏛️ Demandante / Consulta</option>
-                        </select>
-                    </div>
-                    <div>
-                        <label style="display: block; font-size: 11px; font-weight: 700; color: #94a3b8; text-transform: uppercase; margin-bottom: 4px;">Status da Conta:</label>
-                        <select id="usuario-status-input" style="width: 100%; box-sizing: border-box; padding: 8px 10px; border-radius: 6px; border: 1px solid rgba(255,255,255,0.15); background: var(--sagti-surface); color: var(--sagti-text); font-size: 12.5px;">
-                            <option value="Ativo">🟢 Ativo (Habilitado)</option>
-                            <option value="Inativo">🔴 Inativo (Bloqueado)</option>
-                        </select>
-                    </div>
-                </div>
-                <div>
-                    <label style="display: block; font-size: 11px; font-weight: 700; color: #94a3b8; text-transform: uppercase; margin-bottom: 4px;">Senha de Acesso ao Cockpit:</label>
-                    <input type="password" id="usuario-senha-input" placeholder="Padrão: spaguas2026 (ou digite uma nova senha)" style="width: 100%; box-sizing: border-box; padding: 8px 12px; border-radius: 6px; border: 1px solid rgba(255,255,255,0.15); background: rgba(255,255,255,0.06); color: var(--sagti-text); font-size: 12.5px; outline: none;">
-                </div>
-                <div style="display: flex; justify-content: flex-end; gap: 10px; margin-top: 10px;">
-                    <button type="button" class="btn btn-secondary" onclick="window.fecharModalUsuario()" style="padding: 8px 16px; font-size: 12px;">Cancelar</button>
-                    <button type="submit" class="btn btn-primary" style="padding: 8px 20px; font-size: 12px; font-weight: 700; background: var(--sagti-accent);">💾 Salvar Usuário</button>
-                </div>
-            </form>
-        </div>
-    </div>
-
-    <!-- TELA OFICIAL DE LOGIN E AUTENTICAÇÃO DO COCKPIT SP-ÁGUAS -->
-    <div id="tela-login-overlay" style="display: none; position: fixed; inset: 0; background: #f8fafc; z-index: 9999999; align-items: center; justify-content: center; padding: 20px;">
-        <div style="background: rgba(11, 15, 25, 0.88);  -webkit- border: 1px solid rgba(255, 255, 255, 0.14); border-top: 4px solid #0ea5e9; border-radius: 20px; max-width: 440px; width: 100%; padding: 32px 28px; box-shadow: 0 24px 60px rgba(0, 0, 0, 0.85); color: var(--sagti-text); position: relative;">
-            
-            <!-- Cabeçalho Institucional -->
-            <div style="text-align: center; margin-bottom: 24px;">
-                <div style="display: inline-flex; align-items: center; justify-content: center; width: 54px; height: 54px; border-radius: 14px; background: rgba(14, 165, 233, 0.16); border: 1px solid rgba(56, 189, 248, 0.4); margin-bottom: 12px; font-size: 26px; box-shadow: 0 8px 24px rgba(14, 165, 233, 0.25);">
-                    🌊
-                </div>
-                <h2 style="margin: 0; font-size: 19px; font-weight: 900; color: var(--sagti-text); letter-spacing: 0.3px;">SP-ÁGUAS</h2>
-                <div style="font-size: 12px; font-weight: 700; color: var(--sagti-accent); margin-top: 2px; text-transform: uppercase; letter-spacing: 0.5px;">Governança de TIC &bull; SA-GTI</div>
-                <p style="font-size: 11.5px; color: #94a3b8; margin: 6px 0 0 0;">Cockpit Executivo &amp; Operacional (V11)</p>
-            </div>
-
-            <!-- Alerta de Erro de Autenticação -->
-            <div id="login-alerta-erro" style="display: none; background: rgba(239, 68, 68, 0.16); border: 1px solid rgba(239, 68, 68, 0.45); color: #fca5a5; padding: 10px 14px; border-radius: 8px; font-size: 11.5px; margin-bottom: 16px; font-weight: 600; text-align: center;">
-                ⚠️ Usuário ou senha incorretos. Verifique suas credenciais.
-            </div>
-
-            <!-- Formulário de Autenticação Simplificado -->
-            <form id="form-login-cockpit" onsubmit="window.submeterLoginCockpit(event)" style="display: flex; flex-direction: column; gap: 14px;">
-                <div>
-                    <label style="display: block; font-size: 11px; font-weight: 700; color: #cbd5e1; text-transform: uppercase; margin-bottom: 6px;">Selecione o Colaborador / Perfil:</label>
-                    <select id="login-usuario-select" onchange="window.preencherEmailLogin()" style="width: 100%; box-sizing: border-box; padding: 10px 12px; border-radius: 8px; border: 1px solid rgba(56, 189, 248, 0.4); background: var(--sagti-surface); color: var(--sagti-text); font-size: 13px; font-weight: 700; outline: none;">
-                        <!-- Preenchido dinamicamente com os usuários cadastrados -->
-                    </select>
-                    <input type="hidden" id="login-email-input" value="luiz.seixeiro@spaguas.sp.gov.br">
-                </div>
-
-                <div>
-                    <label style="display: block; font-size: 11px; font-weight: 700; color: #cbd5e1; text-transform: uppercase; margin-bottom: 6px;">Senha de Acesso:</label>
-                    <div style="position: relative;">
-                        <input type="password" id="login-senha-input" value="spaguas2026" required placeholder="Digite sua senha..." style="width: 100%; box-sizing: border-box; padding: 10px 38px 10px 12px; border-radius: 8px; border: 1px solid rgba(255, 255, 255, 0.16); background: rgba(255, 255, 255, 0.05); color: var(--sagti-text); font-size: 13px; outline: none;">
-                        <button type="button" onclick="window.toggleMostrarSenhaLogin()" style="position: absolute; right: 10px; top: 50%; transform: translateY(-50%); background: transparent; border: none; color: #94a3b8; font-size: 14px; cursor: pointer;" title="Mostrar/Ocultar Senha">👁️</button>
-                    </div>
-                </div>
-
-                <div style="display: flex; justify-content: space-between; align-items: center; font-size: 11.5px; color: #94a3b8;">
-                    <label style="display: flex; align-items: center; gap: 6px; cursor: pointer;">
-                        <input type="checkbox" id="login-lembrar-checkbox" checked style="accent-color: #0284c7;">
-                        <span>Lembrar minhas credenciais</span>
-                    </label>
-                    <span style="font-size: 10.5px; color: var(--sagti-accent);">🔑 Padrão: spaguas2026</span>
-                </div>
-
-                <button type="submit" class="btn btn-primary" style="padding: 12px; font-size: 13.5px; font-weight: 800; background: var(--sagti-accent); border: 1px solid rgba(56, 189, 248, 0.5); border-radius: 8px; cursor: pointer; box-shadow: 0 4px 16px rgba(14, 165, 233, 0.4); color: var(--sagti-text); display: flex; align-items: center; justify-content: center; gap: 8px; margin-top: 4px;">
-                    🔓 <span>Entrar no Cockpit</span>
-                </button>
-
-                <button type="button" onclick="window.loginRapidoLuiz()" style="padding: 9px; font-size: 11.5px; font-weight: 700; background: rgba(255, 255, 255, 0.06); border: 1px solid rgba(255, 255, 255, 0.14); border-radius: 8px; cursor: pointer; color: var(--sagti-accent); display: flex; align-items: center; justify-content: center; gap: 6px; transition: background-color 0.15s ease, border-color 0.15s ease, opacity 0.15s ease;">
-                    ⚡ <span>Acesso Direto como Luiz Seixeiro (1 Clique)</span>
-                </button>
-            </form>
-
-            <div style="margin-top: 20px; padding-top: 14px; border-top: 1px solid rgba(255,255,255,0.08); text-align: center; font-size: 10.5px; color: #64748b;">
-                SP-Águas &bull; Sistema de Governança e Decisão 360° &bull; Versão 11.0
-            </div>
-        </div>
-    </div>
+    <!-- Autenticação gerenciada pelo backend em /login. -->
 
 <!-- WIDGET MOTOR SEI 4.1.5 (SA-GTI 110050725) -->
 <div id="cockpit-motor-sei-widget" style="position:fixed;right:20px;bottom:20px;z-index:9999;font-family:system-ui,-apple-system,sans-serif;">
-  <button id="btn-abrir-motor-sei" onclick="window.togglePainelMotorSei()" style="background:var(--sagti-surface);color:var(--sagti-text);border:1px solid #38bdf8;border-radius:999px;padding:10px 16px;font-size:13px;font-weight:600;cursor:pointer;box-shadow:0 8px 24px rgba(0,0,0,0.35);display:flex;align-items:center;gap:8px;">
+  <button id="btn-abrir-motor-sei" onclick="window.togglePainelMotorSei()" style="background:var(--sagti-surface-alt);color:var(--sagti-text);border:1px solid #38bdf8;border-radius:999px;padding:10px 16px;font-size:13px;font-weight:600;cursor:pointer;box-shadow:0 8px 24px rgba(0,0,0,0.35);display:flex;align-items:center;gap:8px;">
     <span id="dot-status-motor-sei" style="width:10px;height:10px;border-radius:50%;background:#94a3b8;display:inline-block;"></span>
     Motor SEI 4.1.5
   </button>
-  <div id="modal-motor-sei" style="display:none;position:fixed;right:20px;bottom:70px;width:540px;max-width:92vw;max-height:78vh;overflow:auto;background:var(--sagti-surface);color:var(--sagti-text);border:1px solid #334155;border-radius:12px;padding:16px;box-shadow:0 18px 48px rgba(0,0,0,0.55);">
+  <div id="modal-motor-sei" style="display:none;position:fixed;right:20px;bottom:70px;width:540px;max-width:92vw;max-height:78vh;overflow:auto;background:var(--sagti-surface-alt);color:var(--sagti-text);border:1px solid #334155;border-radius:12px;padding:16px;box-shadow:0 18px 48px rgba(0,0,0,0.55);">
     <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;border-bottom:1px solid #1e293b;padding-bottom:8px;">
       <div>
         <strong style="font-size:15px;color:var(--sagti-text);">Motor SEI SP 4.1.5 &mdash; SA-GTI (110050725)</strong>
@@ -6606,35 +6461,30 @@ window.alternarSubConfig = function(modo) {
     </div>
 
     <div style="display:flex;gap:8px;margin-bottom:12px;flex-wrap:wrap;">
-      <button onclick="window.atualizarStatusMotorSei()" style="background:var(--sagti-surface);color:var(--sagti-text);border:1px solid #475569;border-radius:6px;padding:6px 10px;font-size:12px;cursor:pointer;">Atualizar Status</button>
+      <button onclick="window.atualizarStatusMotorSei()" style="background:var(--sagti-surface-alt);color:var(--sagti-text);border:1px solid #475569;border-radius:6px;padding:6px 10px;font-size:12px;cursor:pointer;">Atualizar Status</button>
       <button onclick="window.carregarCaixaMotorSei()" style="background:#0284c7;color:#fff;border:none;border-radius:6px;padding:6px 12px;font-size:12px;font-weight:600;cursor:pointer;">Listar Caixa da Unidade</button>
-      <button onclick="window.toggleFormCookiesSei()" style="background:var(--sagti-surface);color:#cbd5e1;border:1px solid #475569;border-radius:6px;padding:6px 10px;font-size:12px;cursor:pointer;">Configurar Sess&atilde;o (Cookies)</button>
+      <button onclick="window.toggleFormCookiesSei()" style="background:var(--sagti-surface-alt);color:#cbd5e1;border:1px solid #475569;border-radius:6px;padding:6px 10px;font-size:12px;cursor:pointer;">Configurar Sess&atilde;o (Cookies)</button>
     </div>
 
-    <div id="form-cookies-sei" style="display:none;background:var(--sagti-surface);padding:10px;border-radius:8px;margin-bottom:12px;">
+    <div id="form-cookies-sei" style="display:none;background:var(--sagti-surface-alt);padding:10px;border-radius:8px;margin-bottom:12px;">
       <div style="border-bottom:1px solid #334155;padding-bottom:10px;margin-bottom:10px;">
         <strong style="display:block;font-size:12px;margin-bottom:8px;color:#cbd5e1;">Login institucional via SIP/SEI</strong>
         <div style="display:grid;gap:8px;margin-bottom:8px;">
-          <input id="input-usuario-sei-pw" type="text" autocomplete="username" placeholder="Usuário do SEI" style="padding:6px 8px;border-radius:6px;border:1px solid #475569;background:var(--sagti-surface);color:var(--sagti-text);font-size:12px;">
-          <input id="input-senha-sei-pw" type="password" autocomplete="current-password" placeholder="Senha do SEI" style="padding:6px 8px;border-radius:6px;border:1px solid #475569;background:var(--sagti-surface);color:var(--sagti-text);font-size:12px;">
-          <input id="input-orgao-sei-pw" type="text" value="SPAGUAS" autocomplete="organization" placeholder="Órgão" style="padding:6px 8px;border-radius:6px;border:1px solid #475569;background:var(--sagti-surface);color:var(--sagti-text);font-size:12px;">
+          <input id="input-usuario-sei-pw" type="text" autocomplete="username" placeholder="Usuário do SEI" style="padding:6px 8px;border-radius:6px;border:1px solid #475569;background:var(--sagti-surface-alt);color:var(--sagti-text);font-size:12px;">
+          <input id="input-senha-sei-pw" type="password" autocomplete="current-password" placeholder="Senha do SEI" style="padding:6px 8px;border-radius:6px;border:1px solid #475569;background:var(--sagti-surface-alt);color:var(--sagti-text);font-size:12px;">
+          <input id="input-orgao-sei-pw" type="text" value="SPAGUAS" autocomplete="organization" placeholder="Órgão" style="padding:6px 8px;border-radius:6px;border:1px solid #475569;background:var(--sagti-surface-alt);color:var(--sagti-text);font-size:12px;">
         </div>
         <button onclick="window.loginPlaywrightSei()" style="background:#2563eb;color:#fff;border:none;border-radius:6px;padding:6px 12px;font-size:12px;font-weight:700;cursor:pointer;">Entrar no SEI</button>
       </div>
       <label style="display:block;font-size:12px;margin-bottom:4px;color:#cbd5e1;">Cookie PHPSESSID do SEI:</label>
       <div style="display:flex;gap:8px;margin-bottom:8px;">
-        <input id="input-phpsessid-sei" type="password" placeholder="Cole o PHPSESSID autenticado" style="flex:1;padding:6px 8px;border-radius:6px;border:1px solid #475569;background:var(--sagti-surface);color:var(--sagti-text);font-size:12px;">
+        <input id="input-phpsessid-sei" type="password" placeholder="Cole o PHPSESSID autenticado" style="flex:1;padding:6px 8px;border-radius:6px;border:1px solid #475569;background:var(--sagti-surface-alt);color:var(--sagti-text);font-size:12px;">
         <button onclick="window.salvarCookiesMotorSei()" style="background:#10b981;color:#052e16;border:none;border-radius:6px;padding:6px 12px;font-size:12px;font-weight:700;cursor:pointer;">Salvar</button>
-      </div>
-      <label style="display:block;font-size:11px;margin-bottom:4px;color:#94a3b8;">Token da API do Cockpit (API_TOKEN):</label>
-      <div style="display:flex;gap:8px;">
-        <input id="input-cockpit-token-sei" type="password" placeholder="Opcional: salva em localStorage (cockpit_token)" style="flex:1;padding:6px 8px;border-radius:6px;border:1px solid #475569;background:var(--sagti-surface);color:var(--sagti-text);font-size:12px;">
-        <button onclick="window.salvarTokenCockpitSei()" style="background:var(--sagti-surface-alt);color:var(--sagti-text);border:1px solid #475569;border-radius:6px;padding:6px 12px;font-size:12px;cursor:pointer;">Definir Token</button>
       </div>
     </div>
 
     <div style="display:flex;gap:8px;margin-bottom:12px;">
-      <input id="input-termo-busca-sei" type="text" placeholder="N&uacute;mero do processo ou termo no SEI..." style="flex:1;padding:8px 10px;border-radius:6px;border:1px solid #475569;background:var(--sagti-surface);color:var(--sagti-text);font-size:13px;" onkeydown="if(event.key==='Enter') window.buscarProcessosMotorSei()">
+      <input id="input-termo-busca-sei" type="text" placeholder="N&uacute;mero do processo ou termo no SEI..." style="flex:1;padding:8px 10px;border-radius:6px;border:1px solid #475569;background:var(--sagti-surface-alt);color:var(--sagti-text);font-size:13px;" onkeydown="if(event.key==='Enter') window.buscarProcessosMotorSei()">
       <button onclick="window.buscarProcessosMotorSei()" style="background:#2563eb;color:#fff;border:none;border-radius:6px;padding:8px 14px;font-size:13px;font-weight:600;cursor:pointer;">Buscar</button>
     </div>
 
@@ -6663,29 +6513,32 @@ window.alternarSubConfig = function(modo) {
   };
 
   window.salvarTokenCockpitSei = function() {
-    var t = ((document.getElementById('input-cockpit-token-sei') || {}).value || '').trim();
-    if (!t) { alert('Informe o API_TOKEN.'); return; }
-    localStorage.setItem('cockpit_token', t);
-    document.getElementById('input-cockpit-token-sei').value = '';
-    var out = document.getElementById('resultado-motor-sei');
-    if (out) out.innerHTML = '<div style="color:#4ade80;">Token salvo no navegador.</div>';
+    alert('Tokens da API são gerenciados no servidor e não devem ser inseridos no navegador.');
   };
 
   window.atualizarStatusMotorSei = async function() {
     var dot = document.getElementById('dot-status-motor-sei');
     var txt = document.getElementById('sei-status-texto');
     try {
-      var r = await fetch('/api/v1/sei/status');
+      var r = await fetch('/api/v1/sei/status', { headers: obterHeadersComAuth() });
       var d = await r.json();
       if (r.status === 503 || d.rollback_pendente) {
         if (dot) dot.style.background = '#ef4444';
         if (txt) txt.textContent = 'Bloqueado (rollback pendente): ' + (d.erro || 'verifique o servidor');
+      } else if (d.api_oficial && d.api_oficial.pronta) {
+        if (dot) dot.style.background = '#22c55e';
+        if (txt) txt.textContent = 'API Oficial Prodesp Ativa — Unidade ' + (d.api_oficial.id_unidade || '110050725');
+        var fc = document.getElementById('form-cookies-sei');
+        if (fc) fc.style.display = 'none';
       } else if (d.autenticado) {
         if (dot) dot.style.background = '#22c55e';
         if (txt) txt.textContent = 'Sessão ativa — Unidade ' + (d.unidade || '110050725');
       } else {
         if (dot) dot.style.background = '#f59e0b';
-        if (txt) txt.textContent = 'Sessão inativa — configure os cookies para consultar o SEI';
+        var falt = (d.api_oficial && Array.isArray(d.api_oficial.faltantes) && d.api_oficial.faltantes.length)
+          ? ' (API oficial aguarda: ' + d.api_oficial.faltantes.join(', ') + ')'
+          : '';
+        if (txt) txt.textContent = 'Sessão inativa — configure os cookies ou aguarde API oficial' + falt;
       }
     } catch (e) {
       if (dot) dot.style.background = '#ef4444';
@@ -6756,11 +6609,16 @@ window.alternarSubConfig = function(modo) {
       out.innerHTML = '<div style="color:#94a3b8;">Nenhum processo retornado.</div>';
       return;
     }
-    out.innerHTML = '<div style="margin-bottom:6px;color:var(--sagti-accent);font-weight:600;">' + lista.length + ' processo(s) encontrado(s)</div>' +
+    var tagOrigem = d.origem === 'api_oficial' ? ' <span style="color:#22c55e;font-size:11px;">[API Oficial]</span>' : '';
+    out.innerHTML = '<div style="margin-bottom:6px;color:var(--sagti-accent);font-weight:600;">' + lista.length + ' processo(s) encontrado(s)' + tagOrigem + '</div>' +
       lista.map(function(p) {
-        return '<div style="padding:8px;border:1px solid #1e293b;border-radius:6px;margin-bottom:6px;background:var(--sagti-surface);">' +
-          '<strong>' + escSei(p.numero || p.id_procedimento || 'Sem número') + '</strong>' +
-          (p.id_procedimento ? ' <span style="color:#94a3b8;font-size:11px;">(ID: ' + escSei(p.id_procedimento) + ')</span>' : '') +
+        var proto = p.protocoloProcedimento || p.procedimentoFormatado || p.numero || p.idProcedimento || p.id_procedimento || 'Sem número';
+        var pid = p.idProcedimento || p.id_procedimento || '';
+        var desc = p.tipoProcesso || p.especificacao || '';
+        return '<div style="padding:8px;border:1px solid #1e293b;border-radius:6px;margin-bottom:6px;background:var(--sagti-surface-alt);">' +
+          '<strong>' + escSei(proto) + '</strong>' +
+          (pid ? ' <span style="color:#94a3b8;font-size:11px;">(ID: ' + escSei(pid) + ')</span>' : '') +
+          (desc ? '<div style="color:#cbd5e1;font-size:11px;margin-top:2px;">' + escSei(desc) + '</div>' : '') +
         '</div>';
       }).join('');
   }
@@ -6798,6 +6656,125 @@ window.alternarSubConfig = function(modo) {
   });
 })();
 </script>
+<script>
+(function() {
+    function limparAutenticacaoLegadaLocal() {
+        try {
+            [
+                'cockpit_token',
+                'newapi_token',
+                'sagti_openproject_token',
+                'sagti_usuarios_cockpit_v11',
+                'sagti_usuario_sessao_atual',
+                'sagti_autenticado',
+                'sagti_perfil_ativo'
+            ].forEach(function(chave) {
+                localStorage.removeItem(chave);
+                sessionStorage.removeItem(chave);
+            });
+        } catch (erro) {
+            console.warn('Não foi possível limpar o estado de autenticação legado do navegador.');
+        }
+    }
+
+    function informarAdministracaoIndisponivel() {
+        [
+            ['subview-cfg-usuarios', 'Gestão de usuários indisponível: integre um provedor institucional de identidade antes de administrar contas.'],
+            ['subview-cfg-rbac', 'RBAC não está aplicado no servidor. Não use esta tela para conceder permissões até integrar e validar autorização server-side.']
+        ].forEach(function(item) {
+            var painel = document.getElementById(item[0]);
+            if (painel) {
+                painel.innerHTML = '<div role="status" style="padding:16px;border:1px solid #cbd5e1;background:#fff;color:#334155;line-height:1.5;">' +
+                    window.escapeHtml(item[1]) + '</div>';
+            }
+        });
+        ['tela-login-overlay', 'modal-crud-usuario'].forEach(function(id) {
+            var modal = document.getElementById(id);
+            if (modal) modal.remove();
+        });
+        ['login-senha-input', 'usuario-senha-input', 'input-cockpit-token-sei'].forEach(function(id) {
+            var campo = document.getElementById(id);
+            if (campo) campo.value = '';
+        });
+        var drive = document.getElementById('view-drive_contexto_ia');
+        if (drive) {
+            var avisoDrive = document.createElement('p');
+            avisoDrive.setAttribute('role', 'status');
+            avisoDrive.style.cssText = 'padding:12px;border:1px solid #fed7aa;background:#fff7ed;color:#9a3412;line-height:1.5;';
+            avisoDrive.textContent = 'Ingestão de PDFs, armazenamento de arquivos e indexação RAG não estão implementados. Nenhum documento local será enviado às IAs.';
+            drive.prepend(avisoDrive);
+            drive.querySelectorAll('button[onclick*="acionarSeletorUploadPdfDrive"],button[onclick*="sincronizarDriveComIas"],button[onclick*="restaurarPdfsPadraoDrive"]').forEach(function(botao) {
+                botao.disabled = true;
+                botao.setAttribute('aria-disabled', 'true');
+                botao.title = 'Indisponível: ingestão server-side ainda não implementada.';
+            });
+        }
+        var mesa = document.getElementById('view-mesa_trabalho');
+        if (mesa) {
+            var avisoMesa = document.createElement('p');
+            avisoMesa.setAttribute('role', 'status');
+            avisoMesa.style.cssText = 'padding:12px;border:1px solid #cbd5e1;background:#fff;color:#334155;line-height:1.5;';
+            avisoMesa.textContent = 'A custódia individual não pode ser verificada: esta versão não recebe identidade ou perfil de um IdP institucional.';
+            mesa.prepend(avisoMesa);
+        }
+    }
+
+    limparAutenticacaoLegadaLocal();
+    informarAdministracaoIndisponivel();
+
+    window.obterTokenCockpitSeguro = function() { return ''; };
+    window.abrirTelaLogin = function() { window.location.replace('/login'); };
+    window.loginRapidoLuiz = window.abrirTelaLogin;
+    window.submeterLoginCockpit = function(evento) {
+        if (evento && evento.preventDefault) evento.preventDefault();
+        window.location.replace('/login');
+    };
+    window.trocarPerfilAtivo = function() { return false; };
+    window.trocarPerfilAtivoUsuarioMultiplo = function() { return false; };
+    window.aplicarPermissoesPerfil = function() { return false; };
+    window.perfilAtivo = null;
+    window.renderizarTabelaUsuarios = function() {};
+    window.abrirModalNovoUsuario = function() {
+        alert('A administração de usuários requer integração com um provedor institucional de identidade.');
+    };
+
+    window.verificarAutenticacaoCockpit = async function() {
+        try {
+            var resposta = await fetch('/api/v1/session', { cache: 'no-store' });
+            if (!resposta.ok) throw new Error('HTTP ' + resposta.status);
+            var estado = await resposta.json();
+            if (estado.authenticated !== true) {
+                window.location.replace('/login');
+                return;
+            }
+            var nome = document.getElementById('sidebar-user-name');
+            var avatar = document.getElementById('sidebar-user-avatar');
+            var perfil = document.getElementById('sidebar-user-role-text');
+            if (nome) nome.textContent = 'Sessão institucional';
+            if (avatar) avatar.textContent = 'SG';
+            if (perfil) perfil.textContent = 'Perfil não atribuído';
+            var rag = document.getElementById('kpi-drive-status-rag');
+            if (rag) rag.textContent = 'Desativado';
+            if (window.carregarAcervoProcessos) await window.carregarAcervoProcessos();
+        } catch (erro) {
+            console.error('[Cockpit] Não foi possível validar a sessão:', erro.message);
+            window.location.replace('/login');
+        }
+    };
+
+    window.executarLogoutSistema = async function() {
+        try {
+            var resposta = await fetch('/api/v1/session', { method: 'DELETE', cache: 'no-store' });
+            if (!resposta.ok) throw new Error('HTTP ' + resposta.status);
+            limparAutenticacaoLegadaLocal();
+            window.location.replace('/login');
+        } catch (erro) {
+            console.error('[Cockpit] Falha ao encerrar a sessão:', erro.message);
+            alert('Não foi possível encerrar a sessão no servidor. Tente novamente.');
+        }
+    };
+})();
+</script>
 <script id="sagti-topbar-sync">
 (function() {
     var mapaEixo = {
@@ -6807,17 +6784,14 @@ window.alternarSubConfig = function(modo) {
         daily_warroom: 'daily_warroom', gestao_agil: 'daily_warroom',
         configuracoes: 'configuracoes'
     };
-    function atualizarTopbar(tab) {
-        var eixo = mapaEixo[tab] || 'dashboards';
-        document.querySelectorAll('.sagti-top-nav-btn').forEach(function(btn) {
-            btn.classList.toggle('active', btn.getAttribute('data-eixo') === eixo);
-        });
-    }
     window.addEventListener('DOMContentLoaded', function() {
         var origSwitch = window.switchTab;
         if (typeof origSwitch === 'function') {
             window.switchTab = function(tab) {
-                atualizarTopbar(tab);
+                var eixo = mapaEixo[tab] || 'dashboards';
+                document.querySelectorAll('.sagti-top-nav-btn').forEach(function(btn) {
+                    btn.classList.toggle('active', btn.getAttribute('data-eixo') === eixo);
+                });
                 return origSwitch.apply(this, arguments);
             };
         }
