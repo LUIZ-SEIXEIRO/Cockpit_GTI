@@ -425,7 +425,7 @@
         }
 
         divLateral.style.cssText = 'height:100%;display:flex;flex-direction:column;padding:0;' +
-            'overflow:hidden;background:var(--sagti-surface);backdrop-filter:blur(16px);' +
+            'overflow:hidden;background:var(--sagti-surface);' +
             'border:1px solid rgba(255,255,255,0.1);border-radius:12px;box-shadow:0 8px 24px rgba(0,0,0,0.3);';
 
         divLateral.innerHTML = '<div style="padding:12px 14px;background:var(--sagti-surface);' +
@@ -468,7 +468,7 @@
         var chatCard = document.querySelector('#grid-layout-chat-ia .chart-card:last-child');
         if (chatCard) {
             chatCard.style.cssText = 'height:100%;display:flex;flex-direction:column;padding:0;overflow:hidden;' +
-                'background:var(--sagti-surface);backdrop-filter:blur(16px);border:1px solid rgba(255,255,255,0.1);' +
+                'background:var(--sagti-surface);border:1px solid rgba(255,255,255,0.1);' +
                 'border-radius:12px;box-shadow:0 8px 24px rgba(0,0,0,0.3);';
 
             var headerChat = chatCard.querySelector('div:first-child');

@@ -6715,7 +6715,7 @@ var arquivosAnexados = window.arquivosAnexados || [];
             modal.id = "modal-curadoria-toolkits-ia";
             document.body.appendChild(modal);
         }
-        modal.style.cssText = "position:fixed;inset:0;background:var(--sagti-surface);backdrop-filter:blur(6px);z-index:99999;display:flex;align-items:flex-start;justify-content:center;padding:24px 16px;overflow-y:auto;box-sizing:border-box;";
+        modal.style.cssText = "position:fixed;inset:0;background:var(--sagti-surface);z-index:99999;display:flex;align-items:flex-start;justify-content:center;padding:24px 16px;overflow-y:auto;box-sizing:border-box;";
         modal.onclick = function(e) {
             if (e.target === modal) window.fecharModalCuradoriaIA();
         };
@@ -9229,7 +9229,7 @@ window.temTokenNewApiCustomizado = function() {
             modal.id = 'modal-sonda-real-v9';
             document.body.appendChild(modal);
         }
-        modal.style.cssText = 'position:fixed;inset:0;background:var(--sagti-surface);backdrop-filter:blur(6px);z-index:99999;display:flex;align-items:flex-start;justify-content:center;padding:24px 16px;overflow-y:auto;box-sizing:border-box;';
+        modal.style.cssText = 'position:fixed;inset:0;background:var(--sagti-surface);z-index:99999;display:flex;align-items:flex-start;justify-content:center;padding:24px 16px;overflow-y:auto;box-sizing:border-box;';
         modal.onclick = function(e) {
             if (e.target === modal) modal.style.display = 'none';
         };
@@ -9710,7 +9710,7 @@ window.escapeHtml = window.escapeHtml || function(s) { if (s === null || s === u
             modal.id = "modal-busca-oficial-v9";
             document.body.appendChild(modal);
         }
-        modal.style.cssText = "position:fixed;inset:0;background:var(--sagti-surface);backdrop-filter:blur(6px);z-index:99999;display:flex;align-items:flex-start;justify-content:center;padding:24px 16px;overflow-y:auto;box-sizing:border-box;";
+        modal.style.cssText = "position:fixed;inset:0;background:var(--sagti-surface);z-index:99999;display:flex;align-items:flex-start;justify-content:center;padding:24px 16px;overflow-y:auto;box-sizing:border-box;";
         modal.onclick = function(e) {
             if (e.target === modal) {
                 window.fecharModalBuscaOficial();

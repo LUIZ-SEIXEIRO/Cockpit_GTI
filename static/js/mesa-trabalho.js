@@ -112,7 +112,7 @@
 
         var div = document.createElement('div');
         div.id = 'modal-relatorio-ritual-mesa';
-        div.style.cssText = 'position:fixed;inset:0;background:var(--sagti-surface-alt);backdrop-filter:blur(8px);z-index:99999;display:flex;align-items:center;justify-content:center;padding:20px;';
+        div.style.cssText = 'position:fixed;inset:0;background:var(--sagti-surface-alt);z-index:99999;display:flex;align-items:center;justify-content:center;padding:20px;';
         div.innerHTML = '<div style="background:var(--sagti-surface);border:1px solid rgba(56,189,248,0.35);border-top:4px solid #0ea5e9;border-radius:16px;max-width:680px;width:100%;padding:24px;color:var(--sagti-text);box-shadow:0 24px 60px rgba(0,0,0,0.85);">' +
             '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;">' +
                 '<span style="background:rgba(56,189,248,0.15);color:var(--sagti-accent);padding:4px 10px;border-radius:8px;font-size:11.5px;font-weight:800;">' + rel.tipoLabel + ' • ' + rel.data + '</span>' +
@@ -1030,7 +1030,7 @@
 
         var divModal = document.createElement('div');
         divModal.id = 'modal-logs-sincronizacao-op';
-        divModal.style.cssText = 'position:fixed;inset:0;background:var(--sagti-surface-alt);backdrop-filter:blur(8px);z-index:999999;display:flex;align-items:center;justify-content:center;padding:16px;';
+        divModal.style.cssText = 'position:fixed;inset:0;background:var(--sagti-surface-alt);z-index:999999;display:flex;align-items:center;justify-content:center;padding:16px;';
         divModal.innerHTML = '<div style="background:var(--sagti-surface);border:1px solid rgba(16,185,129,0.45);border-top:4px solid #10b981;border-radius:16px;max-width:920px;width:100%;max-height:90vh;overflow-y:auto;padding:24px;color:#f8fafc;box-shadow:0 24px 60px rgba(0,0,0,0.95);">' +
             '<div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:14px;">' +
                 '<div>' +
@@ -1111,7 +1111,7 @@
 
         var divModal = document.createElement('div');
         divModal.id = 'modal-diff-orquestrador-op';
-        divModal.style.cssText = 'position:fixed;inset:0;background:var(--sagti-surface-alt);backdrop-filter:blur(8px);z-index:999999;display:flex;align-items:center;justify-content:center;padding:16px;';
+        divModal.style.cssText = 'position:fixed;inset:0;background:var(--sagti-surface-alt);z-index:999999;display:flex;align-items:center;justify-content:center;padding:16px;';
         divModal.innerHTML = '<div style="background:var(--sagti-surface);border:1px solid rgba(2,132,199,0.5);border-top:4px solid #0ea5e9;border-radius:16px;max-width:980px;width:100%;max-height:92vh;overflow-y:auto;padding:24px;color:var(--sagti-text);box-shadow:0 24px 60px rgba(0,0,0,0.95);">' +
             '<div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:14px;">' +
                 '<div>' +
@@ -1432,7 +1432,7 @@
 
         var div = document.createElement('div');
         div.id = 'modal-editar-relatorio-ritual';
-        div.style.cssText = 'position:fixed;inset:0;background:var(--sagti-surface-alt);backdrop-filter:blur(8px);z-index:99999;display:flex;align-items:center;justify-content:center;padding:20px;animation:fadeIn 0.2s ease-in-out;';
+        div.style.cssText = 'position:fixed;inset:0;background:var(--sagti-surface-alt);z-index:99999;display:flex;align-items:center;justify-content:center;padding:20px;animation:fadeIn 0.2s ease-in-out;';
 
         div.innerHTML = '<div style="background:var(--sagti-surface);border:1px solid rgba(56,189,248,0.4);border-top:4px solid #38bdf8;border-radius:14px;max-width:680px;width:100%;padding:22px 24px;color:var(--sagti-text);box-shadow:0 24px 60px rgba(0,0,0,0.9);max-height:90vh;overflow-y:auto;">' +
             '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;">' +
@@ -2001,7 +2001,7 @@
 
         var divModal = document.createElement('div');
         divModal.id = 'modal-raci-criar-estruturado';
-        divModal.style.cssText = 'position:fixed;inset:0;background:var(--sagti-surface-alt);backdrop-filter:blur(8px);z-index:99999;display:flex;align-items:center;justify-content:center;padding:16px;';
+        divModal.style.cssText = 'position:fixed;inset:0;background:var(--sagti-surface-alt);z-index:99999;display:flex;align-items:center;justify-content:center;padding:16px;';
         divModal.innerHTML = '<div style="background:var(--sagti-surface);border:1px solid rgba(139,92,246,0.45);border-top:4px solid #0284c7;border-radius:16px;max-width:1100px;width:100%;max-height:94vh;overflow-y:auto;padding:26px;color:#f8fafc;box-shadow:0 24px 60px rgba(0,0,0,0.95);">' +
             '<div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:16px;">' +
                 '<div>' +
@@ -3542,7 +3542,7 @@ window.renderizarTabelaMesa = function() {
 
             var modalLogout = document.createElement('div');
             modalLogout.id = 'modal-logout-confirm';
-            modalLogout.style.cssText = 'position:fixed;inset:0;background:rgba(9,13,22,0.96);backdrop-filter:blur(16px);z-index:999999;display:flex;align-items:center;justify-content:center;padding:20px;';
+            modalLogout.style.cssText = 'position:fixed;inset:0;background:rgba(9,13,22,0.96);z-index:999999;display:flex;align-items:center;justify-content:center;padding:20px;';
             modalLogout.innerHTML = '<div style="background:#0b0f19;border:1px solid rgba(56,189,248,0.3);border-top:4px solid #ef4444;border-radius:18px;max-width:440px;width:100%;padding:28px;text-align:center;box-shadow:0 24px 60px rgba(0,0,0,0.9);color:#ffffff;">' +
                 '<div style="font-size:42px;margin-bottom:12px;">🔒</div>' +
                 '<h3 style="margin:0 0 8px 0;font-size:18px;color:var(--sagti-text);">Sessão Encerrada com Sucesso</h3>' +
@@ -3940,7 +3940,7 @@ window.renderizarTabelaMesa = function() {
         if (!modal) {
             modal = document.createElement('div');
             modal.id = 'modal-visualizador-drive-pdf';
-            modal.style.cssText = 'position:fixed;inset:0;background:var(--sagti-surface);backdrop-filter:blur(6px);z-index:99999;display:flex;align-items:flex-start;justify-content:center;padding:24px 16px;overflow-y:auto;box-sizing:border-box;';
+            modal.style.cssText = 'position:fixed;inset:0;background:var(--sagti-surface);z-index:99999;display:flex;align-items:flex-start;justify-content:center;padding:24px 16px;overflow-y:auto;box-sizing:border-box;';
             modal.onclick = function(e) {
                 if (e.target === modal) modal.style.display = 'none';
             };
@@ -4089,7 +4089,7 @@ window.executarRevisaoHomologacaoAcervoCompleto = function() {
     if (!modal) {
         modal = document.createElement('div');
         modal.id = 'modal-revisao-acervo-completo';
-        modal.style.cssText = 'position:fixed;inset:0;background:var(--sagti-surface);backdrop-filter:blur(6px);z-index:99999;display:flex;align-items:flex-start;justify-content:center;padding:24px 16px;overflow-y:auto;box-sizing:border-box;';
+        modal.style.cssText = 'position:fixed;inset:0;background:var(--sagti-surface);z-index:99999;display:flex;align-items:flex-start;justify-content:center;padding:24px 16px;overflow-y:auto;box-sizing:border-box;';
         modal.onclick = function(e) {
             if (e.target === modal) window.fecharModalRevisaoAcervo();
         };
