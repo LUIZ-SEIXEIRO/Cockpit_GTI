@@ -15,20 +15,6 @@ services:
       timeout: 5s
       retries: 6
       start_period: 10s
-    environment:
-      - COCKPIT_API_TOKEN=${COCKPIT_API_TOKEN:-${API_TOKEN:-}}
-      - API_TOKEN=${API_TOKEN:-${COCKPIT_API_TOKEN:-}}
-      - VERIFY_SSL=${VERIFY_SSL:-true}
-      - OPENPROJECT_URL=${OPENPROJECT_URL:-https://openproject.spaguas.sp.gov.br}
-      - OPENPROJECT_API_TOKEN=${OPENPROJECT_API_TOKEN:-${OPENPROJECT_API_KEY:-}}
-      - OPENPROJECT_API_KEY=${OPENPROJECT_API_KEY:-${OPENPROJECT_API_TOKEN:-}}
-      - GLPI_URL=${GLPI_URL:-https://glpi.spaguas.sp.gov.br}
-      - GLPI_APP_TOKEN=${GLPI_APP_TOKEN:-}
-      - GLPI_USER_TOKEN=${GLPI_USER_TOKEN:-}
-      - NEW_API_KEY=${NEW_API_KEY:-}
-      - NEWAPI_API_KEY=${NEWAPI_API_KEY:-${NEW_API_KEY:-}}
-      - IA_DEFAULT_ENDPOINT=${IA_DEFAULT_ENDPOINT:-}
-      - IA_ALLOWED_ENDPOINTS=${IA_ALLOWED_ENDPOINTS:-}
 
   new-api:
     image: calciumion/new-api:latest
@@ -50,6 +36,12 @@ services:
     restart: unless-stopped
     ports:
       - "5000:5000"
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://127.0.0.1:5000/', timeout=3).close()"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 20s
     volumes:
       - ./data:/app/data
       - ./main.py:/app/main.py
@@ -60,6 +52,9 @@ services:
     environment:
       - COCKPIT_API_TOKEN=${COCKPIT_API_TOKEN:-${API_TOKEN:-}}
       - API_TOKEN=${API_TOKEN:-${COCKPIT_API_TOKEN:-}}
+      - COCKPIT_SESSION_SECRET=${COCKPIT_SESSION_SECRET:-}
+      - COCKPIT_SESSION_COOKIE_SECURE=${COCKPIT_SESSION_COOKIE_SECURE:-false}
+      - COCKPIT_PROCESSOS_FILE=/app/data/processos.json
       - VERIFY_SSL=${VERIFY_SSL:-true}
       - OPENPROJECT_URL=${OPENPROJECT_URL:-https://openproject.spaguas.sp.gov.br}
       - OPENPROJECT_API_TOKEN=${OPENPROJECT_API_TOKEN:-${OPENPROJECT_API_KEY:-}}
@@ -69,6 +64,10 @@ services:
       - GLPI_USER_TOKEN=${GLPI_USER_TOKEN:-}
       - NEW_API_KEY=${NEW_API_KEY:-}
       - NEWAPI_API_KEY=${NEWAPI_API_KEY:-${NEW_API_KEY:-}}
+      - NEW_API_URL=${NEW_API_URL:-http://new-api:3000/v1}
+      - OLLAMA_URL=${OLLAMA_URL:-http://ollama:11434}
+      - MARIADB_HOST=${MARIADB_HOST:-}
+      - MARIADB_PORT=${MARIADB_PORT:-3306}
       - IA_DEFAULT_ENDPOINT=${IA_DEFAULT_ENDPOINT:-}
       - IA_ALLOWED_ENDPOINTS=${IA_ALLOWED_ENDPOINTS:-}
     depends_on:

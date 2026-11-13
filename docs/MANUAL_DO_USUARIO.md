@@ -474,7 +474,7 @@ Central de conhecimento embutida na própria plataforma para consulta imediata s
 2. Na grade principal, mantenha selecionada a pílula **`📌 Minha Custódia`** (ou clique em **`📂 Acervo SEI`** na barra superior para pesquisar qualquer processo da gerência).
 3. Localize o processo desejado e clique no botão **`🤖 Despachar com IA`** na coluna *Ações* (ou acesse a sub-aba **`🤖 Assistente IA`**).
 4. Com o processo vinculado, clique em um dos botões de ação rápida no topo do chat: **`📄 Elaborar DFD`**, **`📊 Elaborar ETP`** ou **`📋 Elaborar TR`**.
-5. A **IA 1 (`qwen2.5:14b`)** redigirá a minuta completa estruturada segundo a Lei 14.133/2021 e os dados reais do processo. Copie o texto com 1 clique para colar diretamente no SEI!.
+5. A minuta é preliminar e gerada pelo gateway autenticado com base nas informações fornecidas. Revise fatos, fundamentos e lacunas antes de copiar ou usar o texto em processo oficial; a resposta da IA não é validação jurídica nem homologação.
 
 ### Roteiro 2: Como conduzir a Daily Scrum de 15 minutos e emitir a Ata em PDF
 1. No menu lateral esquerdo, clique em **🤝 War Room**.
@@ -483,17 +483,17 @@ Central de conhecimento embutida na própria plataforma para consulta imediata s
 4. Durante a reunião, registre impedimentos ou decisões no **Mural de Post-its**.
 5. Ao encerrar, clique em **`📄 Gerar Ata Oficial da Daily (PDF)`** para emitir o documento formatado no padrão da SP-Águas.
 
-### Roteiro 3: Como homologar um Dossiê Técnico e gravá-lo em um Card do OpenProject
-1. Acesse **💼 Mesa de Trabalho** ➔ sub-aba **`🤖 Assistente IA`**.
-2. Selecione o **Slot #2 (IA 2 — Orquestração `qwen2.5-coder:7b`)** e peça: *"Elabore e grave o dossiê de governança atualizado no card #1498 do OpenProject"*.
-3. A IA exibirá a minuta do dossiê em tela e apresentará o botão verde **`[✅ Confirmar e Gravar]`**.
-4. Revise o texto e clique no botão de confirmação para que o backend atualize a descrição e registre o comentário na *timeline* do pacote no OpenProject.
+### Roteiro 3: Revisar e gravar um Dossiê Técnico no OpenProject
+1. Abra a prévia de gravação do processo e confira o card e os dados que serão sincronizados.
+2. Clique em **`Confirmar Gravação`** para solicitar a análise preliminar pelo gateway autenticado.
+3. Revise o dossiê e o comentário de atividade exibidos na prévia. Se a análise retornar inconsistência (`422`) ou o serviço estiver indisponível, a gravação é cancelada.
+4. Somente depois da revisão humana, clique em **`Confirmar após revisão humana`** e confirme a autorização no diálogo. O backend registra a descrição e o comentário no OpenProject; sem confirmação de sucesso, o painel não registra a operação como concluída.
 
 ### Roteiro 4: Como trocar ou testar os modelos de IA no Notebook (Docker Desktop)
 1. Certifique-se de que a stack unificada `cockpit-gti` está rodando no Docker Desktop (`cockpit-gti-backend`, `cockpit-gti-newapi` e `cockpit-gti-ollama`).
-2. Caso tenha baixado um novo modelo no Ollama (ex: `ollama pull qwen2.5:14b`), acesse o **New API** em `http://localhost:3001/`, adicione a etiqueta do modelo no Canal do grupo **SP - ÁGUAS** e garanta que o seu Token tenha permissão para todos os modelos.
+2. Caso use a New API, cadastre o modelo no canal apropriado e configure a credencial no servidor. Sem chave da New API, o backend usa o endpoint local padrão do Ollama.
 3. No Cockpit GTI (`http://localhost:5000/`), vá em **⚙️ Configurações** ➔ **`🤖 Pool de IAs`**.
-4. Informe o nome do modelo no Slot desejado, mantenha o endpoint em `http://100.103.100.98:3001/v1` e clique em **`⚡ Testar este Agente`**.
+4. Informe o modelo e, quando aplicável, o endpoint e a credencial do Slot. As chamadas de teste e inferência são encaminhadas pelo backend autenticado e limitadas à allowlist de destinos.
 5. Confirmado o retorno **`🟢 OK`**, clique em **`💾 Salvar Configuração do Pool`**.
 
 ---

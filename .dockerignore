@@ -7,6 +7,10 @@ __pycache__
 *.pyo
 volumes_docker
 data/usuarios_cockpit.json
+processos.json
+data/processos.json
+glpi_producao_cache.json
+data/glpi_producao_cache.json
 openproject_token.txt
 docs
 *.md
