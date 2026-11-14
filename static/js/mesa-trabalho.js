@@ -183,7 +183,11 @@
         window.modoMesaAtivo = modo || 'custodia';
         window.paginaMesa = 1;
         document.querySelectorAll('.pill-filtro-mesa').forEach(function(btn) {
-            btn.className = (btn.id === 'btn-mesa-' + window.modoMesaAtivo) ? 'btn btn-primary pill-filtro-mesa active' : 'btn btn-secondary pill-filtro-mesa';
+            var ativo = btn.id === 'btn-mesa-' + window.modoMesaAtivo;
+            btn.classList.remove('btn-primary', 'btn-secondary', 'btn-outline-secondary');
+            btn.classList.add(ativo ? 'btn-primary' : 'btn-outline-secondary');
+            btn.classList.toggle('active', ativo);
+            btn.setAttribute('aria-pressed', ativo ? 'true' : 'false');
         });
         window.renderizarTabelaMesa();
     };

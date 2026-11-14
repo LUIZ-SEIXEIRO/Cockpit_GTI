@@ -150,7 +150,21 @@ body {
     gap: 0.25rem;
     margin-bottom: 1rem;
     overflow-x: auto;
+    overflow-y: hidden !important;
+    scrollbar-width: none !important;
     white-space: nowrap;
+}
+
+#barra-subabas-eixo1::-webkit-scrollbar,
+#barra-subabas-eixo2::-webkit-scrollbar,
+#barra-subabas-eixo3::-webkit-scrollbar {
+    display: none;
+}
+
+#barra-subabas-eixo1[style*="display: none"],
+#barra-subabas-eixo2[style*="display: none"],
+#barra-subabas-eixo3[style*="display: none"] {
+    display: none !important;
 }
 
 .barra-subabas-superior .nav-link {
@@ -178,6 +192,29 @@ body {
 
 .kpi-card {
     padding: 1rem;
+}
+
+.kpi-row,
+div[style*="grid-template-columns"] {
+    display: grid !important;
+    gap: 14px !important;
+    align-items: stretch !important;
+}
+
+.kpi-row {
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)) !important;
+}
+
+.kpi-row > .card,
+.kpi-row > .kpi-card,
+div[style*="grid-template-columns"] > .card {
+    width: auto !important;
+    min-width: 0 !important;
+    margin-bottom: 0 !important;
+}
+
+.kpi-row.mesa-kpi-grid {
+    grid-template-columns: repeat(4, minmax(0, 1fr)) !important;
 }
 
 .kpi-val,
@@ -217,6 +254,64 @@ body {
 .table-responsive {
     max-width: 100%;
     overflow-x: auto;
+}
+
+#widget-infra-cockpit {
+    display: none !important;
+}
+
+.mesa-page-title {
+    flex-wrap: wrap;
+}
+
+.mesa-page-title .badge {
+    flex: 0 0 auto;
+    font-size: 0.6875rem;
+}
+
+.mesa-painel-grid {
+    grid-template-columns: minmax(0, 3fr) minmax(280px, 1fr) !important;
+}
+
+.mesa-painel-grid > .card {
+    min-width: 0;
+}
+
+.mesa-grade-header {
+    display: flex;
+    flex-wrap: nowrap;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.75rem 1rem;
+}
+
+.mesa-grade-filtros {
+    display: flex;
+    flex: 1 1 auto;
+    min-width: 0;
+    gap: 0.25rem;
+    overflow-x: auto;
+    scrollbar-width: none;
+}
+
+.mesa-grade-filtros::-webkit-scrollbar {
+    display: none;
+}
+
+.mesa-grade-filtros .pill-filtro-mesa {
+    flex: 0 0 auto;
+    padding: 0.3rem 0.45rem;
+    font-size: 0.6875rem;
+    line-height: 1.2;
+    white-space: nowrap;
+}
+
+.mesa-grade-busca {
+    flex: 0 0 170px;
+    width: 170px;
+    min-width: 130px;
+    padding: 0.375rem 0.5rem;
+    font-size: 0.75rem;
 }
 
 .sagti-dashboard-views {
@@ -414,6 +509,14 @@ a:focus-visible {
     .sagti-dashboard-chart-grid-four {
         grid-template-columns: repeat(2, minmax(0, 1fr));
     }
+
+    .mesa-painel-grid {
+        grid-template-columns: minmax(0, 1fr) !important;
+    }
+
+    .kpi-row.mesa-kpi-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    }
 }
 
 @media (max-width: 575.98px) {
@@ -441,9 +544,28 @@ a:focus-visible {
         grid-template-columns: minmax(0, 1fr);
     }
 
+    .kpi-row.mesa-kpi-grid {
+        grid-template-columns: minmax(0, 1fr) !important;
+    }
+
     .sagti-dashboard-section-header {
         align-items: flex-start;
         flex-direction: column;
+    }
+
+    .mesa-grade-header {
+        align-items: stretch;
+        flex-wrap: wrap;
+    }
+
+    .mesa-grade-filtros,
+    .mesa-grade-busca {
+        flex-basis: 100%;
+    }
+
+    .mesa-grade-busca {
+        width: 100%;
+        min-width: 0;
     }
 }
 

@@ -218,19 +218,20 @@
             </div>
             <div id="view-mesa_trabalho" class="tab-view">
             <!-- CABEÇALHO GLASS DA MESA DE TRABALHO -->
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; flex-wrap: wrap; gap: 12px">
+            <div class="mesa-page-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; flex-wrap: wrap; gap: 12px">
                 <div>
-                    <h2 style="font-size: 18px; font-weight: 800; display: flex; align-items: center; gap: 8px; margin: 0 0 4px 0">
+                    <h2 class="mesa-page-title" style="font-size: 18px; font-weight: 800; display: flex; align-items: center; gap: 8px; margin: 0 0 4px 0">
                         🖥️ MESA DE TRABALHO ÚNICA — COCKPIT OPERACIONAL
+                        <span id="mesa-custodia-status" class="badge bg-amber-lt" title="Esta sessão não recebe identidade ou perfil de um IdP institucional. A lista é filtrada localmente por responsável contendo Luiz ou Seixeiro.">Filtro local · Luiz</span>
                     </h2>
-                    <p style="font-size: 12px; margin: 0">
+                    <p class="mesa-page-description" style="font-size: 12px; margin: 0">
                         Gestão integrada de custódia, prazos críticos, tramitação de processos SEI, ingestão PDF e despacho com IA
                     </p>
                 </div>
             </div>
 
             <!-- SCORECARDS DE CUSTÓDIA E EFICIÊNCIA (GLASSMORPHISM) -->
-            <div class="kpi-row" style="grid-template-columns: repeat(4, 1fr); margin-bottom: 20px; gap: 14px">
+            <div class="kpi-row mesa-kpi-grid" style="grid-template-columns: repeat(4, 1fr); margin-bottom: 20px; gap: 14px">
                 <div class="kpi-card card card-sm" >
                     <div class="kpi-title">📌 Processos sob Minha Custódia</div>
                     <div class="kpi-val" id="mesa-kpi-custodia" >0</div>
@@ -254,29 +255,27 @@
             </div>
 
             <!-- PAINEL OPERACIONAL: GRADE UNIFICADA & MURAL LATERAL -->
-            <div style="display: grid; grid-template-columns: 2.2fr 1fr; gap: 18px; margin-bottom: 20px; align-items: start">
+            <div class="mesa-painel-grid" style="display: grid; grid-template-columns: minmax(0, 3fr) minmax(280px, 1fr); gap: 18px; margin-bottom: 20px; align-items: stretch">
                 <!-- GRADE OPERACIONAL UNIFICADA -->
-                <div class="table-card card" style="margin-bottom: 0">
+                <div class="table-card card mesa-grade-card" style="margin-bottom: 0">
                     <!-- CABEÇALHO DA GRADE COM SEGMENTED PILLS E BUSCA -->
-                    <div class="table-header-bar card-header" style="display: flex; justify-content: space-between; align-items: center; padding: 12px 16px; flex-wrap: wrap; gap: 10px">
-                        <div style="display: flex; gap: 6px; padding: 4px; border-radius: 8px; overflow-x: auto">
-                            <button type="button" class="btn btn-primary pill-filtro-mesa active" id="btn-mesa-custodia" onclick="window.alternarModoMesa('custodia')" style="padding: 5px 12px; font-size: 11.5px; border-radius: 6px; white-space: nowrap">
+                    <div class="table-header-bar card-header mesa-grade-header">
+                        <div class="mesa-grade-filtros" role="group" aria-label="Filtros da grade da Mesa de Trabalho">
+                            <button type="button" class="btn btn-primary pill-filtro-mesa active" id="btn-mesa-custodia" aria-pressed="true" onclick="window.alternarModoMesa('custodia')">
                                 📌 Minha Custódia (<span id="count-mesa-custodia">0</span>)
                             </button>
-                            <button type="button" class="btn btn-secondary pill-filtro-mesa btn-outline-secondary" id="btn-mesa-fixados" onclick="window.alternarModoMesa('fixados')" style="padding: 5px 12px; font-size: 11.5px; border-radius: 6px; white-space: nowrap">
+                            <button type="button" class="btn btn-outline-secondary pill-filtro-mesa" id="btn-mesa-fixados" aria-pressed="false" onclick="window.alternarModoMesa('fixados')">
                                 ⭐ Fixados / Acompanhamento (<span id="count-mesa-fixados">0</span>)
                             </button>
-                            <button type="button" class="btn btn-secondary pill-filtro-mesa btn-outline-secondary" id="btn-mesa-openproject" onclick="window.alternarModoMesa('openproject')" style="padding: 5px 12px; font-size: 11.5px; border-radius: 6px; white-space: nowrap">
+                            <button type="button" class="btn btn-outline-secondary pill-filtro-mesa" id="btn-mesa-openproject" aria-pressed="false" onclick="window.alternarModoMesa('openproject')">
                                 📦 Pacotes OpenProject (<span id="count-mesa-op">500</span>)
                             </button>
-                            <button type="button" class="btn btn-secondary pill-filtro-mesa btn-outline-secondary" id="btn-mesa-glpi" onclick="window.alternarModoMesa('glpi')" style="padding: 5px 12px; font-size: 11.5px; border-radius: 6px; white-space: nowrap">
+                            <button type="button" class="btn btn-outline-secondary pill-filtro-mesa" id="btn-mesa-glpi" aria-pressed="false" onclick="window.alternarModoMesa('glpi')">
                                 🎫 Chamados GLPI (<span id="count-mesa-glpi">15</span>)
                             </button>
                         </div>
 
-                        <div style="display: flex; gap: 8px; align-items: center">
-                            <input type="text" id="busca-mesa-input" placeholder="🔍 Filtrar nesta grade..." oninput="window.renderizarTabelaMesa()" style="padding: 6px 12px; border-radius: 6px; font-size: 12px; width: 190px" class="form-control">
-                        </div>
+                        <input type="text" id="busca-mesa-input" placeholder="🔍 Filtrar nesta grade..." oninput="window.renderizarTabelaMesa()" class="form-control mesa-grade-busca">
                     </div>
 
                     <!-- TABELA DINÂMICA DA MESA -->
@@ -310,7 +309,7 @@
                 </div>
 
                 <!-- MURAL DA COORDENAÇÃO SA-GTI & AVISOS IA -->
-                <div class="table-card card" style="margin-bottom: 0">
+                <div class="table-card card mesa-mural-card" style="margin-bottom: 0">
                     <div class="table-header-bar card-header" style="padding: 12px 16px">
                         <div class="table-header-title" style="font-size: 13px; font-weight: 700; display: flex; align-items: center; gap: 6px">
                             📢 <span>Mural da Coordenação &amp; Alertas IA</span>
@@ -6684,14 +6683,6 @@ window.alternarSubConfig = function(modo) {
                 botao.setAttribute('aria-disabled', 'true');
                 botao.title = 'Indisponível: ingestão server-side ainda não implementada.';
             });
-        }
-        var mesa = document.getElementById('view-mesa_trabalho');
-        if (mesa) {
-            var avisoMesa = document.createElement('p');
-            avisoMesa.setAttribute('role', 'status');
-            avisoMesa.className = 'alert alert-info';
-            avisoMesa.textContent = 'A custódia individual não pode ser verificada: esta versão não recebe identidade ou perfil de um IdP institucional.';
-            mesa.prepend(avisoMesa);
         }
     }
 

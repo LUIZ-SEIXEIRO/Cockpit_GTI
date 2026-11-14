@@ -178,6 +178,79 @@ class TestRedesignUI(unittest.TestCase):
         self.assertIn("'/api/v1/processos', '/api/v1/sei/processos'", cockpit_js)
         self.assertIn("function possuiIndicadoresExecutivos()", cockpit_js)
 
+    def test_mesa_layout_restores_kpis_subtabs_and_compact_grade_header(self):
+        raiz = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
+        with open(os.path.join(raiz, "painel.html"), "r", encoding="utf-8") as f:
+            html = f.read()
+        with open(os.path.join(raiz, "static", "css", "components.css"), "r", encoding="utf-8") as f:
+            components = f.read()
+        with open(os.path.join(raiz, "static", "js", "mesa-trabalho.js"), "r", encoding="utf-8") as f:
+            mesa_js = f.read()
+
+        self.assertRegex(
+            components,
+            r"\.kpi-row,\s*div\[style\*=\"grid-template-columns\"\]\s*\{[^}]*"
+            r"display:\s*grid\s*!important;[^}]*gap:\s*14px\s*!important;[^}]*"
+            r"align-items:\s*stretch\s*!important;",
+        )
+        self.assertIn(
+            "grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)) !important;",
+            components,
+        )
+        self.assertIn(
+            "grid-template-columns: repeat(4, minmax(0, 1fr)) !important;",
+            components,
+        )
+        self.assertRegex(
+            components,
+            r"\.barra-subabas-superior\s*\{[^}]*"
+            r"overflow-y:\s*hidden\s*!important;[^}]*"
+            r"scrollbar-width:\s*none\s*!important;",
+        )
+        for eixo in (1, 2, 3):
+            self.assertIn(f'#barra-subabas-eixo{eixo}[style*="display: none"]', components)
+        self.assertRegex(
+            components,
+            r"#widget-infra-cockpit\s*\{\s*display:\s*none\s*!important;",
+        )
+        self.assertRegex(
+            components,
+            r"\.mesa-grade-header\s*\{[^}]*flex-wrap:\s*nowrap",
+        )
+        self.assertRegex(
+            components,
+            r"\.mesa-painel-grid\s*\{[^}]*"
+            r"grid-template-columns:\s*minmax\(0,\s*3fr\)\s*minmax\(280px,\s*1fr\)\s*!important;",
+        )
+
+        mesa_inicio = html.index('<div id="view-mesa_trabalho"')
+        mesa_fim = html.index('<div id="view-dashboards"', mesa_inicio)
+        mesa = html[mesa_inicio:mesa_fim]
+        self.assertIn('class="kpi-row mesa-kpi-grid"', mesa)
+        for kpi_id in (
+            "mesa-kpi-custodia",
+            "mesa-kpi-criticos",
+            "mesa-kpi-porens",
+            "mesa-kpi-eficiencia",
+        ):
+            self.assertIn(f'id="{kpi_id}"', mesa)
+
+        filtros = re.search(
+            r'<div class="mesa-grade-filtros"[^>]*>(.*?)</div>',
+            mesa,
+            re.DOTALL,
+        )
+        self.assertIsNotNone(filtros)
+        self.assertEqual(len(re.findall(r"<button\b", filtros.group(1))), 4)
+        self.assertIn('class="mesa-painel-grid"', mesa)
+        self.assertIn('class="table-card card mesa-mural-card"', mesa)
+        self.assertIn('class="form-control mesa-grade-busca"', mesa)
+        self.assertIn('id="mesa-custodia-status"', mesa)
+        self.assertNotIn("A custódia individual não pode ser verificada", html)
+
+        self.assertIn("btn.classList.add(ativo ? 'btn-primary' : 'btn-outline-secondary')", mesa_js)
+        self.assertIn("btn.setAttribute('aria-pressed', ativo ? 'true' : 'false')", mesa_js)
+
 
 if __name__ == "__main__":
     unittest.main()
