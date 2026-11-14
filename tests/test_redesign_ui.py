@@ -375,6 +375,50 @@ class TestRedesignUI(unittest.TestCase):
             r'id="cockpit-motor-sei-widget"[^>]*position:\s*fixed',
         )
 
+    def test_acervo_sei_usa_grid_contador_dinamico_e_upload_desabilitado(self):
+        raiz = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
+        with open(os.path.join(raiz, "painel.html"), "r", encoding="utf-8") as f:
+            html = f.read()
+        with open(os.path.join(raiz, "static", "css", "components.css"), "r", encoding="utf-8") as f:
+            components = f.read()
+        with open(os.path.join(raiz, "static", "js", "cockpit-core.js"), "r", encoding="utf-8") as f:
+            cockpit_js = f.read()
+
+        view_inicio = html.index('<div id="view-consulta"')
+        view_fim = html.index('<div id="view-', view_inicio + 1)
+        consulta = html[view_inicio:view_fim]
+        self.assertIn('class="filter-grid sei-filter-grid"', consulta)
+        self.assertEqual(len(re.findall(r'class="filter-group"', consulta)), 9)
+        for field_id in (
+            "filtro-id", "filtro-bucket", "filtro-resp", "filtro-farol", "filtro-aging",
+            "filtro-risco", "filtro-tipo", "filtro-espec", "filtro-marcadores",
+        ):
+            self.assertRegex(consulta, rf'<label class="form-label" for="{field_id}">')
+            self.assertIn(f'id="{field_id}"', consulta)
+        self.assertRegex(
+            components,
+            r"\.sei-filter-grid\s*\{[^}]*display:\s*grid;[^}]*"
+            r"grid-template-columns:\s*repeat\(4,\s*minmax\(0,\s*1fr\)\);[^}]*gap:\s*12px;",
+        )
+        self.assertIn('class="form-control form-control-sm"', consulta)
+        self.assertIn('class="form-select form-select-sm"', consulta)
+        self.assertIn("Exibindo ' + total + ' de ' + processos.length + ' processos'", html)
+        self.assertIn("inicializarFiltrosDropdown', 'aplicarFiltrosConsulta", cockpit_js)
+        self.assertIn("topbar-badge-sei-consulta", html)
+
+        upload_button = re.search(r'<button[^>]*id="btn-processar-sei"[^>]*>', consulta)
+        self.assertIsNotNone(upload_button)
+        self.assertRegex(upload_button.group(0), r"\bdisabled\b")
+        self.assertIn('id="sei-upload-endpoint-notice"', consulta)
+        self.assertIn("/api/v1/sei/upload_pdf", consulta)
+        upload_handler = re.search(
+            r"function dispararProcessamentoSEI\(\)\s*\{(.*?)\n\}",
+            html,
+            re.DOTALL,
+        )
+        self.assertIsNotNone(upload_handler)
+        self.assertNotIn("fetch(", upload_handler.group(1))
+
 
 if __name__ == "__main__":
     unittest.main()

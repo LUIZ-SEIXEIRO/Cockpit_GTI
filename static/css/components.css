@@ -256,6 +256,32 @@ div[style*="grid-template-columns"] > .card {
     overflow-x: auto;
 }
 
+.sei-filter-grid {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 12px;
+    align-items: end;
+    padding: 1rem;
+}
+
+.sei-filter-grid .filter-group {
+    min-width: 0;
+}
+
+.sei-filter-grid .form-label {
+    display: block;
+    margin-bottom: 0.25rem;
+    color: #334155;
+    font-size: 0.75rem;
+    font-weight: 600;
+}
+
+.sei-filter-grid .form-control,
+.sei-filter-grid .form-select {
+    min-width: 0;
+    width: 100%;
+}
+
 #widget-infra-cockpit {
     display: none !important;
 }
@@ -1128,6 +1154,16 @@ a:focus-visible {
     #view-configuracoes .config-agent-grid {
         grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
     }
+
+    .sei-filter-grid {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+}
+
+@media (max-width: 767.98px) {
+    .sei-filter-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
 }
 
 @media (max-width: 575.98px) {
@@ -1150,5 +1186,9 @@ a:focus-visible {
 
     #view-configuracoes .config-doc-content {
         padding: 1rem !important;
+    }
+
+    .sei-filter-grid {
+        grid-template-columns: minmax(0, 1fr);
     }
 }

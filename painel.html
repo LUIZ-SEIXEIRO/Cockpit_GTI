@@ -190,7 +190,7 @@
                     🖥️ <span>Mesa de Trabalho (Custódia)</span> <span class="nav-badge badge bg-blue-lt" style="padding: 2px 7px; border-radius: 10px">Luiz</span>
                 </button>
                 <button type="button" class="nav-link subaba-eixo2-btn subaba-superior-btn" data-subtab="consulta" onclick="switchTab('consulta')">
-                    📂 <span>Acervo SEI</span> <span class="nav-badge badge bg-blue-lt" style="padding: 2px 7px; border-radius: 10px">179</span>
+                    📂 <span>Acervo SEI</span> <span id="topbar-badge-sei-consulta" class="nav-badge badge bg-blue-lt" style="padding: 2px 7px; border-radius: 10px">0</span>
                 </button>
                 <button type="button" class="nav-link subaba-eixo2-btn subaba-superior-btn" data-subtab="esteira_ia" onclick="switchTab('esteira_ia')">
                     🤖 <span>Assistente IA</span> <span class="nav-badge badge bg-blue-lt" style="padding: 2px 7px; border-radius: 10px">4 Cam</span>
@@ -1012,7 +1012,7 @@
                     <h3>BACKLOG CONSOLIDADO PARA CONSULTA</h3>
                     <p>Busca multicritério em tempo real com 9 filtros suspensos e exportação oficial</p>
                 </div>
-                <div id="consulta-total-badge" style="font-size: 24px; font-weight: 800">179 PROCESSOS</div>
+                <div id="consulta-total-badge" style="font-size: 24px; font-weight: 800">0 PROCESSOS</div>
             </div>
 
             <!-- CAIXA CANONICA OFICIAL: ATUALIZACAO DO ACERVO SEI (UPLOAD DE PDF) -->
@@ -1039,10 +1039,14 @@
                         <span id="txt-arquivos-selecionados" style="font-size: 13px; font-weight: 500">Nenhum arquivo selecionado</span>
                     </div>
 
-                    <button type="button" id="btn-processar-sei" class="btn btn-primary" onclick="dispararProcessamentoSEI()" style="font-size: 13px; font-weight: 700">
+                    <button type="button" id="btn-processar-sei" class="btn btn-primary" onclick="dispararProcessamentoSEI()" style="font-size: 13px; font-weight: 700" disabled aria-disabled="true" aria-describedby="sei-upload-endpoint-notice" title="Endpoint de upload ainda não disponível no servidor">
                         ⚡ Processar PDFs & Sincronizar Base MariaDB
                     </button>
                 </div>
+
+                <p id="sei-upload-endpoint-notice" class="alert alert-warning py-2 px-3 mt-3 mb-0" role="status">
+                    Processamento de PDFs pendente: o endpoint <code>/api/v1/sei/upload_pdf</code> ainda não está disponível no servidor.
+                </p>
 
                 <!-- Barra de Status e Progresso Visual Reativo -->
                 <div id="sei-upload-status" style="margin-top: 14px; display: none; padding: 12px 16px; border-radius: 6px">
@@ -1063,54 +1067,54 @@
             </div>
 
 <div class="table-card card">
-                <div class="filter-grid">
+                <div class="filter-grid sei-filter-grid">
                     <div class="filter-group">
-                        <label>ID Processo</label>
-                        <input type="text" id="filtro-id" placeholder="Digite para buscar..." oninput="aplicarFiltrosConsulta()" class="form-control">
+                        <label class="form-label" for="filtro-id">ID Processo</label>
+                        <input type="text" id="filtro-id" placeholder="Digite para buscar..." oninput="aplicarFiltrosConsulta()" class="form-control form-control-sm">
                     </div>
                     <div class="filter-group">
-                        <label>Bucket OpenProject</label>
-                        <select id="filtro-bucket" onchange="aplicarFiltrosConsulta()" class="form-select">
+                        <label class="form-label" for="filtro-bucket">Bucket OpenProject</label>
+                        <select id="filtro-bucket" onchange="aplicarFiltrosConsulta()" class="form-select form-select-sm">
                             <option value="">(Todos)</option>
                         </select>
                     </div>
                     <div class="filter-group">
-                        <label>Responsável Técnico</label>
-                        <select id="filtro-resp" onchange="aplicarFiltrosConsulta()" class="form-select">
+                        <label class="form-label" for="filtro-resp">Responsável Técnico</label>
+                        <select id="filtro-resp" onchange="aplicarFiltrosConsulta()" class="form-select form-select-sm">
                             <option value="">(Todos)</option>
                         </select>
                     </div>
                     <div class="filter-group">
-                        <label>Farol Criticidade</label>
-                        <select id="filtro-farol" onchange="aplicarFiltrosConsulta()" class="form-select">
+                        <label class="form-label" for="filtro-farol">Farol Criticidade</label>
+                        <select id="filtro-farol" onchange="aplicarFiltrosConsulta()" class="form-select form-select-sm">
                             <option value="">(Todos)</option>
                         </select>
                     </div>
                     <div class="filter-group">
-                        <label>Faixa Aging</label>
-                        <select id="filtro-aging" onchange="aplicarFiltrosConsulta()" class="form-select">
+                        <label class="form-label" for="filtro-aging">Faixa Aging</label>
+                        <select id="filtro-aging" onchange="aplicarFiltrosConsulta()" class="form-select form-select-sm">
                             <option value="">(Todas)</option>
                         </select>
                     </div>
                     <div class="filter-group">
-                        <label>Classificação de Risco</label>
-                        <select id="filtro-risco" onchange="aplicarFiltrosConsulta()" class="form-select">
+                        <label class="form-label" for="filtro-risco">Classificação de Risco</label>
+                        <select id="filtro-risco" onchange="aplicarFiltrosConsulta()" class="form-select form-select-sm">
                             <option value="">(Todas)</option>
                         </select>
                     </div>
                     <div class="filter-group">
-                        <label>Tipo de Processo</label>
-                        <select id="filtro-tipo" onchange="aplicarFiltrosConsulta()" class="form-select">
+                        <label class="form-label" for="filtro-tipo">Tipo de Processo</label>
+                        <select id="filtro-tipo" onchange="aplicarFiltrosConsulta()" class="form-select form-select-sm">
                             <option value="">(Todos)</option>
                         </select>
                     </div>
                     <div class="filter-group">
-                        <label>Especificação</label>
-                        <input type="text" id="filtro-espec" placeholder="Buscar no texto da especificação..." oninput="aplicarFiltrosConsulta()" class="form-control">
+                        <label class="form-label" for="filtro-espec">Especificação</label>
+                        <input type="text" id="filtro-espec" placeholder="Buscar no texto da especificação..." oninput="aplicarFiltrosConsulta()" class="form-control form-control-sm">
                     </div>
                     <div class="filter-group">
-                        <label>Marcadores Institucionais</label>
-                        <select id="filtro-marcadores" onchange="aplicarFiltrosConsulta()" class="form-select">
+                        <label class="form-label" for="filtro-marcadores">Marcadores Institucionais</label>
+                        <select id="filtro-marcadores" onchange="aplicarFiltrosConsulta()" class="form-select form-select-sm">
                             <option value="">(Todos)</option>
                         </select>
                     </div>
@@ -5836,70 +5840,7 @@ function atualizarStatusArquivosSEI(files) {
 }
 
 function dispararProcessamentoSEI() {
-    const files = window.arquivosSEISelecionados;
-    const statusBox = document.getElementById('sei-upload-status');
-    const successBox = document.getElementById('sei-upload-success');
-    const progressBar = document.getElementById('sei-progress-bar');
-    const statusMsg = document.getElementById('sei-status-msg');
-    const statusPct = document.getElementById('sei-status-pct');
-
-    if (!files || files.length === 0) {
-        alert('Por favor, clique em "📂 Escolher arquivos" e selecione os relatórios em PDF do SEI primeiro.');
-        return;
-    }
-
-    if (statusBox) statusBox.style.display = 'block';
-    if (successBox) successBox.style.display = 'none';
-
-    let progress = 15;
-    progressBar.style.width = '15%';
-    statusPct.innerText = '15%';
-    statusMsg.innerText = `Processando ${files.length} relatório(s) com regras do Manual v7.1...`;
-
-    const timer = setInterval(() => {
-        if (progress < 85) {
-            progress += 15;
-            progressBar.style.width = progress + '%';
-            statusPct.innerText = progress + '%';
-        }
-    }, 200);
-
-    const formData = new FormData();
-    for (let i = 0; i < files.length; i++) {
-        formData.append('arquivos_pdf', files[i]);
-    }
-
-    fetch('/api/v1/sei/upload_pdf', {
-        method: 'POST',
-        body: formData
-    })
-    .then(res => res.json())
-    .catch(() => ({ status: 'success', total_processados: 197, data_hora: new Date().toLocaleString() }))
-    .then(data => {
-        clearInterval(timer);
-        progressBar.style.width = '100%';
-        statusPct.innerText = '100%';
-
-        setTimeout(() => {
-            if (statusBox) statusBox.style.display = 'none';
-            if (successBox) {
-                successBox.style.display = 'block';
-                document.getElementById('sei-success-txt').innerText = `${data.total_processados || 197} processos processados e sincronizados no MariaDB!`;
-                document.getElementById('sei-success-time').innerText = `Carimbo oficial: ${data.data_hora || new Date().toLocaleString()}`;
-            }
-
-            // Atualiza contadores de topo e status
-            const total = data.total_processados || 197;
-            const badge = document.getElementById('consulta-total-badge');
-            if (badge) badge.innerText = `${total} PROCESSOS`;
-            const statusTxt = document.getElementById('consulta-status-txt');
-            if (statusTxt) statusTxt.innerText = `Exibindo ${total} de ${total} processos`;
-
-            if (typeof renderizarTabelaConsulta === 'function') {
-                renderizarTabelaConsulta();
-            }
-        }, 400);
-    });
+    return false;
 }
 </script>
 
@@ -6215,19 +6156,20 @@ function dispararProcessamentoSEI() {
                 btn.className = act ? 'btn btn-primary subaba-eixo2-btn active' : 'btn btn-outline-secondary subaba-eixo2-btn';
             });
         }
-        if (t === 'consulta') {
-            if (window.inicializarFiltrosDropdown) window.inicializarFiltrosDropdown();
-            if (window.aplicarFiltrosConsulta) window.aplicarFiltrosConsulta();
-        }
         if (t === 'drive_contexto_ia') {
             if (window.renderizarGradeDocumentosDrivePdf) window.renderizarGradeDocumentosDrivePdf();
             if (window.atualizarBadgesDrivePdf) window.atualizarBadgesDrivePdf();
         }
         if (_old) _old(t);
+        if (t === 'consulta') {
+            if (window.inicializarFiltrosDropdown) window.inicializarFiltrosDropdown();
+            if (window.aplicarFiltrosConsulta) window.aplicarFiltrosConsulta();
+        }
     };
 
     window.inicializarFiltrosDropdown = function() {
-        var p = (typeof PROCESSOS !== 'undefined' && Array.isArray(PROCESSOS)) ? PROCESSOS : [];
+        var p = Array.isArray(window.PROCESSOS) ? window.PROCESSOS :
+            ((typeof PROCESSOS !== 'undefined' && Array.isArray(PROCESSOS)) ? PROCESSOS : []);
         if (!p.length) return;
         ['filtro-bucket:Bucket_OpenProject', 'filtro-resp:Responsavel_Tecnico', 'filtro-farol:Farol_Criticidade',
          'filtro-aging:Faixa_Aging', 'filtro-risco:Classificacao_Risco', 'filtro-tipo:Tipo_Processo',
@@ -6245,7 +6187,8 @@ function dispararProcessamentoSEI() {
     };
 
     window.aplicarFiltrosConsulta = function() {
-        var p = (typeof PROCESSOS !== 'undefined' && Array.isArray(PROCESSOS)) ? PROCESSOS : [];
+        var p = Array.isArray(window.PROCESSOS) ? window.PROCESSOS :
+            ((typeof PROCESSOS !== 'undefined' && Array.isArray(PROCESSOS)) ? PROCESSOS : []);
         var fId = (document.getElementById('filtro-id') ? document.getElementById('filtro-id').value : '').toLowerCase().trim();
         var fB = document.getElementById('filtro-bucket') ? document.getElementById('filtro-bucket').value : '';
         var fR = document.getElementById('filtro-resp') ? document.getElementById('filtro-resp').value : '';
@@ -6282,12 +6225,15 @@ function dispararProcessamentoSEI() {
     window.renderizarTabelaConsulta = function() {
         var tbody = document.getElementById('tbody-consulta');
         if (!tbody) return;
-        var p = window.processosFiltrados || [];
+        var processos = Array.isArray(window.PROCESSOS) ? window.PROCESSOS : [];
+        var p = Array.isArray(window.processosFiltrados) ? window.processosFiltrados : processos;
         var total = p.length;
         var st = document.getElementById('consulta-status-txt');
-        if (st) st.innerText = 'Exibindo ' + total + ' de 179 processos';
+        if (st) st.innerText = 'Exibindo ' + total + ' de ' + processos.length + ' processos';
         var bd = document.getElementById('consulta-total-badge');
         if (bd) bd.innerText = total + ' PROCESSOS';
+        var navBadge = document.getElementById('topbar-badge-sei-consulta');
+        if (navBadge) navBadge.textContent = String(processos.length);
         var tam = window.tamanhoPaginaConsulta || 25;
         var pag = window.paginaAtualConsulta || 1;
         var tPags = Math.ceil(total / tam) || 1;

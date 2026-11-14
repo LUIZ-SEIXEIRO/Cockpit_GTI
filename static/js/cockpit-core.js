@@ -83,6 +83,7 @@ window.carregarAcervoProcessos = async function() {
             }
             PROCESSOS = payload.processos;
             window.PROCESSOS = PROCESSOS;
+            window.processosFiltrados = PROCESSOS.slice();
             acervoCarregado = true;
             break;
         } catch (error) {
@@ -107,8 +108,12 @@ window.carregarAcervoProcessos = async function() {
     }
 
     if (status) status.hidden = true;
+    var badgeConsulta = document.getElementById('consulta-total-badge');
+    if (badgeConsulta) badgeConsulta.textContent = PROCESSOS.length + ' PROCESSOS';
+    var badgeNavegacao = document.getElementById('topbar-badge-sei-consulta');
+    if (badgeNavegacao) badgeNavegacao.textContent = String(PROCESSOS.length);
     ['renderizarTabelasEstrategicas', 'renderizarTabelaEstrategica', 'inicializarGraficos',
-     'aplicarFiltrosConsulta', 'renderizarMeusProcessosMesa', 'renderizarSecaoFixadosEAlertasMesa',
+     'inicializarFiltrosDropdown', 'aplicarFiltrosConsulta', 'renderizarMeusProcessosMesa', 'renderizarSecaoFixadosEAlertasMesa',
      'renderizarPautaDaily'].forEach(function(nome) {
         if (typeof window[nome] !== 'function') return;
         try {
