@@ -367,12 +367,13 @@
             </div>
 
             <!-- SELETOR DE MODOS DE DASHBOARD (PILLS) -->
-            <div style="display: flex; gap: 8px; margin-bottom: 20px; padding: 10px 14px; border-radius: 8px; overflow-x: auto">
-                <button class="btn btn-primary pill-filtro-dash" id="btn-dash-consolidado" onclick="alternarModoDashboard('consolidado')">🌐 Visão Consolidada 360° (179)</button>
-                <button class="btn btn-secondary pill-filtro-dash btn-outline-secondary" id="btn-dash-esteira" onclick="alternarModoDashboard('esteira')">📑 Esteira de Contratação (55)</button>
-                <button class="btn btn-secondary pill-filtro-dash btn-outline-secondary" id="btn-dash-rotina" onclick="alternarModoDashboard('rotina')">⚙️ Rotina Operacional (93)</button>
-                <button class="btn btn-secondary pill-filtro-dash btn-outline-secondary" id="btn-dash-portfolio" onclick="alternarModoDashboard('portfolio')">🚀 Portfólio Estratégico (31)</button>
-                <button class="btn btn-secondary pill-filtro-dash btn-outline-secondary" id="btn-dash-farois" onclick="alternarModoDashboard('farois')">🎯 Faróis &amp; Gargalos (87)</button>
+            <div class="sagti-dashboard-views" role="group" aria-label="Visões do Cockpit">
+                <button type="button" class="btn btn-primary pill-filtro-dash" id="btn-dash-consolidado" aria-pressed="true" onclick="alternarModoDashboard('consolidado')">🌐 Visão Consolidada 360° (179)</button>
+                <button type="button" class="btn btn-outline-secondary pill-filtro-dash" id="btn-dash-esteira" aria-pressed="false" onclick="alternarModoDashboard('esteira')">📑 Esteira de Contratação (55)</button>
+                <button type="button" class="btn btn-outline-secondary pill-filtro-dash" id="btn-dash-rotina" aria-pressed="false" onclick="alternarModoDashboard('rotina')">⚙️ Rotina Operacional (93)</button>
+                <button type="button" class="btn btn-outline-secondary pill-filtro-dash" id="btn-dash-portfolio" aria-pressed="false" onclick="alternarModoDashboard('portfolio')">🚀 Portfólio Estratégico (31)</button>
+                <button type="button" class="btn btn-outline-secondary pill-filtro-dash" id="btn-dash-farois" aria-pressed="false" onclick="alternarModoDashboard('farois')">🎯 Faróis &amp; Gargalos (87)</button>
+                <button type="button" class="btn btn-outline-secondary pill-filtro-dash" id="btn-dash-relatorio" aria-pressed="false" onclick="window.abrirRelatorioMensalExecutivo()">📑 Relatório Mensal Executivo</button>
             </div>
 
             <!-- SUB-VIEW 1: CONSOLIDADO 360° -->
@@ -407,80 +408,80 @@
                 </div>
 
                 <!-- SEÇÃO 1: DECOMPOSIÇÃO POR EIXO DE GESTÃO -->
-                <div class="table-card card" style="margin-bottom: 20px">
-                    <div class="table-header-bar card-header" style="display: flex; justify-content: space-between; align-items: center; padding: 12px 18px">
-                        <div class="table-header-title" style="font-size: 13px; font-weight: 700; display: flex; align-items: center; gap: 8px">
+                <div class="table-card card sagti-dashboard-section">
+                    <div class="table-header-bar card-header sagti-dashboard-section-header">
+                        <div class="table-header-title card-title">
                             <span>🧩</span> <span>Decomposição por Eixo de Gestão (Macrofluxo Operacional SA-GTI)</span>
                         </div>
-                        <span style="font-size: 11.5px">Mapeamento de processos e outorgas ativas em 3 frentes de governança</span>
+                        <span class="text-secondary small">Mapeamento de processos e outorgas ativas em 3 frentes de governança</span>
                     </div>
                     <!-- CARDS RESUMO EXECUTIVO POR EIXO -->
-                    <div style="padding: 16px; display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px">
-                        <div style="border-radius: 6px; padding: 14px">
-                            <div style="font-size: 11px; font-weight: 700; text-transform: uppercase">⚙️ Rotina Operacional</div>
-                            <div style="font-size: 22px; font-weight: 800; margin: 4px 0"><span id="kpi-val-rotina">93 processos</span> <span id="kpi-sub-rotina" style="font-size: 12px; font-weight: 600">(52.0%)</span></div>
-                            <span style="font-size: 11px">Atestes mensais (PRODESP), faturas concessionárias e suporte</span>
+                    <div class="sagti-dashboard-axis-grid">
+                        <div class="card card-sm card-body sagti-dashboard-axis-card">
+                            <div class="subheader">⚙️ Rotina Operacional</div>
+                            <div class="sagti-axis-kpi-value"><span id="kpi-val-rotina">93 processos</span> <span id="kpi-sub-rotina" class="badge bg-blue-lt">(52.0%)</span></div>
+                            <span class="small text-secondary">Atestes mensais (PRODESP), faturas concessionárias e suporte</span>
                         </div>
-                        <div style="border-radius: 6px; padding: 14px">
-                            <div style="font-size: 11px; font-weight: 700; text-transform: uppercase">📑 Esteira de Contratação</div>
-                            <div style="font-size: 22px; font-weight: 800; margin: 4px 0"><span id="kpi-val-esteira">55 processos</span> <span id="kpi-sub-esteira" style="font-size: 12px; font-weight: 600">(30.7%)</span></div>
-                            <span style="font-size: 11px">Elaboração de ETP, TR, matriz de riscos e licitações (Lei 14.133)</span>
+                        <div class="card card-sm card-body sagti-dashboard-axis-card">
+                            <div class="subheader">📑 Esteira de Contratação</div>
+                            <div class="sagti-axis-kpi-value"><span id="kpi-val-esteira">55 processos</span> <span id="kpi-sub-esteira" class="badge bg-blue-lt">(30.7%)</span></div>
+                            <span class="small text-secondary">Elaboração de ETP, TR, matriz de riscos e licitações (Lei 14.133)</span>
                         </div>
-                        <div style="border-radius: 6px; padding: 14px">
-                            <div style="font-size: 11px; font-weight: 700; text-transform: uppercase">🚀 Portfólio Estratégico</div>
-                            <div style="font-size: 22px; font-weight: 800; margin: 4px 0"><span id="kpi-val-portfolio">31 processos</span> <span id="kpi-sub-portfolio" style="font-size: 12px; font-weight: 600">(17.3%)</span></div>
-                            <span style="font-size: 11px">Modernização de sistemas, governança de TIC e PDTIC 2027-2030</span>
+                        <div class="card card-sm card-body sagti-dashboard-axis-card">
+                            <div class="subheader">🚀 Portfólio Estratégico</div>
+                            <div class="sagti-axis-kpi-value"><span id="kpi-val-portfolio">31 processos</span> <span id="kpi-sub-portfolio" class="badge bg-blue-lt">(17.3%)</span></div>
+                            <span class="small text-secondary">Modernização de sistemas, governança de TIC e PDTIC 2027-2030</span>
                         </div>
                     </div>
                     <!-- GRÁFICOS DO EIXO E BUCKET -->
-                    <div style="padding: 18px; display: grid; grid-template-columns: 1fr 1fr; gap: 18px">
-                        <div class="chart-card card" style="margin-bottom: 0">
-                            <div class="chart-header card-header" style="padding: 10px 14px; font-size: 12px; font-weight: 700; border-radius: 6px 6px 0 0; margin: -16px -16px 12px -16px">
-                                📌 Distribuição por Eixo de Gestão (Macrofluxo)
+                    <div class="sagti-dashboard-chart-grid sagti-dashboard-chart-grid-two">
+                        <div class="chart-card card sagti-dashboard-chart-card">
+                            <div class="card-header">
+                                <h3 class="card-title">📌 Distribuição por Eixo de Gestão (Macrofluxo)</h3>
                             </div>
-                            <div class="chart-body" id="chart-cons-eixo"></div>
+                            <div class="card-body chart-body" id="chart-cons-eixo"></div>
                         </div>
-                        <div class="chart-card card" style="margin-bottom: 0">
-                            <div class="chart-header card-header" style="padding: 10px 14px; font-size: 12px; font-weight: 700; border-radius: 6px 6px 0 0; margin: -16px -16px 12px -16px">
-                                📂 Decomposição por Bucket Canônico OpenProject
+                        <div class="chart-card card sagti-dashboard-chart-card">
+                            <div class="card-header">
+                                <h3 class="card-title">📂 Decomposição por Bucket Canônico OpenProject</h3>
                             </div>
-                            <div class="chart-body" id="chart-cons-bucket"></div>
+                            <div class="card-body chart-body" id="chart-cons-bucket"></div>
                         </div>
                     </div>
                 </div>
 
                 <!-- SEÇÃO 2: GOVERNANÇA DE PRAZOS, RISCOS E ALOCAÇÃO TÉCNICA -->
-                <div class="table-card card" style="margin-bottom: 20px">
-                    <div class="table-header-bar card-header" style="display: flex; justify-content: space-between; align-items: center; padding: 12px 18px">
-                        <div class="table-header-title" style="font-size: 13px; font-weight: 700; display: flex; align-items: center; gap: 8px">
+                <div class="table-card card sagti-dashboard-section">
+                    <div class="table-header-bar card-header sagti-dashboard-section-header">
+                        <div class="table-header-title card-title">
                             <span>🛡️</span> <span>Governança de Prazos, Matriz de Risco & Alocação Técnica</span>
                         </div>
-                        <span style="font-size: 11.5px">Severidade de risco, faixas de envelhecimento e alocação de técnicos</span>
+                        <span class="text-secondary small">Severidade de risco, faixas de envelhecimento e alocação de técnicos</span>
                     </div>
-                    <div style="padding: 18px; display: grid; grid-template-columns: 1.2fr 1fr 1fr 1fr; gap: 16px">
-                        <div class="chart-card card" style="margin-bottom: 0">
-                            <div class="chart-header card-header" style="padding: 10px 14px; font-size: 12px; font-weight: 700; border-radius: 6px 6px 0 0; margin: -16px -16px 12px -16px">
-                                👤 Processos por Responsável Técnico
+                    <div class="sagti-dashboard-chart-grid sagti-dashboard-chart-grid-four">
+                        <div class="chart-card card sagti-dashboard-chart-card">
+                            <div class="card-header">
+                                <h3 class="card-title">👤 Processos por Responsável Técnico</h3>
                             </div>
-                            <div class="chart-body" id="chart-cons-resp"></div>
+                            <div class="card-body chart-body" id="chart-cons-resp"></div>
                         </div>
-                        <div class="chart-card card" style="margin-bottom: 0">
-                            <div class="chart-header card-header" style="padding: 10px 14px; font-size: 12px; font-weight: 700; border-radius: 6px 6px 0 0; margin: -16px -16px 12px -16px">
-                                🚦 Farol de Criticidade
+                        <div class="chart-card card sagti-dashboard-chart-card">
+                            <div class="card-header">
+                                <h3 class="card-title">🚦 Farol de Criticidade</h3>
                             </div>
-                            <div class="chart-body" id="chart-cons-criticidade"></div>
+                            <div class="card-body chart-body" id="chart-cons-criticidade"></div>
                         </div>
-                        <div class="chart-card card" style="margin-bottom: 0">
-                            <div class="chart-header card-header" style="padding: 10px 14px; font-size: 12px; font-weight: 700; border-radius: 6px 6px 0 0; margin: -16px -16px 12px -16px">
-                                ⚠️ Classificação de Risco
+                        <div class="chart-card card sagti-dashboard-chart-card">
+                            <div class="card-header">
+                                <h3 class="card-title">⚠️ Classificação de Risco</h3>
                             </div>
-                            <div class="chart-body" id="chart-cons-risco"></div>
+                            <div class="card-body chart-body" id="chart-cons-risco"></div>
                         </div>
-                        <div class="chart-card card" style="margin-bottom: 0">
-                            <div class="chart-header card-header" style="padding: 10px 14px; font-size: 12px; font-weight: 700; border-radius: 6px 6px 0 0; margin: -16px -16px 12px -16px">
-                                ⏳ Faixa de Aging
+                        <div class="chart-card card sagti-dashboard-chart-card">
+                            <div class="card-header">
+                                <h3 class="card-title">⏳ Faixa de Aging</h3>
                             </div>
-                            <div class="chart-body" id="chart-cons-aging"></div>
+                            <div class="card-body chart-body" id="chart-cons-aging"></div>
                         </div>
                     </div>
                 </div>

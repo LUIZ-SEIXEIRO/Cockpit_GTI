@@ -142,6 +142,42 @@ class TestRedesignUI(unittest.TestCase):
         for rota in ("/api/v1/sei/login", "/api/v1/sei/status", "/api/v1/ia/chat", "/api/v1/ia/revisar_processo"):
             self.assertIn(rota, js_corpus)
 
+    def test_cockpit_dashboard_views_are_compact_tabler_controls(self):
+        raiz = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
+        with open(os.path.join(raiz, "painel.html"), "r", encoding="utf-8") as f:
+            html = f.read()
+        with open(os.path.join(raiz, "static", "css", "components.css"), "r", encoding="utf-8") as f:
+            components = f.read()
+        with open(os.path.join(raiz, "static", "js", "cockpit-core.js"), "r", encoding="utf-8") as f:
+            cockpit_js = f.read()
+
+        nav = re.search(
+            r'<div class="sagti-dashboard-views"[^>]*>(.*?)</div>',
+            html,
+            re.DOTALL,
+        )
+        self.assertIsNotNone(nav)
+        self.assertEqual(len(re.findall(r"<button\b", nav.group(1))), 6)
+        for button_id in (
+            "btn-dash-consolidado",
+            "btn-dash-esteira",
+            "btn-dash-rotina",
+            "btn-dash-portfolio",
+            "btn-dash-farois",
+            "btn-dash-relatorio",
+        ):
+            self.assertIn(f'id="{button_id}"', nav.group(1))
+
+        self.assertRegex(components, r"\.sagti-dashboard-views\s*\{[^}]*flex-wrap:\s*nowrap")
+        self.assertRegex(components, r"\.sagti-dashboard-views\s*\{[^}]*overflow-x:\s*auto")
+        self.assertIn("padding: 5px 10px;", components)
+        self.assertIn("font-size: 12px;", components)
+        self.assertIn("grid-template-columns: repeat(3, minmax(0, 1fr));", components)
+        self.assertIn("window.abrirRelatorioMensalExecutivo = function()", cockpit_js)
+        self.assertIn("atualizarBotaoModoDashboard(botao, botao.id === 'btn-dash-' + modo)", cockpit_js)
+        self.assertIn("'/api/v1/processos', '/api/v1/sei/processos'", cockpit_js)
+        self.assertIn("function possuiIndicadoresExecutivos()", cockpit_js)
+
 
 if __name__ == "__main__":
     unittest.main()

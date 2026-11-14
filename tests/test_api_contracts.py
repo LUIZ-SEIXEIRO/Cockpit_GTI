@@ -145,6 +145,27 @@ class TestApiContracts(unittest.TestCase):
                     self.assertEqual(response.status_code, 401)
                     self.assertFalse(response.get_json()["sucesso"])
 
+    def test_processos_endpoint_loads_valid_json_file(self):
+        processos = [{"sei": "12345.000001/2026-10", "assunto": "Processo de teste"}]
+        with tempfile.TemporaryDirectory() as diretorio:
+            caminho = os.path.join(diretorio, "processos.json")
+            with open(caminho, "w", encoding="utf-8") as arquivo:
+                json.dump(processos, arquivo)
+
+            with patch.dict(os.environ, {
+                "COCKPIT_PROCESSOS_FILE": caminho,
+                "COCKPIT_API_TOKEN": self.token,
+                "API_TOKEN": "",
+            }):
+                response = self.client.get("/api/v1/processos", headers=self.headers)
+
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.get_json(), {
+            "sucesso": True,
+            "total": 1,
+            "processos": processos,
+        })
+
     def test_web_session_requires_configured_secret_and_valid_token(self):
         config_secret = main.app.config["SECRET_KEY"]
         secure_cookie = main.app.config["SESSION_COOKIE_SECURE"]

@@ -28,6 +28,11 @@ class TestDockerContracts(unittest.TestCase):
         self.assertIn("IA_ALLOWED_ENDPOINTS", backend)
         self.assertIn("COCKPIT_API_TOKEN", backend)
 
+    def test_backend_mounts_process_data_file(self):
+        backend = COMPOSE.split("  cockpit-backend:\n", 1)[1].split("\nvolumes:\n", 1)[0]
+        self.assertIn("- ./data:/app/data", backend)
+        self.assertIn("COCKPIT_PROCESSOS_FILE=/app/data/processos.json", backend)
+
     def test_backend_healthcheck_probes_http_liveness(self):
         backend = COMPOSE.split("  cockpit-backend:\n", 1)[1].split("\nvolumes:\n", 1)[0]
         self.assertIn("healthcheck:", backend)

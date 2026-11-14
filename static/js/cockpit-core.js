@@ -45,25 +45,68 @@ window.carregarAcervoProcessos = async function() {
         status.className = 'alert alert-info';
         view.prepend(status);
     }
-    if (status) status.textContent = 'Carregando acervo SEI protegido...';
-    try {
-        var response = await fetch('/api/v1/processos', {
-            headers: obterHeadersComAuth(),
-            cache: 'no-store'
+    if (status) {
+        status.hidden = false;
+        status.textContent = 'Carregando acervo SEI protegido...';
+    }
+
+    function possuiIndicadoresExecutivos() {
+        var ids = [
+            'kpi-val-acervo-total',
+            'kpi-val-saneamento',
+            'kpi-val-monitoramento',
+            'kpi-val-fluxo-normal'
+        ];
+        return ids.every(function(id) {
+            var indicador = document.getElementById(id);
+            return indicador && /^\d+$/.test(indicador.textContent.trim());
         });
-        if (!response.ok) throw new Error('HTTP ' + response.status);
-        var payload = await response.json();
-        if (payload.sucesso !== true || !Array.isArray(payload.processos)) {
-            throw new Error('Formato de resposta inválido');
+    }
+
+    var falhas = [];
+    var endpoints = ['/api/v1/processos', '/api/v1/sei/processos'];
+    var acervoCarregado = false;
+    for (var i = 0; i < endpoints.length; i++) {
+        try {
+            var response = await fetch(endpoints[i], {
+                headers: obterHeadersComAuth(),
+                cache: 'no-store'
+            });
+            if (!response.ok) throw new Error('HTTP ' + response.status);
+            var payload = await response.json();
+            if (payload.sucesso !== true || !Array.isArray(payload.processos) ||
+                payload.processos.length === 0 ||
+                !payload.processos.every(function(processo) {
+                    return processo && typeof processo === 'object' && !Array.isArray(processo);
+                })) {
+                throw new Error('Formato ou conteúdo do acervo inválido');
+            }
+            PROCESSOS = payload.processos;
+            window.PROCESSOS = PROCESSOS;
+            acervoCarregado = true;
+            break;
+        } catch (error) {
+            falhas.push(endpoints[i] + ': ' + error.message);
         }
-        PROCESSOS = payload.processos;
-        window.PROCESSOS = PROCESSOS;
-        if (status) status.textContent = 'Acervo SEI carregado do servidor (' + PROCESSOS.length + ' registros).';
-    } catch (error) {
-        if (status) status.textContent = 'Acervo SEI indisponível. Consulte o administrador; nenhum dado demonstrativo foi carregado.';
-        console.error('[Cockpit] Falha ao carregar acervo SEI:', error);
+    }
+
+    if (!acervoCarregado) {
+        if (status) {
+            status.hidden = possuiIndicadoresExecutivos();
+            if (!status.hidden) {
+                status.textContent = 'Acervo SEI indisponível. Consulte o administrador; nenhum dado demonstrativo foi carregado.';
+            }
+        }
+        var diagnostico = falhas.join('; ');
+        if (status && status.hidden) {
+            console.warn('[Cockpit] Acervo SEI indisponível; indicadores executivos existentes foram mantidos.', diagnostico);
+        } else {
+            console.error('[Cockpit] Falha ao carregar acervo SEI:', diagnostico);
+        }
         return;
     }
+
+    if (status) status.hidden = true;
     ['renderizarTabelasEstrategicas', 'renderizarTabelaEstrategica', 'inicializarGraficos',
      'aplicarFiltrosConsulta', 'renderizarMeusProcessosMesa', 'renderizarSecaoFixadosEAlertasMesa',
      'renderizarPautaDaily'].forEach(function(nome) {
@@ -3784,71 +3827,87 @@ window.modoDashboardAtivo = 'consolidado';
         portfolio: false
     };
 
-    window.alternarModoDashboard = function(modo) {
-        window.modoDashboardAtivo = modo;
+function atualizarBotaoModoDashboard(botao, ativo) {
+    if (!botao) return;
+    botao.classList.remove('btn-primary', 'btn-secondary', 'btn-outline-secondary');
+    botao.classList.add(ativo ? 'btn-primary' : 'btn-outline-secondary');
+    botao.setAttribute('aria-pressed', ativo ? 'true' : 'false');
+}
 
-        // Alterna classes das pills
-        document.querySelectorAll('.pill-filtro-dash').forEach(btn => {
-            btn.classList.remove('btn-primary');
-            btn.classList.add('btn-secondary');
-        });
-        const activeBtn = document.getElementById('btn-dash-' + modo);
-        if (activeBtn) {
-            activeBtn.classList.remove('btn-secondary');
-            activeBtn.classList.add('btn-primary');
+window.abrirRelatorioMensalExecutivo = function() {
+    document.querySelectorAll('.pill-filtro-dash').forEach(function(botao) {
+        atualizarBotaoModoDashboard(botao, botao.id === 'btn-dash-relatorio');
+    });
+    window.switchTab('gestao_glpi');
+    if (window.currentTab === 'gestao_glpi' && typeof window.alternarSubAbaGlpi === 'function') {
+        window.alternarSubAbaGlpi('relatorio');
+    }
+};
+
+window.alternarModoDashboard = function(modo) {
+    window.modoDashboardAtivo = modo;
+
+    document.querySelectorAll('.pill-filtro-dash').forEach(function(botao) {
+        atualizarBotaoModoDashboard(botao, botao.id === 'btn-dash-' + modo);
+    });
+
+    // Alterna subviews
+    document.querySelectorAll('.subview-dash').forEach(el => el.style.display = 'none');
+    const target = document.getElementById('subview-dash-' + modo);
+    if (target) target.style.display = 'block';
+
+    // Atualiza Banner Principal e Título da Página
+    const titulosModo = {
+        'consolidado': {
+            titulo: '📊 CENTRAL DE DASHBOARDS: VISÃO CONSOLIDADA 360°',
+            desc: 'Visão executiva integrada de processos e demandas finalísticas da SA-GTI (SOE & SEI-SP)',
+            badge: '🌐 Processos Integrados SOE & SEI',
+            pageTitle: '📊 DASHBOARD CONSOLIDADO 360°'
+        },
+        'esteira': {
+            titulo: '📑 CENTRAL DE DASHBOARDS: ESTEIRA DE CONTRATAÇÃO',
+            desc: 'Processos vinculados à estruturação de contratações de TIC (Lei 14.133/2021) sob gestão da SA-GTI',
+            badge: '📑 55 Processos em Contratação',
+            pageTitle: '📑 DASHBOARD DA ESTEIRA DE CONTRATAÇÃO'
+        },
+        'rotina': {
+            titulo: '⚙️ CENTRAL DE DASHBOARDS: ROTINA OPERACIONAL & SUSTENTAÇÃO',
+            desc: 'Atestes e medições mensais (PRODESP), faturas de concessionárias e suporte interno',
+            badge: '⚙️ 93 Processos Operacionais',
+            pageTitle: '⚙️ DASHBOARD DE ROTINA OPERACIONAL'
+        },
+        'portfolio': {
+            titulo: '🚀 CENTRAL DE DASHBOARDS: PORTFÓLIO ESTRATÉGICO & PDTIC',
+            desc: 'Projetos de modernização de sistemas, governança de TIC e iniciativas estruturantes do PDTIC',
+            badge: '🚀 31 Iniciativas Estratégicas',
+            pageTitle: '🚀 DASHBOARD DE PORTFÓLIO ESTRATÉGICO'
+        },
+        'farois': {
+            titulo: '🎯 CENTRAL DE DASHBOARDS: FARÓIS & GARGALOS',
+            desc: 'Acompanhamento de retenções, riscos e gargalos operacionais do acervo SA-GTI',
+            badge: '🎯 87 Faróis & Gargalos',
+            pageTitle: '🎯 FARÓIS & GARGALOS OPERACIONAIS'
         }
-
-        // Alterna subviews
-        document.querySelectorAll('.subview-dash').forEach(el => el.style.display = 'none');
-        const target = document.getElementById('subview-dash-' + modo);
-        if (target) target.style.display = 'block';
-
-        // Atualiza Banner Principal e Título da Página
-        const titulosModo = {
-            'consolidado': {
-                titulo: '📊 CENTRAL DE DASHBOARDS: VISÃO CONSOLIDADA 360°',
-                desc: 'Visão executiva integrada de processos e demandas finalísticas da SA-GTI (SOE & SEI-SP)',
-                badge: '🌐 Processos Integrados SOE & SEI',
-                pageTitle: '📊 DASHBOARD CONSOLIDADO 360°'
-            },
-            'esteira': {
-                titulo: '📑 CENTRAL DE DASHBOARDS: ESTEIRA DE CONTRATAÇÃO',
-                desc: 'Processos vinculados à estruturação de contratações de TIC (Lei 14.133/2021) sob gestão da SA-GTI',
-                badge: '📑 55 Processos em Contratação',
-                pageTitle: '📑 DASHBOARD DA ESTEIRA DE CONTRATAÇÃO'
-            },
-            'rotina': {
-                titulo: '⚙️ CENTRAL DE DASHBOARDS: ROTINA OPERACIONAL & SUSTENTAÇÃO',
-                desc: 'Atestes e medições mensais (PRODESP), faturas de concessionárias e suporte interno',
-                badge: '⚙️ 93 Processos Operacionais',
-                pageTitle: '⚙️ DASHBOARD DE ROTINA OPERACIONAL'
-            },
-            'portfolio': {
-                titulo: '🚀 CENTRAL DE DASHBOARDS: PORTFÓLIO ESTRATÉGICO & PDTIC',
-                desc: 'Projetos de modernização de sistemas, governança de TIC e iniciativas estruturantes do PDTIC',
-                badge: '🚀 31 Iniciativas Estratégicas',
-                pageTitle: '🚀 DASHBOARD DE PORTFÓLIO ESTRATÉGICO'
-            }
-        };
-
-        const cfg = titulosModo[modo] || titulosModo['consolidado'];
-        const elTit = document.getElementById('dash-banner-titulo');
-        if (elTit) elTit.innerText = cfg.titulo;
-        const elDesc = document.getElementById('dash-banner-desc');
-        if (elDesc) elDesc.innerText = cfg.desc;
-        const elBadge = document.getElementById('dash-banner-tag');
-        if (elBadge) elBadge.innerText = cfg.badge;
-        const elSbBadge = document.getElementById('sidebar-banner-tag');
-        if (elSbBadge) elSbBadge.innerText = cfg.badge;
-        const elPageTitle = document.getElementById('page-title');
-        if (elPageTitle) elPageTitle.innerText = cfg.pageTitle;
-
-        // Renderização sob demanda dos gráficos com redimensionamento
-        setTimeout(() => {
-            window.renderizarGraficosModo(modo);
-            window.dispatchEvent(new Event('resize'));
-        }, 60);
     };
+
+    const cfg = titulosModo[modo] || titulosModo['consolidado'];
+    const elTit = document.getElementById('dash-banner-titulo');
+    if (elTit) elTit.innerText = cfg.titulo;
+    const elDesc = document.getElementById('dash-banner-desc');
+    if (elDesc) elDesc.innerText = cfg.desc;
+    const elBadge = document.getElementById('dash-banner-tag');
+    if (elBadge) elBadge.innerText = cfg.badge;
+    const elSbBadge = document.getElementById('sidebar-banner-tag');
+    if (elSbBadge) elSbBadge.innerText = cfg.badge;
+    const elPageTitle = document.getElementById('page-title');
+    if (elPageTitle) elPageTitle.innerText = cfg.pageTitle;
+
+    // Renderização sob demanda dos gráficos com redimensionamento
+    setTimeout(() => {
+        window.renderizarGraficosModo(modo);
+        window.dispatchEvent(new Event('resize'));
+    }, 60);
+};
 
         window.renderizarGraficosModo = function(modo) {
         const coresPadrao = ['#0056d2', '#56b4f8', '#00a859', '#f59e0b', '#f97316', '#ef4444', '#64748b'];
