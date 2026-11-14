@@ -1441,7 +1441,8 @@ let sprintConfig = (function() {
         let salvo = localStorage.getItem('sagti_sprint_cfg');
         if (salvo) {
             let parsed = JSON.parse(salvo);
-            if (parsed && parsed.inicio && !parsed.inicio.startsWith('2027') && parsed.inicio >= '2026-10-01') {
+            if (parsed && parsed.inicio && /^\d{4}-\d{2}-\d{2}$/.test(parsed.inicio) &&
+                !Number.isNaN(new Date(parsed.inicio + 'T00:00:00').getTime())) {
                 if (!parsed.duracao) parsed.duracao = parseInt(parsed.cadencia, 10) || 7;
                 if (parsed.diaSemanaInicio === undefined) parsed.diaSemanaInicio = 1;
                 return parsed;
@@ -4761,6 +4762,60 @@ window.modoFarolAtivo = 'todos';
         };
     }
 
+    function obterCicloSprintAtual(agora) {
+        const duracao = Math.max(1, parseInt(sprintConfig.duracao, 10) || 7);
+        const partesInicio = String(sprintConfig.inicio || '').split('-').map(Number);
+        if (partesInicio.length !== 3 || partesInicio.some(Number.isNaN)) {
+            return { ...sprintConfig, duracao };
+        }
+
+        const inicioBase = new Date(partesInicio[0], partesInicio[1] - 1, partesInicio[2]);
+        const hoje = new Date(agora.getFullYear(), agora.getMonth(), agora.getDate());
+        const diferencaDias = Math.floor((
+            Date.UTC(hoje.getFullYear(), hoje.getMonth(), hoje.getDate()) -
+            Date.UTC(inicioBase.getFullYear(), inicioBase.getMonth(), inicioBase.getDate())
+        ) / 86400000);
+        const indiceCiclo = Math.max(0, Math.floor(diferencaDias / duracao));
+        const inicio = new Date(inicioBase);
+        inicio.setDate(inicio.getDate() + indiceCiclo * duracao);
+        const fim = new Date(inicio);
+        fim.setDate(fim.getDate() + duracao - 1);
+
+        function toISO(data) {
+            return [
+                data.getFullYear(),
+                String(data.getMonth() + 1).padStart(2, '0'),
+                String(data.getDate()).padStart(2, '0')
+            ].join('-');
+        }
+
+        let numero = indiceCiclo + 1;
+        let ano = inicio.getFullYear();
+        const identificadorBase = String(sprintConfig.nome || '').match(/Sprint\s+(\d+)\/(\d{4})/i);
+        if (duracao === 7 && inicioBase.getDay() === 1) {
+            const quinta = new Date(Date.UTC(inicio.getFullYear(), inicio.getMonth(), inicio.getDate()));
+            quinta.setUTCDate(quinta.getUTCDate() + 4 - (quinta.getUTCDay() || 7));
+            const inicioAnoIso = new Date(Date.UTC(quinta.getUTCFullYear(), 0, 1));
+            numero = Math.ceil((((quinta - inicioAnoIso) / 86400000) + 1) / 7);
+            ano = quinta.getUTCFullYear();
+        } else if (identificadorBase) {
+            numero = parseInt(identificadorBase[1], 10) + indiceCiclo;
+        }
+
+        const nomeBase = String(sprintConfig.nome || 'Ciclo Semanal SA-GTI');
+        const nome = identificadorBase
+            ? nomeBase.replace(/Sprint\s+\d+\/\d{4}/i, `Sprint ${numero}/${ano}`)
+            : `Sprint ${numero}/${ano} — ${nomeBase}`;
+
+        return {
+            ...sprintConfig,
+            nome,
+            duracao,
+            inicio: toISO(inicio),
+            fim: toISO(fim)
+        };
+    }
+
     function inicializarSprintTimer() {
         atualizarDisplaySprint();
         setInterval(atualizarDisplaySprint, 60000);
@@ -4780,25 +4835,27 @@ window.modoFarolAtivo = 'todos';
 
         if (!elNome || !elTimer) return;
 
-        const duracao = parseInt(sprintConfig.duracao, 10) || 7;
+        const agora = new Date();
+        const cicloAtual = obterCicloSprintAtual(agora);
+        const duracao = cicloAtual.duracao;
         const descCadencia = duracao === 7 ? 'Semanal / 7 dias corridos' : (duracao === 14 ? 'Quinzenal / 14 dias corridos' : `${duracao} dias corridos`);
 
-        elNome.innerText = `🏃 ${sprintConfig.nome.toUpperCase()}`;
-        elDatas.innerText = `Ciclo: ${formatarDataBR(sprintConfig.inicio)} a ${formatarDataBR(sprintConfig.fim)} (${descCadencia})`;
-        if (elMeta) elMeta.innerText = `Meta: ${sprintConfig.meta}`;
+        elNome.innerText = `🏃 ${cicloAtual.nome.toUpperCase()}`;
+        elDatas.innerText = `Ciclo: ${formatarDataBR(cicloAtual.inicio)} a ${formatarDataBR(cicloAtual.fim)} (${descCadencia})`;
+        if (elMeta) elMeta.innerText = `Meta: ${cicloAtual.meta}`;
 
-        const agora = new Date();
-        const dInicio = new Date(sprintConfig.inicio + 'T00:00:00');
-        const dFim = new Date(sprintConfig.fim + 'T23:59:59');
+        const dInicio = new Date(cicloAtual.inicio + 'T00:00:00');
+        const dReview = new Date(cicloAtual.fim + 'T00:00:00');
+        dReview.setDate(dReview.getDate() + 1);
 
-        const totalMs = Math.max(1, dFim - dInicio);
+        const totalMs = Math.max(1, dReview - dInicio);
         const decorridoMs = agora - dInicio;
         let pct = Math.round((decorridoMs / totalMs) * 100);
         if (pct < 0) pct = 0;
         if (pct > 100) pct = 100;
 
-        const dataReview = calcularDataReview(sprintConfig.fim);
-        const restanteMs = dFim - agora;
+        const dataReview = calcularDataReview(cicloAtual.fim);
+        const restanteMs = dReview - agora;
         let txtRestante = "";
         if (restanteMs > 0) {
             const dias = Math.floor(restanteMs / (1000 * 60 * 60 * 24));
@@ -4810,10 +4867,10 @@ window.modoFarolAtivo = 'todos';
 
         elTimer.innerText = txtRestante;
         if (elWarroom) elWarroom.innerText = txtRestante;
-        if (elNomeWarroom) elNomeWarroom.innerText = sprintConfig.nome;
+        if (elNomeWarroom) elNomeWarroom.innerText = cicloAtual.nome;
         if (elBar) elBar.style.width = pct + '%';
         if (elPct) elPct.innerText = `${pct}% do tempo decorrido (${Math.round(totalMs / (1000 * 60 * 60 * 24))} dias totais)`;
-        if (elIniRodape) elIniRodape.innerText = `Início: ${formatarDataBR(sprintConfig.inicio)}`;
+        if (elIniRodape) elIniRodape.innerText = `Início: ${formatarDataBR(cicloAtual.inicio)}`;
         if (elFimRodape) elFimRodape.innerText = `Sprint Review: ${dataReview}`;
     }
 

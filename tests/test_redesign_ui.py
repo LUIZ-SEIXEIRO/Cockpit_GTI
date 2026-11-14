@@ -251,6 +251,59 @@ class TestRedesignUI(unittest.TestCase):
         self.assertIn("btn.classList.add(ativo ? 'btn-primary' : 'btn-outline-secondary')", mesa_js)
         self.assertIn("btn.setAttribute('aria-pressed', ativo ? 'true' : 'false')", mesa_js)
 
+    def test_warroom_usa_ciclo_dinamico_cards_tabler_e_kanban_horizontal(self):
+        raiz = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
+        with open(os.path.join(raiz, "painel.html"), "r", encoding="utf-8") as f:
+            html = f.read()
+        with open(os.path.join(raiz, "static", "css", "components.css"), "r", encoding="utf-8") as f:
+            components = f.read()
+        with open(os.path.join(raiz, "static", "js", "cockpit-core.js"), "r", encoding="utf-8") as f:
+            cockpit_js = f.read()
+
+        warroom_inicio = html.index('<div id="view-daily_warroom"')
+        warroom_fim = html.index('<div id="view-esteira_ia"', warroom_inicio)
+        warroom = html[warroom_inicio:warroom_fim]
+        self.assertIn('class="warroom-layout"', warroom)
+        self.assertIn('id="sprint-nome-warroom">Calculando ciclo atual...', warroom)
+        self.assertIn('id="sprint-timer-warroom" role="status" aria-live="polite"', warroom)
+        self.assertNotIn("Sprint 45/2026", warroom)
+        self.assertNotIn("16/11/2026", warroom)
+        self.assertIn('class="card-header warroom-card-header warroom-mural-header"', warroom)
+        self.assertEqual(len(re.findall(r'class="btn btn-outline-secondary btn-sm" onclick="adicionarPostitMural', warroom)), 4)
+
+        self.assertIn("function obterCicloSprintAtual(agora)", cockpit_js)
+        self.assertIn("const cicloAtual = obterCicloSprintAtual(agora)", cockpit_js)
+        self.assertIn("elNomeWarroom.innerText = cicloAtual.nome", cockpit_js)
+        self.assertIn("elWarroom.innerText = txtRestante", cockpit_js)
+        self.assertNotIn("!parsed.inicio.startsWith('2027')", cockpit_js)
+
+        self.assertRegex(
+            components,
+            r"\.warroom-layout\s*\{[^}]*"
+            r"grid-template-columns:\s*minmax\(300px,\s*0\.85fr\)\s*minmax\(0,\s*2\.15fr\);[^}]*"
+            r"align-items:\s*stretch;",
+        )
+        self.assertRegex(
+            components,
+            r"\.warroom-card-header\s*\{[^}]*padding:\s*10px 16px;",
+        )
+        self.assertRegex(
+            components,
+            r"\.warroom-mural-actions\s*\{[^}]*display:\s*flex;",
+        )
+        self.assertRegex(
+            components,
+            r"#view-gestao_agil \.kanban-board-5col-grid\s*\{[^}]*"
+            r"grid-template-columns:\s*repeat\(5,\s*minmax\(240px,\s*1fr\)\);[^}]*"
+            r"overflow-x:\s*auto;",
+        )
+        self.assertIn("#view-gestao_agil .kanban-card-modelo {", components)
+
+        kanban_inicio = html.index('<div id="view-gestao_agil"')
+        kanban_fim = html.index('<div id="view-daily_warroom"', kanban_inicio)
+        kanban = html[kanban_inicio:kanban_fim]
+        self.assertEqual(len(re.findall(r'class="kanban-col-modelo ', kanban)), 5)
+
 
 if __name__ == "__main__":
     unittest.main()
