@@ -1033,7 +1033,7 @@
             '</div>' +
 
             '<div style="display:flex;justify-content:space-between;align-items:center;padding-top:12px">' +
-                '<span style="font-size:11px">Arquivo de auditoria no servidor: <code>C:\Cockpit_GTI\laudo_sincronizacao_automatica.txt</code></span>' +
+                '<span style="font-size:11px">Arquivo de auditoria no servidor: <code>C:/Cockpit_GTI/laudo_sincronizacao_automatica.txt</code></span>' +
                 '<button type="button" class="btn btn-outline-secondary" onclick="document.getElementById(\'modal-logs-sincronizacao-op\').remove()" style="padding:6px 16px;font-size:12px">Fechar</button>' +
             '</div>' +
         '</div>';
@@ -1725,11 +1725,10 @@
                 item.view.style.display = ativo ? 'block' : 'none';
             }
             if (item.btn) {
-                if (ativo) {
-                    item.btn.className = 'btn btn-primary active subaba-doc-btn';
-                } else {
-                    item.btn.className = 'btn btn-outline-secondary subaba-doc-btn';
-                }
+                item.btn.classList.remove('btn-primary', 'btn-secondary', 'btn-outline-secondary', 'active');
+                item.btn.classList.add(ativo ? 'btn-primary' : 'btn-outline-secondary');
+                if (ativo) item.btn.classList.add('active');
+                item.btn.setAttribute('aria-pressed', String(ativo));
             }
         });
     };

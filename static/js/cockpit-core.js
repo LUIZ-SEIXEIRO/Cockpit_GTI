@@ -306,8 +306,8 @@ const CHAMADOS_ITSM_SUPORTE = window.CHAMADOS_ITSM_SUPORTE;
                 "id": "mot-6",
                 "nome": "6. 📂 Ingestão SEI v7.1 (Pipeline Hot Folder)",
                 "tipo": "Hot Folder / Watchdog",
-                "endpoint": "C:\Cockpit_GTI\ingestao_sei\novos_pdfs",
-                "endpoint_remoto": "C:\Cockpit_GTI\ingestao_sei\novos_pdfs",
+                "endpoint": "C:/Cockpit_GTI/ingestao_sei/novos_pdfs",
+                "endpoint_remoto": "C:/Cockpit_GTI/ingestao_sei/novos_pdfs",
                 "freq": "Sob Demanda (Hot Folder)",
                 "status": "pausado",
                 "modo_resiliencia": "watchdog_hotfolder_v71",
@@ -378,7 +378,7 @@ const MOTORES_PADRAO = window.MOTORES_PADRAO;
         { id: 'openproject_14', nome: '3. 🏗️ OpenProject 14 Produção (API v3 :8090)', tipo: 'OpenProject API v3', endpoint: 'https://projetos.spaguas.sp.gov.br/api/v3', freq: 'A cada 15 min', status: 'ativo', fallbackTipo: 'fonte_local', detalheLocal: 'Snapshot Oficial com 500 Pacotes Reais em 29 Projetos' },
         { id: 'glpi_10', nome: '4. 🎫 GLPI 10 ITSM & Formcreator', tipo: 'REST API Local', endpoint: 'https://atendimento.spaguas.sp.gov.br/apirest.php', freq: 'A cada 10 min', status: 'ativo', fallbackTipo: 'fonte_local', detalheLocal: 'Atendimento Oficial: 13 Não Solucionados • 6 Atrasados • 16 Problemas • 909 Ativos CMDB' },
         { id: 'zabbix_noc', nome: '5. 📡 Sonda Zabbix NOC (Telemetria Bacias)', tipo: 'Zabbix API / SNMP', endpoint: 'https://www.spaguas.sp.gov.br/site/diretoriasdebacia/', freq: 'A cada 5 min', status: 'ativo', fallbackTipo: 'fonte_local', detalheLocal: 'Monitoramento de SLA WAN/SD-WAN nas 22 UGRHIs' },
-        { id: 'sei_pdf_etl', nome: '6. 📂 Ingestão SEI v7.1 (Pipeline Hot Folder)', tipo: 'Watcher / FileSystem', endpoint: 'C:\Cockpit_GTI\ingestao_sei\novos_pdfs', freq: 'Evento / Watchdog', status: 'ativo', fallbackTipo: 'fonte_local', detalheLocal: 'Pipeline de Ingestão por Pasta Monitorada (Watchdog Event-Driven) — Sem Sondagem HTTP' },
+        { id: 'sei_pdf_etl', nome: '6. 📂 Ingestão SEI v7.1 (Pipeline Hot Folder)', tipo: 'Watcher / FileSystem', endpoint: 'C:/Cockpit_GTI/ingestao_sei/novos_pdfs', freq: 'Evento / Watchdog', status: 'ativo', fallbackTipo: 'fonte_local', detalheLocal: 'Pipeline de Ingestão por Pasta Monitorada (Watchdog Event-Driven) — Sem Sondagem HTTP' },
         { id: 'doe_sp', nome: '7. 🏛️ Acervo SEI-SP & Diário Oficial (DOE-SP)', tipo: 'HTTPS / Web Oficial', endpoint: 'https://www.doe.sp.gov.br', freq: 'Tempo Real', status: 'ativo', fallbackTipo: 'online_doesp', detalheLocal: 'Conectado a https://www.doe.sp.gov.br (Sonda HTTPS Anti-CORS)' },
         { id: 'pncp_pca', nome: '8. 📑 API Oficial PNCP (UASG 262101 • PCA 2027)', tipo: 'REST API Federal', endpoint: 'https://pncp.gov.br/api/consulta/v1/contratacoes/publicacao?dataInicial=20260101&dataFinal=20261231&codigoUnidadeAdministrativa=262101&pagina=1&tamanhoPagina=1', freq: 'Diária (06:00)', status: 'ativo', fallbackTipo: 'fonte_local', detalheLocal: 'Espelho Auditado UASG 262101 (31 Pacotes PCA 2027 • R$ 1,51 bi)' },
         { id: 'soi_soe', nome: '9. 💧 Barramento Hídrico SIGRH / SOI / SOE', tipo: 'Web / REST', endpoint: 'https://sigrh.sp.gov.br/', freq: 'A cada 1 hora', status: 'ativo', fallbackTipo: 'fonte_local', detalheLocal: 'Sistemas de Outorga de Água, Poços e Telemetria DMO' },
@@ -6697,7 +6697,7 @@ window.STORAGE_KEY_POOL_3_IAS = 'sagti_pool_tres_ias_v96';
     };
 
     window.salvarPoolTresIas = async function(btn) {
-        var origHtml = '<span>💾</span> <strong>Salvar Configuração das 2 IAs</strong>';
+        var origHtml = '<span>💾</span> <strong>Salvar Configuração das 3 IAs</strong>';
         var origClass = btn ? btn.className : '';
         if (btn) {
             btn.disabled = true;
@@ -10025,35 +10025,40 @@ window.escapeHtml = window.escapeHtml || function(s) { if (s === null || s === u
     // ==========================================
     window.subConfigAtivo = 'usuarios';
 
-        window.alternarSubConfig = function(modo) {
-        window.subConfigAtivo = modo;
-        document.querySelectorAll('.subview-cfg').forEach(el => el.style.display = 'none');
-        document.querySelectorAll('.pill-cfg').forEach(btn => {
-            btn.classList.remove('btn-primary', 'active');
-            btn.classList.add('btn-secondary');
-        });
-
+    window.alternarSubAbaConfig = function(modo) {
         const target = document.getElementById('subview-cfg-' + modo);
-        if (target) target.style.display = 'block';
+        if (!target) return;
 
-        const btn = document.getElementById('btn-cfg-' + modo);
-        if (btn) {
-            btn.classList.remove('btn-secondary');
-            btn.classList.add('btn-primary', 'active');
+        window.subConfigAtivo = modo;
+        document.querySelectorAll('.subview-cfg').forEach(el => {
+            el.style.setProperty('display', 'none', 'important');
+        });
+        document.querySelectorAll('.pill-cfg').forEach(btn => {
+            const ativo = btn.id === 'btn-cfg-' + modo;
+            btn.classList.toggle('active', ativo);
+            btn.classList.toggle('btn-primary', ativo);
+            btn.classList.toggle('btn-secondary', !ativo);
+            btn.classList.toggle('btn-outline-secondary', !ativo);
+            btn.setAttribute('aria-pressed', String(ativo));
+        });
+        target.style.setProperty('display', 'block', 'important');
+        if (modo === 'backup' && typeof window.renderizarHistoricoSnapshots === 'function') {
+            window.renderizarHistoricoSnapshots();
         }
 
         const titulosCfg = {
-            'rbac': '🛡️ 1. MATRIZ DE CONTROLE DE ACESSO POR PERFIL (RBAC)',
-            'parametros': '⚖️ 2. PARÂMETROS DE GOVERNANÇA, AGING & SPRINTS',
-            'conectores': '🔌 3. CONECTORES & CENTRAL DE VARREDURA MULTISSISTÊMICA',
-            'agentes': '🤖 4. HUB DE AGENTES DE INTELIGÊNCIA ARTIFICIAL',
-            'backup': '💾 5. POLÍTICA DE BACKUP & DRP',
-            'documentacao': '📖 7. DOCUMENTAÇÃO OFICIAL DO PROJETO (MANUAL, ARQUITETURA & GITHUB)'
+            usuarios: '👥 1. GESTÃO DE USUÁRIOS & PERFIS',
+            rbac: '🛡️ 2. PERFIS DE ACESSO & RBAC',
+            parametros: '⚖️ 3. PARÂMETROS DE GESTÃO & SPRINTS',
+            conectores: '🔌 4. CONECTORES & VARREDURA',
+            agentes: '🤖 5. POOL DAS 3 IAs & AGENTES',
+            backup: '💾 6. BACKUP & RESTAURAÇÃO',
+            documentacao: '📖 7. DOCUMENTAÇÃO OFICIAL'
         };
-
-        const tit = document.getElementById('cfg-banner-titulo');
-        if (tit) tit.innerText = titulosCfg[modo] || 'CONFIGURAÇÕES SA-GTI';
+        const titulo = document.getElementById('cfg-banner-titulo');
+        if (titulo) titulo.innerText = titulosCfg[modo];
     };
+    window.alternarSubConfig = window.alternarSubAbaConfig;
 
         window.alternarVisaoTabelaMotores = function(visao) {
         const vStatus = document.getElementById('visao-motores-status');

@@ -32,6 +32,7 @@
             <div class="sagti-connector-status" aria-label="Status dos conectores">
                 <span id="topbar-connector-status" class="badge bg-amber-lt" role="status">Conectores pendentes</span>
             </div>
+            <div id="topbar-motor-sei-mount" class="sagti-topbar-sei-mount" aria-label="Status do Motor SEI"></div>
             <div class="sagti-topbar-user">
                 <strong>Luiz A. S. Seixeiro</strong>
                 <span class="badge bg-blue-lt">Sess&atilde;o institucional</span>
@@ -4205,14 +4206,14 @@
             </div>
 
             <!-- SELETOR DE SUB-PAINÉIS DE CONFIGURAÇÃO (PILLS) -->
-            <div style="display: flex; gap: 8px; margin-bottom: 20px; padding: 10px 14px; border-radius: 8px; overflow-x: auto">
-                <button type="button" class="btn btn-primary pill-cfg" id="btn-cfg-usuarios" onclick="alternarSubConfig('usuarios')" style="white-space: nowrap">👥 1. Gestão de Usuários &amp; Perfis</button>
-                <button type="button" class="btn btn-secondary pill-cfg btn-outline-secondary" id="btn-cfg-rbac" onclick="alternarSubConfig('rbac')" style="white-space: nowrap">🛡️ 2. Perfis de Acesso &amp; RBAC</button>
-                <button type="button" class="btn btn-secondary pill-cfg btn-outline-secondary" id="btn-cfg-parametros" onclick="alternarSubConfig('parametros')" style="white-space: nowrap">⚖️ 3. Parâmetros de Gestão &amp; Sprints</button>
-                <button type="button" class="btn btn-secondary pill-cfg btn-outline-secondary" id="btn-cfg-conectores" onclick="alternarSubConfig('conectores')" style="white-space: nowrap">🔌 4. Conectores &amp; Varredura</button>
-                <button type="button" class="btn btn-secondary pill-cfg btn-outline-secondary" id="btn-cfg-agentes" onclick="alternarSubConfig('agentes')" style="white-space: nowrap">🤖 5. Pool das 3 IAs &amp; Agentes</button>
-                <button type="button" class="btn btn-secondary pill-cfg btn-outline-secondary" id="btn-cfg-backup" onclick="alternarSubConfig('backup')" style="white-space: nowrap">💾 6. Backup &amp; Restauração</button>
-                <button type="button" class="btn btn-secondary pill-cfg btn-outline-secondary" id="btn-cfg-documentacao" onclick="alternarSubConfig('documentacao')" style="white-space: nowrap">📖 7. Documentação Oficial</button>
+            <div class="config-subtabs nav nav-pills" role="tablist" aria-label="Sub-abas de configurações">
+                <button type="button" class="btn btn-primary active pill-cfg" id="btn-cfg-usuarios" aria-pressed="true" onclick="alternarSubConfig('usuarios')">👥 1. Gestão de Usuários &amp; Perfis</button>
+                <button type="button" class="btn btn-outline-secondary pill-cfg" id="btn-cfg-rbac" aria-pressed="false" onclick="alternarSubConfig('rbac')">🛡️ 2. Perfis de Acesso &amp; RBAC</button>
+                <button type="button" class="btn btn-outline-secondary pill-cfg" id="btn-cfg-parametros" aria-pressed="false" onclick="alternarSubConfig('parametros')">⚖️ 3. Parâmetros de Gestão &amp; Sprints</button>
+                <button type="button" class="btn btn-outline-secondary pill-cfg" id="btn-cfg-conectores" aria-pressed="false" onclick="alternarSubConfig('conectores')">🔌 4. Conectores &amp; Varredura</button>
+                <button type="button" class="btn btn-outline-secondary pill-cfg" id="btn-cfg-agentes" aria-pressed="false" onclick="alternarSubConfig('agentes')">🤖 5. Pool das 3 IAs &amp; Agentes</button>
+                <button type="button" class="btn btn-outline-secondary pill-cfg" id="btn-cfg-backup" aria-pressed="false" onclick="alternarSubConfig('backup')">💾 6. Backup &amp; Restauração</button>
+                <button type="button" class="btn btn-outline-secondary pill-cfg" id="btn-cfg-documentacao" aria-pressed="false" onclick="alternarSubConfig('documentacao')">📖 7. Documentação Oficial</button>
             </div>
 
             <!-- SUB-PAINEL 1: MATRIZ RBAC -->
@@ -4297,7 +4298,8 @@
             </div>
 
             <!-- SUB-PAINEL 2: ⚖️ PARÂMETROS DE GESTÃO, AGING & SPRINTS (UNIFICADO) -->
-            <div id="subview-cfg-parametros" class="subview-cfg" style="display: none">
+            <div id="subview-cfg-parametros" class="subview-cfg config-parameters" style="display: none">
+                <div class="config-parameters-grid">
                 <!-- BLOCO 1: AGING & PORÉNS -->
                 <div class="table-card card" style="margin-bottom: 20px">
                     <div class="table-header-bar card-header" style="display: flex; justify-content: space-between; align-items: center">
@@ -4307,7 +4309,7 @@
                     <div style="padding: 20px">
                         <p style="font-size: 12px; margin-bottom: 16px">Configure os limites temporais (em dias de tramitação) para categorização automática dos processos do SEI nos faróis de atenção e apuração de Aging Líquido.</p>
                         
-                        <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-bottom: 20px">
+                        <div class="config-parameter-fields" style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-bottom: 20px">
                             <div style="border-radius: 8px; padding: 14px">
                                 <div style="font-size: 12px; font-weight: 700; margin-bottom: 8px">🟢 Faixa 1: Normal</div>
                                 <label style="font-size: 11px">Prazo máximo (dias):</label>
@@ -4350,7 +4352,7 @@
                         <p style="font-size: 12px; margin-bottom: 16px">Configure a duração das Sprints da SA-GTI (padrão semanal de 7 dias), escolha com total liberdade o dia da semana oficial para início do ciclo, defina as datas ativas e sincronize os limites de WIP e timebox da Daily Scrum.</p>
                         
                         <!-- LINHA 1: CADÊNCIA, DIA DA SEMANA E DATAS -->
-                        <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; margin-bottom: 16px">
+                        <div class="config-parameter-fields" style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; margin-bottom: 16px">
                             <div style="border-radius: 8px; padding: 12px">
                                 <label style="font-size: 11.5px; font-weight: 700; display: block; margin-bottom: 4px">⚡ Duração da Sprint:</label>
                                 <select id="cfg-sprint-duracao" onchange="window.aoAlterarParametrosSprint()" style="width: 100%; padding: 7px; border-radius: 4px; font-size: 12px; font-weight: 700" class="form-select">
@@ -4415,11 +4417,12 @@
                         </div>
                     </div>
                 </div>
+                </div>
             </div>
 
-            <div id="subview-cfg-conectores" class="subview-cfg" style="display: block">
+            <div id="subview-cfg-conectores" class="subview-cfg config-connectors" style="display: block">
                 <!-- 1. SCORECARDS DE SAÚDE DOS CONECTORES (ESTILO CRYPTO DASHBOARD) -->
-                <div class="kpi-row" style="grid-template-columns: repeat(4, 1fr); gap: 14px; margin-bottom: 20px">
+                <div class="kpi-row config-connector-kpis" style="grid-template-columns: repeat(4, 1fr); gap: 14px; margin-bottom: 20px">
                     <div class="kpi-card card card-sm">
                         <div style="display:flex; justify-content:space-between; align-items:center">
                             <span class="kpi-title">🔌 Conectores Mapeados</span>
@@ -4536,7 +4539,7 @@
                             </button>
                         </div>
 
-                        <form id="form-endpoints-conectores-v9" onsubmit="return false;" autocomplete="off" style="display:grid; grid-template-columns: repeat(2, 1fr); gap:16px">
+                        <form id="form-endpoints-conectores-v9" class="config-endpoint-form" onsubmit="return false;" autocomplete="off" style="display:grid; grid-template-columns: repeat(2, 1fr); gap:16px">
                             <input type="text" name="username" autocomplete="username" value="sagti-admin" style="display:none" aria-hidden="true" class="form-control">
 
                             <!-- GLPI 10 -->
@@ -4603,7 +4606,7 @@
                             </button>
                         </div>
 
-                        <div style="display:grid; grid-template-columns: repeat(3, 1fr); gap:16px">
+                        <div class="config-connector-governance" style="display:grid; grid-template-columns: repeat(3, 1fr); gap:16px">
                             <div class="kpi-card card card-sm" style="padding:16px; border-radius:14px; min-height:auto">
                                 <div style="font-size:13px; font-weight:800">🔒 Modo Manutenção Chat IA</div>
                                 <p style="font-size:11px; margin:6px 0 12px 0; line-height:1.4">
@@ -4644,7 +4647,7 @@
             <!-- SUB-PAINEL 6: 🤖 HUB DE AGENTES DE IA & MODELOS -->
             
             <!-- SUB-PAINEL 4: 🤖 HUB DE AGENTES DE IA & POOL DE 3 IAS (CANÔNICO) -->
-            <div id="subview-cfg-agentes" class="subview-cfg" style="display: none; padding-top: 6px">
+            <div id="subview-cfg-agentes" class="subview-cfg config-agents" style="display: none; padding-top: 6px">
 
                 <div id="card-admin-pool-3-ias" class="table-card card" style="margin-bottom: 20px">
                     <div class="table-header-bar card-header" style="padding: 16px 20px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px">
@@ -4658,7 +4661,7 @@
                         </div>
                         <div style="display: flex; gap: 8px; align-items: center; flex-wrap: wrap">
                             <button type="button" class="btn btn-primary" onclick="window.salvarPoolTresIas(this)" id="btn-salvar-pool-ias" style="font-size: 12px; font-weight: 800; padding: 7px 18px; cursor: pointer; display: inline-flex; align-items: center; gap: 6px; transition: background-color 0.2s, border-color 0.2s, opacity 0.2s; border-radius: 8px">
-                                <span>💾</span> <strong>Salvar Configuração das 2 IAs</strong>
+                                <span>💾</span> <strong>Salvar Configuração das 3 IAs</strong>
                             </button>
                         </div>
                     </div>
@@ -4674,11 +4677,11 @@
                         </div>
 
                         <!-- GRADE DAS 3 IAS TOTALMENTE CONFIGURÁVEIS PELO ADMINISTRADOR -->
-                                                <!-- GRID DOS 2 AGENTES ESPECIALIZADOS (GOVERNANÇA SA-GTI) -->
-                        <div style="display: grid; grid-template-columns: repeat(2, minmax(420px, 1fr)); gap: 20px">
+                        <!-- GRID DOS 3 AGENTES ESPECIALIZADOS (GOVERNANÇA SA-GTI) -->
+                        <div class="config-agent-grid">
 
                             <!-- CARD 1: IA 1 — CONVERSAÇÃO & COPILOTO EXECUTIVO 360° -->
-                            <div class="card-config-agente" style="border-radius: 12px; padding: 18px; display: flex; flex-direction: column; gap: 12px">
+                            <div class="card-config-agente config-agent-card" style="border-radius: 12px; padding: 18px; display: flex; flex-direction: column; gap: 12px">
                                 <div style="display: flex; justify-content: space-between; align-items: center">
                                     <span style="font-size: 11px; font-weight: 800; text-transform: uppercase; padding: 3px 10px; border-radius: 10px">🧠 Slot #1 &bull; Diálogo &amp; Copiloto 360°</span>
                                     <span id="badge-status-ia-principal" style="font-size: 10.5px; font-weight: 700; padding: 2px 8px; border-radius: 8px">🟢 Ativo</span>
@@ -4737,7 +4740,7 @@
                             </div>
 
                             <!-- CARD 2: IA 2 — GOVERNANÇA & ESCRITA NO OPENPROJECT -->
-                            <div class="card-config-agente" style="border-radius: 12px; padding: 18px; display: flex; flex-direction: column; gap: 12px">
+                            <div class="card-config-agente config-agent-card" style="border-radius: 12px; padding: 18px; display: flex; flex-direction: column; gap: 12px">
                                 <div style="display: flex; justify-content: space-between; align-items: center">
                                     <span style="font-size: 11px; font-weight: 800; text-transform: uppercase; padding: 3px 10px; border-radius: 10px">🧭 Slot #2 &bull; Governança &amp; Escrita OpenProject</span>
                                     <span id="badge-status-ia-orquestracao" style="font-size: 10.5px; font-weight: 700; padding: 2px 8px; border-radius: 8px">🟢 Ativo</span>
@@ -4795,13 +4798,62 @@
                                 </div>
                             </div>
 
+                            <!-- CARD 3: IA 3 — MICROSSERVIÇOS & TRIAGEM ÁGIL -->
+                            <div class="card-config-agente config-agent-card" style="border-radius: 12px; padding: 18px; display: flex; flex-direction: column; gap: 12px">
+                                <div style="display: flex; justify-content: space-between; align-items: center">
+                                    <span style="font-size: 11px; font-weight: 800; text-transform: uppercase; padding: 3px 10px; border-radius: 10px">⚡ Slot #3 · Microsserviços &amp; Triagem Ágil</span>
+                                    <span id="badge-status-ia-microservicos" class="badge bg-green-lt">Ativo</span>
+                                </div>
+
+                                <div>
+                                    <label for="cfg-ia3-nome" style="font-size: 10.5px; font-weight: 700; text-transform: uppercase; display: block; margin-bottom: 3px">Nome do Agente:</label>
+                                    <input type="text" id="cfg-ia3-nome" value="IA 3 — Microsserviços (Triagem Ágil &amp; Suporte Rápido)" class="form-control">
+                                </div>
+                                <div>
+                                    <label for="cfg-ia3-agent" style="font-size: 10.5px; font-weight: 700; text-transform: uppercase; display: block; margin-bottom: 3px">Modelo da IA:</label>
+                                    <input type="text" id="cfg-ia3-agent" value="qwen2.5-coder:1.5b" class="form-control">
+                                    <input type="hidden" id="cfg-ia3-agent-reserva" value="deepseek-r1:14b">
+                                </div>
+                                <div>
+                                    <label for="cfg-ia3-endpoint" style="font-size: 10.5px; font-weight: 700; text-transform: uppercase; display: block; margin-bottom: 3px">Endpoint Base:</label>
+                                    <input type="text" id="cfg-ia3-endpoint" value="http://100.103.100.98:3001/v1" class="form-control">
+                                </div>
+                                <div>
+                                    <label for="cfg-ia3-apikey" style="font-size: 10.5px; font-weight: 700; text-transform: uppercase; display: block; margin-bottom: 3px">API Key Individual:</label>
+                                    <input type="password" id="cfg-ia3-apikey" autocomplete="new-password" class="form-control">
+                                </div>
+                                <div>
+                                    <label for="cfg-ia3-prompt" style="font-size: 10.5px; font-weight: 700; text-transform: uppercase; display: block; margin-bottom: 3px">Prompt do Agente / Instruções Especializadas:</label>
+                                    <textarea id="cfg-ia3-prompt" rows="5" class="form-control">Você é o Agente de Microsserviços e Triagem Ágil da SA-GTI. Diagnostica chamados GLPI e apoia na dinâmica da Daily Scrum com máxima concisão e precisão.</textarea>
+                                </div>
+                                <input type="hidden" id="cfg-ia3-gatilhos" value="ticket, chamado, glpi, post-it, postit, mover, lembrete, fila, olá, bom dia, boa tarde, ajuda, daily, scrum, kanban, pauta, ata, ata daily, reunião, rituais">
+                                <div class="config-agent-tuning">
+                                    <div>
+                                        <label for="cfg-ia3-temp">Temperatura</label>
+                                        <input type="number" id="cfg-ia3-temp" min="0" max="1" step="0.1" value="0.0" class="form-control">
+                                    </div>
+                                    <div>
+                                        <label for="cfg-ia3-maxtokens">Máx. tokens</label>
+                                        <input type="number" id="cfg-ia3-maxtokens" value="512" class="form-control">
+                                    </div>
+                                    <div>
+                                        <label for="cfg-ia3-timeout">Timeout (s)</label>
+                                        <input type="number" id="cfg-ia3-timeout" value="12" class="form-control">
+                                    </div>
+                                </div>
+                                <div class="config-agent-actions">
+                                    <button type="button" class="btn btn-outline-secondary btn-sm" onclick="window.testarIaIsoladaIndividual('microservicos', this)">⚡ Testar este Agente</button>
+                                    <span id="diag-ia-microservicos" role="status">Status: OK</span>
+                                </div>
+                            </div>
+
                         </div>
 
                         </div>
                     </div>
                 </div>
 
-            <div id="subview-cfg-backup" class="subview-cfg" style="display: none">
+            <div id="subview-cfg-backup" class="subview-cfg config-backup" style="display: none">
                 <!-- BANNER SUB-ABA BACKUP -->
                 <div style="border-radius: 8px; padding: 16px 20px; margin-bottom: 20px; display: flex; justify-content: space-between; align-items: center">
                     <div>
@@ -4816,7 +4868,7 @@
                 </div>
 
                 <!-- CARDS DE POLÍTICA & EXPORTAÇÃO/IMPORTAÇÃO -->
-                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 20px">
+                <div class="config-backup-grid" style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 20px">
                     <!-- CARD 1: AGENDAMENTO AUTOMÁTICO -->
                     <div class="table-card card" style="margin-bottom: 0">
                         <div class="table-header-bar card-header" style="padding: 12px 18px">
@@ -4825,7 +4877,7 @@
                         <div style="padding: 16px 18px">
                             <div style="margin-bottom: 12px">
                                 <label style="font-size: 11.5px; font-weight: 700; display: block; margin-bottom: 4px">Diretório Primário de Backup (Disco H:):</label>
-                                <input type="text" id="cfg-backup-dir" value="H:\Backup_Docker_SPAGUAS" style="width: 100%; padding: 7px 10px; border-radius: 6px; font-size: 12px" class="form-control">
+                                <input type="text" id="cfg-backup-dir" value="H:/Backup_Docker_SPAGUAS" style="width: 100%; padding: 7px 10px; border-radius: 6px; font-size: 12px" class="form-control">
                             </div>
                             <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 12px">
                                 <div>
@@ -4933,24 +4985,24 @@
                 </div>
 
                 <!-- 2. SUB-ABAS DE NAVEGAÇÃO DA DOCUMENTAÇÃO -->
-                <div style="display: flex; gap: 8px; margin-bottom: 20px; padding-bottom: 12px; flex-wrap: wrap">
-                    <button type="button" class="btn btn-primary active subaba-doc-btn" id="btn-doc-usuario" onclick="window.alternarSubAbaDoc('usuario')" style="padding: 8px 16px; font-size: 12.5px; font-weight: 700; border-radius: 8px; cursor: pointer; display: inline-flex; align-items: center; gap: 6px">
+                <div class="config-doc-tabs nav nav-pills" role="tablist" aria-label="Seções da documentação oficial">
+                    <button type="button" class="btn btn-primary active subaba-doc-btn" id="btn-doc-usuario" aria-pressed="true" onclick="window.alternarSubAbaDoc('usuario')">
                         <span>📘</span> 1. Manual do Usuário (Operacional &amp; Executivo)
                     </button>
-                    <button type="button" class="btn btn-secondary subaba-doc-btn btn-outline-secondary" id="btn-doc-tecnica" onclick="window.alternarSubAbaDoc('tecnica')" style="padding: 8px 16px; font-size: 12.5px; font-weight: 600; border-radius: 8px; cursor: pointer; display: inline-flex; align-items: center; gap: 6px">
+                    <button type="button" class="btn btn-outline-secondary subaba-doc-btn" id="btn-doc-tecnica" aria-pressed="false" onclick="window.alternarSubAbaDoc('tecnica')">
                         <span>⚙️</span> 2. Documentação Técnica &amp; Arquitetura
                     </button>
-                    <button type="button" class="btn btn-secondary subaba-doc-btn btn-outline-secondary" id="btn-doc-github" onclick="window.alternarSubAbaDoc('github')" style="padding: 8px 16px; font-size: 12.5px; font-weight: 600; border-radius: 8px; cursor: pointer; display: inline-flex; align-items: center; gap: 6px">
+                    <button type="button" class="btn btn-outline-secondary subaba-doc-btn" id="btn-doc-github" aria-pressed="false" onclick="window.alternarSubAbaDoc('github')">
                         <span>🐙</span> 3. Repositório GitHub &amp; Estrutura do Projeto
                     </button>
-                    <button type="button" class="btn btn-secondary subaba-doc-btn btn-outline-secondary" id="btn-doc-readme" onclick="window.alternarSubAbaDoc('readme')" style="padding: 8px 16px; font-size: 12.5px; font-weight: 600; border-radius: 8px; cursor: pointer; display: inline-flex; align-items: center; gap: 6px">
+                    <button type="button" class="btn btn-outline-secondary subaba-doc-btn" id="btn-doc-readme" aria-pressed="false" onclick="window.alternarSubAbaDoc('readme')">
                         <span>🌊</span> 4. Apresentação Executiva (README.md)
                     </button>
                 </div>
 
                 <!-- 3. CONTEÚDO 1: MANUAL DO USUÁRIO -->
                 <div id="subview-doc-usuario" class="doc-subview" style="display: block; animation: fadeIn 0.3s ease">
-                    <div style="border-radius: 12px; padding: 28px 32px; line-height: 1.7">
+                    <div class="card config-doc-content" style="border-radius: 12px; padding: 28px 32px; line-height: 1.7">
                         <h3 style="font-size: 18px; margin: 0 0 16px 0; padding-bottom: 8px">
                             📘 Manual do Usuário — Cockpit Executivo &amp; Operacional SA-GTI
                         </h3>
@@ -4992,7 +5044,7 @@
 
                 <!-- 4. CONTEÚDO 2: DOCUMENTAÇÃO TÉCNICA -->
                 <div id="subview-doc-tecnica" class="doc-subview" style="display: none; animation: fadeIn 0.3s ease">
-                    <div style="border-radius: 12px; padding: 28px 32px; line-height: 1.7">
+                    <div class="card config-doc-content" style="border-radius: 12px; padding: 28px 32px; line-height: 1.7">
                         <h3 style="font-size: 18px; margin: 0 0 16px 0; padding-bottom: 8px">
                             ⚙️ Documentação Técnica — Arquitetura, Engenharia &amp; Conectores
                         </h3>
@@ -5047,7 +5099,7 @@ python sincronizar_openproject_backend.py --card 1498</pre>
 
                 <!-- 5. CONTEÚDO 3: REPOSITÓRIO GITHUB & ESTRUTURA -->
                 <div id="subview-doc-github" class="doc-subview" style="display: none; animation: fadeIn 0.3s ease">
-                    <div style="border-radius: 12px; padding: 28px 32px; line-height: 1.7">
+                    <div class="card config-doc-content" style="border-radius: 12px; padding: 28px 32px; line-height: 1.7">
                         <h3 style="font-size: 18px; margin: 0 0 16px 0; padding-bottom: 8px">
                             🐙 Repositório GitHub &amp; Estrutura do Projeto Base
                         </h3>
@@ -5089,7 +5141,7 @@ cockpit-gti-spaguas/
                 </div>
                 <!-- 6. CONTEÚDO 4: APRESENTAÇÃO EXECUTIVA (README.MD) -->
                 <div id="subview-doc-readme" class="doc-subview" style="display: none; animation: fadeIn 0.3s ease">
-                    <div style="border-radius: 12px; padding: 28px 32px; line-height: 1.7">
+                    <div class="card config-doc-content" style="border-radius: 12px; padding: 28px 32px; line-height: 1.7">
                         <div style="padding:20px;text-align:center;font-size:13px">⏳ Carregando README.md executivo...</div>
                     </div>
                 </div>
@@ -5857,43 +5909,6 @@ function dispararProcessamentoSEI() {
         return { 'Content-Type': 'application/json', ...extras };
     }
 
-// SOBRESCRITA OFICIAL DE ALTERNARSUBOCNFIG COM DISPLAY IMPORTANT E AUTO-SCROLL
-window.alternarSubConfig = function(modo) {
-    window.subConfigAtivo = modo;
-    document.querySelectorAll(".subview-cfg").forEach(function(el) {
-        el.style.setProperty("display", "none", "important");
-    });
-    document.querySelectorAll(".pill-cfg").forEach(function(btn) {
-        btn.classList.remove("btn-primary");
-        btn.classList.add("btn-secondary");
-    });
-
-    var target = document.getElementById("subview-cfg-" + modo);
-    if (target) {
-        target.style.setProperty("display", "block", "important");
-        target.style.setProperty("visibility", "visible", "important");
-        target.style.setProperty("opacity", "1", "important");
-        target.scrollIntoView({ behavior: "smooth", block: "start" });
-    }
-
-    var btn = document.getElementById("btn-cfg-" + modo);
-    if (btn) {
-        btn.classList.remove("btn-secondary");
-        btn.classList.add("btn-primary");
-    }
-
-    var titulosCfg = {
-        'usuarios': '👥 1. GESTÃO DE USUÁRIOS & ATRIBUIÇÃO DE PERFIS',
-        "rbac": "🛡️ 1. MATRIZ DE CONTROLE DE ACESSO POR PERFIL (RBAC)",
-        "parametros": "⚖️ 2. PARÂMETROS DE GOVERNANÇA, AGING & SPRINTS",
-        "conectores": "🔌 3. CONECTORES & CENTRAL DE VARREDURA MULTISSISTÊMICA",
-        "agentes": "🤖 4. HUB DE AGENTES DE INTELIGÊNCIA ARTIFICIAL",
-        "backup": "💾 5. BACKUP & RESTAURAÇÃO (DRP / PCN)"
-    };
-
-    var tit = document.getElementById("cfg-banner-titulo");
-    if (tit) tit.innerText = titulosCfg[modo] || "CONFIGURAÇÕES SA-GTI";
-};
 </script>
 
 
@@ -5902,53 +5917,6 @@ window.alternarSubConfig = function(modo) {
         return { 'Content-Type': 'application/json', ...extras };
     }
 
-window.alternarSubConfig = function(modo) {
-    window.subConfigAtivo = modo;
-    
-    // Oculta todas as subviews
-    var todas = document.querySelectorAll('.subview-cfg');
-    for (var i = 0; i < todas.length; i++) {
-        todas[i].style.setProperty('display', 'none', 'important');
-    }
-    
-    // Atualiza botoes das pills
-    var pills = document.querySelectorAll('.pill-cfg');
-    for (var j = 0; j < pills.length; j++) {
-        pills[j].classList.remove('btn-primary');
-        pills[j].classList.add('btn-secondary');
-    }
-
-    // Exibe a subview alvo
-    var target = document.getElementById('subview-cfg-' + modo);
-    if (target) {
-        target.style.setProperty('display', 'block', 'important');
-        target.style.setProperty('visibility', 'visible', 'important');
-        target.style.setProperty('opacity', '1', 'important');
-        if (modo === 'backup' && typeof window.renderizarHistoricoSnapshots === 'function') {
-            window.renderizarHistoricoSnapshots();
-        }
-    } else {
-        alert('Diagnostico: Nao foi possivel encontrar o elemento HTML com id: subview-cfg-' + modo);
-    }
-
-    var btn = document.getElementById('btn-cfg-' + modo);
-    if (btn) {
-        btn.classList.remove('btn-secondary');
-        btn.classList.add('btn-primary');
-    }
-
-    var titulosCfg = {
-        'rbac': '🛡️ 1. MATRIZ DE CONTROLE DE ACESSO POR PERFIL (RBAC)',
-        'parametros': '⚖️ 2. PARÂMETROS DE GOVERNANÇA, AGING & SPRINTS',
-        'conectores': '🔌 3. CONECTORES & CENTRAL DE VARREDURA MULTISSISTÊMICA',
-        'agentes': '🤖 4. HUB DE AGENTES DE INTELIGÊNCIA ARTIFICIAL',
-        'backup': '💾 5. BACKUP & RESTAURAÇÃO (DRP / PCN)',
-        'documentacao': '📖 7. DOCUMENTAÇÃO OFICIAL DO PROJETO (MANUAL, ARQUITETURA & GITHUB)'
-    };
-
-    var tit = document.getElementById('cfg-banner-titulo');
-    if (tit) tit.innerText = titulosCfg[modo] || 'CONFIGURAÇÕES SA-GTI';
-};
 </script>
 
 
@@ -6419,15 +6387,15 @@ window.alternarSubConfig = function(modo) {
     <!-- Autenticação gerenciada pelo backend em /login. -->
 
 <!-- WIDGET MOTOR SEI 4.1.5 (SA-GTI 110050725) -->
-<div id="cockpit-motor-sei-widget" style="position:fixed;right:20px;bottom:20px;z-index:9999">
-  <button id="btn-abrir-motor-sei" onclick="window.togglePainelMotorSei()" style="border-radius:999px;padding:10px 16px;font-size:13px;font-weight:600;cursor:pointer;display:flex;align-items:center;gap:8px" class="btn btn-ghost-secondary">
-    <span id="dot-status-motor-sei" style="width:10px;height:10px;border-radius:50%;display:inline-block"></span>
+<div id="cockpit-motor-sei-widget" class="motor-sei-widget">
+  <button type="button" id="btn-abrir-motor-sei" class="btn btn-ghost-secondary btn-sm sagti-motor-sei-trigger" aria-haspopup="dialog" aria-controls="modal-motor-sei" onclick="window.togglePainelMotorSei()">
+    <span id="dot-status-motor-sei" class="motor-sei-status-dot"></span>
     Motor SEI 4.1.5
   </button>
-  <div id="modal-motor-sei" style="display:none;position:fixed;right:20px;bottom:70px;width:540px;max-width:92vw;max-height:78vh;overflow:auto;border-radius:12px;padding:16px">
+  <div id="modal-motor-sei" class="card motor-sei-modal" role="dialog" aria-modal="true" aria-labelledby="motor-sei-modal-title" style="display:none">
     <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;padding-bottom:8px">
       <div>
-        <strong style="font-size:15px">Motor SEI SP 4.1.5 &mdash; SA-GTI (110050725)</strong>
+        <strong id="motor-sei-modal-title" style="font-size:15px">Motor SEI SP 4.1.5 &mdash; SA-GTI (110050725)</strong>
         <div id="sei-status-texto" style="font-size:12px;margin-top:2px">Verificando sess&atilde;o...</div>
       </div>
       <button onclick="window.togglePainelMotorSei()" style="font-size:18px;cursor:pointer" class="btn btn-ghost-secondary">&times;</button>
@@ -6466,6 +6434,10 @@ window.alternarSubConfig = function(modo) {
 </div>
 <script>
 (function() {
+  var motorSeiMount = document.getElementById('topbar-motor-sei-mount');
+  var motorSeiTrigger = document.getElementById('btn-abrir-motor-sei');
+  if (motorSeiMount && motorSeiTrigger) motorSeiMount.appendChild(motorSeiTrigger);
+
   function escSei(s) {
     return String(s == null ? '' : s).replace(/[&<>"']/g, function(c) {
       return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];

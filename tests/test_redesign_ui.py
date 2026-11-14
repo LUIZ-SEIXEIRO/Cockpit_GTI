@@ -304,6 +304,77 @@ class TestRedesignUI(unittest.TestCase):
         kanban = html[kanban_inicio:kanban_fim]
         self.assertEqual(len(re.findall(r'class="kanban-col-modelo ', kanban)), 5)
 
+    def test_configuracoes_padronizam_subabas_layouts_ia_e_widget_sei(self):
+        raiz = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
+        with open(os.path.join(raiz, "painel.html"), "r", encoding="utf-8") as f:
+            html = f.read()
+        with open(os.path.join(raiz, "static", "css", "components.css"), "r", encoding="utf-8") as f:
+            components = f.read()
+        with open(os.path.join(raiz, "static", "js", "cockpit-core.js"), "r", encoding="utf-8") as f:
+            cockpit_js = f.read()
+        with open(os.path.join(raiz, "static", "js", "mesa-trabalho.js"), "r", encoding="utf-8") as f:
+            mesa_js = f.read()
+
+        config_inicio = html.index('<div id="view-configuracoes"')
+        configuracoes = html[config_inicio:]
+        tabs = re.search(r'<div class="config-subtabs[^>]*>(.*?)</div>', configuracoes, re.DOTALL)
+        self.assertIsNotNone(tabs)
+        self.assertEqual(len(re.findall(r'class="btn [^"]*pill-cfg"', tabs.group(1))), 7)
+        self.assertNotIn("window.alternarSubConfig = function", html)
+        self.assertIn("window.alternarSubAbaConfig = function(modo)", cockpit_js)
+        self.assertIn("window.alternarSubConfig = window.alternarSubAbaConfig", cockpit_js)
+        self.assertIn("window.renderizarHistoricoSnapshots();", cockpit_js)
+        self.assertIn("btn.classList.toggle('btn-primary', ativo)", cockpit_js)
+        self.assertIn("btn.classList.toggle('btn-outline-secondary', !ativo)", cockpit_js)
+        self.assertIn("btn.setAttribute('aria-pressed', String(ativo))", cockpit_js)
+        self.assertIn("grid-template-columns: repeat(3, minmax(0, 1fr)) !important;", components)
+        self.assertIn("grid-template-columns: repeat(2, minmax(0, 1fr)) !important;", components)
+
+        self.assertGreaterEqual(self._contraste("#334155", "#ffffff"), 4.5)
+        self.assertGreaterEqual(self._contraste("#ffffff", "#004b87"), 4.5)
+        self.assertIn(".config-parameters-grid", components)
+        self.assertIn(".config-parameter-fields", components)
+        self.assertIn(".config-connector-kpis", components)
+        self.assertIn(".config-endpoint-form", components)
+        self.assertIn(".config-backup-grid", components)
+
+        agents_inicio = configuracoes.index('<div id="subview-cfg-agentes"')
+        agents_fim = configuracoes.index('<div id="subview-cfg-backup"', agents_inicio)
+        agents = configuracoes[agents_inicio:agents_fim]
+        self.assertEqual(agents.count('class="card-config-agente config-agent-card"'), 3)
+        for field in (
+            "cfg-ia3-nome",
+            "cfg-ia3-agent",
+            "cfg-ia3-endpoint",
+            "cfg-ia3-apikey",
+            "cfg-ia3-prompt",
+            "cfg-ia3-gatilhos",
+            "cfg-ia3-temp",
+            "cfg-ia3-maxtokens",
+            "cfg-ia3-timeout",
+        ):
+            self.assertIn(f'id="{field}"', agents)
+        self.assertIn("C:/Cockpit_GTI/ingestao_sei/novos_pdfs", cockpit_js)
+        self.assertIn("C:/Cockpit_GTI/laudo_sincronizacao_automatica.txt", mesa_js)
+        self.assertNotIn(r"C:\Cockpit_GTI\laudo_sincronizacao_automatica.txt", mesa_js)
+        self.assertNotIn(r"C:\Cockpit_GTI\ingestao_sei\novos_pdfs", cockpit_js)
+        self.assertIn('value="H:/Backup_Docker_SPAGUAS"', configuracoes)
+
+        doc_tabs = re.search(r'<div class="config-doc-tabs[^>]*>(.*?)</div>', configuracoes, re.DOTALL)
+        self.assertIsNotNone(doc_tabs)
+        self.assertEqual(len(re.findall(r'class="btn [^"]*subaba-doc-btn"', doc_tabs.group(1))), 4)
+        self.assertIn("item.btn.setAttribute('aria-pressed', String(ativo))", mesa_js)
+        self.assertIn("#view-configuracoes .config-doc-tabs .subaba-doc-btn.active", components)
+
+        self.assertIn('id="topbar-motor-sei-mount"', html)
+        self.assertIn("motorSeiMount.appendChild(motorSeiTrigger)", html)
+        self.assertIn('class="card motor-sei-modal"', html)
+        self.assertIn("#modal-motor-sei {", components)
+        self.assertNotRegex(
+            html,
+            r'id="cockpit-motor-sei-widget"[^>]*position:\s*fixed',
+        )
+
 
 if __name__ == "__main__":
     unittest.main()
