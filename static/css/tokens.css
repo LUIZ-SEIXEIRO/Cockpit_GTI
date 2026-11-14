@@ -1,24 +1,46 @@
-/* Hallmark · SA-GTI / SP-Aguas · Design Tokens (Modelo 2: Cockpit Bicolor Marinho)
-   The Floor: sidebar #0b2545, area clara #f8fafc, cards #ffffff, acentos #004b87 e #01a75f */
+/* SP-Aguas institutional tokens mapped to Tabler Core 1.7.4. */
 :root {
-    --sagti-bg: #f8fafc;
-    --sagti-sidebar: #0b2545;
-    --sagti-sidebar-hover: rgba(255, 255, 255, 0.08);
-    --sagti-sidebar-active: rgba(255, 255, 255, 0.12);
-    --sagti-sidebar-border: rgba(255, 255, 255, 0.12);
-    --sagti-sidebar-text: #cbd5e1;
-    --sagti-surface: #ffffff;
-    --sagti-surface-alt: #f1f5f9;
-    --sagti-border: #e2e8f0;
+    --tblr-primary: #004b87;
+    --tblr-primary-rgb: 0, 75, 135;
+    --tblr-info: #0369a1;
+    --tblr-info-rgb: 3, 105, 161;
+    --tblr-success: #01a75f;
+    --tblr-success-rgb: 1, 167, 95;
+    --tblr-warning: #d97706;
+    --tblr-warning-rgb: 217, 119, 6;
+    --tblr-danger: #dc2626;
+    --tblr-danger-rgb: 220, 38, 38;
+    --tblr-body-bg: #f8fafc;
+    --tblr-body-color: #334155;
+    --tblr-bg-surface: #ffffff;
+    --tblr-bg-surface-secondary: #f1f5f9;
+    --tblr-border-color: #e2e8f0;
+    --tblr-font-sans-serif: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+
+    --sagti-bg: var(--tblr-body-bg);
+    --sagti-surface: var(--tblr-bg-surface);
+    --sagti-surface-alt: var(--tblr-bg-surface-secondary);
+    --sagti-border: var(--tblr-border-color);
     --sagti-border-strong: #cbd5e1;
-    --sagti-brand-navy: #004b87;
-    --sagti-accent: #0284c7;
-    --sagti-accent-hover: #0369a1;
-    --sagti-accent-soft: #eff6ff;
-    --sagti-green: #01a75f;
+    --sagti-brand-navy: var(--tblr-primary);
+    --sagti-accent: var(--tblr-info);
+    --sagti-accent-hover: #004b87;
+    --sagti-accent-soft: #e0f2fe;
+    --sagti-green: var(--tblr-success);
+    --sagti-success-contrast: #00502e;
     --sagti-text: #0f172a;
     --sagti-text-muted: #475569;
-    --sagti-radius: 8px;
-    --sagti-radius-sm: 6px;
-    --sagti-font-sans: 'Inter', 'Segoe UI', system-ui, -apple-system, sans-serif;
+    --sagti-radius: 0.5rem;
+    --sagti-radius-sm: 0.375rem;
+    --sagti-font-sans: var(--tblr-font-sans-serif);
+}
+
+.text-green,
+.text-success {
+    color: #006b3c;
+}
+
+.bg-success,
+.btn-success {
+    color: #052e1b;
 }

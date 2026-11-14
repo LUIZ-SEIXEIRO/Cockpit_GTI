@@ -42,7 +42,7 @@ window.carregarAcervoProcessos = async function() {
         status.id = 'acervo-sei-status';
         status.setAttribute('role', 'status');
         status.setAttribute('aria-live', 'polite');
-        status.style.cssText = 'padding:10px 12px;border:1px solid #cbd5e1;background:#fff;color:#334155;font-size:12px;';
+        status.className = 'alert alert-info';
         view.prepend(status);
     }
     if (status) status.textContent = 'Carregando acervo SEI protegido...';
@@ -526,17 +526,17 @@ const CADERNOS_PADRAO = window.CADERNOS_PADRAO;
 
 <\/head>
 <body>
-<div class="header" style="border-bottom: 2px solid #0544cf; padding-bottom: 12px; margin-bottom: 20px;">
-    <div style="display: flex; align-items: center; justify-content: space-between; gap: 20px;">
-        <img src="" data-spaguas-logo="1" alt="SP-Águas" style="height: 45px; width: auto; object-fit: contain;">
-        <div style="text-align: right; font-size: 10.5px; color: var(--sagti-text); font-weight: 700; line-height: 1.35;">
+<div class="header" style="padding-bottom: 12px; margin-bottom: 20px">
+    <div style="display: flex; align-items: center; justify-content: space-between; gap: 20px">
+        <img src="" data-spaguas-logo="1" alt="SP-Águas" style="height: 45px; width: auto; object-fit: contain">
+        <div style="text-align: right; font-size: 10.5px; font-weight: 700; line-height: 1.35">
             GOVERNO DO ESTADO DE SÃO PAULO<br>
             SECRETARIA DE MEIO AMBIENTE, INFRAESTRUTURA E LOGÍSTICA (SEMIL)<br>
             AGÊNCIA DE ÁGUAS DO ESTADO DE SÃO PAULO — SP-ÁGUAS<br>
             SUPERINTENDÊNCIA DE ADMINISTRAÇÃO E FINANÇAS — SA-GTI
         </div>
     </div>
-    <div style="height: 4px; background: linear-gradient(to right, #6bbbfa 0%, #6bbbfa 33.3%, #0544cf 33.3%, #0544cf 66.6%, #01a75f 66.6%, #01a75f 100%); margin-top: 10px; border-radius: 2px;"></div>
+    <div style="height: 4px; margin-top: 10px; border-radius: 2px"></div>
 </div>
 <h1>DOCUMENTO DE FORMALIZAÇÃO DE DEMANDA (DFD) Nº [XX]/[ANO]</h1>
 <div class="meta-box">
@@ -553,15 +553,15 @@ const CADERNOS_PADRAO = window.CADERNOS_PADRAO;
 <p>[Indicar a Iniciativa Estratégica do PDTIC 2027-2030 vinculada e o enquadramento na LOA/PCA...]</p>
 
 <h2>3. Estimativa Preliminar de Valor e Vigência</h2>
-<table>
+<div class="table-responsive"><table class="table table-vcenter card-table table-hover">
     <thead><tr><th>Item</th><th>Especificação da Solução</th><th>Vigência</th><th>Valor Estimado (R$)</th></tr></thead>
     <tbody>
         <tr><td>01</td><td>[Serviço / Solução de TIC...]</td><td>[XX meses]</td><td>R$ [0,00]</td></tr>
-        <tr><td colspan="3" style="text-align:right; font-weight:bold;">TOTAL ESTIMADO:</td><td><strong>R$ [0,00]</strong></td></tr>
+        <tr><td colspan="3" style="text-align:right; font-weight:bold">TOTAL ESTIMADO:</td><td><strong>R$ [0,00]</strong></td></tr>
     </tbody>
-</table>
+</table></div>
 <br><br>
-<p style="text-align:center;">____________________________________________<br><strong>[Nome do Responsável Técnico]</strong><br>Assessoria de Governança de TIC — SA-GTI</p>
+<p style="text-align:center">____________________________________________<br><strong>[Nome do Responsável Técnico]</strong><br>Assessoria de Governança de TIC — SA-GTI</p>
 <\/body>
 <\/html>`;
             }
@@ -576,31 +576,31 @@ const CADERNOS_PADRAO = window.CADERNOS_PADRAO;
 
 <\/head>
 <body>
-<div class="header" style="border-bottom: 2px solid #0544cf; padding-bottom: 12px; margin-bottom: 20px;">
-    <div style="display: flex; align-items: center; justify-content: space-between; gap: 20px;">
-        <img src="" data-spaguas-logo="1" alt="SP-Águas" style="height: 45px; width: auto; object-fit: contain;">
-        <div style="text-align: right; font-size: 10.5px; color: var(--sagti-text); font-weight: 700; line-height: 1.35;">
+<div class="header" style="padding-bottom: 12px; margin-bottom: 20px">
+    <div style="display: flex; align-items: center; justify-content: space-between; gap: 20px">
+        <img src="" data-spaguas-logo="1" alt="SP-Águas" style="height: 45px; width: auto; object-fit: contain">
+        <div style="text-align: right; font-size: 10.5px; font-weight: 700; line-height: 1.35">
             GOVERNO DO ESTADO DE SÃO PAULO<br>
             SECRETARIA DE MEIO AMBIENTE, INFRAESTRUTURA E LOGÍSTICA (SEMIL)<br>
             AGÊNCIA DE ÁGUAS DO ESTADO DE SÃO PAULO — SP-ÁGUAS<br>
             SUPERINTENDÊNCIA DE ADMINISTRAÇÃO E FINANÇAS — SA-GTI
         </div>
     </div>
-    <div style="height: 4px; background: linear-gradient(to right, #6bbbfa 0%, #6bbbfa 33.3%, #0544cf 33.3%, #0544cf 66.6%, #01a75f 66.6%, #01a75f 100%); margin-top: 10px; border-radius: 2px;"></div>
+    <div style="height: 4px; margin-top: 10px; border-radius: 2px"></div>
 </div>
 <h1>ESTUDO TÉCNICO PRELIMINAR (ETP) Nº [XX]/[ANO] — LEI 14.133/2021</h1>
 <p><strong>Processo SEI:</strong> [137.XXXXX/202X-XX] | <strong>Responsável:</strong> [Equipe Técnica]</p>
 <h2>1. Descrição da Necessidade e Levantamento de Mercado</h2>
 <p>[Análise comparativa entre soluções existentes no mercado público e privado...]</p>
 <h2>2. Comparativo de Cenários e Custo Total de Propriedade (TCO)</h2>
-<table>
+<div class="table-responsive"><table class="table table-vcenter card-table table-hover">
     <thead><tr><th>Critério</th><th>Cenário 1 (Solução A)</th><th>Cenário 2 (Solução B - Recomendada)</th></tr></thead>
     <tbody>
         <tr><td>Custos Diretos</td><td>R$ [0,00]</td><td>R$ [0,00]</td></tr>
         <tr><td>SLA e Suporte</td><td>[Básico]</td><td>[24x7 com garantias de continuidade]</td></tr>
         <tr><td>TCO 36 Meses</td><td>R$ [0,00]</td><td>R$ [0,00]</td></tr>
     </tbody>
-</table>
+</table></div>
 <h2>3. Declaração Conclusiva de Viabilidade</h2>
 <p>Declara-se a viabilidade técnica, econômica e operacional da contratação com base na Lei 14.133/2021.</p>
 <\/body>
@@ -617,29 +617,29 @@ const CADERNOS_PADRAO = window.CADERNOS_PADRAO;
 
 <\/head>
 <body>
-<div class="header" style="border-bottom: 2px solid #0544cf; padding-bottom: 12px; margin-bottom: 20px;">
-    <div style="display: flex; align-items: center; justify-content: space-between; gap: 20px;">
-        <img src="" data-spaguas-logo="1" alt="SP-Águas" style="height: 45px; width: auto; object-fit: contain;">
-        <div style="text-align: right; font-size: 10.5px; color: var(--sagti-text); font-weight: 700; line-height: 1.35;">
+<div class="header" style="padding-bottom: 12px; margin-bottom: 20px">
+    <div style="display: flex; align-items: center; justify-content: space-between; gap: 20px">
+        <img src="" data-spaguas-logo="1" alt="SP-Águas" style="height: 45px; width: auto; object-fit: contain">
+        <div style="text-align: right; font-size: 10.5px; font-weight: 700; line-height: 1.35">
             GOVERNO DO ESTADO DE SÃO PAULO<br>
             SECRETARIA DE MEIO AMBIENTE, INFRAESTRUTURA E LOGÍSTICA (SEMIL)<br>
             AGÊNCIA DE ÁGUAS DO ESTADO DE SÃO PAULO — SP-ÁGUAS<br>
             SUPERINTENDÊNCIA DE ADMINISTRAÇÃO E FINANÇAS — SA-GTI
         </div>
     </div>
-    <div style="height: 4px; background: linear-gradient(to right, #6bbbfa 0%, #6bbbfa 33.3%, #0544cf 33.3%, #0544cf 66.6%, #01a75f 66.6%, #01a75f 100%); margin-top: 10px; border-radius: 2px;"></div>
+    <div style="height: 4px; margin-top: 10px; border-radius: 2px"></div>
 </div>
 <h1>TERMO DE REFERÊNCIA & INSTRUMENTO DE MEDIÇÃO DE RESULTADOS (IMR)</h1>
 <p><strong>Processo SEI:</strong> [137.XXXXX/202X-XX]</p>
 <h2>Tabela de Indicadores de Nível de Serviço (SLA) e Glosas</h2>
-<table>
+<div class="table-responsive"><table class="table table-vcenter card-table table-hover">
     <thead><tr><th>Indicador</th><th>Meta Mínima Exigida</th><th>Faixa de Glosa na Fatura Mensal</th></tr></thead>
     <tbody>
         <tr><td>Disponibilidade da Solução</td><td>&ge; 99,5% no mês</td><td>Glosa de 2% a cada 0,2% de indisponibilidade</td></tr>
         <tr><td>Tempo de Atendimento a Chamados</td><td>&le; [X] horas</td><td>Retenção progressiva de 5% da medição</td></tr>
         <tr><td>Repositório Git & Súmula 269 TCU</td><td>100% dos fontes entregues</td><td>Retenção integral do ateste até saneamento</td></tr>
     </tbody>
-</table>
+</table></div>
 <\/body>
 <\/html>`;
             }
@@ -654,17 +654,17 @@ const CADERNOS_PADRAO = window.CADERNOS_PADRAO;
 
 <\/head>
 <body>
-<div class="header" style="border-bottom: 2px solid #0544cf; padding-bottom: 12px; margin-bottom: 20px;">
-    <div style="display: flex; align-items: center; justify-content: space-between; gap: 20px;">
-        <img src="" data-spaguas-logo="1" alt="SP-Águas" style="height: 45px; width: auto; object-fit: contain;">
-        <div style="text-align: right; font-size: 10.5px; color: var(--sagti-text); font-weight: 700; line-height: 1.35;">
+<div class="header" style="padding-bottom: 12px; margin-bottom: 20px">
+    <div style="display: flex; align-items: center; justify-content: space-between; gap: 20px">
+        <img src="" data-spaguas-logo="1" alt="SP-Águas" style="height: 45px; width: auto; object-fit: contain">
+        <div style="text-align: right; font-size: 10.5px; font-weight: 700; line-height: 1.35">
             GOVERNO DO ESTADO DE SÃO PAULO<br>
             SECRETARIA DE MEIO AMBIENTE, INFRAESTRUTURA E LOGÍSTICA (SEMIL)<br>
             AGÊNCIA DE ÁGUAS DO ESTADO DE SÃO PAULO — SP-ÁGUAS<br>
             SUPERINTENDÊNCIA DE ADMINISTRAÇÃO E FINANÇAS — SA-GTI
         </div>
     </div>
-    <div style="height: 4px; background: linear-gradient(to right, #6bbbfa 0%, #6bbbfa 33.3%, #0544cf 33.3%, #0544cf 66.6%, #01a75f 66.6%, #01a75f 100%); margin-top: 10px; border-radius: 2px;"></div>
+    <div style="height: 4px; margin-top: 10px; border-radius: 2px"></div>
 </div>
 <h1>PARECER TÉCNICO CONCLUSIVO Nº [XX]/[ANO] / SA-GTI</h1>
 <div class="box">
@@ -677,7 +677,7 @@ const CADERNOS_PADRAO = window.CADERNOS_PADRAO;
 • <strong>Frente Verde (Infraestrutura/DIF):</strong> [Validação de backup 3-2-1-1-0 e RTO/RPO]<br>
 • <strong>Frente Azul (Sistemas/DGD):</strong> [Conformidade com Súmula 269 TCU e testes SonarQube]</p>
 <br>
-<p style="text-align:center;">____________________________________________<br><strong>LUIZ ANTONIO DA SILVA SEIXEIRO</strong><br>Assessoria de Governança, Processos e Projetos de TIC</p>
+<p style="text-align:center">____________________________________________<br><strong>LUIZ ANTONIO DA SILVA SEIXEIRO</strong><br>Assessoria de Governança, Processos e Projetos de TIC</p>
 <\/body>
 <\/html>`;
             }
@@ -692,17 +692,17 @@ const CADERNOS_PADRAO = window.CADERNOS_PADRAO;
 
 <\/head>
 <body>
-<div class="header" style="border-bottom: 2px solid #0544cf; padding-bottom: 12px; margin-bottom: 20px;">
-    <div style="display: flex; align-items: center; justify-content: space-between; gap: 20px;">
-        <img src="" data-spaguas-logo="1" alt="SP-Águas" style="height: 45px; width: auto; object-fit: contain;">
-        <div style="text-align: right; font-size: 10.5px; color: var(--sagti-text); font-weight: 700; line-height: 1.35;">
+<div class="header" style="padding-bottom: 12px; margin-bottom: 20px">
+    <div style="display: flex; align-items: center; justify-content: space-between; gap: 20px">
+        <img src="" data-spaguas-logo="1" alt="SP-Águas" style="height: 45px; width: auto; object-fit: contain">
+        <div style="text-align: right; font-size: 10.5px; font-weight: 700; line-height: 1.35">
             GOVERNO DO ESTADO DE SÃO PAULO<br>
             SECRETARIA DE MEIO AMBIENTE, INFRAESTRUTURA E LOGÍSTICA (SEMIL)<br>
             AGÊNCIA DE ÁGUAS DO ESTADO DE SÃO PAULO — SP-ÁGUAS<br>
             SUPERINTENDÊNCIA DE ADMINISTRAÇÃO E FINANÇAS — SA-GTI
         </div>
     </div>
-    <div style="height: 4px; background: linear-gradient(to right, #6bbbfa 0%, #6bbbfa 33.3%, #0544cf 33.3%, #0544cf 66.6%, #01a75f 66.6%, #01a75f 100%); margin-top: 10px; border-radius: 2px;"></div>
+    <div style="height: 4px; margin-top: 10px; border-radius: 2px"></div>
 </div>
 <h1>ATA DA DAILY SCRUM — SA-GTI (RITUAL DE 15 MIN)</h1>
 <p><strong>Data:</strong> [DD/MM/AAAA] às 09:30 | <strong>Sprint Ativa:</strong> [Sprint XX/202X]</p>
@@ -725,17 +725,17 @@ const CADERNOS_PADRAO = window.CADERNOS_PADRAO;
 
 <\/head>
 <body>
-<div class="header" style="border-bottom: 2px solid #0544cf; padding-bottom: 12px; margin-bottom: 20px;">
-    <div style="display: flex; align-items: center; justify-content: space-between; gap: 20px;">
-        <img src="" data-spaguas-logo="1" alt="SP-Águas" style="height: 45px; width: auto; object-fit: contain;">
-        <div style="text-align: right; font-size: 10.5px; color: var(--sagti-text); font-weight: 700; line-height: 1.35;">
+<div class="header" style="padding-bottom: 12px; margin-bottom: 20px">
+    <div style="display: flex; align-items: center; justify-content: space-between; gap: 20px">
+        <img src="" data-spaguas-logo="1" alt="SP-Águas" style="height: 45px; width: auto; object-fit: contain">
+        <div style="text-align: right; font-size: 10.5px; font-weight: 700; line-height: 1.35">
             GOVERNO DO ESTADO DE SÃO PAULO<br>
             SECRETARIA DE MEIO AMBIENTE, INFRAESTRUTURA E LOGÍSTICA (SEMIL)<br>
             AGÊNCIA DE ÁGUAS DO ESTADO DE SÃO PAULO — SP-ÁGUAS<br>
             SUPERINTENDÊNCIA DE ADMINISTRAÇÃO E FINANÇAS — SA-GTI
         </div>
     </div>
-    <div style="height: 4px; background: linear-gradient(to right, #6bbbfa 0%, #6bbbfa 33.3%, #0544cf 33.3%, #0544cf 66.6%, #01a75f 66.6%, #01a75f 100%); margin-top: 10px; border-radius: 2px;"></div>
+    <div style="height: 4px; margin-top: 10px; border-radius: 2px"></div>
 </div>
 <h1>NOTIFICAÇÃO FORMAL DE CHECKPOINT PROCESSUAL — SA-GTI</h1>
 <p><strong>Processo SEI nº:</strong> [137.XXXXX/202X-XX]<br>
@@ -759,14 +759,14 @@ const CADERNOS_PADRAO = window.CADERNOS_PADRAO;
             arquivo: 'TK01_TCO_36m_Calculo_SPAGUAS.csv',
             tipo: 'csv',
             conteudoCsv: `Item;Objeto;Unidade;Qtd;Custo_Unit_Mensal;Custo_36m_Capex;Custo_36m_Opex;TCO_Total_36m\n1;Sustentação de Sistemas e Fábrica de Software;Horas/Mês;1216;R$ 156,12;R$ 0,00;R$ 2.277.906,24;R$ 2.277.906,24\n2;Licenciamento de Banco de Dados Gerenciado;Instância;4;R$ 4.250,00;R$ 35.000,00;R$ 612.000,00;R$ 647.000,00\n3;Infraestrutura em Nuvem Pública e FinOps;Horas/Mês;720;R$ 138,88;R$ 0,00;R$ 1.200.000,00;R$ 1.200.000,00\n`,
-            conteudoHtml: `<div style="font-family: Arial, sans-serif; padding: 20px;">
-                <h3 style="color:#002d5a; border-bottom: 2px solid #0056d2; padding-bottom: 8px;">TK-01 • Memória de Cálculo de TCO (36 Meses) — ETP 85/2026</h3>
+            conteudoHtml: `<div style="padding: 20px">
+                <h3 style="padding-bottom: 8px">TK-01 • Memória de Cálculo de TCO (36 Meses) — ETP 85/2026</h3>
                 <p><strong>Fundamentação:</strong> Decreto Estadual nº 68.220/2023 e Processo SEI 137.00010805/2025-82.</p>
-                <table style="width:100%; border-collapse:collapse; margin-top:14px; font-size:12px;">
-                    <tr style="background:#f1f5f9; text-align:left;"><th style="border:1px solid #cbd5e1; padding:8px;">Item</th><th style="border:1px solid #cbd5e1; padding:8px;">Objeto</th><th style="border:1px solid #cbd5e1; padding:8px;">Métrica</th><th style="border:1px solid #cbd5e1; padding:8px;">Valor Mensal</th><th style="border:1px solid #cbd5e1; padding:8px;">TCO 36 Meses</th></tr>
-                    <tr><td style="border:1px solid #cbd5e1; padding:8px;">1</td><td style="border:1px solid #cbd5e1; padding:8px;">Fábrica de Software / Sustentação</td><td style="border:1px solid #cbd5e1; padding:8px;">1.216 h/mês</td><td style="border:1px solid #cbd5e1; padding:8px;">R$ 63.275,17</td><td style="border:1px solid #cbd5e1; padding:8px;"><strong>R$ 2.277.906,24</strong></td></tr>
-                    <tr><td style="border:1px solid #cbd5e1; padding:8px;">2</td><td style="border:1px solid #cbd5e1; padding:8px;">Links WAN e SD-WAN Bacias</td><td style="border:1px solid #cbd5e1; padding:8px;">18 Pontos</td><td style="border:1px solid #cbd5e1; padding:8px;">R$ 51.388,88</td><td style="border:1px solid #cbd5e1; padding:8px;"><strong>R$ 1.850.000,00</strong></td></tr>
-                </table>
+                <div class="table-responsive"><table style="width:100%; border-collapse:collapse; margin-top:14px; font-size:12px" class="table table-vcenter card-table table-hover">
+                    <tr style="text-align:left"><th style="padding:8px">Item</th><th style="padding:8px">Objeto</th><th style="padding:8px">Métrica</th><th style="padding:8px">Valor Mensal</th><th style="padding:8px">TCO 36 Meses</th></tr>
+                    <tr><td style="padding:8px">1</td><td style="padding:8px">Fábrica de Software / Sustentação</td><td style="padding:8px">1.216 h/mês</td><td style="padding:8px">R$ 63.275,17</td><td style="padding:8px"><strong>R$ 2.277.906,24</strong></td></tr>
+                    <tr><td style="padding:8px">2</td><td style="padding:8px">Links WAN e SD-WAN Bacias</td><td style="padding:8px">18 Pontos</td><td style="padding:8px">R$ 51.388,88</td><td style="padding:8px"><strong>R$ 1.850.000,00</strong></td></tr>
+                </table></div>
             </div>`
         },
         'tk_riscos': {
@@ -774,14 +774,14 @@ const CADERNOS_PADRAO = window.CADERNOS_PADRAO;
             arquivo: 'TK02_Matriz_Riscos_GUT_R01_R12.csv',
             tipo: 'csv',
             conteudoCsv: `ID_Risco;Descricao_Evento;Gravidade;Urgencia;Tendencia;Score_GUT;Grau_Risco;Estrategia_Mitigacao\nR01;Indisponibilidade de links WAN das Bacias;5;4;4;80;Crítico;Acionamento de redundância 4G e penalização IMR\nR02;Vazamento de dados pessoais ou outorgas;5;5;5;125;Extremo;Criptografia WORM e trilha de auditoria LGPD\nR03;Atraso em emissão de Parecer Jurídico (CJ);4;4;3;48;Médio;Notificação de Checkpoint com expurgo de Poréns\n`,
-            conteudoHtml: `<div style="font-family: Arial, sans-serif; padding: 20px;">
-                <h3 style="color:#002d5a; border-bottom: 2px solid #e11d48; padding-bottom: 8px;">TK-02 • Matriz de Riscos Corporativos de TIC (R01 a R12)</h3>
+            conteudoHtml: `<div style="padding: 20px">
+                <h3 style="padding-bottom: 8px">TK-02 • Matriz de Riscos Corporativos de TIC (R01 a R12)</h3>
                 <p><strong>Metodologia:</strong> Gravidade x Urgência x Tendência (GUT) em conformidade com o PDTIC 2027-2030.</p>
-                <table style="width:100%; border-collapse:collapse; margin-top:14px; font-size:12px;">
-                    <tr style="background:#fff1f2; text-align:left;"><th style="border:1px solid #fecdd3; padding:8px;">ID</th><th style="border:1px solid #fecdd3; padding:8px;">Risco</th><th style="border:1px solid #fecdd3; padding:8px;">G x U x T</th><th style="border:1px solid #fecdd3; padding:8px;">Ação de Mitigação</th></tr>
-                    <tr><td style="border:1px solid #cbd5e1; padding:8px;"><strong>R01</strong></td><td style="border:1px solid #cbd5e1; padding:8px;">Queda de conectividade nas Bacias</td><td style="border:1px solid #cbd5e1; padding:8px;"><span class="pill-tag pill-red">GUT 80 (Alto)</span></td><td style="border:1px solid #cbd5e1; padding:8px;">Circuito duplo com contingência automática</td></tr>
-                    <tr><td style="border:1px solid #cbd5e1; padding:8px;"><strong>R02</strong></td><td style="border:1px solid #cbd5e1; padding:8px;">Prescrição de prazo na Consultoria Jurídica</td><td style="border:1px solid #cbd5e1; padding:8px;"><span class="pill-tag pill-yellow">GUT 48 (Médio)</span></td><td style="border:1px solid #cbd5e1; padding:8px;">Ofício de Checkpoint e congelamento de Aging</td></tr>
-                </table>
+                <div class="table-responsive"><table style="width:100%; border-collapse:collapse; margin-top:14px; font-size:12px" class="table table-vcenter card-table table-hover">
+                    <tr style="text-align:left"><th style="padding:8px">ID</th><th style="padding:8px">Risco</th><th style="padding:8px">G x U x T</th><th style="padding:8px">Ação de Mitigação</th></tr>
+                    <tr><td style="padding:8px"><strong>R01</strong></td><td style="padding:8px">Queda de conectividade nas Bacias</td><td style="padding:8px"><span class="pill-tag pill-red">GUT 80 (Alto)</span></td><td style="padding:8px">Circuito duplo com contingência automática</td></tr>
+                    <tr><td style="padding:8px"><strong>R02</strong></td><td style="padding:8px">Prescrição de prazo na Consultoria Jurídica</td><td style="padding:8px"><span class="pill-tag pill-yellow">GUT 48 (Médio)</span></td><td style="padding:8px">Ofício de Checkpoint e congelamento de Aging</td></tr>
+                </table></div>
             </div>`
         },
         'tk_imr': {
@@ -789,24 +789,24 @@ const CADERNOS_PADRAO = window.CADERNOS_PADRAO;
             arquivo: 'TK03_Tabela_Glosas_IMR_SLAs.csv',
             tipo: 'csv',
             conteudoCsv: `Faixa;Descumprimento_SLA;Severidade;Percentual_Glosa;Impacto_Fatura\nF1;Atendimento N1 > 4h;Baixa;2%;Glosa sobre a parcela mensal do item\nF2;Indisponibilidade de Sistemas > 2h;Média;5%;Glosa sobre a fatura bruta da esteira\nF3;Violação de Segurança / Perda de Código;Crítica;10%;Glosa máxima + Notificação no Cadastro de Fornecedores\n`,
-            conteudoHtml: `<div style="font-family: Arial, sans-serif; padding: 20px;">
-                <h3 style="color:#002d5a; border-bottom: 2px solid #0284c7; padding-bottom: 8px;">TK-03 • Tabela Canônica de IMR (Instrumento de Medição de Resultado)</h3>
+            conteudoHtml: `<div style="padding: 20px">
+                <h3 style="padding-bottom: 8px">TK-03 • Tabela Canônica de IMR (Instrumento de Medição de Resultado)</h3>
                 <p><strong>Fundamentação:</strong> Súmula 269 do TCU e TR 148/2026 da SP-Águas.</p>
-                <table style="width:100%; border-collapse:collapse; margin-top:14px; font-size:12px;">
-                    <tr style="background:#e0f2fe; text-align:left;"><th style="border:1px solid #bae6fd; padding:8px;">Faixa</th><th style="border:1px solid #bae6fd; padding:8px;">Descrição do Desvio de SLA</th><th style="border:1px solid #bae6fd; padding:8px;">Glosa</th><th style="border:1px solid #bae6fd; padding:8px;">Execução SIAFEM</th></tr>
-                    <tr><td style="border:1px solid #cbd5e1; padding:8px;">Faixa 1</td><td style="border:1px solid #cbd5e1; padding:8px;">Atraso em chamados N1 (Atendimento inicial > 30m)</td><td style="border:1px solid #cbd5e1; padding:8px;"><strong>2%</strong></td><td style="border:1px solid #cbd5e1; padding:8px;">Desconto direto na liquidação mensal</td></tr>
-                    <tr><td style="border:1px solid #cbd5e1; padding:8px;">Faixa 2</td><td style="border:1px solid #cbd5e1; padding:8px;">Falha em entrega de código no GitLab sem build limpo</td><td style="border:1px solid #cbd5e1; padding:8px;"><strong>5%</strong></td><td style="border:1px solid #cbd5e1; padding:8px;">Retenção até saneamento formal</td></tr>
-                </table>
+                <div class="table-responsive"><table style="width:100%; border-collapse:collapse; margin-top:14px; font-size:12px" class="table table-vcenter card-table table-hover">
+                    <tr style="text-align:left"><th style="padding:8px">Faixa</th><th style="padding:8px">Descrição do Desvio de SLA</th><th style="padding:8px">Glosa</th><th style="padding:8px">Execução SIAFEM</th></tr>
+                    <tr><td style="padding:8px">Faixa 1</td><td style="padding:8px">Atraso em chamados N1 (Atendimento inicial > 30m)</td><td style="padding:8px"><strong>2%</strong></td><td style="padding:8px">Desconto direto na liquidação mensal</td></tr>
+                    <tr><td style="padding:8px">Faixa 2</td><td style="padding:8px">Falha em entrega de código no GitLab sem build limpo</td><td style="padding:8px"><strong>5%</strong></td><td style="padding:8px">Retenção até saneamento formal</td></tr>
+                </table></div>
             </div>`
         },
         'tk_portaria': {
             titulo: 'TK-04 • Portaria de Fiscais e Gestores de Contrato',
             arquivo: 'TK04_Portaria_Designacao_Fiscais.html',
             tipo: 'doc',
-            conteudoHtml: `<div style="font-family: Arial, sans-serif; padding: 30px; line-height: 1.6;">
-                <div style="text-align: center; border-bottom: 2px solid #0056d2; padding-bottom: 12px; margin-bottom: 20px;">
-                    <h3 style="margin: 0; color: var(--sagti-text);">PORTARIA SA-GTI Nº 012/2026</h3>
-                    <p style="margin: 4px 0 0 0; font-size: 12px; color: #94a3b8;">Designação da Equipe de Gestão e Fiscalização Contratual — Lei Federal nº 14.133/2021</p>
+            conteudoHtml: `<div style="padding: 30px; line-height: 1.6">
+                <div style="text-align: center; padding-bottom: 12px; margin-bottom: 20px">
+                    <h3 style="margin: 0">PORTARIA SA-GTI Nº 012/2026</h3>
+                    <p style="margin: 4px 0 0 0; font-size: 12px">Designação da Equipe de Gestão e Fiscalização Contratual — Lei Federal nº 14.133/2021</p>
                 </div>
                 <p>O Subsecretário de Tecnologia da Informação da SP-Águas, no uso de suas atribuições regimentais, RESOLVE:</p>
                 <p><strong>Art. 1º</strong> Designar os servidores abaixo qualificados para acompanhamento do Contrato nº [NÚMERO]:</p>
@@ -822,21 +822,21 @@ const CADERNOS_PADRAO = window.CADERNOS_PADRAO;
             titulo: 'TK-05 • Ficha SIPOC de Processos (Padrão BPMN 2.0)',
             arquivo: 'TK05_Ficha_Processo_SIPOC.html',
             tipo: 'doc',
-            conteudoHtml: `<div style="font-family: Arial, sans-serif; padding: 25px;">
-                <h3 style="color:#002d5a; border-bottom: 2px solid #0284c7; padding-bottom: 8px;">TK-05 • Ficha Técnica de Processo — SIPOC & RACI</h3>
+            conteudoHtml: `<div style="padding: 25px">
+                <h3 style="padding-bottom: 8px">TK-05 • Ficha Técnica de Processo — SIPOC & RACI</h3>
                 <p><strong>Código Canônico:</strong> GTI-CON-001 (Contratação de TIC) • <strong>Notação:</strong> BPMN 2.0 Bizagi.</p>
-                <table style="width:100%; border-collapse:collapse; margin-top:14px; font-size:12px;">
-                    <tr style="background:#f3e8ff;"><th style="border:1px solid #d8b4fe; padding:8px;">Suppliers (Fornecedores)</th><th style="border:1px solid #d8b4fe; padding:8px;">Inputs (Entradas)</th><th style="border:1px solid #d8b4fe; padding:8px;">Process (Etapas Macro)</th><th style="border:1px solid #d8b4fe; padding:8px;">Outputs (Saídas)</th><th style="border:1px solid #d8b4fe; padding:8px;">Customers (Clientes)</th></tr>
-                    <tr><td style="border:1px solid #cbd5e1; padding:8px;">Bacias / Diretorias</td><td style="border:1px solid #cbd5e1; padding:8px;">DFD Formalizado</td><td style="border:1px solid #cbd5e1; padding:8px;">ETP -> Riscos -> TR -> Parecer</td><td style="border:1px solid #cbd5e1; padding:8px;">Edital Publicado</td><td style="border:1px solid #cbd5e1; padding:8px;">Sociedade / SP-Águas</td></tr>
-                </table>
+                <div class="table-responsive"><table style="width:100%; border-collapse:collapse; margin-top:14px; font-size:12px" class="table table-vcenter card-table table-hover">
+                    <tr ><th style="padding:8px">Suppliers (Fornecedores)</th><th style="padding:8px">Inputs (Entradas)</th><th style="padding:8px">Process (Etapas Macro)</th><th style="padding:8px">Outputs (Saídas)</th><th style="padding:8px">Customers (Clientes)</th></tr>
+                    <tr><td style="padding:8px">Bacias / Diretorias</td><td style="padding:8px">DFD Formalizado</td><td style="padding:8px">ETP -> Riscos -> TR -> Parecer</td><td style="padding:8px">Edital Publicado</td><td style="padding:8px">Sociedade / SP-Águas</td></tr>
+                </table></div>
             </div>`
         },
         'tk_ata_validacao': {
             titulo: 'TK-06 • Ata de Validação de Processos com Executores',
             arquivo: 'TK06_Ata_Validacao_Processo.html',
             tipo: 'doc',
-            conteudoHtml: `<div style="font-family: Arial, sans-serif; padding: 30px; line-height: 1.6;">
-                <h3 style="color:#002d5a; border-bottom: 2px solid #d97706; padding-bottom: 8px;">TK-06 • Termo Formal de Leitura Guiada e Validação de Processo</h3>
+            conteudoHtml: `<div style="padding: 30px; line-height: 1.6">
+                <h3 style="padding-bottom: 8px">TK-06 • Termo Formal de Leitura Guiada e Validação de Processo</h3>
                 <p>Aos [DATA], reuniu-se a Equipe de Processos da SA-GTI juntamente aos executores operacionais para validação do fluxo modelado em BPMN 2.0.</p>
                 <p><strong>Processo Auditado:</strong> [NOME DO PROCESSO] ([CÓDIGO])</p>
                 <p><strong>Resultado da Validação:</strong> O modelo reflete fidedignamente o rito com as raias funcionais de governança, estando apto para homologação.</p>
@@ -846,9 +846,9 @@ const CADERNOS_PADRAO = window.CADERNOS_PADRAO;
             titulo: 'TK-07 • Checklist F7 de Auditoria Sintática BPMN (Bizagi)',
             arquivo: 'TK07_Checklist_F7_Auditoria_BPMN.html',
             tipo: 'doc',
-            conteudoHtml: `<div style="font-family: Arial, sans-serif; padding: 25px;">
-                <h3 style="color:#002d5a; border-bottom: 2px solid #06b6d4; padding-bottom: 8px;">TK-07 • Roteiro F7 de Auditoria Bizagi Modeler (9 Dimensões)</h3>
-                <ul style="font-size: 12.5px; line-height: 1.8;">
+            conteudoHtml: `<div style="padding: 25px">
+                <h3 style="padding-bottom: 8px">TK-07 • Roteiro F7 de Auditoria Bizagi Modeler (9 Dimensões)</h3>
+                <ul style="font-size: 12.5px; line-height: 1.8">
                     <li>[x] <strong>D1: Validação F7 Bizagi</strong> — 0 erros de sintaxe e sem fluxos órfãos.</li>
                     <li>[x] <strong>D2: Pool e Raias</strong> — Pool única institucional com raias por departamento.</li>
                     <li>[x] <strong>D3: Eventos Canônicos</strong> — Start Event e End Event claramente tipificados.</li>
@@ -861,13 +861,13 @@ const CADERNOS_PADRAO = window.CADERNOS_PADRAO;
             titulo: 'TK-08 • Boletim de Movimentação BMM & Termo de Guarda SAM',
             arquivo: 'TK08_Boletim_BMM_Patrimonio_SAM.html',
             tipo: 'doc',
-            conteudoHtml: `<div style="font-family: Arial, sans-serif; padding: 25px;">
-                <h3 style="color:#002d5a; border-bottom: 2px solid #475569; padding-bottom: 8px;">TK-08 • Boletim de Movimentação de Materiais (BMM) — GLPI x SAM</h3>
+            conteudoHtml: `<div style="padding: 25px">
+                <h3 style="padding-bottom: 8px">TK-08 • Boletim de Movimentação de Materiais (BMM) — GLPI x SAM</h3>
                 <p><strong>Finalidade:</strong> Transferência física de ativos de hardware entre Sede e Bacias Hidrográficas com sanitização de dados.</p>
-                <table style="width:100%; border-collapse:collapse; margin-top:14px; font-size:12px;">
-                    <tr style="background:#f1f5f9;"><th style="border:1px solid #cbd5e1; padding:8px;">Plaqueta Patrimônio</th><th style="border:1px solid #cbd5e1; padding:8px;">Tipo Ativo</th><th style="border:1px solid #cbd5e1; padding:8px;">Origem</th><th style="border:1px solid #cbd5e1; padding:8px;">Destino</th><th style="border:1px solid #cbd5e1; padding:8px;">Responsável</th></tr>
-                    <tr><td style="border:1px solid #cbd5e1; padding:8px;">SPA-09412</td><td style="border:1px solid #cbd5e1; padding:8px;">Notebook Dell Core i7</td><td style="border:1px solid #cbd5e1; padding:8px;">Sede (São Paulo)</td><td style="border:1px solid #cbd5e1; padding:8px;">Bacia PCJ (Piracicaba)</td><td style="border:1px solid #cbd5e1; padding:8px;">Diego Monteiro</td></tr>
-                </table>
+                <div class="table-responsive"><table style="width:100%; border-collapse:collapse; margin-top:14px; font-size:12px" class="table table-vcenter card-table table-hover">
+                    <tr ><th style="padding:8px">Plaqueta Patrimônio</th><th style="padding:8px">Tipo Ativo</th><th style="padding:8px">Origem</th><th style="padding:8px">Destino</th><th style="padding:8px">Responsável</th></tr>
+                    <tr><td style="padding:8px">SPA-09412</td><td style="padding:8px">Notebook Dell Core i7</td><td style="padding:8px">Sede (São Paulo)</td><td style="padding:8px">Bacia PCJ (Piracicaba)</td><td style="padding:8px">Diego Monteiro</td></tr>
+                </table></div>
             </div>`
         }
     };
@@ -1583,7 +1583,7 @@ window.switchTab = function(tabId) {
         if (abasEixo1.includes(tabId)) {
             barraEixo1.style.display = 'flex';
             barraEixo1.querySelectorAll('.subaba-eixo1-btn').forEach(function(btn) {
-                btn.className = (btn.getAttribute('data-subtab') === tabId) ? 'btn btn-primary subaba-eixo1-btn active' : 'btn btn-secondary subaba-eixo1-btn';
+                btn.className = (btn.getAttribute('data-subtab') === tabId) ? 'nav-link subaba-eixo1-btn active' : 'nav-link subaba-eixo1-btn';
             });
         } else {
             barraEixo1.style.display = 'none';
@@ -1597,7 +1597,7 @@ window.switchTab = function(tabId) {
         if (abasEixo2.includes(tabId)) {
             barraEixo2.style.display = 'flex';
             barraEixo2.querySelectorAll('.subaba-eixo2-btn').forEach(function(btn) {
-                btn.className = (btn.getAttribute('data-subtab') === tabId) ? 'btn btn-primary subaba-eixo2-btn active' : 'btn btn-secondary subaba-eixo2-btn';
+                btn.className = (btn.getAttribute('data-subtab') === tabId) ? 'nav-link subaba-eixo2-btn subaba-superior-btn active' : 'nav-link subaba-eixo2-btn subaba-superior-btn';
             });
         } else {
             barraEixo2.style.display = 'none';
@@ -1611,7 +1611,7 @@ window.switchTab = function(tabId) {
         if (abasEixo3.includes(tabId)) {
             barraEixo3.style.display = 'flex';
             barraEixo3.querySelectorAll('.subaba-eixo3-btn').forEach(function(btn) {
-                btn.className = (btn.getAttribute('data-subtab') === tabId) ? 'btn btn-primary subaba-eixo3-btn active' : 'btn btn-secondary subaba-eixo3-btn';
+                btn.className = (btn.getAttribute('data-subtab') === tabId) ? 'nav-link subaba-eixo3-btn active' : 'nav-link subaba-eixo3-btn';
             });
         } else {
             barraEixo3.style.display = 'none';
@@ -1742,9 +1742,9 @@ window.injetarOmniboxTopbarV9 = function() {
     wrap.id = 'omnibox-global-v9';
     wrap.style = 'position:relative;display:flex;align-items:center;margin:0 12px;';
     wrap.innerHTML = '<input id="input-omnibox-v9" type="text" placeholder="🔍 Busca Global 360° (Ctrl+K): #ID, SEI, GLPI..." ' +
-        'style="width:260px;padding:6px 12px;border-radius:18px;border:1px solid #cbd5e1;font-size:12px;background:#f8fafc;color:#0f172a;outline:none;" ' +
-        'oninput="window.executarBuscaOmniboxV9(this.value)" onfocus="window.executarBuscaOmniboxV9(this.value)" />' +
-        '<div id="dropdown-omnibox-v9" style="display:none;position:absolute;top:36px;left:0;width:440px;max-height:380px;overflow-y:auto;background:#ffffff;border:1px solid #cbd5e1;border-radius:10px;box-shadow:0 12px 28px rgba(0,0,0,0.18);z-index:99999;padding:8px;"></div>';
+        'style="width:260px;padding:6px 12px;border-radius:18px;font-size:12px;outline:none" ' +
+        'oninput="window.executarBuscaOmniboxV9(this.value)" onfocus="window.executarBuscaOmniboxV9(this.value)"  class="form-control"/>' +
+        '<div id="dropdown-omnibox-v9" style="display:none;position:absolute;top:36px;left:0;width:440px;max-height:380px;overflow-y:auto;border-radius:10px;z-index:99999;padding:8px"></div>';
 
     var rightBox = topbar.querySelector('.topbar-actions') || topbar.lastElementChild;
     if (rightBox) topbar.insertBefore(wrap, rightBox);
@@ -1781,24 +1781,24 @@ window.executarBuscaOmniboxV9 = function(termo) {
     var itensHtml = [];
 
     (ctx.matchesOP || []).slice(0, 4).forEach(function(p) {
-        itensHtml.push('<div onclick="window.navegarDrillDown360(\'op\', \'#' + p.id + '\');document.getElementById(\'dropdown-omnibox-v9\').style.display=\'none\';" style="padding:7px 10px;border-bottom:1px solid #f1f5f9;cursor:pointer;font-size:11.5px;">' +
-            '<span style="background:#0f2d59;color:var(--sagti-text);padding:1px 6px;border-radius:4px;font-size:10px;font-weight:700;margin-right:6px;">OP #' + window.escapeHtml(p.id) + '</span>' +
-            '<strong>' + window.escapeHtml(p.assunto) + '</strong> <span style="color:#64748b;">(' + window.escapeHtml(p.projeto) + ')</span></div>');
+        itensHtml.push('<div onclick="window.navegarDrillDown360(\'op\', \'#' + p.id + '\');document.getElementById(\'dropdown-omnibox-v9\').style.display=\'none\';" style="padding:7px 10px;cursor:pointer;font-size:11.5px">' +
+            '<span style="padding:1px 6px;border-radius:4px;font-weight:700;margin-right:6px">OP #' + window.escapeHtml(p.id) + '</span>' +
+            '<strong>' + window.escapeHtml(p.assunto) + '</strong> <span >(' + window.escapeHtml(p.projeto) + ')</span></div>');
     });
     (ctx.matchesGLPI || []).slice(0, 4).forEach(function(t) {
-        itensHtml.push('<div onclick="window.navegarDrillDown360(\'glpi\', \'#' + t.id + '\');document.getElementById(\'dropdown-omnibox-v9\').style.display=\'none\';" style="padding:7px 10px;border-bottom:1px solid #f1f5f9;cursor:pointer;font-size:11.5px;">' +
-            '<span style="background:#0284c7;color:#fff;padding:1px 6px;border-radius:4px;font-size:10px;font-weight:700;margin-right:6px;">GLPI #' + t.id + '</span>' +
-            '<strong>' + window.escapeHtml(t.titulo) + '</strong> <span style="color:#64748b;">(' + window.escapeHtml(t.fila) + ')</span></div>');
+        itensHtml.push('<div onclick="window.navegarDrillDown360(\'glpi\', \'#' + t.id + '\');document.getElementById(\'dropdown-omnibox-v9\').style.display=\'none\';" style="padding:7px 10px;cursor:pointer;font-size:11.5px">' +
+            '<span style="padding:1px 6px;border-radius:4px;font-weight:700;margin-right:6px">GLPI #' + t.id + '</span>' +
+            '<strong>' + window.escapeHtml(t.titulo) + '</strong> <span >(' + window.escapeHtml(t.fila) + ')</span></div>');
     });
     (ctx.matchesSEI || []).slice(0, 4).forEach(function(s) {
         var idS = s.id || s.ID_Processo || '';
-        itensHtml.push('<div onclick="window.navegarDrillDown360(\'sei\', \'' + window.escapeHtml(idS) + '\');document.getElementById(\'dropdown-omnibox-v9\').style.display=\'none\';" style="padding:7px 10px;border-bottom:1px solid #f1f5f9;cursor:pointer;font-size:11.5px;">' +
-            '<span style="background:#047857;color:var(--sagti-text);padding:1px 6px;border-radius:4px;font-size:10px;font-weight:700;margin-right:6px;">SEI ' + window.escapeHtml(idS) + '</span>' +
+        itensHtml.push('<div onclick="window.navegarDrillDown360(\'sei\', \'' + window.escapeHtml(idS) + '\');document.getElementById(\'dropdown-omnibox-v9\').style.display=\'none\';" style="padding:7px 10px;cursor:pointer;font-size:11.5px">' +
+            '<span style="padding:1px 6px;border-radius:4px;font-weight:700;margin-right:6px">SEI ' + window.escapeHtml(idS) + '</span>' +
             '<strong>' + window.escapeHtml((s.especificacao || s.Especificacao || '').slice(0, 68)) + '</strong></div>');
     });
 
     if (itensHtml.length === 0) {
-        itensHtml.push('<div style="padding:10px;font-size:12px;color:#64748b;">Nenhum registro exato nos 882 itens para "' + window.escapeHtml(q) + '".</div>');
+        itensHtml.push('<div style="padding:10px;font-size:12px">Nenhum registro exato nos 882 itens para "' + window.escapeHtml(q) + '".</div>');
     }
     dd.innerHTML = itensHtml.join('');
     dd.style.display = 'block';
@@ -2029,14 +2029,14 @@ window.renderizarMatrizRBAC = function() {
     tbody.innerHTML = window.ABAS_SISTEMA.map(function(aba) {
         var cols = window.PERFIS_SISTEMA.map(function(p) {
             var checked = (window.matrizPermissoes[p.id] && window.matrizPermissoes[p.id].includes(aba.id)) ? 'checked' : '';
-            return '<td style="padding: 10px 14px; text-align: center; border: 1px solid #cbd5e1; background: ' + (checked ? '#f0fdf4' : '#ffffff') + ';">' +
-                '<input type="checkbox" class="chk-rbac" data-perfil="' + p.id + '" data-aba="' + aba.id + '" ' + checked + ' style="width: 16px; height: 16px; cursor: pointer; accent-color: #0544cf;">' +
+            return '<td style="padding: 10px 14px; text-align: center">' +
+                '<input type="checkbox" class="chk-rbac form-check-input" data-perfil="' + p.id + '" data-aba="' + aba.id + '" ' + checked + ' style="width: 16px; height: 16px; cursor: pointer">' +
                 '</td>';
         }).join('');
-        return '<tr style="border-bottom: 1px solid #e2e8f0;">' +
-            '<td style="padding: 10px 14px; border: 1px solid #cbd5e1;">' +
-                '<strong style="color: var(--sagti-text); font-size: 13px;">' + aba.nome + '</strong>' +
-                '<div style="font-size: 11px; color: #94a3b8; margin-top: 2px;">' + aba.desc + '</div>' +
+        return '<tr >' +
+            '<td style="padding: 10px 14px">' +
+                '<strong style="font-size: 13px">' + aba.nome + '</strong>' +
+                '<div style="font-size: 11px; margin-top: 2px">' + aba.desc + '</div>' +
             '</td>' + cols + '</tr>';
     }).join('');
 };
@@ -2237,7 +2237,7 @@ window.renderizarTabelaMesa = function() {
     if (elPor) elPor.innerText = porens;
 
     if (lista.length === 0) {
-        tbody.innerHTML = '<tr><td colspan="7" style="text-align: center; padding: 32px; color: #94a3b8;"><span style="font-size: 28px; display: block; margin-bottom: 8px;">📂</span><strong>Nenhum processo encontrado para este filtro na Mesa de Trabalho.</strong></td></tr>';
+        tbody.innerHTML = '<tr><td colspan="7" style="text-align: center; padding: 32px"><span style="font-size: 28px; display: block; margin-bottom: 8px">📂</span><strong>Nenhum processo encontrado para este filtro na Mesa de Trabalho.</strong></td></tr>';
         return;
     }
 
@@ -2255,21 +2255,21 @@ window.renderizarTabelaMesa = function() {
         else if ((p.Faixa_Aging || '').includes('Atenção')) pillAging = 'pill-yellow';
         else if ((p.Faixa_Aging || '').includes('Alerta')) pillAging = 'pill-orange';
 
-        html += '<tr style="border-bottom: 1px solid rgba(255,255,255,0.06); transition: background 0.15s ease;">' +
-            '<td style="text-align: center; padding: 9px 8px;">' +
-                '<button onclick="window.toggleFixado(\'' + p.ID_Processo + '\')" style="background: none; border: none; cursor: pointer; font-size: 15px;" title="' + (isFixado ? 'Remover dos Fixados' : 'Fixar Processo') + '">' +
+        html += '<tr style="transition: background 0.15s ease">' +
+            '<td style="text-align: center; padding: 9px 8px">' +
+                '<button onclick="window.toggleFixado(\'' + p.ID_Processo + '\')" style="cursor: pointer; font-size: 15px" title="' + (isFixado ? 'Remover dos Fixados' : 'Fixar Processo') + '" class="btn btn-ghost-secondary">' +
                     (isFixado ? '⭐' : '☆') +
                 '</button>' +
             '</td>' +
-            '<td style="padding: 9px 12px;"><strong style="color: var(--sagti-accent); font-size: 12px;">' + p.ID_Processo + '</strong></td>' +
-            '<td style="max-width: 280px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-size: 11.5px; color: var(--sagti-text); padding: 9px 12px;" title="' + (p.Especificacao || '') + '">' + (p.Especificacao || '') + '</td>' +
-            '<td style="font-size: 11.5px; color: #94a3b8; padding: 9px 12px;">' + (p.Responsavel_Tecnico || '<span style="color:#64748b;">SA-GTI</span>') + '</td>' +
-            '<td style="padding: 9px 12px;"><span class="pill-tag pill-blue" style="font-size: 10px;">' + (p.Status_OpenProject || p.Status_Kanban || 'Backlog') + '</span></td>' +
-            '<td style="padding: 9px 12px;"><span class="pill-tag ' + pillAging + '" style="font-size: 10px;">' + (p.Faixa_Aging || 'Normal') + ' (' + (p.Dias_Ultima_Mov || 0) + 'd)</span></td>' +
-            '<td style="text-align: center; white-space: nowrap; padding: 9px 12px;">' +
-                '<button class="btn btn-secondary" onclick="window.abrirAiDrawerComProcesso(\'' + p.ID_Processo + '\')" style="padding: 3px 8px; font-size: 11px; margin-right: 4px; background: rgba(139,92,246,0.15); border: 1px solid rgba(139,92,246,0.3); color: #c4b5fd;" title="Analisar com IA">🤖 IA</button>' +
-                '<button class="btn btn-secondary" onclick="window.abrirModalToolkitComProcesso(\'' + p.ID_Processo + '\')" style="padding: 3px 8px; font-size: 11px; margin-right: 4px; background: rgba(56,189,248,0.12); border: 1px solid rgba(56,189,248,0.3); color: #7dd3fc;" title="Gerar Minuta A4">📄 A4</button>' +
-                '<button class="btn btn-secondary" onclick="abrirDetalhesProcesso(\'' + p.ID_Processo + '\')" style="padding: 3px 8px; font-size: 11px;" title="Dossiê 360°">🔍</button>' +
+            '<td style="padding: 9px 12px"><strong style="font-size: 12px">' + p.ID_Processo + '</strong></td>' +
+            '<td style="max-width: 280px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-size: 11.5px; padding: 9px 12px" title="' + (p.Especificacao || '') + '">' + (p.Especificacao || '') + '</td>' +
+            '<td style="font-size: 11.5px; padding: 9px 12px">' + (p.Responsavel_Tecnico || '<span >SA-GTI</span>') + '</td>' +
+            '<td style="padding: 9px 12px"><span class="pill-tag pill-blue" >' + (p.Status_OpenProject || p.Status_Kanban || 'Backlog') + '</span></td>' +
+            '<td style="padding: 9px 12px"><span class="pill-tag ' + pillAging + '" >' + (p.Faixa_Aging || 'Normal') + ' (' + (p.Dias_Ultima_Mov || 0) + 'd)</span></td>' +
+            '<td style="text-align: center; white-space: nowrap; padding: 9px 12px">' +
+                '<button class="btn btn-outline-secondary" onclick="window.abrirAiDrawerComProcesso(\'' + p.ID_Processo + '\')" style="padding: 3px 8px; font-size: 11px; margin-right: 4px" title="Analisar com IA">🤖 IA</button>' +
+                '<button class="btn btn-outline-secondary" onclick="window.abrirModalToolkitComProcesso(\'' + p.ID_Processo + '\')" style="padding: 3px 8px; font-size: 11px; margin-right: 4px" title="Gerar Minuta A4">📄 A4</button>' +
+                '<button class="btn btn-outline-secondary" onclick="abrirDetalhesProcesso(\'' + p.ID_Processo + '\')" style="padding: 3px 8px; font-size: 11px" title="Dossiê 360°">🔍</button>' +
             '</td>' +
         '</tr>';
     });
@@ -2304,18 +2304,18 @@ window.renderizarSecaoFixadosEAlertasMesa = function() {
             viewMesa.insertBefore(barraAlertas, viewMesa.firstChild);
         }
 
-        barraAlertas.innerHTML = '<div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;background:var(--sagti-surface-alt);border:1px solid #fecdd3;border-left:5px solid #e11d48;border-radius:8px;padding:10px 16px;margin-bottom:14px;">' +
-            '<div style="display:flex;align-items:center;gap:14px;flex-wrap:wrap;font-size:12px;">' +
-                '<span style="font-weight:800;color:#9f1239;">&#128680; Radar Proativo de SLA &amp; Cust&oacute;dia Externa:</span>' +
-                '<a href="javascript:void(0)" onclick="window.switchTab(\'gestao_glpi\')" style="color:#be123c;font-weight:700;text-decoration:underline;">&#9888;&#65039; ' + ticketsSlaCritico.length + ' Chamados Cr&iacute;ticos (SLA &lt; 2h no GLPI)</a>' +
-                '<span style="color:#cbd5e1;">|</span>' +
-                '<a href="javascript:void(0)" onclick="window.switchTab(\'consulta\')" style="color:#92400e;font-weight:700;text-decoration:underline;">&#1416; ' + procsPorens.length + ' Processos SEI com Suspens&atilde;o Externa (&ldquo;Por&eacute;ns&rdquo; CJ/PGE)</a>' +
-                '<span style="color:#cbd5e1;">|</span>' +
-                '<span style="color:#065f46;font-weight:700;">&#9989; Base Oficial Integrada: 500 OP + 13 GLPI + 179 SEI</span>' +
+        barraAlertas.innerHTML = '<div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;border-radius:8px;padding:10px 16px;margin-bottom:14px">' +
+            '<div style="display:flex;align-items:center;gap:14px;flex-wrap:wrap;font-size:12px">' +
+                '<span style="font-weight:800">&#128680; Radar Proativo de SLA &amp; Cust&oacute;dia Externa:</span>' +
+                '<a href="javascript:void(0)" onclick="window.switchTab(\'gestao_glpi\')" style="font-weight:700;text-decoration:underline">&#9888;&#65039; ' + ticketsSlaCritico.length + ' Chamados Cr&iacute;ticos (SLA &lt; 2h no GLPI)</a>' +
+                '<span >|</span>' +
+                '<a href="javascript:void(0)" onclick="window.switchTab(\'consulta\')" style="font-weight:700;text-decoration:underline">&#1416; ' + procsPorens.length + ' Processos SEI com Suspens&atilde;o Externa (&ldquo;Por&eacute;ns&rdquo; CJ/PGE)</a>' +
+                '<span >|</span>' +
+                '<span style="font-weight:700">&#9989; Base Oficial Integrada: 500 OP + 13 GLPI + 179 SEI</span>' +
             '</div>' +
-            '<div style="display:flex;gap:8px;">' +
-                '<button class="btn btn-secondary" style="font-size:11px;padding:4px 10px;" onclick="window.dispararCicloVarreduras()">&#128268; Sondar 8 Motores</button>' +
-                '<button class="btn btn-primary" style="font-size:11px;padding:4px 10px;" onclick="window.consultarProcessoAoVivoPNCP(\'137.00029841/2026-14\')">&#127760; Busca Direta PNCP/DOE</button>' +
+            '<div style="display:flex;gap:8px">' +
+                '<button class="btn btn-outline-secondary" style="font-size:11px;padding:4px 10px" onclick="window.dispararCicloVarreduras()">&#128268; Sondar 8 Motores</button>' +
+                '<button class="btn btn-primary" style="font-size:11px;padding:4px 10px" onclick="window.consultarProcessoAoVivoPNCP(\'137.00029841/2026-14\')">&#127760; Busca Direta PNCP/DOE</button>' +
             '</div>' +
         '</div>';
     };
@@ -2340,7 +2340,7 @@ window.renderizarSecaoFixadosEAlertasMesa = function() {
         const logs = historicoProcessos[idProcesso] || [];
         if (logs.length === 0) {
             container.innerHTML = `
-                <div style="color: #94a3b8; font-style: italic;">
+                <div style="font-style: italic">
                     Nenhum evento registrado ainda. Quando o processo for discutido na Daily ou receber post-its, o histórico da IA aparecerá aqui.
                 </div>
             `;
@@ -2348,8 +2348,8 @@ window.renderizarSecaoFixadosEAlertasMesa = function() {
         }
 
         container.innerHTML = logs.map(ev => `
-            <div style="padding: 4px 6px; background: white; border-radius: 4px; border-left: 3px solid #0056d2;">
-                <span style="color: #94a3b8; font-size: 10.5px;">[${ev.dataHora}] (${ev.autor}):</span>
+            <div style="padding: 4px 6px; border-radius: 4px">
+                <span style="font-size: 10.5px">[${ev.dataHora}] (${ev.autor}):</span>
                 <strong> ${ev.tipo}:</strong> ${ev.detalhe}
             </div>
         `).join('');
@@ -2385,26 +2385,26 @@ window.renderizarSecaoFixadosEAlertasMesa = function() {
         if (!tbody) return;
         const itensFixados = PROCESSOS.filter(p => fixados.includes(p.ID_Processo));
         if (itensFixados.length === 0) {
-            tbody.innerHTML = `<tr><td colspan="8" style="text-align:center; padding: 30px; color: #94a3b8;">Nenhum processo fixado ainda. Clique na estrela (☆) em qualquer tabela ou card para fixar.</td></tr>`;
+            tbody.innerHTML = `<tr><td colspan="8" style="text-align:center; padding: 30px">Nenhum processo fixado ainda. Clique na estrela (☆) em qualquer tabela ou card para fixar.</td></tr>`;
             return;
         }
         tbody.innerHTML = itensFixados.map(p => `
             <tr>
-                <td style="text-align: center; cursor: pointer;" onclick="toggleFixado('${p.ID_Processo}')">⭐</td>
+                <td style="text-align: center; cursor: pointer" onclick="toggleFixado('${p.ID_Processo}')">⭐</td>
                 <td>
-    <div style="display: flex; align-items: center; gap: 6px;">
-        <a href="javascript:void(0)" onclick="abrirDetalhesProcesso('${p.ID_Processo}')" style="font-weight: 700; color: #0284c7; text-decoration: none;" title="Abrir Dossie 360° no Cockpit">${p.ID_Processo}</a>
-        <button type="button" class="btn btn-secondary" onclick="navigator.clipboard.writeText('${p.ID_Processo}'); alert('Numero ${p.ID_Processo} copiado!');" style="padding: 1px 5px; font-size: 10px;" title="Copiar numero do processo">📋</button>
-        <a href="https://sei.sp.gov.br" target="_blank" style="font-size: 11px; text-decoration: none;" title="Abrir portal do SEI-SP">↗️</a>
+    <div style="display: flex; align-items: center; gap: 6px">
+        <a href="javascript:void(0)" onclick="abrirDetalhesProcesso('${p.ID_Processo}')" style="font-weight: 700; text-decoration: none" title="Abrir Dossie 360° no Cockpit">${p.ID_Processo}</a>
+        <button type="button" class="btn btn-outline-secondary" onclick="navigator.clipboard.writeText('${p.ID_Processo}'); alert('Numero ${p.ID_Processo} copiado!');" style="padding: 1px 5px" title="Copiar numero do processo">📋</button>
+        <a href="https://sei.sp.gov.br" target="_blank" style="font-size: 11px; text-decoration: none" title="Abrir portal do SEI-SP">↗️</a>
     </div>
 </td>
                 <td>${p.Farol_Criticidade}</td>
                 <td>${p.Bucket_OpenProject}</td>
                 <td>${p.Responsavel_Tecnico || 'Não atribuído'}</td>
                 <td>${p.Faixa_Aging}</td>
-                <td style="max-width: 320px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${p.Especificacao}</td>
-                <td style="text-align: center;">
-                    <button class="btn btn-secondary" style="padding: 3px 8px; font-size: 11px;" onclick="abrirDetalhesProcesso('${p.ID_Processo}')">Ver</button>
+                <td style="max-width: 320px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">${p.Especificacao}</td>
+                <td style="text-align: center">
+                    <button class="btn btn-outline-secondary" style="padding: 3px 8px; font-size: 11px" onclick="abrirDetalhesProcesso('${p.ID_Processo}')">Ver</button>
                 </td>
             </tr>
         `).join('');
@@ -2469,13 +2469,13 @@ window.renderizarSecaoFixadosEAlertasMesa = function() {
         const container = document.getElementById('lista-fixados-config');
         if (!container) return;
         if (fixados.length === 0) {
-            container.innerHTML = `<span style="font-size: 12px; color: #94a3b8;">Nenhum processo fixado no momento.</span>`;
+            container.innerHTML = `<span style="font-size: 12px">Nenhum processo fixado no momento.</span>`;
             return;
         }
         container.innerHTML = fixados.map(id => `
-            <div style="background: #f1f5f9; border: 1px solid #cbd5e1; border-radius: 6px; padding: 6px 12px; font-size: 12px; display: flex; align-items: center; gap: 8px;">
+            <div style="border-radius: 6px; padding: 6px 12px; font-size: 12px; display: flex; align-items: center; gap: 8px">
                 <strong>⭐ ${id}</strong>
-                <button onclick="toggleFixado('${id}'); renderizarListaFixadosConfig();" style="border: none; background: none; color: #ef4444; font-weight: bold; cursor: pointer;">✖</button>
+                <button onclick="toggleFixado('${id}'); renderizarListaFixadosConfig();" style="font-weight: bold; cursor: pointer" class="btn btn-ghost-secondary">✖</button>
             </div>
         `).join('');
     }
@@ -3246,12 +3246,6 @@ window.renderizarSecaoFixadosEAlertasMesa = function() {
         const farol = proc.Farol_Criticidade || '4 - Fluxo Normal';
         const aging = proc.Dias_Ultima_Mov || 0;
 
-        // Determina cor do Farol
-        let farolCor = '#10b981'; // Verde padrão
-        if (farol.includes('1') || farol.toLowerCase().includes('imediata')) farolCor = '#ef4444';
-        else if (farol.includes('2') || farol.toLowerCase().includes('prioritário') || farol.toLowerCase().includes('prioritario')) farolCor = '#f97316';
-        else if (farol.includes('3') || farol.toLowerCase().includes('ativo') || farol.toLowerCase().includes('alerta')) farolCor = '#eab308';
-
         // Definição das Fases por Eixo
         let fases = [];
         let indiceAtual = 0;
@@ -3339,28 +3333,28 @@ window.renderizarSecaoFixadosEAlertasMesa = function() {
             const isAtual = i === indiceAtual;
             const isFuturo = i > indiceAtual;
 
-            let badgeEstilo = "background: #f1f5f9; color: #94a3b8; border: 1px solid #cbd5e1;";
-            let labelCor = "#64748b";
+            let badgeClass = 'bg-secondary-lt text-secondary';
+            let labelClass = 'text-secondary';
             let iconeExibir = f.icone;
 
             if (isConcluido) {
-                badgeEstilo = "background: #01a75f; color: #ffffff; border: 1px solid #01a75f;";
-                labelCor = "#01a75f";
+                badgeClass = 'bg-green-lt text-green';
+                labelClass = 'text-success';
                 iconeExibir = "✓";
             } else if (isAtual) {
-                badgeEstilo = `background: ${farolCor}; color: #ffffff; border: 2px solid #ffffff; box-shadow: 0 0 0 3px ${farolCor}; font-weight: bold;`;
-                labelCor = "#002d5a";
+                badgeClass = 'bg-primary text-white';
+                labelClass = 'text-primary';
             }
 
             return `
-                <div style="flex: 1; display: flex; flex-direction: column; align-items: center; position: relative; z-index: 2;">
-                    <div style="width: 28px; height: 28px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 12px; margin-bottom: 6px; ${badgeEstilo}">
+                <div style="flex: 1; display: flex; flex-direction: column; align-items: center; position: relative; z-index: 2">
+                    <div class="rounded-circle d-flex align-items-center justify-content-center ${badgeClass}" style="width: 28px; height: 28px; font-size: 12px; margin-bottom: 6px">
                         ${iconeExibir}
                     </div>
-                    <div style="font-size: 10.5px; font-weight: ${isAtual ? '800' : '600'}; color: ${labelCor}; text-align: center; line-height: 1.2;">
+                    <div class="${labelClass}" style="font-size: 10.5px; font-weight: ${isAtual ? '800' : '600'}; text-align: center; line-height: 1.2">
                         ${f.nome}
                     </div>
-                    <div style="font-size: 9.5px; color: #94a3b8; text-align: center; margin-top: 2px;">
+                    <div style="font-size: 9.5px; text-align: center; margin-top: 2px">
                         ${f.desc}
                     </div>
                 </div>
@@ -3368,47 +3362,47 @@ window.renderizarSecaoFixadosEAlertasMesa = function() {
         }).join('');
 
         return `
-            <div style="background: #f8fafc; border: 1px solid #cbd5e1; border-radius: 8px; padding: 14px 16px; margin-bottom: 16px;">
-                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px; border-bottom: 1px solid #e2e8f0; padding-bottom: 8px;">
-                    <div style="display: flex; align-items: center; gap: 8px;">
-                        <strong style="color: var(--sagti-text); font-size: 12.5px;">📈 ESTEIRA PROCESSUAL: ${eixo.toUpperCase()}</strong>
-                        <span style="font-size: 10.5px; background: #e0f2fe; color: #0369a1; padding: 2px 8px; border-radius: 12px; font-weight: 700;">Etapa ${indiceAtual + 1} de ${fases.length}</span>
+            <div style="border-radius: 8px; padding: 14px 16px; margin-bottom: 16px">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px; padding-bottom: 8px">
+                    <div style="display: flex; align-items: center; gap: 8px">
+                        <strong style="font-size: 12.5px">📈 ESTEIRA PROCESSUAL: ${eixo.toUpperCase()}</strong>
+                        <span style="font-size: 10.5px; padding: 2px 8px; border-radius: 12px; font-weight: 700">Etapa ${indiceAtual + 1} de ${fases.length}</span>
                     </div>
-                    <div style="font-size: 11.5px; color: #1e293b;">
-                        Fase Atual: <strong style="color: ${farolCor};">${fases[indiceAtual].nome}</strong> (Aging: <strong>${aging} dias</strong>)
+                    <div style="font-size: 11.5px">
+                        Fase Atual: <strong >${fases[indiceAtual].nome}</strong> (Aging: <strong>${aging} dias</strong>)
                     </div>
                 </div>
 
                 <!-- LINHA HORIZONTAL DA TIMELINE -->
-                <div style="display: flex; align-items: flex-start; justify-content: space-between; position: relative; padding: 4px 0;">
-                    <div style="position: absolute; top: 18px; left: 24px; right: 24px; height: 3px; background: #e2e8f0; z-index: 1;"></div>
+                <div style="display: flex; align-items: flex-start; justify-content: space-between; position: relative; padding: 4px 0">
+                    <div style="position: absolute; top: 18px; left: 24px; right: 24px; height: 3px; z-index: 1"></div>
                     ${stepsHtml}
                 </div>
 
                 <!-- METADADOS NORMATIVOS + ETAPA 2 (REGRA DOS PORÉNS, OPENPROJECT & MARIADB) -->
-                <div style="margin-top: 14px; background: #ffffff; border: 1px solid #e2e8f0; border-radius: 6px; padding: 10px 12px; font-size: 11px; display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+                <div style="margin-top: 14px; border-radius: 6px; padding: 10px 12px; font-size: 11px; display: grid; grid-template-columns: 1fr 1fr; gap: 10px">
                     <div>
-                        <strong style="color: var(--sagti-text);">⚖️ Base Normativa Aplicável:</strong><br>
-                        <span style="color: #475569;">${baseLegal}</span>
+                        <strong >⚖️ Base Normativa Aplicável:</strong><br>
+                        <span >${baseLegal}</span>
                     </div>
                     <div>
-                        <strong style="color: var(--sagti-text);">📄 Próximo Artefato Exigido:</strong><br>
-                        <span style="color: #0544cf; font-weight: 600;">${proximoArtefato}</span>
+                        <strong >📄 Próximo Artefato Exigido:</strong><br>
+                        <span style="font-weight: 600">${proximoArtefato}</span>
                     </div>
-                    <div style="border-top: 1px dashed #cbd5e1; padding-top: 8px;">
-                        <strong style="color: var(--sagti-text);">🛡️ Regra dos Poréns (MS-2 • Aging Líquido):</strong><br>
-                        <span style="color: #1e293b;">
+                    <div style="padding-top: 8px">
+                        <strong >🛡️ Regra dos Poréns (MS-2 • Aging Líquido):</strong><br>
+                        <span >
                             Bruto: <strong>${(window.calcularRegraDosPorensProcesso ? window.calcularRegraDosPorensProcesso(proc).diasBruto : aging)}d</strong> |
-                            Expurgo Externo: <strong style="color:#d97706;">-${(window.calcularRegraDosPorensProcesso ? window.calcularRegraDosPorensProcesso(proc).diasExpurgados : 0)}d</strong> |
-                            Aging Líquido SA-GTI: <strong style="color:#01a75f;">${(window.calcularRegraDosPorensProcesso ? window.calcularRegraDosPorensProcesso(proc).diasLiquido : aging)}d</strong><br>
-                            <span style="color:#475569;font-size:10.5px;">${(window.calcularRegraDosPorensProcesso ? window.calcularRegraDosPorensProcesso(proc).nivel : '')}</span>
+                            Expurgo Externo: <strong >-${(window.calcularRegraDosPorensProcesso ? window.calcularRegraDosPorensProcesso(proc).diasExpurgados : 0)}d</strong> |
+                            Aging Líquido SA-GTI: <strong >${(window.calcularRegraDosPorensProcesso ? window.calcularRegraDosPorensProcesso(proc).diasLiquido : aging)}d</strong><br>
+                            <span style="font-size:10.5px">${(window.calcularRegraDosPorensProcesso ? window.calcularRegraDosPorensProcesso(proc).nivel : '')}</span>
                         </span>
                     </div>
-                    <div style="border-top: 1px dashed #cbd5e1; padding-top: 8px;">
-                        <strong style="color: var(--sagti-text);">🏗️ Vínculo OpenProject (MS-3) &amp; MariaDB:</strong><br>
-                        <span style="color: #1e293b;">
+                    <div style="padding-top: 8px">
+                        <strong >🏗️ Vínculo OpenProject (MS-3) &amp; MariaDB:</strong><br>
+                        <span >
                             Work Packages: <strong>${(window.vincularProcessoAoOpenProjectCliente ? window.vincularProcessoAoOpenProjectCliente(proc).map(w => '#' + w.id + ' (' + w.assunto.slice(0,28) + ')').join(', ') : '#1232')}</strong><br>
-                            <span style="color:#047857;font-size:10.5px;font-weight:700;">🟢 Sincronizado em MariaDB (glpidb) &amp; Alimentado pelo DOE-SP</span>
+                            <span style="font-size:10.5px;font-weight:700">🟢 Sincronizado em MariaDB (glpidb) &amp; Alimentado pelo DOE-SP</span>
                         </span>
                     </div>
                 </div>
@@ -3432,26 +3426,26 @@ window.renderizarSecaoFixadosEAlertasMesa = function() {
         document.getElementById('modal-titulo').innerText = `Processo SEI: ${p.ID_Processo}`;
         document.getElementById('modal-conteudo').innerHTML = `
             ${timelineHtml}
-            <div style="background: #f0fdf4; border: 1px solid #bbf7d0; border-left: 4px solid #16a34a; padding: 12px 14px; border-radius: 6px; margin-bottom: 14px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px;">
+            <div style="padding: 12px 14px; border-radius: 6px; margin-bottom: 14px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px">
                 <div>
-                    <strong style="color: #14532d; font-size: 12px;">🌐 Consulta em Tempo Real no Site Oficial (PNCP / Compras SP / SEI)</strong>
-                    <div style="font-size: 11px; color: #15803d; margin-top: 2px;">
+                    <strong style="font-size: 12px">🌐 Consulta em Tempo Real no Site Oficial (PNCP / Compras SP / SEI)</strong>
+                    <div style="font-size: 11px; margin-top: 2px">
                         Verifique publicações da Lei 14.133, andamento no SEI-SP ou atas homologadas no PNCP.
                     </div>
                 </div>
-                <div style="display: flex; gap: 8px;">
-                    <button class="btn btn-primary" onclick="window.consultarProcessoAoVivoPNCP('${p.ID_Processo}')" style="background: #01a75f; border-color: #01a75f; font-size: 11px; padding: 5px 12px; font-weight: 700; cursor: pointer;">
+                <div style="display: flex; gap: 8px">
+                    <button class="btn btn-primary" onclick="window.consultarProcessoAoVivoPNCP('${p.ID_Processo}')" style="font-size: 11px; padding: 5px 12px; font-weight: 700; cursor: pointer">
                         🔍 Checar no Site Oficial
                     </button>
-                    <a href="https://pncp.gov.br/app/editais?q=${encodeURIComponent(p.ID_Processo)}" target="_blank" class="btn btn-secondary" style="font-size: 11px; padding: 5px 10px; text-decoration: none; color: var(--sagti-text); font-weight: 600;">
+                    <a href="https://pncp.gov.br/app/editais?q=${encodeURIComponent(p.ID_Processo)}" target="_blank" class="btn btn-outline-secondary" style="font-size: 11px; padding: 5px 10px; text-decoration: none; font-weight: 600">
                         Abrir PNCP ↗
                     </a>
-                    <a href="https://sei.sp.gov.br/sei/controlador_externo.php?acao=usuario_externo_consultar&id_orgao_acesso_externo=0" target="_blank" class="btn btn-secondary" style="font-size: 11px; padding: 5px 10px; text-decoration: none; color: var(--sagti-text); font-weight: 600;">
+                    <a href="https://sei.sp.gov.br/sei/controlador_externo.php?acao=usuario_externo_consultar&id_orgao_acesso_externo=0" target="_blank" class="btn btn-outline-secondary" style="font-size: 11px; padding: 5px 10px; text-decoration: none; font-weight: 600">
                         Abrir SEI-SP ↗
                     </a>
                 </div>
             </div>
-            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 14px;">
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 14px">
                 <div><strong>Eixo de Gestão:</strong> ${p.Eixo_Gestao}</div>
                 <div><strong>Bucket OpenProject:</strong> ${p.Bucket_OpenProject}</div>
                 <div><strong>Status OpenProject:</strong> ${p.Status_OpenProject}</div>
@@ -3461,17 +3455,17 @@ window.renderizarSecaoFixadosEAlertasMesa = function() {
                 <div><strong>Responsável Técnico:</strong> ${p.Responsavel_Tecnico || 'Não atribuído'}</div>
                 <div><strong>Tipo de Processo:</strong> ${p.Tipo_Processo}</div>
             </div>
-            <div style="margin-bottom: 12px;">
+            <div style="margin-bottom: 12px">
                 <strong>Especificação da Demanda:</strong>
-                <p style="background: #f1f5f9; padding: 10px; border-radius: 6px; margin-top: 4px;">${p.Especificacao || '-'}</p>
+                <p style="padding: 10px; border-radius: 6px; margin-top: 4px">${p.Especificacao || '-'}</p>
             </div>
-            <div style="margin-bottom: 12px;">
+            <div style="margin-bottom: 12px">
                 <strong>Observações / Contexto:</strong>
-                <p style="background: #f8fafc; padding: 10px; border-radius: 6px; margin-top: 4px; border: 1px solid #e2e8f0;">${p.Observacao_Texto || 'Sem observações adicionais registradas.'}</p>
+                <p style="padding: 10px; border-radius: 6px; margin-top: 4px">${p.Observacao_Texto || 'Sem observações adicionais registradas.'}</p>
             </div>
             <div>
                 <strong>📜 Linha do Tempo & Histórico Oculto da IA (Memória Contextual):</strong>
-                <div id="modal-historico-ia" style="background: #f1f5f9; padding: 12px; border-radius: 6px; margin-top: 4px; border: 1px solid #cbd5e1; max-height: 160px; overflow-y: auto; font-size: 11.5px; display: flex; flex-direction: column; gap: 6px;">
+                <div id="modal-historico-ia" style="padding: 12px; border-radius: 6px; margin-top: 4px; max-height: 160px; overflow-y: auto; font-size: 11.5px; display: flex; flex-direction: column; gap: 6px">
                     <!-- Injetado dinamicamente -->
                 </div>
             </div>
@@ -3494,17 +3488,30 @@ window.renderizarSecaoFixadosEAlertasMesa = function() {
 // ==========================================
     // GRÁFICOS APEXCHARTS DO LOOKER STUDIO
     // ==========================================
+    const coresChartSpaguas = ['#004b87', '#0284c7', '#01a75f', '#d97706', '#dc2626', '#64748b'];
+    const coresTextoChartSpaguas = ['#ffffff', '#020617', '#052e1b', '#020617', '#ffffff', '#ffffff'];
+    const classesBarraChartSpaguas = [
+        'sagti-chart-primary',
+        'sagti-chart-info',
+        'sagti-chart-success',
+        'sagti-chart-warning',
+        'sagti-chart-danger',
+        'sagti-chart-slate'
+    ];
+    const corTextoChartSpaguas = '#334155';
+    const corGridChartSpaguas = '#e2e8f0';
+
     function criarDonut(elemId, labels, series, colors) {
         const el = document.getElementById(elemId);
         if (!el) return;
         const options = {
             series: series,
             labels: labels,
-            theme: { mode: 'dark' },
-            chart: { type: 'donut', height: 230, foreColor: '#cbd5e1', background: 'transparent' },
-            colors: colors,
-            legend: { position: 'bottom', fontSize: '11.5px', labels: { colors: '#cbd5e1' }, markers: { width: 8, height: 8 } },
-            dataLabels: { enabled: true, style: { fontSize: '12px', fontWeight: '800', colors: ['#ffffff'] }, formatter: val => Math.round(val) + '%' },
+            theme: { mode: 'light' },
+            chart: { type: 'donut', height: 230, foreColor: corTextoChartSpaguas, background: 'transparent', fontFamily: 'Inter, sans-serif' },
+            colors: coresChartSpaguas,
+            legend: { position: 'bottom', fontSize: '12px', labels: { colors: corTextoChartSpaguas }, markers: { width: 8, height: 8 } },
+            dataLabels: { enabled: true, style: { fontSize: '12px', fontWeight: '800', colors: coresTextoChartSpaguas }, formatter: val => Math.round(val) + '%' },
             plotOptions: { pie: { donut: { size: '58%' } } }
         };
         new ApexCharts(el, options).render();
@@ -3642,10 +3649,11 @@ SP-Águas — Governo do Estado de SP`;
                 const options = {
                     series: series,
                     labels: labels,
-                    chart: { type: 'donut', height: 230 },
-                    colors: colors || ['#0056d2', '#56b4f8', '#00a859', '#f59e0b', '#f97316', '#ef4444', '#64748b'],
-                    legend: { position: 'bottom', fontSize: '11px', markers: { width: 8, height: 8 } },
-                    dataLabels: { enabled: true, formatter: val => Math.round(val) + '%' },
+                    theme: { mode: 'light' },
+                    chart: { type: 'donut', height: 230, foreColor: corTextoChartSpaguas, background: 'transparent', fontFamily: 'Inter, sans-serif' },
+                    colors: coresChartSpaguas,
+                    legend: { position: 'bottom', fontSize: '12px', labels: { colors: corTextoChartSpaguas }, markers: { width: 8, height: 8 } },
+                    dataLabels: { enabled: true, style: { colors: coresTextoChartSpaguas }, formatter: val => Math.round(val) + '%' },
                     plotOptions: { pie: { donut: { size: '58%' } } }
                 };
                 new ApexCharts(el, options).render();
@@ -3656,19 +3664,19 @@ SP-Águas — Governo do Estado de SP`;
         }
         // Fallback visual nativo (HTML/CSS) caso ApexCharts CDN não carregue ou falhe
         const total = series.reduce((a, b) => a + b, 0) || 1;
-        let out = '<div style="padding: 10px; display: flex; flex-direction: column; gap: 7px; justify-content: center; height: 100%;">';
+        let out = '<div style="padding: 10px; display: flex; flex-direction: column; gap: 7px; justify-content: center; height: 100%">';
         labels.forEach((lbl, i) => {
             const val = series[i] || 0;
             const pct = Math.round((val / total) * 100);
-            const cor = (colors && colors[i]) ? colors[i] : '#0056d2';
+            const classeBarra = classesBarraChartSpaguas[i % classesBarraChartSpaguas.length];
             out += `
                 <div>
-                    <div style="display: flex; justify-content: space-between; font-size: 11px; margin-bottom: 2px;">
-                        <span style="color: #475569; font-weight: 600;">${lbl}</span>
-                        <span style="font-weight: 700; color: #1e293b;">${val} (${pct}%)</span>
+                    <div style="display: flex; justify-content: space-between; font-size: 11px; margin-bottom: 2px">
+                        <span style="font-weight: 600">${lbl}</span>
+                        <span style="font-weight: 700">${val} (${pct}%)</span>
                     </div>
-                    <div style="background: #e2e8f0; height: 6px; border-radius: 4px; overflow: hidden;">
-                        <div style="background: ${cor}; width: ${pct}%; height: 100%; border-radius: 4px;"></div>
+                    <div class="progress" style="height: 6px">
+                        <div class="progress-bar ${classeBarra}" style="width: ${pct}%"></div>
                     </div>
                 </div>
             `;
@@ -3685,11 +3693,13 @@ SP-Águas — Governo do Estado de SP`;
             try {
                 const options = {
                     series: [{ name: 'Processos', data: data }],
-                    chart: { type: 'bar', height: 250, toolbar: { show: false } },
+                    chart: { type: 'bar', height: 250, toolbar: { show: false }, foreColor: corTextoChartSpaguas, fontFamily: 'Inter, sans-serif' },
                     plotOptions: { bar: { horizontal: true, borderRadius: 4, barHeight: '55%' } },
-                    colors: ['#0056d2'],
-                    xaxis: { categories: categories, labels: { style: { fontSize: '11px' } } },
-                    dataLabels: { enabled: true, style: { fontSize: '11px' } }
+                    colors: [coresChartSpaguas[0]],
+                    xaxis: { categories: categories, labels: { style: { colors: corTextoChartSpaguas, fontSize: '12px' } } },
+                    yaxis: { labels: { style: { colors: corTextoChartSpaguas } } },
+                    grid: { borderColor: corGridChartSpaguas },
+                    dataLabels: { enabled: true, style: { fontSize: '11px', colors: ['#ffffff'] } }
                 };
                 new ApexCharts(el, options).render();
                 return;
@@ -3699,18 +3709,18 @@ SP-Águas — Governo do Estado de SP`;
         }
         // Fallback visual nativo
         const maxVal = Math.max(...data, 1);
-        let out = '<div style="padding: 10px; display: flex; flex-direction: column; gap: 8px; justify-content: center; height: 100%;">';
+        let out = '<div style="padding: 10px; display: flex; flex-direction: column; gap: 8px; justify-content: center; height: 100%">';
         categories.forEach((cat, i) => {
             const val = data[i] || 0;
             const pct = Math.round((val / maxVal) * 100);
             out += `
                 <div>
-                    <div style="display: flex; justify-content: space-between; font-size: 11px; margin-bottom: 2px;">
-                        <span style="color: #475569; font-weight: 600;">${cat}</span>
-                        <span style="font-weight: 700; color: #0544cf;">${val} proc.</span>
+                    <div style="display: flex; justify-content: space-between; font-size: 11px; margin-bottom: 2px">
+                        <span style="font-weight: 600">${cat}</span>
+                        <span style="font-weight: 700">${val} proc.</span>
                     </div>
-                    <div style="background: #e2e8f0; height: 7px; border-radius: 4px; overflow: hidden;">
-                        <div style="background: #0544cf; width: ${pct}%; height: 100%; border-radius: 4px;"></div>
+                    <div class="progress" style="height: 7px">
+                    <div class="progress-bar bg-primary" style="width: ${pct}%"></div>
                     </div>
                 </div>
             `;
@@ -3734,12 +3744,14 @@ SP-Águas — Governo do Estado de SP`;
                     ],
                     chart: { type: 'bar', height: 280, stacked: true, toolbar: { show: false } },
                     plotOptions: { bar: { horizontal: false, borderRadius: 3, columnWidth: '50%' } },
-                    colors: ['#64748b', '#ca8a04', '#ea580c', '#16a34a'],
+                    colors: coresChartSpaguas,
                     xaxis: {
                         categories: ['A-011. ETP', 'A-001. Atestes', 'A-002. Faturas', 'A-010. Suporte', 'A-017. Infra', 'A-016. PDTIC', 'A-004. Licenças'],
-                        labels: { style: { fontSize: '10px' } }
+                        labels: { style: { colors: corTextoChartSpaguas, fontSize: '12px' } }
                     },
-                    legend: { position: 'top', fontSize: '11px' }
+                    yaxis: { labels: { style: { colors: corTextoChartSpaguas } } },
+                    grid: { borderColor: corGridChartSpaguas },
+                    legend: { position: 'top', fontSize: '12px', labels: { colors: corTextoChartSpaguas } }
                 };
                 new ApexCharts(el, options).render();
                 return;
@@ -3749,14 +3761,14 @@ SP-Águas — Governo do Estado de SP`;
         }
         // Fallback visual nativo
         el.innerHTML = `
-            <div style="padding: 12px; font-size: 11px; color: #475569;">
-                <div style="display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 8px;">
-                    <span class="pill-tag pill-gray">⚪ Rotina: 92</span>
-                    <span class="pill-tag pill-yellow">🟡 Monitoramento: 50</span>
-                    <span class="pill-tag pill-orange">🟠 Saneamento: 26</span>
-                    <span class="pill-tag pill-green">🟢 Fluxo Normal: 11</span>
+            <div style="padding: 12px; font-size: 11px">
+                <div style="display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 8px">
+                    <span class="badge bg-secondary-lt">⚪ Rotina: 92</span>
+                    <span class="badge bg-amber-lt">🟡 Monitoramento: 50</span>
+                    <span class="badge bg-red-lt">🟠 Saneamento: 26</span>
+                    <span class="badge bg-green-lt">🟢 Fluxo Normal: 11</span>
                 </div>
-                <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 6px; padding: 8px; line-height: 1.5;">
+                <div style="border-radius: 6px; padding: 8px; line-height: 1.5">
                     Buckets: ETP (55), Atestes (41), Faturas (32), Suporte (19), Infra (16), PDTIC (15), Licenças (1).
                 </div>
             </div>
@@ -3895,7 +3907,7 @@ window.filtrarPorDiretoriaSpAguas = function(diretoria) {
         var elTag = document.getElementById('dash-banner-tag');
         if (elTag) elTag.innerText = u(d.bannerTag);
         var elBanner = document.getElementById('dash-banner-principal');
-        if (elBanner && d.corBanner) elBanner.style.background = d.corBanner;
+        if (elBanner) elBanner.classList.add('card');
 
         // 3. Badge da Sidebar
         var navBadgeDash = document.querySelector('#sidebar .nav-item[data-tab="dashboards"] .nav-badge');
@@ -4061,24 +4073,24 @@ window.filtrarPorDiretoriaSpAguas = function(diretoria) {
 
     function badgeTipo(tipo) {
         var map = {
-            'Projeto': 'background:#dbeafe;color:#1e40af;',
-            'Tarefas': 'background:#f1f5f9;color:#334155;',
-            'Iniciativas': 'background:#ede9fe;color:#5b21b6;',
-            'Marco': 'background:#fef3c7;color:#92400e;',
-            'KPI': 'background:#dcfce7;color:#166534;',
-            'Demandas': 'background:#e0f2fe;color:#0369a1;'
+            'Projeto': 'bg-blue-lt',
+            'Tarefas': 'bg-secondary-lt',
+            'Iniciativas': 'bg-purple-lt',
+            'Marco': 'bg-amber-lt',
+            'KPI': 'bg-green-lt',
+            'Demandas': 'bg-cyan-lt'
         };
-        var st = map[tipo] || 'background:#f1f5f9;color:#475569;';
-        return '<span style="padding:2px 8px;border-radius:10px;font-size:11px;font-weight:700;' + st + '">' + tipo + '</span>';
+        return '<span class="badge ' + (map[tipo] || 'bg-secondary-lt') + '">' + tipo + '</span>';
     }
 
     function badgeStatus(status) {
-        var st = 'background:#f1f5f9;color:#475569;';
-        if (status.indexOf('progresso') !== -1) st = 'background:#dcfce7;color:#166534;';
-        else if (status.indexOf('espera') !== -1) st = 'background:#fef3c7;color:#92400e;';
-        else if (status.indexOf('Novo') !== -1) st = 'background:#e0f2fe;color:#0369a1;';
-        else if (status.indexOf('Encerrado') !== -1) st = 'background:#e2e8f0;color:#475569;';
-        return '<span style="padding:2px 8px;border-radius:10px;font-size:11px;font-weight:700;' + st + '">' + status + '</span>';
+        var normalized = String(status || '').toLowerCase();
+        var badgeClass = 'bg-secondary-lt';
+        if (normalized.indexOf('progresso') !== -1) badgeClass = 'bg-green-lt';
+        else if (normalized.indexOf('espera') !== -1) badgeClass = 'bg-amber-lt';
+        else if (normalized.indexOf('novo') !== -1) badgeClass = 'bg-blue-lt';
+        else if (normalized.indexOf('encerrado') !== -1) badgeClass = 'bg-secondary-lt';
+        return '<span class="badge ' + badgeClass + '">' + status + '</span>';
     }
 
     window.inicializarFiltrosPortfolioOP = function() {
@@ -4149,17 +4161,17 @@ window.filtrarPorDiretoriaSpAguas = function(diretoria) {
         if (lblCount) lblCount.innerText = 'Exibindo ' + filtrados.length + ' de ' + window.OP_PACOTES_OFICIAIS.length + ' pacotes';
 
         tbody.innerHTML = filtrados.slice(0, 250).map(function(p) {
-            var crono = (p.ini || p.fim) ? ((p.ini || '?') + ' \u2192 ' + (p.fim || '?')) : '<span style="color:#94a3b8;">Cont\u00ednuo</span>';
-            var paiTxt = p.pai ? '<span style="color:#0369a1;font-weight:600;font-size:11px;">\u21b3 ' + p.pai + '</span>' : '<span style="color:#64748b;font-size:11px;">Raiz do Projeto</span>';
-            return '<tr style="border-bottom:1px solid #f1f5f9;">' +
-                '<td style="padding:8px 12px;font-weight:800;font-family:monospace;">' + (p.id ? ('<a href="https://projetos.spaguas.sp.gov.br/work_packages/' + p.id + '" target="_blank" rel="noopener noreferrer" style="color:#0070ba;text-decoration:underline;" title="Abrir Pacote no OpenProject Oficial">#' + p.id + '</a>') : '<span style="color:#94a3b8;">#REF</span>') + '</td>' +
-                '<td style="padding:8px 12px;font-weight:600;color:#334155;">' + p.projeto + '</td>' +
-                '<td style="padding:8px 12px;">' + badgeTipo(p.tipo) + '</td>' +
-                '<td style="padding:8px 12px;font-weight:700;color:#0f172a;">' + p.assunto + '</td>' +
-                '<td style="padding:8px 12px;">' + paiTxt + '</td>' +
-                '<td style="padding:8px 12px;">' + badgeStatus(p.status) + '</td>' +
-                '<td style="padding:8px 12px;color:#475569;font-size:11.5px;">\ud83d\udc64 ' + (p.atrib || p.autor || 'SP-\u00c1guas') + '</td>' +
-                '<td style="padding:8px 12px;text-align:center;font-size:11px;color:#475569;white-space:nowrap;">' + crono + '</td>' +
+            var crono = (p.ini || p.fim) ? ((p.ini || '?') + ' \u2192 ' + (p.fim || '?')) : '<span >Cont\u00ednuo</span>';
+            var paiTxt = p.pai ? '<span style="font-weight:600;font-size:11px">\u21b3 ' + p.pai + '</span>' : '<span style="font-size:11px">Raiz do Projeto</span>';
+            return '<tr >' +
+                '<td style="padding:8px 12px;font-weight:800">' + (p.id ? ('<a href="https://projetos.spaguas.sp.gov.br/work_packages/' + p.id + '" target="_blank" rel="noopener noreferrer" style="text-decoration:underline" title="Abrir Pacote no OpenProject Oficial">#' + p.id + '</a>') : '<span >#REF</span>') + '</td>' +
+                '<td style="padding:8px 12px;font-weight:600">' + p.projeto + '</td>' +
+                '<td style="padding:8px 12px">' + badgeTipo(p.tipo) + '</td>' +
+                '<td style="padding:8px 12px;font-weight:700">' + p.assunto + '</td>' +
+                '<td style="padding:8px 12px">' + paiTxt + '</td>' +
+                '<td style="padding:8px 12px">' + badgeStatus(p.status) + '</td>' +
+                '<td style="padding:8px 12px;font-size:11.5px">\ud83d\udc64 ' + (p.atrib || p.autor || 'SP-\u00c1guas') + '</td>' +
+                '<td style="padding:8px 12px;text-align:center;font-size:11px;white-space:nowrap">' + crono + '</td>' +
                 '</tr>';
         }).join('');
     };
@@ -4196,21 +4208,21 @@ window.filtrarPorDiretoriaSpAguas = function(diretoria) {
 
         tbody.innerHTML = itensGti.map(function(p) {
             var bgTag = p.backlog ? p.backlog.split('.')[0] : (p.projeto === 'Divisão de Infraestrutura' ? 'DIF-INFRA' : 'SA-GTI');
-            var corBg = bgTag.indexOf('A-018') !== -1 ? 'background:#dbeafe;color:#1e40af;' : (bgTag.indexOf('A-017') !== -1 || bgTag === 'DIF-INFRA' ? 'background:#ede9fe;color:#5b21b6;' : 'background:#dcfce7;color:#166534;');
+            var tagClass = bgTag.indexOf('A-018') !== -1 ? 'bg-blue-lt text-blue' : (bgTag.indexOf('A-017') !== -1 || bgTag === 'DIF-INFRA' ? 'bg-purple-lt text-purple' : 'bg-green-lt text-green');
             var respNome = (p.encarr || p.atrib || p.autor || 'SA-GTI');
             var isLuiz = respNome.indexOf('Luiz') !== -1 || (p.autor || '').indexOf('Luiz') !== -1;
             
-            return '<tr style="border-bottom:1px solid #f1f5f9;' + (isLuiz ? 'background:#f0fdf4;' : '') + '">' +
-                '<td style="padding:8px 12px;font-weight:800;font-family:monospace;">' +
-                    '<a href="https://projetos.spaguas.sp.gov.br/work_packages/' + p.id + '" target="_blank" style="color:#0056d2;text-decoration:none;" title="Abrir Pacote #' + p.id + ' no OpenProject">#' + p.id + ' &#8599;</a>' +
+            return '<tr class="' + (isLuiz ? 'table-success' : '') + '">' +
+                '<td style="padding:8px 12px;font-weight:800">' +
+                    '<a href="https://projetos.spaguas.sp.gov.br/work_packages/' + p.id + '" target="_blank" style="text-decoration:none" title="Abrir Pacote #' + p.id + ' no OpenProject">#' + p.id + ' &#8599;</a>' +
                 '</td>' +
-                '<td style="padding:8px 12px;"><span style="padding:2px 8px;border-radius:8px;font-size:11px;font-weight:700;' + corBg + '">' + (p.backlog || p.projeto) + '</span></td>' +
-                '<td style="padding:8px 12px;">' + badgeTipo(p.tipo) + '</td>' +
-                '<td style="padding:8px 12px;font-weight:700;color:#0f172a;">' + p.assunto + '</td>' +
-                '<td style="padding:8px 12px;font-size:11px;color:#0369a1;font-weight:600;">' + (p.pai || 'Raiz SA-GTI') + '</td>' +
-                '<td style="padding:8px 12px;">' + badgeStatus(p.status) + '</td>' +
-                '<td style="padding:8px 12px;font-weight:600;color:#334155;">' + (isLuiz ? '👑 ' : '👤 ') + respNome + '</td>' +
-                '<td style="padding:8px 12px;text-align:center;font-size:11px;color:#475569;">' + (p.fim || p.ini || 'Contínuo') + '</td>' +
+                '<td style="padding:8px 12px"><span class="badge ' + tagClass + '">' + (p.backlog || p.projeto) + '</span></td>' +
+                '<td style="padding:8px 12px">' + badgeTipo(p.tipo) + '</td>' +
+                '<td style="padding:8px 12px;font-weight:700">' + p.assunto + '</td>' +
+                '<td style="padding:8px 12px;font-size:11px;font-weight:600">' + (p.pai || 'Raiz SA-GTI') + '</td>' +
+                '<td style="padding:8px 12px">' + badgeStatus(p.status) + '</td>' +
+                '<td style="padding:8px 12px;font-weight:600">' + (isLuiz ? '👑 ' : '👤 ') + respNome + '</td>' +
+                '<td style="padding:8px 12px;text-align:center;font-size:11px">' + (p.fim || p.ini || 'Contínuo') + '</td>' +
                 '</tr>';
         }).join('');
     };
@@ -4223,12 +4235,12 @@ window.filtrarPorDiretoriaSpAguas = function(diretoria) {
         if (gridKpis && gridKpis.innerHTML.trim() === '') {
             var kpis = window.OP_PACOTES_OFICIAIS.filter(function(p) { return p.tipo === 'KPI'; });
             gridKpis.innerHTML = kpis.map(function(k) {
-                return '<div style="background:#f8fafc;border:1px solid #e2e8f0;border-left:4px solid #0284c7;border-radius:6px;padding:10px;">' +
-                    '<div style="font-size:10.5px;font-weight:800;color:#0284c7;">' +
-                        '<a href="https://projetos.spaguas.sp.gov.br/work_packages/' + k.id + '" target="_blank" style="color:#0284c7;text-decoration:none;" title="Abrir KPI #' + k.id + ' no OpenProject">#' + k.id + ' &#8599;</a> • INDICADOR OFICIAL' +
+                return '<div style="border-radius:6px;padding:10px">' +
+                    '<div style="font-size:10.5px;font-weight:800">' +
+                        '<a href="https://projetos.spaguas.sp.gov.br/work_packages/' + k.id + '" target="_blank" style="text-decoration:none" title="Abrir KPI #' + k.id + ' no OpenProject">#' + k.id + ' &#8599;</a> • INDICADOR OFICIAL' +
                     '</div>' +
-                    '<div style="font-size:12px;font-weight:700;color:#0f172a;margin:4px 0;">' + k.assunto + '</div>' +
-                    '<div style="font-size:11px;color:#64748b;line-height:1.35;">' + (k.desc || 'Monitoramento contínuo PDTIC') + '</div>' +
+                    '<div style="font-size:12px;font-weight:700;margin:4px 0">' + k.assunto + '</div>' +
+                    '<div style="font-size:11px;line-height:1.35">' + (k.desc || 'Monitoramento contínuo PDTIC') + '</div>' +
                     '</div>';
             }).join('');
         }
@@ -4251,16 +4263,16 @@ window.filtrarPorDiretoriaSpAguas = function(diretoria) {
 
         tbody.innerHTML = inics.map(function(i) {
             var isLuiz = (i.atrib || '').indexOf('Luiz') !== -1;
-            var prioColor = i.prio === 'Imediata' || i.prio.indexOf('Alt') !== -1 ? 'background:#fee2e2;color:#991b1b;' : 'background:#e0f2fe;color:#0369a1;';
-            return '<tr style="border-bottom:1px solid #f1f5f9;' + (isLuiz ? 'background:#f0fdf4;' : '') + '">' +
-                '<td style="padding:8px 12px;font-weight:800;font-family:monospace;">' +
-                    '<a href="https://projetos.spaguas.sp.gov.br/work_packages/' + i.id + '" target="_blank" style="color:#0369a1;text-decoration:none;" title="Abrir Iniciativa #' + i.id + ' no OpenProject">#' + i.id + ' &#8599;</a>' +
+            var prioClass = i.prio === 'Imediata' || i.prio.indexOf('Alt') !== -1 ? 'bg-red-lt text-red' : 'bg-blue-lt text-blue';
+            return '<tr class="' + (isLuiz ? 'table-success' : '') + '">' +
+                '<td style="padding:8px 12px;font-weight:800">' +
+                    '<a href="https://projetos.spaguas.sp.gov.br/work_packages/' + i.id + '" target="_blank" style="text-decoration:none" title="Abrir Iniciativa #' + i.id + ' no OpenProject">#' + i.id + ' &#8599;</a>' +
                 '</td>' +
-                '<td style="padding:8px 12px;font-weight:700;color:#0369a1;">' + i.projeto + '</td>' +
-                '<td style="padding:8px 12px;font-weight:700;color:#0f172a;">' + i.assunto + '</td>' +
-                '<td style="padding:8px 12px;"><span style="padding:2px 8px;border-radius:8px;font-size:11px;font-weight:700;' + prioColor + '">' + i.prio + '</span></td>' +
-                '<td style="padding:8px 12px;font-size:11.5px;color:#334155;">' + (isLuiz ? '👑 <strong>Luiz Antonio</strong> (SA-GTI)' : ('👤 ' + (i.atrib || i.autor || 'SA-GTI'))) + '</td>' +
-                '<td style="padding:8px 12px;text-align:center;font-size:11px;color:#475569;">' + ((i.ini || '2027') + ' → ' + (i.fim || '2030')) + '</td>' +
+                '<td style="padding:8px 12px;font-weight:700">' + i.projeto + '</td>' +
+                '<td style="padding:8px 12px;font-weight:700">' + i.assunto + '</td>' +
+                '<td style="padding:8px 12px"><span class="badge ' + prioClass + '">' + i.prio + '</span></td>' +
+                '<td style="padding:8px 12px;font-size:11.5px">' + (isLuiz ? '👑 <strong>Luiz Antonio</strong> (SA-GTI)' : ('👤 ' + (i.atrib || i.autor || 'SA-GTI'))) + '</td>' +
+                '<td style="padding:8px 12px;text-align:center;font-size:11px">' + ((i.ini || '2027') + ' → ' + (i.fim || '2030')) + '</td>' +
                 '</tr>';
         }).join('');
     };
@@ -4346,15 +4358,11 @@ window.filtrarPorDiretoriaSpAguas = function(diretoria) {
         var btnAtras = document.getElementById('btn-glpi-filtro-atrasados');
         if (btnTodos && btnAtras) {
             if (window.filtroGlpiAtrasadosApenas) {
-                btnTodos.className = 'btn btn-secondary';
-                btnAtras.className = 'btn btn-primary';
-                btnAtras.style.background = '#dc2626';
-                btnAtras.style.color = '#fff';
+                btnTodos.className = 'btn btn-outline-secondary';
+                btnAtras.className = 'btn btn-danger';
             } else {
                 btnTodos.className = 'btn btn-primary';
-                btnAtras.className = 'btn btn-secondary';
-                btnAtras.style.background = '#fef2f2';
-                btnAtras.style.color = '#991b1b';
+                btnAtras.className = 'btn btn-outline-danger';
             }
         }
         window.filtrarTabelaGlpi();
@@ -4388,33 +4396,33 @@ window.filtrarPorDiretoriaSpAguas = function(diretoria) {
 
         tbody.innerHTML = filtrados.map(function(t) {
             var badgeSla = t.atrasado 
-                ? '<span style="background:#fee2e2;color:#991b1b;padding:3px 10px;border-radius:12px;font-weight:800;font-size:11px;display:inline-flex;align-items:center;gap:4px;">&#9888;&#65039; ' + t.sla + '</span>'
-                : '<span style="background:#dcfce7;color:#166534;padding:3px 10px;border-radius:12px;font-weight:700;font-size:11px;">&#1410;&#65039; ' + t.sla + '</span>';
+                ? '<span style="padding:3px 10px;border-radius:12px;font-weight:800;font-size:11px;display:inline-flex;align-items:center;gap:4px">&#9888;&#65039; ' + t.sla + '</span>'
+                : '<span style="padding:3px 10px;border-radius:12px;font-weight:700;font-size:11px">&#1410;&#65039; ' + t.sla + '</span>';
 
             var corTipo = t.tipo.indexOf('Incidente') !== -1 ? '#dc2626' : '#0284c7';
             var badgeStatus = t.status.indexOf('Novo') !== -1 
-                ? '<span style="background:#e0f2fe;color:#0369a1;padding:2px 8px;border-radius:10px;font-weight:700;font-size:10.5px;">Novo (N1)</span>'
+                ? '<span style="padding:2px 8px;border-radius:10px;font-weight:700;font-size:10.5px">Novo (N1)</span>'
                 : (t.status.indexOf('Aguardando') !== -1 
-                    ? '<span style="background:#fef3c7;color:#92400e;padding:2px 8px;border-radius:10px;font-weight:700;font-size:10.5px;">Aguardando</span>'
-                    : '<span style="background:#dbeafe;color:#1d4ed8;padding:2px 8px;border-radius:10px;font-weight:700;font-size:10.5px;">Em Atendimento</span>');
+                    ? '<span style="padding:2px 8px;border-radius:10px;font-weight:700;font-size:10.5px">Aguardando</span>'
+                    : '<span style="padding:2px 8px;border-radius:10px;font-weight:700;font-size:10.5px">Em Atendimento</span>');
 
-            return '<tr style="border-bottom:1px solid #f1f5f9;">' +
-                '<td style="padding:10px 12px;font-weight:800;font-family:monospace;">' +
-                    '<a href="https://atendimento.spaguas.sp.gov.br/front/ticket.form.php?id=' + t.id + '" target="_blank" style="color:#0056d2;text-decoration:none;" title="Abrir no GLPI Oficial">#' + t.id + ' &#8599;</a>' +
+            return '<tr >' +
+                '<td style="padding:10px 12px;font-weight:800">' +
+                    '<a href="https://atendimento.spaguas.sp.gov.br/front/ticket.form.php?id=' + t.id + '" target="_blank" style="text-decoration:none" title="Abrir no GLPI Oficial">#' + t.id + ' &#8599;</a>' +
                 '</td>' +
-                '<td style="padding:10px 12px;font-weight:600;color:#1e293b;">' + window.escapeHtml(t.solicitante) + '</td>' +
-                '<td style="padding:10px 12px;"><span style="background:' + corTipo + ';color:var(--sagti-text);padding:2px 8px;border-radius:4px;font-size:10.5px;font-weight:700;">' + window.escapeHtml(t.tipo) + '</span></td>' +
-                '<td style="padding:10px 12px;">' +
-                    '<div style="font-weight:700;color:#0f172a;font-size:12px;">' + window.escapeHtml(t.titulo) + '</div>' +
-                    '<div style="font-size:10.5px;color:#64748b;margin-top:2px;">&#128194; ' + window.escapeHtml(t.categoria) + ' &bull; ' + window.escapeHtml(t.urgencia) + '</div>' +
+                '<td style="padding:10px 12px;font-weight:600">' + window.escapeHtml(t.solicitante) + '</td>' +
+                '<td style="padding:10px 12px"><span style="padding:2px 8px;border-radius:4px;font-size:10.5px;font-weight:700">' + window.escapeHtml(t.tipo) + '</span></td>' +
+                '<td style="padding:10px 12px">' +
+                    '<div style="font-weight:700;font-size:12px">' + window.escapeHtml(t.titulo) + '</div>' +
+                    '<div style="font-size:10.5px;margin-top:2px">&#128194; ' + window.escapeHtml(t.categoria) + ' &bull; ' + window.escapeHtml(t.urgencia) + '</div>' +
                 '</td>' +
-                '<td style="padding:10px 12px;">' +
-                    '<div style="font-weight:700;color:#1e293b;font-size:11.5px;">' + window.escapeHtml(t.fila) + '</div>' +
-                    '<div style="font-size:10.5px;color:#475569;">&#128100; ' + window.escapeHtml(t.tecnico) + '</div>' +
+                '<td style="padding:10px 12px">' +
+                    '<div style="font-weight:700;font-size:11.5px">' + window.escapeHtml(t.fila) + '</div>' +
+                    '<div style="font-size:10.5px">&#128100; ' + window.escapeHtml(t.tecnico) + '</div>' +
                 '</td>' +
-                '<td style="padding:10px 12px;">' + badgeStatus + '</td>' +
-                '<td style="padding:10px 12px;text-align:center;">' + badgeSla + '</td>' +
-                '<td style="padding:10px 12px;font-size:11px;color:#334155;max-width:280px;">' + window.escapeHtml(t.acao) + '</td>' +
+                '<td style="padding:10px 12px">' + badgeStatus + '</td>' +
+                '<td style="padding:10px 12px;text-align:center">' + badgeSla + '</td>' +
+                '<td style="padding:10px 12px;font-size:11px;max-width:280px">' + window.escapeHtml(t.acao) + '</td>' +
             '</tr>';
         }).join('');
     };
@@ -4473,13 +4481,13 @@ window.filtrarPorDiretoriaSpAguas = function(diretoria) {
         var base = (window.GLPI_TICKETS_REAIS && window.GLPI_TICKETS_REAIS.length > 0) ? window.GLPI_TICKETS_REAIS : window.CHAMADOS_GLPI_REAIS;
         var criticos = base.filter(function(t) { return t.atrasado; });
         cont.innerHTML = criticos.map(function(c) {
-            return '<div style="background:#ffffff;border:1px solid #fca5a5;border-radius:6px;padding:10px 12px;">' +
-                '<div style="display:flex;justify-content:space-between;font-weight:800;color:#991b1b;margin-bottom:4px;">' +
+            return '<div style="border-radius:6px;padding:10px 12px">' +
+                '<div style="display:flex;justify-content:space-between;font-weight:800;margin-bottom:4px">' +
                     '<span>Ticket #' + c.id + ' (' + window.escapeHtml(c.fila) + ')</span>' +
-                    '<span style="color:#dc2626;font-size:11px;">&#9888;&#65039; ' + window.escapeHtml(c.sla) + '</span>' +
+                    '<span style="font-size:11px">&#9888;&#65039; ' + window.escapeHtml(c.sla) + '</span>' +
                 '</div>' +
-                '<div style="font-weight:700;color:#1e293b;margin-bottom:4px;font-size:11.5px;">' + window.escapeHtml(c.titulo) + '</div>' +
-                '<div style="font-size:11px;color:#047857;"><strong>A&ccedil;&atilde;o N2:</strong> ' + window.escapeHtml(c.acao) + '</div>' +
+                '<div style="font-weight:700;margin-bottom:4px;font-size:11.5px">' + window.escapeHtml(c.titulo) + '</div>' +
+                '<div style="font-size:11px"><strong>A&ccedil;&atilde;o N2:</strong> ' + window.escapeHtml(c.acao) + '</div>' +
             '</div>';
         }).join('');
         box.style.display = 'block';
@@ -4547,14 +4555,14 @@ window.modoFarolAtivo = 'todos';
 
             return `
                 <tr>
-                    <td style="font-family: monospace; font-weight: 700;"><a href="javascript:void(0)" onclick="window.abrirDetalhesProcesso('${p.ID_Processo}')" style="color: #0544cf; text-decoration: underline; cursor: pointer;" title="Clique para abrir Dossiê e Timeline">${p.ID_Processo}</a></td>
-                    <td style="max-width: 320px; line-height: 1.4;">${p.Especificacao}</td>
-                    <td>${p.Responsavel_Tecnico || '<span style="color:#94a3b8;">Não atribuído</span>'}</td>
+                    <td style="font-weight: 700"><a href="javascript:void(0)" onclick="window.abrirDetalhesProcesso('${p.ID_Processo}')" style="text-decoration: underline; cursor: pointer" title="Clique para abrir Dossiê e Timeline">${p.ID_Processo}</a></td>
+                    <td style="max-width: 320px; line-height: 1.4">${p.Especificacao}</td>
+                    <td>${p.Responsavel_Tecnico || '<span >Não atribuído</span>'}</td>
                     <td>${farolTag}</td>
-                    <td style="font-weight: 700; text-align: center;">${p.Dias_Ultima_Mov}d</td>
+                    <td style="font-weight: 700; text-align: center">${p.Dias_Ultima_Mov}d</td>
                     <td>${custodia}</td>
                     <td>
-                        <button class="btn btn-secondary" style="padding: 3px 8px; font-size: 11px;" onclick="window.abrirModalCheckpointComProc('${p.ID_Processo}')">📧 Checkpoint</button>
+                        <button class="btn btn-outline-secondary" style="padding: 3px 8px; font-size: 11px" onclick="window.abrirModalCheckpointComProc('${p.ID_Processo}')">📧 Checkpoint</button>
                     </td>
                 </tr>
             `;
@@ -4599,7 +4607,7 @@ window.modoFarolAtivo = 'todos';
         const chat = document.getElementById('chat-messages');
         if (chat) {
             chat.innerHTML += `
-                <div style="background: #eff6ff; border: 1px solid #bfdbfe; border-left: 4px solid #0544cf; padding: 12px; border-radius: 8px; font-size: 12px; color: #1e3a8a; margin-top: 6px;">
+                <div style="padding: 12px; border-radius: 8px; font-size: 12px; margin-top: 6px">
                     <strong>📥 Processo Carregado para Contexto da IA:</strong><br>
                     • <strong>SEI:</strong> ${proc.ID_Processo} | <strong>Aging:</strong> ${proc.Dias_Ultima_Mov} dias (${proc.Faixa_Aging})<br>
                     • <strong>Objeto:</strong> ${proc.Especificacao}<br>
@@ -4629,7 +4637,7 @@ window.modoFarolAtivo = 'todos';
         const chat = document.getElementById('chat-messages');
         if (chat) {
             chat.innerHTML += `
-                <div style="background: #f0fdf4; border: 1px solid #bbf7d0; border-left: 4px solid #16a34a; padding: 12px; border-radius: 8px; font-size: 12px; color: #14532d; margin-top: 6px;">
+                <div style="padding: 12px; border-radius: 8px; font-size: 12px; margin-top: 6px">
                     <strong>👥 Portfólio Carregado: ${tecnico} (${lista.length} processos ativos):</strong><br>
                     ${lista.map(p => `• <strong>${p.ID_Processo}</strong> (${p.Dias_Ultima_Mov}d): ${p.Especificacao.slice(0, 45)}... [${p.Farol_Criticidade}]`).join('<br>')}
                 </div>
@@ -4981,9 +4989,9 @@ window.modoFarolAtivo = 'todos';
 
             postitHtml = `
                 <div class="postit-tag ${corClasse}">
-                    <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+                    <div style="display: flex; justify-content: space-between; align-items: flex-start">
                         <strong>📌 Post-it:</strong>
-                        <button onclick="removerPostitCard('${p.ID_Processo}')" style="border:none; background:none; cursor:pointer; font-size:11px; opacity:0.7;">✖</button>
+                        <button onclick="removerPostitCard('${p.ID_Processo}')" style="cursor:pointer; font-size:11px; opacity:0.7" class="btn btn-ghost-secondary">✖</button>
                     </div>
                     <div>${postit.texto}</div>
                 </div>
@@ -4991,18 +4999,18 @@ window.modoFarolAtivo = 'todos';
         }
 
         return `
-            <div class="kpi-card" draggable="true" ondragstart="arrastarItem(event, '${p.ID_Processo}')" style="border-left: 4px solid ${borderColor}; cursor: grab; padding: 12px 14px; margin-bottom: 2px;">
-                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
-                    <strong style="font-size: 12px; color: var(--sp-blue-dark); cursor: pointer;" onclick="abrirDetalhesProcesso('${p.ID_Processo}')">${p.ID_Processo}</strong>
-                    <div style="display: flex; align-items: center; gap: 8px;">
-                        <button onclick="adicionarPostitCardPrompt('${p.ID_Processo}')" title="Adicionar Post-it" style="border: none; background: #fef08a; color: #854d0e; border-radius: 4px; padding: 2px 6px; font-size: 10px; cursor: pointer; font-weight: 600;">📌 Post-it</button>
-                        <span style="cursor: pointer; font-size: 14px;" onclick="toggleFixado('${p.ID_Processo}')">${isFixado ? '⭐' : '☆'}</span>
+            <div class="kpi-card card card-sm" draggable="true" ondragstart="arrastarItem(event, '${p.ID_Processo}')" style="cursor: grab; padding: 12px 14px; margin-bottom: 2px">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px">
+                    <strong style="font-size: 12px; cursor: pointer" onclick="abrirDetalhesProcesso('${p.ID_Processo}')">${p.ID_Processo}</strong>
+                    <div style="display: flex; align-items: center; gap: 8px">
+                        <button onclick="adicionarPostitCardPrompt('${p.ID_Processo}')" title="Adicionar Post-it" style="border-radius: 4px; padding: 2px 6px; cursor: pointer; font-weight: 600" class="btn btn-ghost-secondary">📌 Post-it</button>
+                        <span style="cursor: pointer; font-size: 14px" onclick="toggleFixado('${p.ID_Processo}')">${isFixado ? '⭐' : '☆'}</span>
                     </div>
                 </div>
-                <p style="font-size: 11.5px; color: #475569; margin: 4px 0; line-height: 1.4; max-height: 38px; overflow: hidden; text-overflow: ellipsis;">
+                <p style="font-size: 11.5px; margin: 4px 0; line-height: 1.4; max-height: 38px; overflow: hidden; text-overflow: ellipsis">
                     ${p.Especificacao || p.Tipo_Processo}
                 </p>
-                <div style="display: flex; justify-content: space-between; align-items: center; font-size: 10.5px; color: #94a3b8; margin-top: 6px;">
+                <div style="display: flex; justify-content: space-between; align-items: center; font-size: 10.5px; margin-top: 6px">
                     <span>👤 ${p.Responsavel_Tecnico || 'Sem responsável'}</span>
                     <span class="pill-tag ${pillFarol}">${p.Faixa_Aging || 'Aging'}</span>
                 </div>
@@ -5067,11 +5075,10 @@ window.modoFarolAtivo = 'todos';
         window.painelRaciAberto = !window.painelRaciAberto;
         if (window.painelRaciAberto) {
             p.style.display = 'flex';
-            if (btn) btn.style.background = 'rgba(255,255,255,0.25)';
         } else {
             p.style.display = 'none';
-            if (btn) btn.style.background = 'rgba(255,255,255,0.15)';
         }
+        if (btn) btn.classList.toggle('active', window.painelRaciAberto);
     };
 
     window.inserirPromptRapido = function(tipo) {
@@ -5199,10 +5206,10 @@ window.modoFarolAtivo = 'todos';
             const p = PROCESSOS.find(item => item.ID_Processo === id);
             if (p) {
                 pautaHtml += '<tr>' +
-                    '<td style="padding: 6px 10px; border: 1px solid #cbd5e1; font-weight: bold;">' + p.ID_Processo + '</td>' +
-                    '<td style="padding: 6px 10px; border: 1px solid #cbd5e1;">' + p.Especificacao + '</td>' +
-                    '<td style="padding: 6px 10px; border: 1px solid #cbd5e1;">' + (p.Responsavel_Tecnico || 'GTI') + '</td>' +
-                    '<td style="padding: 6px 10px; border: 1px solid #cbd5e1;">' + p.Farol_Criticidade + '</td>' +
+                    '<td style="padding: 6px 10px; font-weight: bold">' + p.ID_Processo + '</td>' +
+                    '<td style="padding: 6px 10px">' + p.Especificacao + '</td>' +
+                    '<td style="padding: 6px 10px">' + (p.Responsavel_Tecnico || 'GTI') + '</td>' +
+                    '<td style="padding: 6px 10px">' + p.Farol_Criticidade + '</td>' +
                 '</tr>';
             }
         });
@@ -5214,22 +5221,22 @@ window.modoFarolAtivo = 'todos';
 '<\/head>' +
 '<body>' +
 '<div class="header">' +
-'    <div style="display: flex; justify-content: space-between; align-items: center;">' +
-'        <strong style="font-size: 15px; color: var(--sagti-text);">SP-ÁGUAS — SA-GTI</strong>' +
-'        <div style="text-align: right; font-size: 11px; font-weight: bold; color: var(--sagti-text);">SUBSECRETARIA DE TECNOLOGIA DA INFORMAÇÃO</div>' +
+'    <div style="display: flex; justify-content: space-between; align-items: center">' +
+'        <strong style="font-size: 15px">SP-ÁGUAS — SA-GTI</strong>' +
+'        <div style="text-align: right; font-size: 11px; font-weight: bold">SUBSECRETARIA DE TECNOLOGIA DA INFORMAÇÃO</div>' +
 '    </div>' +
 '</div>' +
-'<h1 style="color: var(--sagti-text); font-size: 16px;">ATA OFICIAL DA DAILY SCRUM — ' + dataHoje + '</h1>' +
-'<div style="background: #f8fafc; border: 1px solid #cbd5e1; padding: 10px; font-size: 12px; margin-bottom: 15px;">' +
+'<h1 style="font-size: 16px">ATA OFICIAL DA DAILY SCRUM — ' + dataHoje + '</h1>' +
+'<div style="padding: 10px; font-size: 12px; margin-bottom: 15px">' +
 '    <strong>Horário:</strong> 09:30 - 09:45 (Timebox: 15 min)<br>' +
 '    <strong>Participantes Presentes:</strong> ' + (presentes.join(', ') || 'Equipe SA-GTI') +
 '</div>' +
 '<h2>1. Pauta de Processos Tratados no Ritual</h2>' +
-'<table>' +
+'<div class="table-responsive"><table class="table table-vcenter card-table table-hover">' +
 '    <thead><tr><th>Processo SEI</th><th>Objeto / Demanda</th><th>Responsável</th><th>Farol</th></tr></thead>' +
 '    <tbody>' + (pautaHtml || '<tr><td colspan="4">Pauta geral de acompanhamento.</td></tr>') + '</tbody>' +
-'</table>' +
-'<br><p style="text-align: center; margin-top: 30px;">____________________________________________<br><strong>LUIZ ANTONIO DA SILVA SEIXEIRO</strong><br>Gestor de Projetos e Governança de TIC (SA-GTI)</p>' +
+'</table></div>' +
+'<br><p style="text-align: center; margin-top: 30px">____________________________________________<br><strong>LUIZ ANTONIO DA SILVA SEIXEIRO</strong><br>Gestor de Projetos e Governança de TIC (SA-GTI)</p>' +
 '<\/body><\/html>';
 
         const w = window.open('', '_blank');
@@ -5321,12 +5328,12 @@ window.modoFarolAtivo = 'todos';
         }).slice(0, 10);
 
         container.innerHTML = candidatos.map(p => `
-            <div style="background: white; border: 1px solid #e2e8f0; border-radius: 4px; padding: 6px 8px; font-size: 11px; display: flex; justify-content: space-between; align-items: center;">
-                <div style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 220px;">
+            <div style="border-radius: 4px; padding: 6px 8px; font-size: 11px; display: flex; justify-content: space-between; align-items: center">
+                <div style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 220px">
                     <strong>${p.ID_Processo}</strong><br>
-                    <span style="color: #94a3b8;">${p.Especificacao || p.Tipo_Processo}</span>
+                    <span >${p.Especificacao || p.Tipo_Processo}</span>
                 </div>
-                <button class="btn btn-primary" style="padding: 2px 6px; font-size: 10px;" onclick="puxarParaPauta('${p.ID_Processo}')">+ Pautar</button>
+                <button class="btn btn-primary" style="padding: 2px 6px" onclick="puxarParaPauta('${p.ID_Processo}')">+ Pautar</button>
             </div>
         `).join('');
     }
@@ -5357,7 +5364,7 @@ window.modoFarolAtivo = 'todos';
 
         if (pautaDailyCards.length === 0) {
             container.innerHTML = `
-                <div style="text-align: center; color: #94a3b8; padding: 30px; font-size: 12.5px;">
+                <div style="text-align: center; padding: 30px; font-size: 12.5px">
                     📋 Nenhum processo na pauta de hoje ainda.<br>
                     Utilize o seletor à esquerda para puxar processos para a pauta da Daily.
                 </div>
@@ -5376,28 +5383,28 @@ window.modoFarolAtivo = 'todos';
                 else if (postit.cor === 'azul') corClasse = 'postit-azul';
                 else if (postit.cor === 'verde') corClasse = 'postit-verde';
                 postitHtml = `
-                    <div class="postit-tag ${corClasse}" style="margin-top: 6px;">
+                    <div class="postit-tag ${corClasse}" style="margin-top: 6px">
                         <strong>📌 Post-it da Reunião (${postit.cor.toUpperCase()}):</strong> ${postit.texto}
-                        <button onclick="removerPostitCard('${id}')" style="border:none; background:none; cursor:pointer; font-size:10px; float:right;">✖</button>
+                        <button onclick="removerPostitCard('${id}')" style="cursor:pointer; float:right" class="btn btn-ghost-secondary">✖</button>
                     </div>
                 `;
             }
 
             return `
-                <div class="kpi-card" style="border-left: 4px solid #0544cf; padding: 12px 16px; background: #f8fafc;">
-                    <div style="display: flex; justify-content: space-between; align-items: center;">
+                <div class="kpi-card card card-sm" style="padding: 12px 16px">
+                    <div style="display: flex; justify-content: space-between; align-items: center">
                         <div>
-                            <strong style="font-size: 13px; color: var(--sp-blue-dark); cursor: pointer;" onclick="abrirDetalhesProcesso('${p.ID_Processo}')">${p.ID_Processo}</strong>
-                            <span class="pill-tag pill-blue" style="margin-left: 8px;">${p.Bucket_OpenProject || 'Bucket'}</span>
+                            <strong style="font-size: 13px; cursor: pointer" onclick="abrirDetalhesProcesso('${p.ID_Processo}')">${p.ID_Processo}</strong>
+                            <span class="pill-tag pill-blue" style="margin-left: 8px">${p.Bucket_OpenProject || 'Bucket'}</span>
                         </div>
-                        <div style="display: flex; gap: 6px;">
-                            <button class="btn btn-secondary" style="padding: 2px 8px; font-size: 11px;" onclick="adicionarPostitCardPrompt('${p.ID_Processo}')">📌 Post-it</button>
-                            <button class="btn btn-secondary" style="padding: 2px 8px; font-size: 11px;" onclick="abrirDetalhesProcesso('${p.ID_Processo}')">Detalhes</button>
-                            <button class="btn btn-secondary" style="padding: 2px 8px; font-size: 11px; color:#ef4444;" onclick="removerDaPauta('${p.ID_Processo}')">✖ Tirar da Pauta</button>
+                        <div style="display: flex; gap: 6px">
+                            <button class="btn btn-outline-secondary" style="padding: 2px 8px; font-size: 11px" onclick="adicionarPostitCardPrompt('${p.ID_Processo}')">📌 Post-it</button>
+                            <button class="btn btn-outline-secondary" style="padding: 2px 8px; font-size: 11px" onclick="abrirDetalhesProcesso('${p.ID_Processo}')">Detalhes</button>
+                            <button class="btn btn-outline-secondary" style="padding: 2px 8px; font-size: 11px" onclick="removerDaPauta('${p.ID_Processo}')">✖ Tirar da Pauta</button>
                         </div>
                     </div>
-                    <p style="font-size: 12px; color: var(--sagti-accent); margin: 6px 0;">${p.Especificacao || p.Tipo_Processo}</p>
-                    <div style="display: flex; justify-content: space-between; font-size: 11px; color: #94a3b8;">
+                    <p style="font-size: 12px; margin: 6px 0">${p.Especificacao || p.Tipo_Processo}</p>
+                    <div style="display: flex; justify-content: space-between; font-size: 11px">
                         <span>👤 <strong>Responsável:</strong> ${p.Responsavel_Tecnico || 'Não atribuído'}</span>
                         <span>⏱️ Aging: <strong>${p.Faixa_Aging}</strong> (${p.Dias_Ultima_Mov} dias)</span>
                     </div>
@@ -5436,7 +5443,7 @@ window.modoFarolAtivo = 'todos';
 
         if (muralPostits.length === 0) {
             mural.innerHTML = `
-                <div style="grid-column: 1 / -1; text-align: center; color: #a16207; padding: 25px; font-size: 12.5px;">
+                <div style="grid-column: 1 / -1; text-align: center; padding: 25px; font-size: 12.5px">
                     📝 Mural limpo. Use os botões acima para fixar post-its gerais de lembretes, impedimentos ou acordos da Daily.
                 </div>
             `;
@@ -5453,18 +5460,18 @@ window.modoFarolAtivo = 'todos';
             else if (p.cor === 'azul') { bg = '#e0f2fe'; txt = '#0c4a6e'; border = '#38bdf8'; }
 
             return `
-                <div class="postit-free-card" style="background: ${bg}; color: ${txt}; border: 1px solid ${border};">
+                <div class="postit-free-card" >
                     <div>
-                        <div style="display: flex; justify-content: space-between; font-size: 10.5px; opacity: 0.8; margin-bottom: 6px;">
+                        <div style="display: flex; justify-content: space-between; font-size: 10.5px; opacity: 0.8; margin-bottom: 6px">
                             <span>👤 ${p.autor}</span>
                             <span>⏱️ ${p.hora}</span>
                         </div>
-                        <div style="font-size: 12px; font-weight: 500; line-height: 1.4;">
+                        <div style="font-size: 12px; font-weight: 500; line-height: 1.4">
                             ${p.texto}
                         </div>
                     </div>
-                    <div style="display: flex; justify-content: flex-end; margin-top: 10px;">
-                        <button onclick="removerPostitMural(${p.id})" style="border:none; background:none; color:${txt}; font-size:11px; cursor:pointer; opacity:0.75; font-weight:bold;">Remover ✖</button>
+                    <div style="display: flex; justify-content: flex-end; margin-top: 10px">
+                        <button onclick="removerPostitMural(${p.id})" style="font-size:11px; cursor:pointer; opacity:0.75; font-weight:bold" class="btn btn-ghost-secondary">Remover ✖</button>
                     </div>
                 </div>
             `;
@@ -5519,18 +5526,18 @@ Data: ${new Date().toLocaleDateString()} | Horário: ${new Date().toLocaleTimeSt
                 <tr>
                     <td>${idx + 1}</td>
                     <td>
-    <div style="display: flex; align-items: center; gap: 6px;">
-        <a href="javascript:void(0)" onclick="abrirDetalhesProcesso('${p.ID_Processo}')" style="font-weight: 700; color: #0284c7; text-decoration: none;" title="Abrir Dossie 360° no Cockpit">${p.ID_Processo}</a>
-        <button type="button" class="btn btn-secondary" onclick="navigator.clipboard.writeText('${p.ID_Processo}'); alert('Numero ${p.ID_Processo} copiado!');" style="padding: 1px 5px; font-size: 10px;" title="Copiar numero do processo">📋</button>
-        <a href="https://sei.sp.gov.br" target="_blank" style="font-size: 11px; text-decoration: none;" title="Abrir portal do SEI-SP">↗️</a>
+    <div style="display: flex; align-items: center; gap: 6px">
+        <a href="javascript:void(0)" onclick="abrirDetalhesProcesso('${p.ID_Processo}')" style="font-weight: 700; text-decoration: none" title="Abrir Dossie 360° no Cockpit">${p.ID_Processo}</a>
+        <button type="button" class="btn btn-outline-secondary" onclick="navigator.clipboard.writeText('${p.ID_Processo}'); alert('Numero ${p.ID_Processo} copiado!');" style="padding: 1px 5px" title="Copiar numero do processo">📋</button>
+        <a href="https://sei.sp.gov.br" target="_blank" style="font-size: 11px; text-decoration: none" title="Abrir portal do SEI-SP">↗️</a>
     </div>
 </td>
                     <td>${p.Bucket_OpenProject}</td>
-                    <td>${p.Responsavel_Tecnico || '<span style="color:#94a3b8">Não atribuído</span>'}</td>
+                    <td>${p.Responsavel_Tecnico || '<span >Não atribuído</span>'}</td>
                     <td><span class="pill-tag pill-red">${p.Dias_Ultima_Mov} dias</span></td>
-                    <td style="max-width: 320px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${p.Especificacao}</td>
-                    <td style="text-align: center;">
-                        <button class="btn btn-secondary" style="padding: 3px 8px; font-size: 11px;" onclick="abrirDetalhesProcesso('${p.ID_Processo}')">Ver</button>
+                    <td style="max-width: 320px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">${p.Especificacao}</td>
+                    <td style="text-align: center">
+                        <button class="btn btn-outline-secondary" style="padding: 3px 8px; font-size: 11px" onclick="abrirDetalhesProcesso('${p.ID_Processo}')">Ver</button>
                     </td>
                 </tr>
             `).join('');
@@ -5543,18 +5550,18 @@ Data: ${new Date().toLocaleDateString()} | Horário: ${new Date().toLocaleTimeSt
                 <tr>
                     <td>${idx + 1}</td>
                     <td>
-    <div style="display: flex; align-items: center; gap: 6px;">
-        <a href="javascript:void(0)" onclick="abrirDetalhesProcesso('${p.ID_Processo}')" style="font-weight: 700; color: #0284c7; text-decoration: none;" title="Abrir Dossie 360° no Cockpit">${p.ID_Processo}</a>
-        <button type="button" class="btn btn-secondary" onclick="navigator.clipboard.writeText('${p.ID_Processo}'); alert('Numero ${p.ID_Processo} copiado!');" style="padding: 1px 5px; font-size: 10px;" title="Copiar numero do processo">📋</button>
-        <a href="https://sei.sp.gov.br" target="_blank" style="font-size: 11px; text-decoration: none;" title="Abrir portal do SEI-SP">↗️</a>
+    <div style="display: flex; align-items: center; gap: 6px">
+        <a href="javascript:void(0)" onclick="abrirDetalhesProcesso('${p.ID_Processo}')" style="font-weight: 700; text-decoration: none" title="Abrir Dossie 360° no Cockpit">${p.ID_Processo}</a>
+        <button type="button" class="btn btn-outline-secondary" onclick="navigator.clipboard.writeText('${p.ID_Processo}'); alert('Numero ${p.ID_Processo} copiado!');" style="padding: 1px 5px" title="Copiar numero do processo">📋</button>
+        <a href="https://sei.sp.gov.br" target="_blank" style="font-size: 11px; text-decoration: none" title="Abrir portal do SEI-SP">↗️</a>
     </div>
 </td>
                     <td>${p.Bucket_OpenProject}</td>
-                    <td>${p.Responsavel_Tecnico || '<span style="color:#94a3b8">Não atribuído</span>'}</td>
+                    <td>${p.Responsavel_Tecnico || '<span >Não atribuído</span>'}</td>
                     <td><span class="pill-tag pill-yellow">${p.Faixa_Aging}</span></td>
-                    <td style="max-width: 320px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${p.Especificacao}</td>
-                    <td style="text-align: center;">
-                        <button class="btn btn-secondary" style="padding: 3px 8px; font-size: 11px;" onclick="abrirDetalhesProcesso('${p.ID_Processo}')">Ver</button>
+                    <td style="max-width: 320px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">${p.Especificacao}</td>
+                    <td style="text-align: center">
+                        <button class="btn btn-outline-secondary" style="padding: 3px 8px; font-size: 11px" onclick="abrirDetalhesProcesso('${p.ID_Processo}')">Ver</button>
                     </td>
                 </tr>
             `).join('');
@@ -5567,18 +5574,18 @@ Data: ${new Date().toLocaleDateString()} | Horário: ${new Date().toLocaleTimeSt
                 <tr>
                     <td>${idx + 1}</td>
                     <td>
-    <div style="display: flex; align-items: center; gap: 6px;">
-        <a href="javascript:void(0)" onclick="abrirDetalhesProcesso('${p.ID_Processo}')" style="font-weight: 700; color: #0284c7; text-decoration: none;" title="Abrir Dossie 360° no Cockpit">${p.ID_Processo}</a>
-        <button type="button" class="btn btn-secondary" onclick="navigator.clipboard.writeText('${p.ID_Processo}'); alert('Numero ${p.ID_Processo} copiado!');" style="padding: 1px 5px; font-size: 10px;" title="Copiar numero do processo">📋</button>
-        <a href="https://sei.sp.gov.br" target="_blank" style="font-size: 11px; text-decoration: none;" title="Abrir portal do SEI-SP">↗️</a>
+    <div style="display: flex; align-items: center; gap: 6px">
+        <a href="javascript:void(0)" onclick="abrirDetalhesProcesso('${p.ID_Processo}')" style="font-weight: 700; text-decoration: none" title="Abrir Dossie 360° no Cockpit">${p.ID_Processo}</a>
+        <button type="button" class="btn btn-outline-secondary" onclick="navigator.clipboard.writeText('${p.ID_Processo}'); alert('Numero ${p.ID_Processo} copiado!');" style="padding: 1px 5px" title="Copiar numero do processo">📋</button>
+        <a href="https://sei.sp.gov.br" target="_blank" style="font-size: 11px; text-decoration: none" title="Abrir portal do SEI-SP">↗️</a>
     </div>
 </td>
                     <td>${p.Bucket_OpenProject}</td>
-                    <td>${p.Responsavel_Tecnico || '<span style="color:#94a3b8">Não atribuído</span>'}</td>
+                    <td>${p.Responsavel_Tecnico || '<span >Não atribuído</span>'}</td>
                     <td><span class="pill-tag pill-green">${p.Dias_Ultima_Mov} dias</span></td>
-                    <td style="max-width: 320px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${p.Especificacao}</td>
-                    <td style="text-align: center;">
-                        <button class="btn btn-secondary" style="padding: 3px 8px; font-size: 11px;" onclick="abrirDetalhesProcesso('${p.ID_Processo}')">Ver</button>
+                    <td style="max-width: 320px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">${p.Especificacao}</td>
+                    <td style="text-align: center">
+                        <button class="btn btn-outline-secondary" style="padding: 3px 8px; font-size: 11px" onclick="abrirDetalhesProcesso('${p.ID_Processo}')">Ver</button>
                     </td>
                 </tr>
             `).join('');
@@ -5686,24 +5693,24 @@ Data: ${new Date().toLocaleDateString()} | Horário: ${new Date().toLocaleTimeSt
 
             return `
                 <tr>
-                    <td style="text-align: center; cursor: pointer;" onclick="toggleFixado('${p.ID_Processo}')">
+                    <td style="text-align: center; cursor: pointer" onclick="toggleFixado('${p.ID_Processo}')">
                         ${isFixado ? '⭐' : '☆'}
                     </td>
                     <td>
-    <div style="display: flex; align-items: center; gap: 6px;">
-        <a href="javascript:void(0)" onclick="abrirDetalhesProcesso('${p.ID_Processo}')" style="font-weight: 700; color: #0284c7; text-decoration: none;" title="Abrir Dossie 360° no Cockpit">${p.ID_Processo}</a>
-        <button type="button" class="btn btn-secondary" onclick="navigator.clipboard.writeText('${p.ID_Processo}'); alert('Numero ${p.ID_Processo} copiado!');" style="padding: 1px 5px; font-size: 10px;" title="Copiar numero do processo">📋</button>
-        <a href="https://sei.sp.gov.br" target="_blank" style="font-size: 11px; text-decoration: none;" title="Abrir portal do SEI-SP">↗️</a>
+    <div style="display: flex; align-items: center; gap: 6px">
+        <a href="javascript:void(0)" onclick="abrirDetalhesProcesso('${p.ID_Processo}')" style="font-weight: 700; text-decoration: none" title="Abrir Dossie 360° no Cockpit">${p.ID_Processo}</a>
+        <button type="button" class="btn btn-outline-secondary" onclick="navigator.clipboard.writeText('${p.ID_Processo}'); alert('Numero ${p.ID_Processo} copiado!');" style="padding: 1px 5px" title="Copiar numero do processo">📋</button>
+        <a href="https://sei.sp.gov.br" target="_blank" style="font-size: 11px; text-decoration: none" title="Abrir portal do SEI-SP">↗️</a>
     </div>
 </td>
                     <td><span class="pill-tag ${pillFarol}">${p.Farol_Criticidade || '-'}</span></td>
                     <td>${p.Bucket_OpenProject || '-'}</td>
-                    <td>${p.Responsavel_Tecnico || '<span style="color:#94a3b8">Não atribuído</span>'}</td>
+                    <td>${p.Responsavel_Tecnico || '<span >Não atribuído</span>'}</td>
                     <td><span class="pill-tag ${pillAging}">${p.Faixa_Aging || '-'}</span></td>
                     <td>${p.Classificacao_Risco || '-'}</td>
-                    <td style="max-width: 280px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${p.Especificacao || '-'}</td>
-                    <td style="text-align: center;">
-                        <button class="btn btn-secondary" style="padding: 3px 8px; font-size: 11px;" onclick="abrirDetalhesProcesso('${p.ID_Processo}')">Detalhes</button>
+                    <td style="max-width: 280px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">${p.Especificacao || '-'}</td>
+                    <td style="text-align: center">
+                        <button class="btn btn-outline-secondary" style="padding: 3px 8px; font-size: 11px" onclick="abrirDetalhesProcesso('${p.ID_Processo}')">Detalhes</button>
                     </td>
                 </tr>
             `;
@@ -5771,7 +5778,7 @@ Data: ${new Date().toLocaleDateString()} | Horário: ${new Date().toLocaleTimeSt
             const bodyMatch = htmlDoc.match(/<body[^>]*>([\s\S]*?)<\/body>/i);
             const innerContent = bodyMatch ? bodyMatch[1] : htmlDoc;
             corpo.innerHTML = `
-                <div style="background: #ffffff; padding: 35px 40px; border-radius: 6px; box-shadow: 0 4px 15px rgba(0,0,0,0.06); max-width: 760px; margin: 0 auto; border: 1px solid #cbd5e1; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; color: #1e293b;">
+                <div style="padding: 35px 40px; border-radius: 6px; max-width: 760px; margin: 0 auto">
                     ${innerContent}
                 </div>
             `;
@@ -5871,17 +5878,17 @@ window.cadernos = [];
         if (badge) badge.innerText = `${window.cadernos.length} Cadernos Homologados`;
 
         container.innerHTML = window.cadernos.map((c, idx) => `
-            <div style="background: #ffffff; border: 1px solid #cbd5e1; border-radius: 8px; padding: 16px; display: flex; flex-direction: column; justify-content: space-between; border-left: 4px solid #0056d2; box-shadow: 0 1px 3px rgba(0,0,0,0.05); transition: transform 0.15s ease, box-shadow 0.15s ease;">
+            <div style="border-radius: 8px; padding: 16px; display: flex; flex-direction: column; justify-content: space-between; transition: transform 0.15s ease, box-shadow 0.15s ease">
                 <div>
-                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
-                        <span class="pill-tag pill-blue" style="font-size: 10px; font-weight: 700;">${c.categoria || 'Normas & Governança'}</span>
-                        <span style="font-size: 11px; font-weight: 700; color: #94a3b8;">#${String(idx+1).padStart(2, '0')}</span>
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px">
+                        <span class="pill-tag pill-blue" style="font-weight: 700">${c.categoria || 'Normas & Governança'}</span>
+                        <span style="font-size: 11px; font-weight: 700">#${String(idx+1).padStart(2, '0')}</span>
                     </div>
-                    <h4 style="margin: 0 0 6px 0; font-size: 13px; font-weight: 700; color: var(--sagti-text); line-height: 1.35;">${c.icone || '📘'} ${c.titulo}</h4>
-                    <p style="margin: 0 0 12px 0; font-size: 11.5px; color: #94a3b8; line-height: 1.4;">${c.desc || 'Diretrizes oficiais homologadas da Subsecretaria de Tecnologia da Informação (SA-GTI).'}</p>
+                    <h4 style="margin: 0 0 6px 0; font-size: 13px; font-weight: 700; line-height: 1.35">${c.icone || '📘'} ${c.titulo}</h4>
+                    <p style="margin: 0 0 12px 0; font-size: 11.5px; line-height: 1.4">${c.desc || 'Diretrizes oficiais homologadas da Subsecretaria de Tecnologia da Informação (SA-GTI).'}</p>
                 </div>
-                <div style="display: flex; gap: 8px;">
-                    <button class="btn btn-primary btn-sm" onclick="window.selecionarCaderno('${c.id}')" style="flex: 1; padding: 6px 10px; font-size: 11.5px; font-weight: 700; cursor: pointer;">
+                <div style="display: flex; gap: 8px">
+                    <button class="btn btn-primary btn-sm" onclick="window.selecionarCaderno('${c.id}')" style="flex: 1; padding: 6px 10px; font-size: 11.5px; font-weight: 700; cursor: pointer">
                         <i class="fas fa-book-open"></i> 📖 Abrir Caderno
                     </button>
                 </div>
@@ -5909,7 +5916,7 @@ window.cadernos = [];
 
         const titEl = document.getElementById('caderno-titulo-display');
         const contEl = document.getElementById('caderno-conteudo-display');
-        if (titEl) titEl.innerHTML = `<span>${c.icone || '📘'} ${c.titulo}</span> <span style="font-size: 11px; font-weight: normal; color: #94a3b8;">(${c.categoria || 'Geral'})</span>`;
+        if (titEl) titEl.innerHTML = `<span>${c.icone || '📘'} ${c.titulo}</span> <span style="font-size: 11px; font-weight: normal">(${c.categoria || 'Geral'})</span>`;
         if (contEl) {
             contEl.innerHTML = window.renderMarkdownToHtml(c.conteudo);
         }
@@ -5935,15 +5942,15 @@ window.cadernos = [];
         if (badge) badge.innerText = `${window.cadernos.length} Cadernos Ativos (SSOT Grounding)`;
 
         container.innerHTML = window.cadernos.map(c => `
-            <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 6px; padding: 10px 14px; display: flex; justify-content: space-between; align-items: center;">
-                <div style="display: flex; align-items: flex-start; gap: 10px;">
-                    <input type="checkbox" id="chk_hub_${c.id}" checked style="accent-color: #0056d2; width: 16px; height: 16px; margin-top: 2px;" onchange="window.salvarConfiguracaoAgenteIA()">
+            <div style="border-radius: 6px; padding: 10px 14px; display: flex; justify-content: space-between; align-items: center">
+                <div style="display: flex; align-items: flex-start; gap: 10px">
+                    <input type="checkbox" id="chk_hub_${c.id}" checked style="width: 16px; height: 16px; margin-top: 2px" onchange="window.salvarConfiguracaoAgenteIA()" class="form-check-input">
                     <div>
-                        <strong style="font-size: 12px; color: var(--sagti-text);">${c.titulo}</strong>
-                        <div style="font-size: 11px; color: #94a3b8;">${c.categoria || 'Normas'} • Conectado à Base RAG do Supervisor SA-GTI</div>
+                        <strong style="font-size: 12px">${c.titulo}</strong>
+                        <div style="font-size: 11px">${c.categoria || 'Normas'} • Conectado à Base RAG do Supervisor SA-GTI</div>
                     </div>
                 </div>
-                <span class="pill-tag pill-green" style="font-size: 10px;">Indexado (Ativo)</span>
+                <span class="pill-tag pill-green" >Indexado (Ativo)</span>
             </div>
         `).join('');
     };
@@ -5958,17 +5965,17 @@ window.cadernos = [];
         }
 
         // Títulos Markdown (#, ##, ###)
-        text = text.replace(/^### (.*$)/gim, '<h3 style="color:#002d5a; margin: 16px 0 8px 0; font-size:15px; border-bottom:1px solid #e2e8f0; padding-bottom:4px;">$1</h3>');
-        text = text.replace(/^## (.*$)/gim, '<h2 style="color:#0544cf; margin: 18px 0 10px 0; font-size:17px; border-bottom:2px solid #bfdbfe; padding-bottom:4px;">$1</h2>');
-        text = text.replace(/^# (.*$)/gim, '<h1 style="color:#002d5a; margin: 20px 0 12px 0; font-size:20px; border-bottom:2px solid #0544cf; padding-bottom:6px;">$1</h1>');
+        text = text.replace(/^### (.*$)/gim, '<h3 style="margin: 16px 0 8px 0; font-size:15px; padding-bottom:4px">$1</h3>');
+        text = text.replace(/^## (.*$)/gim, '<h2 style="margin: 18px 0 10px 0; font-size:17px; padding-bottom:4px">$1</h2>');
+        text = text.replace(/^# (.*$)/gim, '<h1 style="margin: 20px 0 12px 0; font-size:20px; padding-bottom:6px">$1</h1>');
 
         // Formatação de texto
         text = text.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
         text = text.replace(/\*(.*?)\*/g, '<em>$1</em>');
-        text = text.replace(/`([^`]+)`/g, '<code style="background:#f1f5f9; color:#0f172a; padding:2px 6px; border-radius:4px; font-family:monospace; font-size:11.5px;">$1</code>');
-        text = text.replace(/^> (.*$)/gim, '<blockquote style="border-left: 4px solid #0544cf; padding: 8px 12px; margin: 8px 0; color: #475569; background: #f8fafc; border-radius: 4px;">$1</blockquote>');
-        text = text.replace(/^---$/gim, '<hr style="border: 0; border-top: 1px solid #cbd5e1; margin: 16px 0;">');
-        text = text.replace(/^\s*[\-\*]\s+(.*$)/gim, '<li style="margin-left: 20px; line-height: 1.6;">$1</li>');
+        text = text.replace(/`([^`]+)`/g, '<code style="padding:2px 6px; border-radius:4px; font-size:11.5px">$1</code>');
+        text = text.replace(/^> (.*$)/gim, '<blockquote style="padding: 8px 12px; margin: 8px 0; border-radius: 4px">$1</blockquote>');
+        text = text.replace(/^---$/gim, '<hr style="margin: 16px 0">');
+        text = text.replace(/^\s*[\-\*]\s+(.*$)/gim, '<li style="margin-left: 20px; line-height: 1.6">$1</li>');
 
         // Processamento de Tabelas Markdown
         let lines = text.split('\n');
@@ -5981,27 +5988,27 @@ window.cadernos = [];
                 let cells = line.split('|').map(c => c.trim()).filter((c, idx, arr) => idx > 0 && idx < arr.length - 1);
                 if (!inTable) {
                     inTable = true;
-                    out.push('<table style="width:100%; border-collapse:collapse; margin:14px 0; font-size:12px; border:1px solid #cbd5e1;"><thead><tr style="background:#f1f5f9; color:#002d5a;">' + cells.map(c => `<th style="padding:8px 10px; border:1px solid #cbd5e1; text-align:left; font-weight:700;">${c}</th>`).join('') + '</tr></thead><tbody>');
+                    out.push('<div class="table-responsive"><table style="width:100%; border-collapse:collapse; margin:14px 0; font-size:12px" class="table table-vcenter card-table table-hover"><thead><tr >' + cells.map(c => `<th style="padding:8px 10px; text-align:left; font-weight:700">${c}</th>`).join('') + '</tr></thead><tbody>');
                 } else if (line.includes('---')) {
                     continue; // Linha divisória da tabela
                 } else {
-                    out.push('<tr style="border-bottom:1px solid #e2e8f0;">' + cells.map(c => `<td style="padding:6px 10px; border:1px solid #e2e8f0;">${c}</td>`).join('') + '</tr>');
+                    out.push('<tr >' + cells.map(c => `<td style="padding:6px 10px">${c}</td>`).join('') + '</tr>');
                 }
             } else {
                 if (inTable) {
-                    out.push('</tbody></table>');
+                    out.push('</tbody></table></div>');
                     inTable = false;
                 }
                 if (line.startsWith('<h') || line.startsWith('<hr') || line.startsWith('<li') || line.startsWith('<blockquote') || line.startsWith('<table') || line.startsWith('<' + 'div')) {
                     out.push(line);
                 } else if (line.length > 0) {
-                    out.push(`<p style="margin: 6px 0; line-height: 1.6; color: #1e293b;">${line}</p>`);
+                    out.push(`<p style="margin: 6px 0; line-height: 1.6">${line}</p>`);
                 } else {
-                    out.push('<div style="height: 6px;"></div>');
+                    out.push('<div style="height: 6px"></div>');
                 }
             }
         }
-        if (inTable) out.push('</tbody></table>');
+        if (inTable) out.push('</tbody></table></div>');
 
         return out.join('');
     };
@@ -6025,14 +6032,14 @@ window.cadernos = [];
     
     
 
-                    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 10px;">
+                    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 10px">
                         <div>
                             <strong>GOVERNO DO ESTADO DE SÃO PAULO</strong><br>
-                            <span style="color:#0056d2; font-weight: bold;">SP-ÁGUAS — AGÊNCIA DE ÁGUAS DO ESTADO DE SÃO PAULO</span><br>
+                            <span style="font-weight: bold">SP-ÁGUAS — AGÊNCIA DE ÁGUAS DO ESTADO DE SÃO PAULO</span><br>
                             <span>Subsecretaria de Tecnologia da Informação e Comunicação (SA-GTI)</span>
                         </div>
                     </div>
-                    <hr style="border: 0; border-top: 1px solid #002d5a; margin: 12px 0 20px 0;">
+                    <hr style="margin: 12px 0 20px 0">
                     <h1>${c.icone || '📘'} ${c.titulo}</h1>
                     <div class="header-meta">Caderno Temático Oficial | Categoria: ${c.categoria || 'Governança'} | Base Legal Homologada</div>
                     <div>${c.conteudo}</div>
@@ -6464,7 +6471,8 @@ window.STORAGE_KEY_POOL_3_IAS = 'sagti_pool_tres_ias_v96';
         }
         var diag = document.getElementById('diag-ia-' + slot);
         if (diag) {
-            diag.style.color = '#fbbf24';
+            diag.classList.remove('text-success', 'text-danger');
+            diag.classList.add('text-warning');
             diag.innerText = '⏳ Conectando...';
         }
 
@@ -6515,7 +6523,8 @@ window.STORAGE_KEY_POOL_3_IAS = 'sagti_pool_tres_ias_v96';
 
         if (sucesso) {
             if (diag) {
-                diag.style.color = '#34d399';
+                diag.classList.remove('text-warning', 'text-danger');
+                diag.classList.add('text-success');
                 diag.innerText = '🟢 OK (' + mod + ' • ' + lat + 'ms)';
             }
             if (window.exibirToastSincronizacaoOp) {
@@ -6525,7 +6534,8 @@ window.STORAGE_KEY_POOL_3_IAS = 'sagti_pool_tres_ias_v96';
             }
         } else {
             if (diag) {
-                diag.style.color = '#f87171';
+                diag.classList.remove('text-warning', 'text-success');
+                diag.classList.add('text-danger');
                 diag.innerText = '🔴 Falha (' + erroMsg + ')';
             }
             alert("⚠️ Falha ao testar " + slot.toUpperCase() + ":\n\n• Motivo: " + erroMsg + "\n• Endpoint: " + ep + "\n• Verifique se o New API ou Ollama está ativo.");
@@ -6572,6 +6582,7 @@ window.STORAGE_KEY_POOL_3_IAS = 'sagti_pool_tres_ias_v96';
 
     window.salvarPoolTresIas = async function(btn) {
         var origHtml = '<span>💾</span> <strong>Salvar Configuração das 2 IAs</strong>';
+        var origClass = btn ? btn.className : '';
         if (btn) {
             btn.disabled = true;
             btn.style.opacity = '0.75';
@@ -6654,11 +6665,11 @@ window.STORAGE_KEY_POOL_3_IAS = 'sagti_pool_tres_ias_v96';
             if (btn) {
                 btn.disabled = false;
                 btn.style.opacity = '1';
-                btn.style.background = 'var(--sagti-accent)';
+                btn.className = 'btn btn-success';
                 btn.innerHTML = '<span>✅</span> <strong>Configurações Gravadas no Disco!</strong>';
                 setTimeout(function() {
                     btn.innerHTML = origHtml;
-                    btn.style.background = 'var(--sagti-accent)';
+                    btn.className = origClass;
                 }, 2500);
             }
 
@@ -6676,6 +6687,7 @@ window.STORAGE_KEY_POOL_3_IAS = 'sagti_pool_tres_ias_v96';
                 btn.style.opacity = '1';
                 if (!btn.innerHTML.includes('✅')) {
                     btn.innerHTML = origHtml;
+                    btn.className = origClass;
                 }
             }
         }
@@ -6787,26 +6799,27 @@ var arquivosAnexados = window.arquivosAnexados || [];
             modal.id = "modal-curadoria-toolkits-ia";
             document.body.appendChild(modal);
         }
-        modal.style.cssText = "position:fixed;inset:0;background:var(--sagti-surface-alt);z-index:99999;display:flex;align-items:flex-start;justify-content:center;padding:24px 16px;overflow-y:auto;box-sizing:border-box;";
+        modal.style.cssText = "position:fixed;inset:0;z-index:99999;display:flex;align-items:flex-start;justify-content:center;padding:24px 16px;overflow-y:auto;box-sizing:border-box;";
+        modal.classList.add('sagti-modal-backdrop');
         modal.onclick = function(e) {
             if (e.target === modal) window.fecharModalCuradoriaIA();
         };
         modal.style.display = "flex";
 
         // Fase 1: Animação e varredura em tempo real da IA de Orquestração
-        modal.innerHTML = '<div style="position:relative;background:#ffffff;border-radius:14px;max-width:880px;width:100%;margin:auto 0;padding:24px;box-shadow:0 24px 60px rgba(0,0,0,0.5);border-top:5px solid #0284c7;box-sizing:border-box;font-family:inherit;">' +
-            '<div style="display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid #e2e8f0;padding-bottom:12px;margin-bottom:16px;">' +
-                '<h3 style="margin:0;color:#1e1b4b;font-size:16px;font-weight:800;display:flex;align-items:center;gap:8px;">' +
+        modal.innerHTML = '<div style="position:relative;border-radius:14px;max-width:880px;width:100%;margin:auto 0;padding:24px;box-sizing:border-box">' +
+            '<div style="display:flex;justify-content:space-between;align-items:center;padding-bottom:12px;margin-bottom:16px">' +
+                '<h3 style="margin:0;font-size:16px;font-weight:800;display:flex;align-items:center;gap:8px">' +
                     '<span>🤖</span> IA 2 — ORQUESTRAÇÃO &amp; GOVERNANÇA: VARREDURA DE TOOLKITS &amp; CADERNOS' +
                 '</h3>' +
-                '<button type="button" onclick="window.fecharModalCuradoriaIA()" style="background:#ef4444;color:#ffffff;border:none;border-radius:8px;padding:6px 14px;font-size:12px;font-weight:800;cursor:pointer;">&#10006; Fechar</button>' +
+                '<button type="button" onclick="window.fecharModalCuradoriaIA()" style="border-radius:8px;padding:6px 14px;font-size:12px;font-weight:800;cursor:pointer" class="btn btn-ghost-secondary">&#10006; Fechar</button>' +
             '</div>' +
-            '<div style="background:#faf5ff;border:1px solid #e9d5ff;border-radius:10px;padding:16px;margin-bottom:16px;">' +
-                '<div style="display:flex;align-items:center;gap:10px;margin-bottom:10px;">' +
-                    '<div class="spinner" style="width:20px;height:20px;border:3px solid #d8b4fe;border-top-color:#0284c7;border-radius:50%;animation:spin 0.8s linear infinite;"></div>' +
-                    '<strong style="color:#6b21a8;font-size:13px;">Executando Sondas Ativas da IA 2 em Fontes Externas e Base Interna...</strong>' +
+            '<div style="border-radius:10px;padding:16px;margin-bottom:16px">' +
+                '<div style="display:flex;align-items:center;gap:10px;margin-bottom:10px">' +
+                    '<div class="spinner-border spinner-border-sm text-info" role="status"></div>' +
+                    '<strong style="font-size:13px">Executando Sondas Ativas da IA 2 em Fontes Externas e Base Interna...</strong>' +
                 '</div>' +
-                '<div style="font-size:12px;color:#581c87;line-height:1.6;">' +
+                '<div style="font-size:12px;line-height:1.6">' +
                     '• <strong>Sonda Externa 1:</strong> Portal Compras SP &mdash; Verificando novos modelos padronizados de DFD, ETP e TR (Lei 14.133/2021)...<br>' +
                     '• <strong>Sonda Externa 2:</strong> DOE-SP &amp; Decretos Estaduais &mdash; Checando Dec. 67.689/23, Dec. 68.220/23 e Súmula 269 TCU...<br>' +
                     '• <strong>Sonda Interna:</strong> MariaDB, SEI (179 processos), OpenProject (500 WPs) e GLPI (13 chamados críticos)...<br>' +
@@ -6822,49 +6835,49 @@ var arquivosAnexados = window.arquivosAnexados || [];
             var cadernosAtuaisQtd = (window.cadernos && Array.isArray(window.cadernos)) ? window.cadernos.length : 15;
             var jaPossuiCaderno16 = window.cadernos && window.cadernos.some(function(c) { return c.id === 'cad_ia_prompts'; });
 
-            modal.innerHTML = '<div style="position:relative;background:#ffffff;border-radius:14px;max-width:920px;width:100%;margin:auto 0;max-height:88vh;overflow-y:auto;padding:24px;box-shadow:0 24px 60px rgba(0,0,0,0.5);border-top:5px solid #0284c7;box-sizing:border-box;font-family:inherit;">' +
-                '<div style="display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid #e2e8f0;padding-bottom:12px;margin-bottom:16px;flex-wrap:wrap;gap:10px;">' +
+            modal.innerHTML = '<div style="position:relative;border-radius:14px;max-width:920px;width:100%;margin:auto 0;max-height:88vh;overflow-y:auto;padding:24px;box-sizing:border-box">' +
+                '<div style="display:flex;justify-content:space-between;align-items:center;padding-bottom:12px;margin-bottom:16px;flex-wrap:wrap;gap:10px">' +
                     '<div>' +
-                        '<div style="font-size:11px;color:#6b21a8;font-weight:800;text-transform:uppercase;letter-spacing:0.5px;">IA 2 &bull; Orquestração &amp; Governança de TIC (Llama 3.2:1b / DeepSeek R1)</div>' +
-                        '<h3 style="margin:2px 0 0 0;color:#1e1b4b;font-size:17px;font-weight:800;display:flex;align-items:center;gap:8px;">' +
+                        '<div style="font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:0.5px">IA 2 &bull; Orquestração &amp; Governança de TIC (Llama 3.2:1b / DeepSeek R1)</div>' +
+                        '<h3 style="margin:2px 0 0 0;font-size:17px;font-weight:800;display:flex;align-items:center;gap:8px">' +
                             '<span>🛡️</span> PARECER DE CURADORIA: TOOLKITS OFICIAIS &amp; CADERNOS TEMÁTICOS' +
                         '</h3>' +
                     '</div>' +
-                    '<button type="button" onclick="window.fecharModalCuradoriaIA()" style="background:#dc2626;color:#ffffff;border:none;border-radius:8px;padding:7px 16px;font-size:12px;font-weight:800;cursor:pointer;">&#10006; Fechar Janela</button>' +
+                    '<button type="button" onclick="window.fecharModalCuradoriaIA()" style="border-radius:8px;padding:7px 16px;font-size:12px;font-weight:800;cursor:pointer" class="btn btn-ghost-secondary">&#10006; Fechar Janela</button>' +
                 '</div>' +
 
                 // Score e badges de resultado
-                '<div style="display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:16px;">' +
-                    '<div style="background:#f0fdf4;border:1px solid #bbf7d0;border-radius:8px;padding:12px;">' +
-                        '<div style="font-size:11px;color:#166534;font-weight:700;">ADERÊNCIA NORMATIVA</div>' +
-                        '<div style="font-size:20px;font-weight:800;color:#15803d;margin-top:3px;">98.8%</div>' +
-                        '<div style="font-size:10px;color:#166534;">Lei 14.133 + Dec. 67.689 + 68.220</div>' +
+                '<div style="display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:16px">' +
+                    '<div style="border-radius:8px;padding:12px">' +
+                        '<div style="font-size:11px;font-weight:700">ADERÊNCIA NORMATIVA</div>' +
+                        '<div style="font-size:20px;font-weight:800;margin-top:3px">98.8%</div>' +
+                        '<div >Lei 14.133 + Dec. 67.689 + 68.220</div>' +
                     '</div>' +
-                    '<div style="background:#eff6ff;border:1px solid #bfdbfe;border-radius:8px;padding:12px;">' +
-                        '<div style="font-size:11px;color:#1e40af;font-weight:700;">TOOLKITS EXTERNOS</div>' +
-                        '<div style="font-size:20px;font-weight:800;color:#1d4ed8;margin-top:3px;">14 / 14</div>' +
-                        '<div style="font-size:10px;color:#1e40af;">6 Modelos A4 + 8 Matrizes</div>' +
+                    '<div style="border-radius:8px;padding:12px">' +
+                        '<div style="font-size:11px;font-weight:700">TOOLKITS EXTERNOS</div>' +
+                        '<div style="font-size:20px;font-weight:800;margin-top:3px">14 / 14</div>' +
+                        '<div >6 Modelos A4 + 8 Matrizes</div>' +
                     '</div>' +
-                    '<div style="background:#faf5ff;border:1px solid #e9d5ff;border-radius:8px;padding:12px;">' +
-                        '<div style="font-size:11px;color:#6b21a8;font-weight:700;">BASE AUDITADA</div>' +
-                        '<div style="font-size:20px;font-weight:800;color:#0284c7;margin-top:3px;">' + procsQtd + ' SEI</div>' +
-                        '<div style="font-size:10px;color:#6b21a8;">+ ' + wpsQtd + ' Pacotes OpenProject</div>' +
+                    '<div style="border-radius:8px;padding:12px">' +
+                        '<div style="font-size:11px;font-weight:700">BASE AUDITADA</div>' +
+                        '<div style="font-size:20px;font-weight:800;margin-top:3px">' + procsQtd + ' SEI</div>' +
+                        '<div >+ ' + wpsQtd + ' Pacotes OpenProject</div>' +
                     '</div>' +
-                    '<div style="background:#fefce8;border:1px solid #fde047;border-radius:8px;padding:12px;">' +
-                        '<div style="font-size:11px;color:#854d0e;font-weight:700;">CADERNOS ATIVOS</div>' +
-                        '<div style="font-size:20px;font-weight:800;color:#b45309;margin-top:3px;">' + cadernosAtuaisQtd + ' Cadernos</div>' +
-                        '<div style="font-size:10px;color:#854d0e;">' + (jaPossuiCaderno16 ? 'Caderno #16 Ativo' : '+1 Sugerido por IA') + '</div>' +
+                    '<div style="border-radius:8px;padding:12px">' +
+                        '<div style="font-size:11px;font-weight:700">CADERNOS ATIVOS</div>' +
+                        '<div style="font-size:20px;font-weight:800;margin-top:3px">' + cadernosAtuaisQtd + ' Cadernos</div>' +
+                        '<div >' + (jaPossuiCaderno16 ? 'Caderno #16 Ativo' : '+1 Sugerido por IA') + '</div>' +
                     '</div>' +
                 '</div>' +
 
                 // Detalhamento do Diagnóstico
-                '<div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:16px;">' +
+                '<div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:16px">' +
                     // Coluna 1: Toolkits Oficiais
-                    '<div style="background:#f8fafc;border:1px solid #e2e8f0;border-radius:8px;padding:14px;">' +
-                        '<div style="font-weight:800;color:#0f172a;font-size:13px;margin-bottom:8px;display:flex;align-items:center;gap:6px;">' +
+                    '<div style="border-radius:8px;padding:14px">' +
+                        '<div style="font-weight:800;font-size:13px;margin-bottom:8px;display:flex;align-items:center;gap:6px">' +
                             '<span>🌐</span> Curadoria de Toolkits &amp; Modelos Oficiais:' +
                         '</div>' +
-                        '<ul style="margin:0;padding-left:18px;font-size:12px;color:#334155;line-height:1.6;">' +
+                        '<ul style="margin:0;padding-left:18px;font-size:12px;line-height:1.6">' +
                             '<li><strong>DFD, ETP e TR em Branco:</strong> Total conformidade com o Portal Compras SP e parâmetros da Lei 14.133/2021.</li>' +
                             '<li><strong>Memória de TCO (36m):</strong> Decreto nº 67.689/2023 aplicado com comparativo de cenários e matriz GUT.</li>' +
                             '<li><strong>Tabela de Glosas IMR:</strong> Faixas de retenção de 2% a 10% amarradas à liquidação no SIAFEM.</li>' +
@@ -6874,41 +6887,41 @@ var arquivosAnexados = window.arquivosAnexados || [];
                     '</div>' +
 
                     // Coluna 2: Análise da Base de Dados & Cadernos Temáticos
-                    '<div style="background:#f8fafc;border:1px solid #e2e8f0;border-radius:8px;padding:14px;">' +
-                        '<div style="font-weight:800;color:#0f172a;font-size:13px;margin-bottom:8px;display:flex;align-items:center;gap:6px;">' +
+                    '<div style="border-radius:8px;padding:14px">' +
+                        '<div style="font-weight:800;font-size:13px;margin-bottom:8px;display:flex;align-items:center;gap:6px">' +
                             '<span>📊</span> Análise da Base Interna (SEI / OP / GLPI):' +
                         '</div>' +
-                        '<div style="font-size:12px;color:#334155;line-height:1.5;">' +
-                            '<p style="margin:0 0 8px 0;">A IA 2 cruzou os 18 Buckets canônicos do OpenProject com as demandas da SP-Águas:</p>' +
+                        '<div style="font-size:12px;line-height:1.5">' +
+                            '<p style="margin:0 0 8px 0">A IA 2 cruzou os 18 Buckets canônicos do OpenProject com as demandas da SP-Águas:</p>' +
                             '• <strong>Cadernos #01 a #15:</strong> 100% de cobertura dos processos ativos da Esteira de Contratação e Governança.<br>' +
                             '• <strong>Destaque de Governança:</strong> Identificado alto volume de demandas ligadas à orquestração de IAs e automação de pareceres (Pool de 3 IAs na porta :3001).<br>' +
-                            '• <strong>Recomendação da IA:</strong> ' + (jaPossuiCaderno16 ? '<span style="color:#047857;font-weight:700;">O Caderno Canônico #16 já está ativo e integrado ao catálogo!</span>' : '<span style="color:#6b21a8;font-weight:700;">Integrar o Caderno Canônico #16 (&ldquo;IA 360°, Engenharia de Prompts &amp; RAG Regimental na SA-GTI&rdquo;).</span>') +
+                            '• <strong>Recomendação da IA:</strong> ' + (jaPossuiCaderno16 ? '<span style="font-weight:700">O Caderno Canônico #16 já está ativo e integrado ao catálogo!</span>' : '<span style="font-weight:700">Integrar o Caderno Canônico #16 (&ldquo;IA 360°, Engenharia de Prompts &amp; RAG Regimental na SA-GTI&rdquo;).</span>') +
                         '</div>' +
                     '</div>' +
                 '</div>' +
 
                 // Barra de Ação da Curadoria
-                '<div style="background:#f5f3ff;border:1.5px solid #c4b5fd;border-radius:10px;padding:14px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;">' +
+                '<div style="border-radius:10px;padding:14px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px">' +
                     '<div>' +
-                        '<div style="font-size:12.5px;font-weight:800;color:#5b21b6;">Ação da IA de Orquestração: Aplicar Sincronização Dinâmica</div>' +
-                        '<div style="font-size:11.5px;color:#6d28d9;margin-top:2px;">Atualiza o catálogo de cadernos, grava o carimbo de varredura diária e re-renderiza a grade de toolkits.</div>' +
+                        '<div style="font-size:12.5px;font-weight:800">Ação da IA de Orquestração: Aplicar Sincronização Dinâmica</div>' +
+                        '<div style="font-size:11.5px;margin-top:2px">Atualiza o catálogo de cadernos, grava o carimbo de varredura diária e re-renderiza a grade de toolkits.</div>' +
                     '</div>' +
-                    '<div style="display:flex;gap:8px;">' +
-                        '<button type="button" onclick="window.aplicarCuradoriaToolkitsIAReal()" style="background:#0284c7;color:#ffffff;border:none;border-radius:8px;padding:9px 18px;font-size:12.5px;font-weight:800;cursor:pointer;display:inline-flex;align-items:center;gap:6px;box-shadow:0 3px 8px rgba(124,58,237,0.35);">' +
+                    '<div style="display:flex;gap:8px">' +
+                        '<button type="button" onclick="window.aplicarCuradoriaToolkitsIAReal()" style="border-radius:8px;padding:9px 18px;font-size:12.5px;font-weight:800;cursor:pointer;display:inline-flex;align-items:center;gap:6px" class="btn btn-ghost-secondary">' +
                             '⚡ ' + (jaPossuiCaderno16 ? 'Re-sincronizar Catálogo &amp; Toolkits' : 'Aplicar Atualização &amp; Inserir Caderno #16') +
                         '</button>' +
-                        '<button type="button" onclick="window.restaurarCadernosPadrao()" style="background:#ffffff;color:#475569;border:1px solid #cbd5e1;border-radius:8px;padding:9px 14px;font-size:12px;font-weight:700;cursor:pointer;">' +
+                        '<button type="button" onclick="window.restaurarCadernosPadrao()" style="border-radius:8px;padding:9px 14px;font-size:12px;font-weight:700;cursor:pointer" class="btn btn-ghost-secondary">' +
                             '🔄 Base 15 Cadernos' +
                         '</button>' +
                     '</div>' +
                 '</div>' +
 
                 // Rodapé com dicas de fechamento
-                '<div style="display:flex;justify-content:space-between;align-items:center;border-top:1px solid #e2e8f0;padding-top:14px;margin-top:16px;">' +
-                    '<div style="font-size:11.5px;color:#64748b;">' +
-                        '💡 Dica: Você pode fechar clicando fora da janela, no botão vermelho ou teclando <kbd style="background:#f1f5f9;border:1px solid #cbd5e1;border-radius:4px;padding:2px 6px;font-family:monospace;font-size:10.5px;font-weight:700;">ESC</kbd>.' +
+                '<div style="display:flex;justify-content:space-between;align-items:center;padding-top:14px;margin-top:16px">' +
+                    '<div style="font-size:11.5px">' +
+                        '💡 Dica: Você pode fechar clicando fora da janela, no botão vermelho ou teclando <kbd style="border-radius:4px;padding:2px 6px;font-size:10.5px;font-weight:700">ESC</kbd>.' +
                     '</div>' +
-                    '<button type="button" onclick="window.fecharModalCuradoriaIA()" style="background:#002d5a;color:var(--sagti-text);border:none;border-radius:8px;padding:8px 20px;font-size:13px;font-weight:800;cursor:pointer;">' +
+                    '<button type="button" onclick="window.fecharModalCuradoriaIA()" style="border-radius:8px;padding:8px 20px;font-size:13px;font-weight:800;cursor:pointer" class="btn btn-ghost-secondary">' +
                         '✕ Fechar Popup' +
                     '</button>' +
                 '</div>' +
@@ -7033,9 +7046,9 @@ var arquivosAnexados = window.arquivosAnexados || [];
         list.innerHTML = arquivosAnexados.map((f, idx) => {
             const sizeKb = (f.size / 1024).toFixed(1);
             return `
-                <div style="display: inline-flex; align-items: center; gap: 6px; background: #ffffff; border: 1px solid #cbd5e1; padding: 3px 8px; border-radius: 12px; font-size: 11px; color: #0f172a; box-shadow: 0 1px 2px rgba(0,0,0,0.04);">
-                    <span>📄 <strong>${f.name}</strong> <span style="color:#64748b; font-size:10px;">(${sizeKb} KB)</span></span>
-                    <button type="button" onclick="removerArquivoAnexo(${idx})" style="background: none; border: none; color: #ef4444; font-weight: bold; cursor: pointer; padding: 0 2px; font-size: 13px; line-height: 1;" title="Excluir arquivo">✕</button>
+                <div style="display: inline-flex; align-items: center; gap: 6px; padding: 3px 8px; border-radius: 12px; font-size: 11px">
+                    <span>📄 <strong>${f.name}</strong> <span >(${sizeKb} KB)</span></span>
+                    <button type="button" onclick="removerArquivoAnexo(${idx})" style="font-weight: bold; cursor: pointer; padding: 0 2px; font-size: 13px; line-height: 1" title="Excluir arquivo" class="btn btn-ghost-secondary">✕</button>
                 </div>
             `;
         }).join('');
@@ -7064,9 +7077,9 @@ var arquivosAnexados = window.arquivosAnexados || [];
 
         if (chat) {
             chat.innerHTML = `
-                <div style="display: flex; gap: 12px; max-width: 88%; align-self: flex-start;">
-                    <div style="width: 34px; height: 34px; border-radius: 50%; background: var(--sagti-accent); display: flex; align-items: center; justify-content: center; color: white; font-size: 15px; flex-shrink: 0;">🤖</div>
-                    <div style="background: #ffffff; padding: 14px 18px; border-radius: 4px 14px 14px 14px; border: 1px solid #e2e8f0; font-size: 13px; color: #1e293b; box-shadow: 0 2px 6px rgba(0,0,0,0.04); line-height: 1.65;">
+                <div style="display: flex; gap: 12px; max-width: 88%; align-self: flex-start">
+                    <div style="width: 34px; height: 34px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 15px; flex-shrink: 0">🤖</div>
+                    <div style="padding: 14px 18px; border-radius: 4px 14px 14px 14px; font-size: 13px; line-height: 1.65">
                         Conversa reiniciada, Luiz! Estou aqui pronto para te ajudar no que precisar hoje — seja para redigir algum texto, organizar tarefas ou consultar qualquer demanda nossa. O que vamos fazer agora?
                     </div>
                 </div>
@@ -7085,7 +7098,7 @@ var arquivosAnexados = window.arquivosAnexados || [];
         const chat = document.getElementById('chat-messages');
         if (chat) {
             chat.innerHTML += `
-                <div style="background: #f0fdf4; padding: 10px 14px; border-radius: 8px; border: 1px solid #bbf7d0; font-size: 12px; color: #166534;">
+                <div style="padding: 10px 14px; border-radius: 8px; font-size: 12px">
                     📎 <strong>Artefato Anexado:</strong> ${nome} (Benchmarking realizado pela IA: termos e especificações comparados com sucesso).
                 </div>
             `;
@@ -7101,10 +7114,10 @@ var arquivosAnexados = window.arquivosAnexados || [];
         const chat = document.getElementById('chat-messages');
         if (chat) {
             chat.innerHTML += `
-                <div style="background: #eff6ff; padding: 10px 14px; border-radius: 8px; border: 1px solid #bfdbfe; font-size: 12px; color: #1e40af;">
+                <div style="padding: 10px 14px; border-radius: 8px; font-size: 12px">
                     🤖 <strong>Sugestão Proativa da IA (Mediação RACI):</strong><br>
                     Incorporadas as 3 recomendações técnicas dos consultados à minuta:
-                    <ul style="margin-left: 18px; margin-top: 4px;">
+                    <ul style="margin-left: 18px; margin-top: 4px">
                         <li>Cláusula de regularidade fiscal e IN 94/2022 (CJ).</li>
                         <li>Requisitos de conformidade ISO 27001 e criptografia (DGD).</li>
                         <li>SLA com RTO &le; 4h e RPO &le; 1h para links críticos (DMO).</li>
@@ -7236,7 +7249,7 @@ window.inicializarPuxadorEsteira = function() {
         const chat = document.getElementById('chat-messages');
         if (chat) {
             chat.innerHTML += `
-                <div style="background: #eff6ff; border: 1px solid #bfdbfe; border-left: 4px solid #0544cf; padding: 12px; border-radius: 8px; font-size: 12px; color: #1e3a8a; margin-top: 6px;">
+                <div style="padding: 12px; border-radius: 8px; font-size: 12px; margin-top: 6px">
                     <strong>📥 Processo Carregado para Contexto da IA:</strong><br>
                     • <strong>SEI:</strong> ${proc.ID_Processo} | <strong>Aging:</strong> ${proc.Dias_Ultima_Mov} dias (${proc.Faixa_Aging})<br>
                     • <strong>Objeto:</strong> ${proc.Especificacao}<br>
@@ -7266,7 +7279,7 @@ window.inicializarPuxadorEsteira = function() {
         const chat = document.getElementById('chat-messages');
         if (chat) {
             chat.innerHTML += `
-                <div style="background: #f0fdf4; border: 1px solid #bbf7d0; border-left: 4px solid #16a34a; padding: 12px; border-radius: 8px; font-size: 12px; color: #14532d; margin-top: 6px;">
+                <div style="padding: 12px; border-radius: 8px; font-size: 12px; margin-top: 6px">
                     <strong>👥 Portfólio Carregado: ${tecnico} (${lista.length} processos ativos):</strong><br>
                     ${lista.map(p => `• <strong>${p.ID_Processo}</strong> (${p.Dias_Ultima_Mov}d): ${p.Especificacao.slice(0, 45)}... [${p.Farol_Criticidade}]`).join('<br>')}
                 </div>
@@ -7757,8 +7770,8 @@ window.NEWAPI_DETERMINISTIC_LOCK = Object.freeze({
                 if (ehPerguntaDossie) {
                     if (temDossie) {
                         return 'Sim, Luiz! Na <strong>Tarefa #' + idOpBuscado + '</strong> (<em>' + ass + '</em>) existe o <strong>Dossiê Técnico de Governança, Contratação & Orquestração</strong> completo e estruturado.<br><br>' +
-                            '<div style="background:#f8fafc;border-left:4px solid #0284c7;border-radius:6px;padding:12px 16px;margin:8px 0;line-height:1.7;font-size:12.5px;">' +
-                            '<div style="font-weight:700;color:#002d5a;margin-bottom:8px;font-size:13px;">📑 Dossiê Técnico de Governança & Orquestração (#1498):</div>' +
+                            '<div style="border-radius:6px;padding:12px 16px;margin:8px 0;line-height:1.7;font-size:12.5px">' +
+                            '<div style="font-weight:700;margin-bottom:8px;font-size:13px">📑 Dossiê Técnico de Governança & Orquestração (#1498):</div>' +
                             '• <strong>Processo SEI:</strong> <strong>137.00010608/2025-63</strong> (Controle de Links de Internet e Comunicação)<br>' +
                             '• <strong>Enquadramento Normativo:</strong> Lei Federal nº 14.133/2021, Decreto Estadual nº 68.220/2023 e alinhamento ao <strong>PDTIC 2027–2030 (Eixo Conectividade)</strong><br>' +
                             '• <strong>Estrutura Documental:</strong> Identificação do Objeto, Alinhamento Estratégico, Matriz de Riscos Operacionais, Especificação Técnica e Instrumento de Medição de Resultados (IMR com SLA mínimo &ge; 99,5%)<br>' +
@@ -7774,7 +7787,7 @@ window.NEWAPI_DETERMINISTIC_LOCK = Object.freeze({
                 // Caso B: Resumo Geral da Tarefa / Pacote
                 return 'Aqui está o resumo executivo completo da <strong>Tarefa #' + idOpBuscado + '</strong> do OpenProject, Luiz:<br><br>' +
                     '📦 <strong>Pacote de Trabalho:</strong> <strong>#' + idOpBuscado + ' — ' + ass + '</strong><br>' +
-                    '<div style="margin-top:8px;line-height:1.7;">' +
+                    '<div style="margin-top:8px;line-height:1.7">' +
                     '• <strong>Carteira / Projeto:</strong> <em>' + proj + '</em> | <strong>Status:</strong> <strong>' + st + '</strong> (' + atrib + ')<br>' +
                     '• <strong>Processo SEI Vinculado:</strong> <strong>SEI ' + numSei + '</strong><br>' +
                     '• <strong>Objeto da Demanda:</strong> ' + objLimpo + '<br>' +
@@ -7782,7 +7795,7 @@ window.NEWAPI_DETERMINISTIC_LOCK = Object.freeze({
                     '• <strong>Alinhamento Estratégico:</strong> Lei Federal nº 14.133/2021 e PDTIC 2027–2030 (Eixo Modernização de Infraestrutura e Conectividade).' +
                     '</div><br>' +
                     '🎯 <strong>Próximos Passos Recomendados:</strong><br>' +
-                    '<div style="margin-top:4px;line-height:1.6;">' +
+                    '<div style="margin-top:4px;line-height:1.6">' +
                     '1. Acompanhar a liberação de parecer na Consultoria Jurídica (demanda sob a <em>Regra dos Poréns</em> com aging congelado);<br>' +
                     '2. Ajustar os termos finais do IMR com a equipe técnica da DIF;<br>' +
                     '3. Promover a transição de Backlog para a Sprint Ativa assim que a CJ emitir manifestação.' +
@@ -7810,17 +7823,17 @@ window.NEWAPI_DETERMINISTIC_LOCK = Object.freeze({
         if (/\b(?:prioridade|prioridades|organizar\s*(?:meu\s*dia|minhas\s*prioridades)|o\s*que\s*(?:fazer|priorizar)\s*hoje|demandas?\s*urgentes?|ordem\s*de\s*prioridade|rotina\s*de\s*hoje)\b/i.test(qClean)) {
             return 'Aqui está a organização estratégica das suas prioridades de hoje na SA-GTI, Luiz, calibrada pelas urgências operacionais e prazos regulamentares:<br><br>' +
                 '🚨 <strong>Prioridade 1 — Urgência Imediata (Destravamento & Suporte Crítico):</strong><br>' +
-                '<div style="margin-top:4px;margin-bottom:8px;line-height:1.7;">' +
+                '<div style="margin-top:4px;margin-bottom:8px;line-height:1.7">' +
                 '• <strong>SEI 137.00010608/2025-63 (Links SD-WAN / Pacote #1498):</strong> Emitir despacho de cobrança cordial para a Consultoria Jurídica (CJ). O processo está protegido pela <em>Regra dos Poréns</em> (aging líquido 0d), mas a manifestação da CJ é a chave para puxar o pacote do Backlog para a Sprint Ativa;<br>' +
                 '• <strong>Chamado GLPI #1533 (Alessandro Delbue / Redefinição MFA):</strong> Concluir o reset de autenticação no Azure AD / Microsoft Entra ID para restabelecer acesso pleno à VPN e ao SEI.' +
                 '</div>' +
                 '⚙️ <strong>Prioridade 2 — Foco Técnico da Tarde (Track 2 & Conformidade TCU):</strong><br>' +
-                '<div style="margin-top:4px;margin-bottom:8px;line-height:1.7;">' +
+                '<div style="margin-top:4px;margin-bottom:8px;line-height:1.7">' +
                 '• <strong>Track 2 (#1232) e Métricas UST/Pontos de Função (#1233):</strong> Fechar a matriz de entregáveis mensuráveis dos novos TRs de Sustentação (#399) e Suporte (#398), vedando homem-hora puro em cumprimento estrito à <strong>Súmula 269 do TCU</strong>;<br>' +
                 '• <strong>SAM Estoque (SEI 137.00000119/2026-84):</strong> Cobrar encerramento da pesquisa de preços com fornecedores para consolidar a planilha de custos do ETP.' +
                 '</div>' +
                 '📊 <strong>Prioridade 3 — Governança Contratual & Rituais:</strong><br>' +
-                '<div style="margin-top:4px;line-height:1.7;">' +
+                '<div style="margin-top:4px;line-height:1.7">' +
                 '• <strong>Medições de IMR Prodesp (Sustentação SEI 137.00029841/2026-14):</strong> Conferência da apuração de SLA (&ge; 95%) para emissão do Termo de Recebimento Provisório/Definitivo (TRP/TRD) e liquidação sem glosas no SIAFEM;<br>' +
                 '• <strong>Daily War Room (15 min):</strong> Checar impedimentos e manter o WIP da equipe técnica (Diego, Marcos Tadeu e Rafael) no limite de 5 demandas.' +
                 '</div><br>' +
@@ -7831,13 +7844,13 @@ window.NEWAPI_DETERMINISTIC_LOCK = Object.freeze({
         if (/\b(?:track\s*1\b.*track\s*2\b|track\s*2\b.*track\s*1\b|andamento.*track|status.*track|como\s*est[aá].*track|frentes.*track)\b/i.test(qClean)) {
             return 'Aqui está o raio-x executivo e comparativo das frentes <strong>Track 1</strong> e <strong>Track 2</strong> sob sua coordenação, Luiz:<br><br>' +
                 '🚀 <strong>Track 1 — Operação Atual & Sustentação Legada (Pacote #1231):</strong><br>' +
-                '<div style="margin-top:4px;margin-bottom:8px;line-height:1.7;">' +
+                '<div style="margin-top:4px;margin-bottom:8px;line-height:1.7">' +
                 '• <strong>Escopo & Objetivo:</strong> Manutenção da operação contínua e sem interrupções dos contratos vigentes da SA-GTI (sustentação de sistemas, infraestrutura crítica e atendimento às bacias), garantindo que a rotina da SP-Águas permaneça estável enquanto a nova licitação é estruturada;<br>' +
                 '• <strong>Status Operacional:</strong> 🚀 <strong>Em progresso (Estável)</strong> — Fila de suporte N2 sob controle, medições mensais de SLA dentro do catálogo e apuração regular de IMR;<br>' +
                 '• <strong>Ação Imediata:</strong> Acompanhar atestes e liquidação no SIAFEM para evitar passivos contratuais.' +
                 '</div>' +
                 '🎯 <strong>Track 2 — Renegociação Contratual & Novos TRs (Pacote #1232):</strong><br>' +
-                '<div style="margin-top:4px;margin-bottom:8px;line-height:1.7;">' +
+                '<div style="margin-top:4px;margin-bottom:8px;line-height:1.7">' +
                 '• <strong>Escopo & Objetivo:</strong> Reestruturação completa do modelo de contratação de software e sustentação da autarquia sob a <strong>Lei Federal nº 14.133/2021</strong> e alinhada ao <strong>PDTIC 2027–2030</strong>;<br>' +
                 '• <strong>Status Operacional:</strong> 🚀 <strong>Em progresso (Prioridade de Governança)</strong> — Foco central na parametrização de <strong>Métricas de Pagamento por Resultado (Pacote #1233)</strong>, substituindo homem-hora por catálogo de entregáveis em <strong>UST (Unidade de Serviço Técnico)</strong> e <strong>Pontos de Função</strong>, cumprindo a <strong>Súmula 269 do TCU</strong> (código sob custódia no GitLab corporativo e Quality Gate SonarQube com cobertura unitária &ge; 80%);<br>' +
                 '• <strong>Entregáveis em Andamento:</strong> Minutas dos Termos de Referência (TR #398 de Suporte Especializado e TR #399 de Sustentação Evolutiva), Matriz de Riscos Contratuais e Tabela de Glosas Progressivas (2%, 5% e 10%).' +
@@ -7957,7 +7970,7 @@ window.NEWAPI_DETERMINISTIC_LOCK = Object.freeze({
                 refContexto = ' (como o processo <strong>SEI ' + window.escapeHtml(sTop.id || sTop.ID_Processo) + '</strong> referente a <em>' + window.escapeHtml(sTop.especificacao || sTop.Especificacao || 'contratação de TIC') + '</em>)';
             }
             return 'Claro, Luiz! Preparei uma sugestão de texto com tom profissional, cordial e direto para você usar no seu dia a dia' + refContexto + ':<br><br>' +
-                '<blockquote style="margin:8px 0;padding:12px 16px;background:#f8fafc;border-left:4px solid #0544cf;border-radius:6px;color:#1e293b;font-style:normal;">' +
+                '<blockquote style="margin:8px 0;padding:12px 16px;border-radius:6px;font-style:normal">' +
                 '<strong>Assunto:</strong> Alinhamento e acompanhamento de demanda prioritária — SA-GTI / SP-Águas<br><br>' +
                 'Prezados(as), tudo bem?<br><br>' +
                 'Escrevo para alinharmos o andamento da demanda em curso e verificarmos se há alguma pendência técnica em que a equipe da SA-GTI possa apoiar para agilizarmos a próxima etapa. ' +
@@ -8028,7 +8041,7 @@ window.NEWAPI_DETERMINISTIC_LOCK = Object.freeze({
             // Se apenas uma entidade específica foi consultada com alta relevância (ex: id direto 1498):
             if (temOP && String(ctx.matchesOP[0].id) === '1498') {
                 return 'Aqui está o status direto da demanda <strong>#' + ctx.matchesOP[0].id + '</strong> (' + window.escapeHtml(ctx.matchesOP[0].assunto) + '), Luiz:<br><br>' +
-                    '<div style="line-height:1.7;">' +
+                    '<div style="line-height:1.7">' +
                     '• <strong>Carteira:</strong> ' + window.escapeHtml(ctx.matchesOP[0].projeto) + ' | <strong>Status:</strong> ' + window.escapeHtml(ctx.matchesOP[0].status) + '<br>' +
                     '• <strong>Dossiê:</strong> 🟢 <strong>Sim, possui Dossiê Técnico de Governança completo</strong> homologado pela IA 2 (Llama 3.2 1B) em 06/11/2026 às 16:48:15.<br>' +
                     '• <strong>Processo SEI:</strong> 137.00010608/2025-63 (Controle de Links de Internet e Comunicação).' +
@@ -8391,8 +8404,7 @@ window.NEWAPI_DETERMINISTIC_LOCK = Object.freeze({
 
                         var chatSt = document.getElementById('chat-st-' + slotAtual);
                         if (chatSt) {
-                            chatSt.style.background = '#dcfce7';
-                            chatSt.style.color = '#166534';
+                            chatSt.classList.add('badge', 'bg-green-lt', 'text-green');
                             chatSt.innerText = 'Ativa (' + lat + 'ms)';
                         }
 
@@ -8440,7 +8452,7 @@ window.NEWAPI_DETERMINISTIC_LOCK = Object.freeze({
                     body: JSON.stringify(toolArgs)
                 });
                 if (rMcp.ok) {
-                    return '<div style="margin-bottom:10px;padding:10px 12px;background:#ecfdf5;border:1px solid #6ee7b7;border-radius:8px;font-size:12.5px;color:#065f46;">' +
+                    return '<div style="margin-bottom:10px;padding:10px 12px;border-radius:8px;font-size:12.5px">' +
                         'Pronto, Luiz! Acabei de executar isso para você no nosso Quadro Ágil. ' +
                         '<a href="javascript:void(0)" onclick="window.switchTab(\'gestao_agil\')" class="link-drilldown-v9">Ver no Quadro Kanban &rarr;</a>' +
                         '</div>';
@@ -8453,7 +8465,7 @@ window.NEWAPI_DETERMINISTIC_LOCK = Object.freeze({
                 posts.unshift({ id: Date.now(), cor: 'amarelo', texto: toolArgs.texto, autor: 'Luiz Seixeiro', hora: new Date().toLocaleTimeString().slice(0,5) });
                 try { localStorage.setItem('sagti_mural_postits', JSON.stringify(posts)); } catch(e){}
             }
-            return '<div style="margin-bottom:10px;padding:10px 12px;background:#eff6ff;border:1px solid #93c5fd;border-radius:8px;font-size:12.5px;color:#1e3a8a;">' +
+            return '<div style="margin-bottom:10px;padding:10px 12px;border-radius:8px;font-size:12.5px">' +
                 'Anotado! Já registrei essa ação diretamente no seu Quadro Ágil. ' +
                 '<a href="javascript:void(0)" onclick="window.switchTab(\'gestao_agil\')" class="link-drilldown-v9">Abrir Quadro &rarr;</a>' +
                 '</div>';
@@ -8492,7 +8504,7 @@ window.NEWAPI_DETERMINISTIC_LOCK = Object.freeze({
                         ? String(jDoc.choices[0].message.content || '').trim()
                         : '';
                     if (!textoDoc) throw new Error('O gateway IA não retornou uma minuta válida.');
-                    return '<div style="margin-bottom:10px;padding:10px 12px;background:#f0fdf4;border:1px solid #86efac;border-radius:8px;font-size:12.5px;color:#14532d;">' +
+                    return '<div style="margin-bottom:10px;padding:10px 12px;border-radius:8px;font-size:12.5px">' +
                         '<strong>Minuta preliminar de ' + window.escapeHtml(tipoArtefato) + ' — revisão humana obrigatória.</strong><br>' +
                         window.escapeHtml(textoDoc).replace(/\n/g, '<br>') +
                         '</div>';
@@ -8500,7 +8512,7 @@ window.NEWAPI_DETERMINISTIC_LOCK = Object.freeze({
                 var erroDoc = await rDoc.json().catch(function() { return {}; });
                 throw new Error((erroDoc && (erroDoc.erro || erroDoc.mensagem)) || ('Gateway IA retornou HTTP ' + rDoc.status + '.'));
             } catch (e) {}
-            return '<div style="margin-bottom:10px;padding:10px 12px;background:#fff7ed;border:1px solid #fdba74;border-radius:8px;font-size:12.5px;color:#9a3412;">' +
+            return '<div style="margin-bottom:10px;padding:10px 12px;border-radius:8px;font-size:12.5px">' +
                 '<strong>IA indisponível.</strong> Não foi possível gerar a minuta pelo gateway autenticado; nenhum documento foi produzido.</div>';
         }
 
@@ -8548,26 +8560,26 @@ window.NEWAPI_DETERMINISTIC_LOCK = Object.freeze({
             }
 
             var cardUiId = 'card-conf-op-' + Date.now();
-            return '<div id="' + cardUiId + '" class="card-confirmacao-op" style="margin: 10px 0; background: var(--sagti-surface-alt); border: 1.5px solid #38bdf8; border-radius: 10px; padding: 14px 16px; box-shadow: 0 4px 16px rgba(0,0,0,0.3);">' +
-                '<div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">' +
-                    '<strong style="color:var(--sagti-accent); font-size:13px; display:flex; align-items:center; gap:6px;">' +
+            return '<div id="' + cardUiId + '" class="card-confirmacao-op" style="margin: 10px 0; border-radius: 10px; padding: 14px 16px">' +
+                '<div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px">' +
+                    '<strong style="font-size:13px; display:flex; align-items:center; gap:6px">' +
                         '<span>🏗️</span> PROPOSTA DE ' + tipoOperacao.toUpperCase() + ' NO OPENPROJECT' +
                     '</strong>' +
-                    '<span style="font-size:10.5px; background:rgba(245,158,11,0.2); color:#f59e0b; border:1px solid rgba(245,158,11,0.4); padding:2px 8px; border-radius:10px; font-weight:700;">Aguardando sua confirmação</span>' +
+                    '<span style="font-size:10.5px; padding:2px 8px; border-radius:10px; font-weight:700">Aguardando sua confirmação</span>' +
                 '</div>' +
-                '<div style="font-size:12px; color:var(--sagti-text); line-height:1.5; margin-bottom:12px; background:rgba(255,255,255,0.04); padding:10px 12px; border-radius:6px; border:1px solid rgba(255,255,255,0.08);">' +
+                '<div style="font-size:12px; line-height:1.5; margin-bottom:12px; padding:10px 12px; border-radius:6px">' +
                     '<div><strong>Card Alvo:</strong> #' + cardId + ' &mdash; ' + window.escapeHtml(opExistente.assunto || '') + '</div>' +
-                    '<div style="margin-top:4px;"><strong>Operação Solicitada:</strong> ' + detalheAcao + '</div>' +
-                    '<div style="margin-top:6px; color:#94a3b8; font-size:11px;">🔒 <em>Em conformidade com a governança da SA-GTI, nenhuma alteração é enviada ao servidor sem seu comando explícito.</em></div>' +
+                    '<div style="margin-top:4px"><strong>Operação Solicitada:</strong> ' + detalheAcao + '</div>' +
+                    '<div style="margin-top:6px; font-size:11px">🔒 <em>Em conformidade com a governança da SA-GTI, nenhuma alteração é enviada ao servidor sem seu comando explícito.</em></div>' +
                 '</div>' +
-                '<div style="display:flex; gap:10px; align-items:center; flex-wrap:wrap;">' +
-                    '<button type="button" class="btn btn-primary" onclick="window.executarAcaoConfirmadaOpenProject("' + cardId + '", "' + (mOpCategorizar ? 'categorizar' : 'escrever') + '", "' + encodeURIComponent(pergunta) + '", "' + cardUiId + '")" style="background: var(--sagti-surface-alt); color:var(--sagti-text); font-weight:800; font-size:12px; padding:7px 18px; border-radius:6px; border:1px solid #34d399; cursor:pointer; display:inline-flex; align-items:center; gap:6px; box-shadow:0 2px 8px rgba(16,185,129,0.35);">' +
+                '<div style="display:flex; gap:10px; align-items:center; flex-wrap:wrap">' +
+                    '<button type="button" class="btn btn-primary" onclick="window.executarAcaoConfirmadaOpenProject("' + cardId + '", "' + (mOpCategorizar ? 'categorizar' : 'escrever') + '", "' + encodeURIComponent(pergunta) + '", "' + cardUiId + '")" style="font-weight:800; font-size:12px; padding:7px 18px; border-radius:6px; cursor:pointer; display:inline-flex; align-items:center; gap:6px">' +
                         '✅ Confirmar e Gravar no Card #' + cardId +
                     '</button>' +
-                    '<button type="button" class="btn btn-secondary" onclick="document.getElementById("' + cardUiId + '").remove()" style="background: rgba(255,255,255,0.08); color:#cbd5e1; font-size:12px; padding:7px 14px; border-radius:6px; border:1px solid rgba(255,255,255,0.15); cursor:pointer;">' +
+                    '<button type="button" class="btn btn-outline-secondary" onclick="document.getElementById("' + cardUiId + '").remove()" style="font-size:12px; padding:7px 14px; border-radius:6px; cursor:pointer">' +
                         '❌ Cancelar' +
                     '</button>' +
-                    '<a href="https://projetos.spaguas.sp.gov.br/work_packages/' + cardId + '" target="_blank" rel="noopener noreferrer" style="font-size:11.5px; color:var(--sagti-accent); text-decoration:none; margin-left:auto;">' +
+                    '<a href="https://projetos.spaguas.sp.gov.br/work_packages/' + cardId + '" target="_blank" rel="noopener noreferrer" style="font-size:11.5px; text-decoration:none; margin-left:auto">' +
                         'Abrir Card #' + cardId + ' no OP ↗' +
                     '</a>' +
                 '</div>' +
@@ -8616,8 +8628,8 @@ window.NEWAPI_DETERMINISTIC_LOCK = Object.freeze({
         var rawPergunta = decodeURIComponent(rawPerguntaEncoded);
         var elCard = document.getElementById(cardUiId);
         if (elCard) {
-            elCard.innerHTML = '<div style="display:flex; align-items:center; gap:8px; color:var(--sagti-accent); font-size:12.5px; font-weight:700;">' +
-                '<span style="display:inline-block;width:10px;height:10px;border-radius:50%;background:#38bdf8;animation:pulse 1s infinite;"></span>' +
+            elCard.innerHTML = '<div style="display:flex; align-items:center; gap:8px; font-size:12.5px; font-weight:700">' +
+                '<span style="display:inline-block;width:10px;height:10px;border-radius:50%;animation:pulse 1s infinite"></span>' +
                 'Gravando e sincronizando Card #' + cardId + ' no servidor oficial do OpenProject (API v3)...' +
             '</div>';
         }
@@ -8640,18 +8652,18 @@ window.NEWAPI_DETERMINISTIC_LOCK = Object.freeze({
         try {
             var res = window.openProjectOrchestrator ? await window.openProjectOrchestrator.transmitirCardAoServidor(cardId, payload) : null;
             if (elCard) {
-                elCard.innerHTML = '<div style="padding:12px 16px; background:#ecfdf5; border:1px solid #6ee7b7; border-radius:8px; color:#065f46; font-size:12.5px; line-height:1.5;">' +
+                elCard.innerHTML = '<div style="padding:12px 16px; border-radius:8px; font-size:12.5px; line-height:1.5">' +
                     '✅ <strong>Operação Confirmada e Executada com Sucesso!</strong><br>' +
                     'O Card <strong>#' + cardId + '</strong> foi atualizado e sincronizado no OpenProject com parecer e categorização oficiais.<br>' +
-                    '<a href="https://projetos.spaguas.sp.gov.br/work_packages/' + cardId + '" target="_blank" rel="noopener noreferrer" style="font-weight:700; color:#047857; text-decoration:underline; display:inline-block; margin-top:4px;">Abrir Card #' + cardId + ' no OpenProject ↗</a>' +
+                    '<a href="https://projetos.spaguas.sp.gov.br/work_packages/' + cardId + '" target="_blank" rel="noopener noreferrer" style="font-weight:700; text-decoration:underline; display:inline-block; margin-top:4px">Abrir Card #' + cardId + ' no OpenProject ↗</a>' +
                 '</div>';
             }
         } catch(err) {
             if (elCard) {
-                elCard.innerHTML = '<div style="padding:12px 16px; background:#eff6ff; border:1px solid #93c5fd; border-radius:8px; color:#1e3a8a; font-size:12.5px; line-height:1.5;">' +
+                elCard.innerHTML = '<div style="padding:12px 16px; border-radius:8px; font-size:12.5px; line-height:1.5">' +
                     'ℹ️ <strong>Card #' + cardId + ' atualizado no Banco do Cockpit!</strong><br>' +
                     'O parecer e categorização foram gravados. O espelhamento no OpenProject será enviado na próxima sincronização do backend.<br>' +
-                    '<a href="https://projetos.spaguas.sp.gov.br/work_packages/' + cardId + '" target="_blank" rel="noopener noreferrer" style="font-weight:700; color:#1d4ed8; text-decoration:underline; display:inline-block; margin-top:4px;">Abrir Card #' + cardId + ' no OpenProject ↗</a>' +
+                    '<a href="https://projetos.spaguas.sp.gov.br/work_packages/' + cardId + '" target="_blank" rel="noopener noreferrer" style="font-weight:700; text-decoration:underline; display:inline-block; margin-top:4px">Abrir Card #' + cardId + ' no OpenProject ↗</a>' +
                 '</div>';
             }
         }
@@ -8676,14 +8688,14 @@ window.NEWAPI_DETERMINISTIC_LOCK = Object.freeze({
         for (var i = 0; i < linhas.length; i++) {
             var l = linhas[i].trim();
             if (!l) {
-                htmlLinhas.push('<div style="height:5px;"></div>');
+                htmlLinhas.push('<div style="height:5px"></div>');
                 continue;
             }
 
             // Headers markdown ### ou ##
             if (/^#{1,4}\s+(.*)$/.test(l)) {
                 var hTxt = l.replace(/^#{1,4}\s+/, '');
-                htmlLinhas.push('<div style="font-weight:700;font-size:13px;color:#002d5a;margin-top:8px;margin-bottom:3px;">' + window.escapeHtml(hTxt) + '</div>');
+                htmlLinhas.push('<div style="font-weight:700;font-size:13px;margin-top:8px;margin-bottom:3px">' + window.escapeHtml(hTxt) + '</div>');
                 continue;
             }
 
@@ -8692,8 +8704,8 @@ window.NEWAPI_DETERMINISTIC_LOCK = Object.freeze({
                 var bTxt = l.replace(/^[-*•]\s+/, '');
                 var bSafe = window.escapeHtml(bTxt)
                     .replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>')
-                    .replace(/`([^`]+)`/g, '<code style="background:#f1f5f9;padding:1px 5px;border-radius:4px;font-family:monospace;font-size:11.5px;">$1</code>');
-                htmlLinhas.push('<div style="display:flex;align-items:flex-start;gap:7px;margin-bottom:3px;line-height:1.6;"><span style="color:#0284c7;font-size:13px;line-height:1.3;">•</span><span style="flex:1;">' + bSafe + '</span></div>');
+                    .replace(/`([^`]+)`/g, '<code style="padding:1px 5px;border-radius:4px;font-size:11.5px">$1</code>');
+                htmlLinhas.push('<div style="display:flex;align-items:flex-start;gap:7px;margin-bottom:3px;line-height:1.6"><span style="font-size:13px;line-height:1.3">•</span><span style="flex:1">' + bSafe + '</span></div>');
                 continue;
             }
 
@@ -8704,16 +8716,16 @@ window.NEWAPI_DETERMINISTIC_LOCK = Object.freeze({
                 var nTxt = numMatch[2];
                 var nSafe = window.escapeHtml(nTxt)
                     .replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>')
-                    .replace(/`([^`]+)`/g, '<code style="background:#f1f5f9;padding:1px 5px;border-radius:4px;font-family:monospace;font-size:11.5px;">$1</code>');
-                htmlLinhas.push('<div style="display:flex;align-items:flex-start;gap:6px;margin-bottom:3px;line-height:1.6;"><span style="color:#002d5a;font-weight:700;font-size:12px;line-height:1.3;">' + nNum + '.</span><span style="flex:1;">' + nSafe + '</span></div>');
+                    .replace(/`([^`]+)`/g, '<code style="padding:1px 5px;border-radius:4px;font-size:11.5px">$1</code>');
+                htmlLinhas.push('<div style="display:flex;align-items:flex-start;gap:6px;margin-bottom:3px;line-height:1.6"><span style="font-weight:700;font-size:12px;line-height:1.3">' + nNum + '.</span><span style="flex:1">' + nSafe + '</span></div>');
                 continue;
             }
 
             // Linha regular com formatacao
             var safe = window.escapeHtml(l);
             safe = safe.replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>');
-            safe = safe.replace(/`([^`]+)`/g, '<code style="background:#f1f5f9;padding:1px 5px;border-radius:4px;font-family:monospace;font-size:11.5px;">$1</code>');
-            htmlLinhas.push('<div style="margin-bottom:3px;line-height:1.6;">' + safe + '</div>');
+            safe = safe.replace(/`([^`]+)`/g, '<code style="padding:1px 5px;border-radius:4px;font-size:11.5px">$1</code>');
+            htmlLinhas.push('<div style="margin-bottom:3px;line-height:1.6">' + safe + '</div>');
         }
         return htmlLinhas.join('');
     };
@@ -8729,9 +8741,9 @@ window.NEWAPI_DETERMINISTIC_LOCK = Object.freeze({
         var pediuFontesOuTabelas = window.usuarioSolicitouFontesExplicitamente(pergunta);
 
         // Bolha limpa, humana e acolhedora (sem cabeçalhos robóticos de modelo/latência/verificação)
-        html.push('<div style="display:flex;gap:12px;max-width:92%;align-self:flex-start;">');
-        html.push('<div style="width:34px;height:34px;border-radius:50%;background:var(--sagti-accent);display:flex;align-items:center;justify-content:center;color:white;font-size:15px;flex-shrink:0;box-shadow:0 2px 5px rgba(5,68,207,0.2);">&#129302;</div>');
-        html.push('<div style="background:#ffffff;border:1px solid #e2e8f0;padding:14px 18px;border-radius:4px 14px 14px 14px;line-height:1.65;color:#1e293b;font-size:13px;box-shadow:0 2px 6px rgba(0,0,0,0.04);flex:1;">');
+        html.push('<div style="display:flex;gap:12px;max-width:92%;align-self:flex-start">');
+        html.push('<div style="width:34px;height:34px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:15px;flex-shrink:0">&#129302;</div>');
+        html.push('<div style="padding:14px 18px;border-radius:4px 14px 14px 14px;line-height:1.65;font-size:13px;flex:1">');
 
         if (htmlAutomacao) {
             html.push(htmlAutomacao);
@@ -8739,7 +8751,7 @@ window.NEWAPI_DETERMINISTIC_LOCK = Object.freeze({
 
         // Síntese principal (da IA ao vivo ou do motor humanizado pessoal)
         if (resultadoLlm && resultadoLlm.status === 'indisponivel') {
-            html.push('<div style="padding:10px 12px;background:#fff7ed;border:1px solid #fdba74;border-radius:8px;color:#9a3412;">' +
+            html.push('<div style="padding:10px 12px;border-radius:8px">' +
                 '<strong>IA indisponível.</strong> ' + window.escapeHtml(resultadoLlm.erro || 'Não foi possível consultar o gateway autenticado.') +
                 ' Nenhuma resposta de IA foi produzida.</div>');
         } else if (temRespostaLlmViva) {
@@ -8750,55 +8762,55 @@ window.NEWAPI_DETERMINISTIC_LOCK = Object.freeze({
 
         // SOMENTE SE O USUÁRIO SOLICITOU EXPLICITAMENTE AS FONTES / REGISTROS / TABELAS:
         if (pediuFontesOuTabelas && ctx) {
-            html.push('<div style="margin-top:14px;padding-top:12px;border-top:1px dashed #cbd5e1;">');
-            html.push('<div style="font-size:11.5px;font-weight:700;color:#002d5a;margin-bottom:8px;">&#128269; Fontes e Registros Consultados (882 Registros Auditados sob solicita&ccedil;&atilde;o):</div>');
+            html.push('<div style="margin-top:14px;padding-top:12px">');
+            html.push('<div style="font-size:11.5px;font-weight:700;margin-bottom:8px">&#128269; Fontes e Registros Consultados (882 Registros Auditados sob solicita&ccedil;&atilde;o):</div>');
 
             if (ctx.matchesOP && ctx.matchesOP.length > 0) {
                 var mostraOP = ctx.matchesOP.slice(0, 6);
-                html.push('<div style="margin-bottom:10px;"><strong style="color:#0369a1;font-size:11.5px;">OpenProject (' + ctx.matchesOP.length + ' encontrados):</strong>');
-                html.push('<div style="overflow-x:auto;margin-top:4px;"><table style="width:100%;border-collapse:collapse;font-size:11px;">');
-                html.push('<thead><tr style="background:#0f2d59;color:var(--sagti-text);"><th style="padding:4px 8px;text-align:left;">#ID</th><th style="padding:4px 8px;text-align:left;">Projeto</th><th style="padding:4px 8px;text-align:left;">Entrega</th><th style="padding:4px 8px;text-align:left;">Status</th><th style="padding:4px 8px;text-align:left;">Respons&aacute;vel</th></tr></thead><tbody>');
+                html.push('<div style="margin-bottom:10px"><strong style="font-size:11.5px">OpenProject (' + ctx.matchesOP.length + ' encontrados):</strong>');
+                html.push('<div style="overflow-x:auto;margin-top:4px"><div class="table-responsive"><table style="width:100%;border-collapse:collapse;font-size:11px" class="table table-vcenter card-table table-hover">');
+                html.push('<thead><tr ><th style="padding:4px 8px;text-align:left">#ID</th><th style="padding:4px 8px;text-align:left">Projeto</th><th style="padding:4px 8px;text-align:left">Entrega</th><th style="padding:4px 8px;text-align:left">Status</th><th style="padding:4px 8px;text-align:left">Respons&aacute;vel</th></tr></thead><tbody>');
                 mostraOP.forEach(function(p) {
-                    html.push('<tr style="border-bottom:1px solid #e2e8f0;">' +
-                        '<td style="padding:4px 8px;"><a href="javascript:void(0)" onclick="window.navegarDrillDown360(\'op\', \'#' + p.id + '\')" class="link-drilldown-v9">#' + window.escapeHtml(p.id) + '</a></td>' +
-                        '<td style="padding:4px 8px;">' + window.escapeHtml(p.projeto) + '</td>' +
-                        '<td style="padding:4px 8px;font-weight:700;">' + window.escapeHtml(p.assunto) + '</td>' +
-                        '<td style="padding:4px 8px;">' + window.escapeHtml(p.status || 'Ativo') + '</td>' +
-                        '<td style="padding:4px 8px;">' + window.escapeHtml(p.atrib || p.encarr || 'SP-Águas') + '</td></tr>');
+                    html.push('<tr >' +
+                        '<td style="padding:4px 8px"><a href="javascript:void(0)" onclick="window.navegarDrillDown360(\'op\', \'#' + p.id + '\')" class="link-drilldown-v9">#' + window.escapeHtml(p.id) + '</a></td>' +
+                        '<td style="padding:4px 8px">' + window.escapeHtml(p.projeto) + '</td>' +
+                        '<td style="padding:4px 8px;font-weight:700">' + window.escapeHtml(p.assunto) + '</td>' +
+                        '<td style="padding:4px 8px">' + window.escapeHtml(p.status || 'Ativo') + '</td>' +
+                        '<td style="padding:4px 8px">' + window.escapeHtml(p.atrib || p.encarr || 'SP-Águas') + '</td></tr>');
                 });
-                html.push('</tbody></table></div></div>');
+                html.push('</tbody></table></div></div></div>');
             }
 
             if (ctx.matchesGLPI && ctx.matchesGLPI.length > 0) {
                 var mostraGLPI = ctx.matchesGLPI.slice(0, 6);
-                html.push('<div style="margin-bottom:10px;"><strong style="color:#0056d2;font-size:11.5px;">GLPI 10 (' + ctx.matchesGLPI.length + ' encontrados):</strong>');
-                html.push('<div style="overflow-x:auto;margin-top:4px;"><table style="width:100%;border-collapse:collapse;font-size:11px;">');
-                html.push('<thead><tr style="background:#0056d2;color:var(--sagti-text);"><th style="padding:4px 8px;text-align:left;">Ticket</th><th style="padding:4px 8px;text-align:left;">SEI / Ref</th><th style="padding:4px 8px;text-align:left;">Objeto</th><th style="padding:4px 8px;text-align:left;">Fila</th><th style="padding:4px 8px;text-align:left;">Status</th></tr></thead><tbody>');
+                html.push('<div style="margin-bottom:10px"><strong style="font-size:11.5px">GLPI 10 (' + ctx.matchesGLPI.length + ' encontrados):</strong>');
+                html.push('<div style="overflow-x:auto;margin-top:4px"><div class="table-responsive"><table style="width:100%;border-collapse:collapse;font-size:11px" class="table table-vcenter card-table table-hover">');
+                html.push('<thead><tr ><th style="padding:4px 8px;text-align:left">Ticket</th><th style="padding:4px 8px;text-align:left">SEI / Ref</th><th style="padding:4px 8px;text-align:left">Objeto</th><th style="padding:4px 8px;text-align:left">Fila</th><th style="padding:4px 8px;text-align:left">Status</th></tr></thead><tbody>');
                 mostraGLPI.forEach(function(t) {
-                    html.push('<tr style="border-bottom:1px solid #e2e8f0;">' +
-                        '<td style="padding:4px 8px;"><a href="javascript:void(0)" href="https://atendimento.spaguas.sp.gov.br/front/ticket.form.php?id=' + t.id + '" target="_blank" class="link-drilldown-v9" title="Abrir no GLPI de Producao">#' + t.id + ' ↗</a></td>' +
-                        '<td style="padding:4px 8px;font-family:monospace;">' + window.escapeHtml(t.sei) + '</td>' +
-                        '<td style="padding:4px 8px;font-weight:700;">' + window.escapeHtml(t.titulo) + '</td>' +
-                        '<td style="padding:4px 8px;">' + window.escapeHtml(t.fila) + '</td>' +
-                        '<td style="padding:4px 8px;">' + window.escapeHtml(t.status) + '</td></tr>');
+                    html.push('<tr >' +
+                        '<td style="padding:4px 8px"><a href="javascript:void(0)" href="https://atendimento.spaguas.sp.gov.br/front/ticket.form.php?id=' + t.id + '" target="_blank" class="link-drilldown-v9" title="Abrir no GLPI de Producao">#' + t.id + ' ↗</a></td>' +
+                        '<td style="padding:4px 8px">' + window.escapeHtml(t.sei) + '</td>' +
+                        '<td style="padding:4px 8px;font-weight:700">' + window.escapeHtml(t.titulo) + '</td>' +
+                        '<td style="padding:4px 8px">' + window.escapeHtml(t.fila) + '</td>' +
+                        '<td style="padding:4px 8px">' + window.escapeHtml(t.status) + '</td></tr>');
                 });
-                html.push('</tbody></table></div></div>');
+                html.push('</tbody></table></div></div></div>');
             }
 
             if (ctx.matchesSEI && ctx.matchesSEI.length > 0) {
                 var mostraSEI = ctx.matchesSEI.slice(0, 6);
-                html.push('<div><strong style="color:#047857;font-size:11.5px;">Processos SEI (' + ctx.matchesSEI.length + ' encontrados):</strong>');
-                html.push('<div style="overflow-x:auto;margin-top:4px;"><table style="width:100%;border-collapse:collapse;font-size:11px;">');
-                html.push('<thead><tr style="background:#047857;color:var(--sagti-text);"><th style="padding:4px 8px;text-align:left;">Processo SEI</th><th style="padding:4px 8px;text-align:left;">Especifica&ccedil;&atilde;o</th><th style="padding:4px 8px;text-align:left;">Bucket</th><th style="padding:4px 8px;text-align:left;">Respons&aacute;vel</th></tr></thead><tbody>');
+                html.push('<div><strong style="font-size:11.5px">Processos SEI (' + ctx.matchesSEI.length + ' encontrados):</strong>');
+                html.push('<div style="overflow-x:auto;margin-top:4px"><div class="table-responsive"><table style="width:100%;border-collapse:collapse;font-size:11px" class="table table-vcenter card-table table-hover">');
+                html.push('<thead><tr ><th style="padding:4px 8px;text-align:left">Processo SEI</th><th style="padding:4px 8px;text-align:left">Especifica&ccedil;&atilde;o</th><th style="padding:4px 8px;text-align:left">Bucket</th><th style="padding:4px 8px;text-align:left">Respons&aacute;vel</th></tr></thead><tbody>');
                 mostraSEI.forEach(function(p) {
                     var idS = p.id || p.ID_Processo || '';
-                    html.push('<tr style="border-bottom:1px solid #e2e8f0;">' +
-                        '<td style="padding:4px 8px;"><a href="javascript:void(0)" onclick="window.navegarDrillDown360(\'sei\', \'' + window.escapeHtml(idS) + '\')" class="link-drilldown-v9">' + window.escapeHtml(idS) + '</a></td>' +
-                        '<td style="padding:4px 8px;">' + window.escapeHtml(p.especificacao || p.Especificacao || '') + '</td>' +
-                        '<td style="padding:4px 8px;">' + window.escapeHtml(p.bucket || p.Bucket_OpenProject || '') + '</td>' +
-                        '<td style="padding:4px 8px;">' + window.escapeHtml(p.responsavel || p.Responsavel_Tecnico || 'SA-GTI') + '</td></tr>');
+                    html.push('<tr >' +
+                        '<td style="padding:4px 8px"><a href="javascript:void(0)" onclick="window.navegarDrillDown360(\'sei\', \'' + window.escapeHtml(idS) + '\')" class="link-drilldown-v9">' + window.escapeHtml(idS) + '</a></td>' +
+                        '<td style="padding:4px 8px">' + window.escapeHtml(p.especificacao || p.Especificacao || '') + '</td>' +
+                        '<td style="padding:4px 8px">' + window.escapeHtml(p.bucket || p.Bucket_OpenProject || '') + '</td>' +
+                        '<td style="padding:4px 8px">' + window.escapeHtml(p.responsavel || p.Responsavel_Tecnico || 'SA-GTI') + '</td></tr>');
                 });
-                html.push('</tbody></table></div></div>');
+                html.push('</tbody></table></div></div></div>');
             }
 
             html.push('</div>');
@@ -8817,12 +8829,12 @@ window.NEWAPI_DETERMINISTIC_LOCK = Object.freeze({
         var anexosHtml = '';
         if (window.arquivosAnexados && window.arquivosAnexados.length > 0) {
             var nomes = window.arquivosAnexados.map(function(a) { return window.escapeHtml(a.name); }).join(', ');
-            anexosHtml = '<div style="margin-bottom:4px;font-size:11px;background:rgba(255,255,255,0.25);padding:4px 8px;border-radius:4px;">&#128206; <strong>Anexo(s):</strong> ' + nomes + '</div>';
+            anexosHtml = '<div style="margin-bottom:4px;font-size:11px;padding:4px 8px;border-radius:4px">&#128206; <strong>Anexo(s):</strong> ' + nomes + '</div>';
             window.arquivosAnexados = [];
             if (typeof window.renderizarAnexosChips === 'function') window.renderizarAnexosChips();
         }
 
-        msgContainer.innerHTML += '<div style="background:#0544cf;color:white;padding:11px 16px;border-radius:14px 14px 4px 14px;font-size:13px;align-self:flex-end;max-width:82%;box-shadow:0 2px 5px rgba(5,68,207,0.15);line-height:1.5;">' +
+        msgContainer.innerHTML += '<div style="padding:11px 16px;border-radius:14px 14px 4px 14px;font-size:13px;align-self:flex-end;max-width:82%;line-height:1.5">' +
             anexosHtml +
             '<div>' + window.escapeHtml(txt) + '</div></div>';
         if (input) input.value = '';
@@ -8833,8 +8845,8 @@ window.NEWAPI_DETERMINISTIC_LOCK = Object.freeze({
         var agPrevisto = (poolAtivo.ias[slotPrevisto] && poolAtivo.ias[slotPrevisto].agent) || 'IA Pessoal';
 
         var typingId = 'typing-' + Date.now();
-        msgContainer.innerHTML += '<div id="' + typingId + '" style="background:#ffffff;padding:10px 14px;border-radius:4px 14px 14px 14px;border:1px solid #e2e8f0;font-size:12px;color:#475569;align-self:flex-start;max-width:70%;display:flex;align-items:center;gap:8px;">' +
-            '<span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:#10b981;"></span>' +
+        msgContainer.innerHTML += '<div id="' + typingId + '" style="padding:10px 14px;border-radius:4px 14px 14px 14px;font-size:12px;align-self:flex-start;max-width:70%;display:flex;align-items:center;gap:8px">' +
+            '<span style="display:inline-block;width:8px;height:8px;border-radius:50%"></span>' +
             '<span>Pensando...</span></div>';
         msgContainer.scrollTop = msgContainer.scrollHeight;
 
@@ -8866,7 +8878,7 @@ window.NEWAPI_DETERMINISTIC_LOCK = Object.freeze({
         var elTyping = document.getElementById(typingId);
         if (elTyping) elTyping.remove();
 
-        msgContainer.innerHTML += '<div style="align-self:flex-start;width:100%;">' + respostaFinalHtml + '</div>';
+        msgContainer.innerHTML += '<div style="align-self:flex-start;width:100%">' + respostaFinalHtml + '</div>';
         msgContainer.scrollTop = msgContainer.scrollHeight;
     };
 
@@ -8981,23 +8993,23 @@ window.carregarMotoresVarredura = async function() {
         motores.forEach(m => {
             const isAtivo = m.status === 'ativo';
             trs += `
-                <tr style="border-bottom: 1px solid #e2e8f0;">
-                    <td style="padding: 10px 12px;">
-                        <strong style="color: var(--sagti-text); font-size: 12px;">${m.nome}</strong>
-                        <div style="font-size: 10.5px; color: #94a3b8;">${m.desc || ''}</div>
+                <tr >
+                    <td style="padding: 10px 12px">
+                        <strong style="font-size: 12px">${m.nome}</strong>
+                        <div style="font-size: 10.5px">${m.desc || ''}</div>
                     </td>
-                    <td style="padding: 10px 12px;"><span class="pill-tag pill-blue" style="font-size: 10px;">${m.tipo}</span></td>
-                    <td style="padding: 10px 12px; font-family: monospace; font-size: 11px; color: var(--sagti-accent);">${m.endpoint}</td>
-                    <td style="padding: 10px 12px; text-align: center; font-size: 11px;">${m.freq}</td>
-                    <td style="padding: 10px 12px; text-align: center;">
-                        <span class="pill-tag ${isAtivo ? 'pill-green' : 'pill-yellow'}" style="font-size: 10px;">
+                    <td style="padding: 10px 12px"><span class="pill-tag pill-blue" >${m.tipo}</span></td>
+                    <td style="padding: 10px 12px; font-size: 11px">${m.endpoint}</td>
+                    <td style="padding: 10px 12px; text-align: center; font-size: 11px">${m.freq}</td>
+                    <td style="padding: 10px 12px; text-align: center">
+                        <span class="pill-tag ${isAtivo ? 'pill-green' : 'pill-yellow'}" >
                             ${isAtivo ? '🟢 Ativo' : '⚪ Pausado'}
                         </span>
                     </td>
-                    <td style="padding: 10px 12px; text-align: center; white-space: nowrap;">
-                        <button class="btn btn-secondary" onclick="window.abrirModalEditarMotor('${m.id}')" style="padding: 3px 8px; font-size: 11px; margin-right: 4px;">✏️ Editar</button>
-                        <button class="btn btn-secondary" onclick="window.alternarStatusMotor('${m.id}')" style="padding: 3px 8px; font-size: 11px; margin-right: 4px;">${isAtivo ? '⏸️ Pausar' : '▶️ Ativar'}</button>
-                        <button class="btn btn-secondary" onclick="window.excluirMotor('${m.id}')" style="padding: 3px 8px; font-size: 11px; color: #ef4444; border-color: #fca5a5;">🗑️</button>
+                    <td style="padding: 10px 12px; text-align: center; white-space: nowrap">
+                        <button class="btn btn-outline-secondary" onclick="window.abrirModalEditarMotor('${m.id}')" style="padding: 3px 8px; font-size: 11px; margin-right: 4px">✏️ Editar</button>
+                        <button class="btn btn-outline-secondary" onclick="window.alternarStatusMotor('${m.id}')" style="padding: 3px 8px; font-size: 11px; margin-right: 4px">${isAtivo ? '⏸️ Pausar' : '▶️ Ativar'}</button>
+                        <button class="btn btn-outline-secondary" onclick="window.excluirMotor('${m.id}')" style="padding: 3px 8px; font-size: 11px">🗑️</button>
                     </td>
                 </tr>
             `;
@@ -9166,7 +9178,7 @@ window.temTokenNewApiCustomizado = function() {
                     endpoint: motor.endpoint,
                     status: 'ONLINE',
                     latenciaMs: lat,
-                    badgeHtml: '<span style="background:#dcfce7;color:#166534;padding:3px 9px;border-radius:12px;font-weight:800;font-size:10.5px;">&#128994; ONLINE (' + lat + 'ms)</span>',
+                    badgeHtml: '<span style="padding:3px 9px;border-radius:12px;font-weight:800;font-size:10.5px">&#128994; ONLINE (' + lat + 'ms)</span>',
                     detalhe: 'Serviço/API respondendo em tempo real (HTTP ' + resp.status + ')'
                 };
             }
@@ -9179,7 +9191,7 @@ window.temTokenNewApiCustomizado = function() {
                 endpoint: motor.endpoint,
                 status: 'SEM_SONDA',
                 latenciaMs: latFalha,
-                badgeHtml: '<span style="background:#fef3c7;color:#92400e;padding:3px 9px;border-radius:12px;font-weight:800;font-size:10.5px;">&#128993; SEM SONDA ATIVA</span>',
+                badgeHtml: '<span style="padding:3px 9px;border-radius:12px;font-weight:800;font-size:10.5px">&#128993; SEM SONDA ATIVA</span>',
                 detalhe: motor.detalheLocal
             };
         }
@@ -9190,7 +9202,7 @@ window.temTokenNewApiCustomizado = function() {
                 endpoint: motor.endpoint,
                 status: 'FONTE_LOCAL',
                 latenciaMs: latFalha,
-                badgeHtml: '<span style="background:#dbeafe;color:#1d4ed8;padding:3px 9px;border-radius:12px;font-weight:800;font-size:10.5px;">&#128309; FONTE LOCAL AUDITADA</span>',
+                badgeHtml: '<span style="padding:3px 9px;border-radius:12px;font-weight:800;font-size:10.5px">&#128309; FONTE LOCAL AUDITADA</span>',
                 detalhe: motor.detalheLocal
             };
         }
@@ -9200,7 +9212,7 @@ window.temTokenNewApiCustomizado = function() {
             endpoint: motor.endpoint,
             status: 'ONLINE',
             latenciaMs: Math.max(12, latFalha),
-            badgeHtml: '<span style="background:#dcfce7;color:#166534;padding:3px 9px;border-radius:12px;font-weight:800;font-size:10.5px;">&#128994; ONLINE (' + Math.max(12, latFalha) + 'ms &bull; HTTPS DOE-SP)</span>',
+            badgeHtml: '<span style="padding:3px 9px;border-radius:12px;font-weight:800;font-size:10.5px">&#128994; ONLINE (' + Math.max(12, latFalha) + 'ms &bull; HTTPS DOE-SP)</span>',
             detalhe: motor.detalheLocal || 'Conectado a https://www.doe.sp.gov.br (Sonda HTTPS Anti-CORS + Buscador DOE-SP Ativo)'
         };
     };
@@ -9218,24 +9230,24 @@ window.temTokenNewApiCustomizado = function() {
         if (tbody) {
             tbody.innerHTML = window.MOTORES_CANONICOS_V9.map(function(m) {
                 var r = resultados.find(function(x) { return x.id === m.id; }) || { badgeHtml: '', detalhe: m.detalheLocal };
-                var tipoBadge = '<span style="background:rgba(56,189,248,0.12);color:var(--sagti-accent);border:1px solid rgba(56,189,248,0.3);padding:2px 7px;border-radius:6px;font-size:10px;font-weight:700;display:inline-block;margin-top:4px;">' + window.escapeHtml(m.tipo || 'REST API') + '</span>';
-                var freqBadge = '<span style="background:rgba(255,255,255,0.06);color:#cbd5e1;border:1px solid rgba(255,255,255,0.1);padding:3px 8px;border-radius:6px;font-size:11px;font-weight:600;">' + window.escapeHtml(m.freq || 'Tempo Real') + '</span>';
+                var tipoBadge = '<span style="padding:2px 7px;border-radius:6px;font-weight:700;display:inline-block;margin-top:4px">' + window.escapeHtml(m.tipo || 'REST API') + '</span>';
+                var freqBadge = '<span style="padding:3px 8px;border-radius:6px;font-size:11px;font-weight:600">' + window.escapeHtml(m.freq || 'Tempo Real') + '</span>';
 
                 var btnAcoes = '';
                 if (m.id === 'doe_sp' || m.nome.indexOf('DOE-SP') !== -1 || m.nome.indexOf('Diário Oficial') !== -1) {
-                    btnAcoes += `<button type="button" class="btn btn-primary" style="padding:4px 9px;font-size:11px;background:#01a75f;border-color:#01a75f;font-weight:700;border-radius:6px;margin-right:4px;" onclick="window.abrirPainelMotor1DoeSp()">🔍 Buscar DOE-SP</button>`;
+                    btnAcoes += `<button type="button" class="btn btn-primary" style="padding:4px 9px;font-size:11px;font-weight:700;border-radius:6px;margin-right:4px" onclick="window.abrirPainelMotor1DoeSp()">🔍 Buscar DOE-SP</button>`;
                 }
-                btnAcoes += `<button type="button" class="btn btn-secondary" style="padding:4px 8px;font-size:11px;font-weight:600;border-radius:6px;margin-right:4px;" onclick="window.sondarMotorIndividual('${m.id}')" title="Testar sonda deste motor">⚡ Sondar</button>`;
-                btnAcoes += `<button type="button" class="btn btn-secondary" style="padding:4px 8px;font-size:11px;border-radius:6px;margin-right:4px;" onclick="window.alternarStatusMotorCanonico('${m.id}')">${m.status === 'inativo' ? '▶️ Ativar' : '⏸️ Pausar'}</button>`;
-                btnAcoes += `<button type="button" class="btn btn-secondary" style="padding:4px 8px;font-size:11px;border-radius:6px;" onclick="window.editarMotorCanonico('${m.id}')" title="Editar Motor">✏️</button>`;
+                btnAcoes += `<button type="button" class="btn btn-outline-secondary" style="padding:4px 8px;font-size:11px;font-weight:600;border-radius:6px;margin-right:4px" onclick="window.sondarMotorIndividual('${m.id}')" title="Testar sonda deste motor">⚡ Sondar</button>`;
+                btnAcoes += `<button type="button" class="btn btn-outline-secondary" style="padding:4px 8px;font-size:11px;border-radius:6px;margin-right:4px" onclick="window.alternarStatusMotorCanonico('${m.id}')">${m.status === 'inativo' ? '▶️ Ativar' : '⏸️ Pausar'}</button>`;
+                btnAcoes += `<button type="button" class="btn btn-outline-secondary" style="padding:4px 8px;font-size:11px;border-radius:6px" onclick="window.editarMotorCanonico('${m.id}')" title="Editar Motor">✏️</button>`;
 
-                return '<tr style="border-bottom:1px solid rgba(255,255,255,0.06);">' +
-                    '<td style="padding:12px 14px;font-weight:700;color:#ffffff;line-height:1.4;">' + window.escapeHtml(m.nome) + '<br>' + tipoBadge + '</td>' +
-                    '<td style="padding:12px 14px;font-family:monospace;font-size:11.5px;color:var(--sagti-accent);word-break:break-all;">' + window.escapeHtml(m.endpoint) + '</td>' +
-                    '<td style="padding:12px 14px;white-space:nowrap;" id="status-col-' + m.id + '">' + r.badgeHtml + '</td>' +
-                    '<td style="padding:12px 14px;text-align:center;white-space:nowrap;">' + freqBadge + '</td>' +
-                    '<td style="padding:12px 14px;font-size:11.5px;color:#94a3b8;line-height:1.4;">' + window.escapeHtml(r.detalhe || m.detalheLocal || '') + '</td>' +
-                    '<td style="padding:12px 14px;text-align:center;white-space:nowrap;">' + btnAcoes + '</td>' +
+                return '<tr >' +
+                    '<td style="padding:12px 14px;font-weight:700;line-height:1.4">' + window.escapeHtml(m.nome) + '<br>' + tipoBadge + '</td>' +
+                    '<td style="padding:12px 14px;font-size:11.5px;word-break:break-all">' + window.escapeHtml(m.endpoint) + '</td>' +
+                    '<td style="padding:12px 14px;white-space:nowrap" id="status-col-' + m.id + '">' + r.badgeHtml + '</td>' +
+                    '<td style="padding:12px 14px;text-align:center;white-space:nowrap">' + freqBadge + '</td>' +
+                    '<td style="padding:12px 14px;font-size:11.5px;line-height:1.4">' + window.escapeHtml(r.detalhe || m.detalheLocal || '') + '</td>' +
+                    '<td style="padding:12px 14px;text-align:center;white-space:nowrap">' + btnAcoes + '</td>' +
                     '</tr>';
             }).join('');
         }
@@ -9270,32 +9282,33 @@ window.temTokenNewApiCustomizado = function() {
             modal.id = 'modal-sonda-real-v9';
             document.body.appendChild(modal);
         }
-        modal.style.cssText = 'position:fixed;inset:0;background:var(--sagti-surface-alt);z-index:99999;display:flex;align-items:flex-start;justify-content:center;padding:24px 16px;overflow-y:auto;box-sizing:border-box;';
+        modal.style.cssText = 'position:fixed;inset:0;z-index:99999;display:flex;align-items:flex-start;justify-content:center;padding:24px 16px;overflow-y:auto;box-sizing:border-box;';
+        modal.classList.add('sagti-modal-backdrop');
         modal.onclick = function(e) {
             if (e.target === modal) modal.style.display = 'none';
         };
         modal.style.display = 'flex';
-        modal.innerHTML = '<div style="background:#0b0f19;border-radius:18px;max-width:880px;width:100%;max-height:88vh;overflow-y:auto;box-shadow:0 24px 60px rgba(0,0,0,0.85);border:1px solid rgba(255,255,255,0.12);border-top:4px solid #0ea5e9;padding:22px;color:var(--sagti-text);">' +
-            '<div style="display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid rgba(255,255,255,0.08);padding-bottom:14px;margin-bottom:16px;">' +
+        modal.innerHTML = '<div style="border-radius:18px;max-width:880px;width:100%;max-height:88vh;overflow-y:auto;padding:22px">' +
+            '<div style="display:flex;justify-content:space-between;align-items:center;padding-bottom:14px;margin-bottom:16px">' +
                 '<div>' +
-                    '<h3 style="margin:0;color:var(--sagti-text);font-size:16px;font-weight:800;">&#128269; Diagn&oacute;stico Real dos 8 Motores &amp; Portais Oficiais (Zero Falso Positivo)</h3>' +
-                    '<div style="font-size:11.5px;color:#94a3b8;margin-top:3px;">Sondagem HTTP com AbortController + Medidor de Lat&ecirc;ncia &bull; ' + onlineCnt + ' Online Vivo | ' + localCnt + ' Fonte Local Auditada | ' + semSondaCnt + ' Sem Sonda Ativa</div>' +
+                    '<h3 style="margin:0;font-size:16px;font-weight:800">&#128269; Diagn&oacute;stico Real dos 8 Motores &amp; Portais Oficiais (Zero Falso Positivo)</h3>' +
+                    '<div style="font-size:11.5px;margin-top:3px">Sondagem HTTP com AbortController + Medidor de Lat&ecirc;ncia &bull; ' + onlineCnt + ' Online Vivo | ' + localCnt + ' Fonte Local Auditada | ' + semSondaCnt + ' Sem Sonda Ativa</div>' +
                 '</div>' +
-                '<button onclick="document.getElementById(\'modal-sonda-real-v9\').style.display=\'none\'" class="btn btn-secondary" style="background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.15);color:var(--sagti-text);font-weight:700;">&#10006; Fechar</button>' +
+                '<button onclick="document.getElementById(\'modal-sonda-real-v9\').style.display=\'none\'" class="btn btn-outline-secondary" style="font-weight:700">&#10006; Fechar</button>' +
             '</div>' +
-            '<table style="width:100%;border-collapse:collapse;font-size:12px;">' +
-                '<thead><tr style="background:var(--sagti-surface-alt);color:#94a3b8;"><th style="padding:10px 12px;text-align:left;border-bottom:1px solid rgba(255,255,255,0.1);">Motor / Conector</th><th style="padding:10px 12px;text-align:left;border-bottom:1px solid rgba(255,255,255,0.1);">Endpoint Sondado</th><th style="padding:10px 12px;text-align:left;border-bottom:1px solid rgba(255,255,255,0.1);">Status Real</th><th style="padding:10px 12px;text-align:left;border-bottom:1px solid rgba(255,255,255,0.1);">Proveni&ecirc;ncia / Evid&ecirc;ncia</th></tr></thead>' +
+            '<div class="table-responsive"><table style="width:100%;border-collapse:collapse;font-size:12px" class="table table-vcenter card-table table-hover">' +
+                '<thead><tr ><th style="padding:10px 12px;text-align:left">Motor / Conector</th><th style="padding:10px 12px;text-align:left">Endpoint Sondado</th><th style="padding:10px 12px;text-align:left">Status Real</th><th style="padding:10px 12px;text-align:left">Proveni&ecirc;ncia / Evid&ecirc;ncia</th></tr></thead>' +
                 '<tbody>' +
                 resultados.map(function(r) {
-                    return '<tr style="border-bottom:1px solid rgba(255,255,255,0.06);">' +
-                        '<td style="padding:12px 12px;font-weight:700;color:var(--sagti-text);">' + window.escapeHtml(r.nome) + '</td>' +
-                        '<td style="padding:12px 12px;font-family:monospace;font-size:11.5px;color:var(--sagti-accent);font-weight:700;word-break:break-all;">' + window.escapeHtml(r.endpoint) + '</td>' +
-                        '<td style="padding:12px 12px;white-space:nowrap;">' + r.badgeHtml + '</td>' +
-                        '<td style="padding:12px 12px;font-size:11.5px;color:#cbd5e1;">' + window.escapeHtml(r.detalhe) + '</td>' +
+                    return '<tr >' +
+                        '<td style="padding:12px 12px;font-weight:700">' + window.escapeHtml(r.nome) + '</td>' +
+                        '<td style="padding:12px 12px;font-size:11.5px;font-weight:700;word-break:break-all">' + window.escapeHtml(r.endpoint) + '</td>' +
+                        '<td style="padding:12px 12px;white-space:nowrap">' + r.badgeHtml + '</td>' +
+                        '<td style="padding:12px 12px;font-size:11.5px">' + window.escapeHtml(r.detalhe) + '</td>' +
                     '</tr>';
                 }).join('') +
                 '</tbody>' +
-            '</table>' +
+            '</table></div>' +
         '</div>';
     };
     window.executarHealthcheckGeral = window.dispararCicloVarreduras;
@@ -9306,29 +9319,29 @@ window.renderizarEstadoInicialMotoresV9 = function() {
 
     tbody.innerHTML = window.MOTORES_CANONICOS_V9.map(function(m) {
         var badge = m.fallbackTipo === 'sem_sonda'
-            ? '<span style="background:rgba(245,158,11,0.2);color:#fbbf24;border:1px solid rgba(245,158,11,0.4);padding:3px 9px;border-radius:12px;font-weight:800;font-size:10.5px;">🟡 SEM SONDA ATIVA</span>'
+            ? '<span style="padding:3px 9px;border-radius:12px;font-weight:800;font-size:10.5px">🟡 SEM SONDA ATIVA</span>'
             : (m.fallbackTipo === 'fonte_local'
-                ? '<span style="background:rgba(14,165,233,0.2);color:var(--sagti-accent);border:1px solid rgba(56,189,248,0.4);padding:3px 9px;border-radius:12px;font-weight:800;font-size:10.5px;">🔵 FONTE LOCAL AUDITADA</span>'
-                : '<span style="background:rgba(16,185,129,0.2);color:#34d399;border:1px solid rgba(16,185,129,0.4);padding:3px 9px;border-radius:12px;font-weight:800;font-size:10.5px;">🟢 ONLINE (HTTPS DOE-SP)</span>');
+                ? '<span style="padding:3px 9px;border-radius:12px;font-weight:800;font-size:10.5px">🔵 FONTE LOCAL AUDITADA</span>'
+                : '<span style="padding:3px 9px;border-radius:12px;font-weight:800;font-size:10.5px">🟢 ONLINE (HTTPS DOE-SP)</span>');
 
-        var tipoBadge = '<span style="background:rgba(56,189,248,0.12);color:var(--sagti-accent);border:1px solid rgba(56,189,248,0.3);padding:2px 7px;border-radius:6px;font-size:10px;font-weight:700;display:inline-block;margin-top:4px;">' + window.escapeHtml(m.tipo || 'REST API') + '</span>';
-        var freqBadge = '<span style="background:rgba(255,255,255,0.06);color:#cbd5e1;border:1px solid rgba(255,255,255,0.1);padding:3px 8px;border-radius:6px;font-size:11px;font-weight:600;">' + window.escapeHtml(m.freq || 'Tempo Real') + '</span>';
+        var tipoBadge = '<span style="padding:2px 7px;border-radius:6px;font-weight:700;display:inline-block;margin-top:4px">' + window.escapeHtml(m.tipo || 'REST API') + '</span>';
+        var freqBadge = '<span style="padding:3px 8px;border-radius:6px;font-size:11px;font-weight:600">' + window.escapeHtml(m.freq || 'Tempo Real') + '</span>';
 
         var btnAcoes = '';
         if (m.id === 'doe_sp' || m.nome.indexOf('DOE-SP') !== -1 || m.nome.indexOf('Diário Oficial') !== -1) {
-            btnAcoes += `<button type="button" class="btn btn-primary" style="padding:4px 9px;font-size:11px;background:#01a75f;border-color:#01a75f;font-weight:700;border-radius:6px;margin-right:4px;" onclick="window.abrirPainelMotor1DoeSp()">🔍 Buscar DOE-SP</button>`;
+            btnAcoes += `<button type="button" class="btn btn-primary" style="padding:4px 9px;font-size:11px;font-weight:700;border-radius:6px;margin-right:4px" onclick="window.abrirPainelMotor1DoeSp()">🔍 Buscar DOE-SP</button>`;
         }
-        btnAcoes += `<button type="button" class="btn btn-secondary" style="padding:4px 8px;font-size:11px;font-weight:600;border-radius:6px;margin-right:4px;" onclick="window.sondarMotorIndividual('${m.id}')" title="Testar sonda deste motor">⚡ Sondar</button>`;
-        btnAcoes += `<button type="button" class="btn btn-secondary" style="padding:4px 8px;font-size:11px;border-radius:6px;margin-right:4px;" onclick="window.alternarStatusMotorCanonico('${m.id}')">${m.status === 'inativo' ? '▶️ Ativar' : '⏸️ Pausar'}</button>`;
-        btnAcoes += `<button type="button" class="btn btn-secondary" style="padding:4px 8px;font-size:11px;border-radius:6px;" onclick="window.editarMotorCanonico('${m.id}')" title="Editar Motor">✏️</button>`;
+        btnAcoes += `<button type="button" class="btn btn-outline-secondary" style="padding:4px 8px;font-size:11px;font-weight:600;border-radius:6px;margin-right:4px" onclick="window.sondarMotorIndividual('${m.id}')" title="Testar sonda deste motor">⚡ Sondar</button>`;
+        btnAcoes += `<button type="button" class="btn btn-outline-secondary" style="padding:4px 8px;font-size:11px;border-radius:6px;margin-right:4px" onclick="window.alternarStatusMotorCanonico('${m.id}')">${m.status === 'inativo' ? '▶️ Ativar' : '⏸️ Pausar'}</button>`;
+        btnAcoes += `<button type="button" class="btn btn-outline-secondary" style="padding:4px 8px;font-size:11px;border-radius:6px" onclick="window.editarMotorCanonico('${m.id}')" title="Editar Motor">✏️</button>`;
 
-        return '<tr style="border-bottom:1px solid rgba(255,255,255,0.06);">' +
-            '<td style="padding:12px 14px;font-weight:700;color:#ffffff;line-height:1.4;">' + window.escapeHtml(m.nome) + '<br>' + tipoBadge + '</td>' +
-            '<td style="padding:12px 14px;font-family:monospace;font-size:11.5px;color:var(--sagti-accent);word-break:break-all;">' + window.escapeHtml(m.endpoint) + '</td>' +
-            '<td style="padding:12px 14px;white-space:nowrap;" id="status-col-' + m.id + '">' + badge + '</td>' +
-            '<td style="padding:12px 14px;text-align:center;white-space:nowrap;">' + freqBadge + '</td>' +
-            '<td style="padding:12px 14px;font-size:11.5px;color:#94a3b8;line-height:1.4;">' + window.escapeHtml(m.detalheLocal || '') + '</td>' +
-            '<td style="padding:12px 14px;text-align:center;white-space:nowrap;">' + btnAcoes + '</td>' +
+        return '<tr >' +
+            '<td style="padding:12px 14px;font-weight:700;line-height:1.4">' + window.escapeHtml(m.nome) + '<br>' + tipoBadge + '</td>' +
+            '<td style="padding:12px 14px;font-size:11.5px;word-break:break-all">' + window.escapeHtml(m.endpoint) + '</td>' +
+            '<td style="padding:12px 14px;white-space:nowrap" id="status-col-' + m.id + '">' + badge + '</td>' +
+            '<td style="padding:12px 14px;text-align:center;white-space:nowrap">' + freqBadge + '</td>' +
+            '<td style="padding:12px 14px;font-size:11.5px;line-height:1.4">' + window.escapeHtml(m.detalheLocal || '') + '</td>' +
+            '<td style="padding:12px 14px;text-align:center;white-space:nowrap">' + btnAcoes + '</td>' +
             '</tr>';
     }).join('');
 };
@@ -9338,7 +9351,7 @@ window.sondarMotorIndividual = async function(motorId) {
     if (!motor) return;
     var tdStatus = document.getElementById('status-col-' + motorId);
     if (tdStatus) {
-        tdStatus.innerHTML = '<span style="background:rgba(255,255,255,0.1);color:var(--sagti-accent);padding:3px 9px;border-radius:12px;font-size:10.5px;font-weight:700;">⏳ Sondando...</span>';
+        tdStatus.innerHTML = '<span style="padding:3px 9px;border-radius:12px;font-size:10.5px;font-weight:700">⏳ Sondando...</span>';
     }
     var r = await window.sondarEndpointReal(motor);
     if (tdStatus) {
@@ -9401,7 +9414,7 @@ window.escapeHtml = window.escapeHtml || function(s) { if (s === null || s === u
                     endpoint: endpointOficial,
                     status: "ONLINE",
                     latenciaMs: latB,
-                    badgeHtml: '<span style="background:#dcfce7;color:#166534;padding:3px 9px;border-radius:12px;font-weight:800;font-size:10.5px;">&#128994; ONLINE (' + latB + 'ms &bull; HTTPS DOE-SP)</span>',
+                    badgeHtml: '<span style="padding:3px 9px;border-radius:12px;font-weight:800;font-size:10.5px">&#128994; ONLINE (' + latB + 'ms &bull; HTTPS DOE-SP)</span>',
                     detalhe: "Portal https://www.doe.sp.gov.br respondendo ao vivo (Handshake HTTPS verificado • Sonda Anti-CORS Ativa)"
                 };
             }
@@ -9414,7 +9427,7 @@ window.escapeHtml = window.escapeHtml || function(s) { if (s === null || s === u
             endpoint: endpointOficial,
             status: "OFFLINE",
             latenciaMs: latD,
-            badgeHtml: '<span style="background:#fee2e2;color:#991b1b;padding:3px 9px;border-radius:12px;font-weight:800;font-size:10.5px;">&#128308; INDISPONÍVEL</span>',
+            badgeHtml: '<span style="padding:3px 9px;border-radius:12px;font-weight:800;font-size:10.5px">&#128308; INDISPONÍVEL</span>',
             detalhe: "Não foi possível confirmar a conexão HTTPS com o Portal DOE-SP."
         };
     };
@@ -9447,7 +9460,7 @@ window.escapeHtml = window.escapeHtml || function(s) { if (s === null || s === u
 
         if (boxRes) {
             boxRes.style.display = "block";
-            boxRes.innerHTML = '<div style="padding:14px;background:#f8fafc;border:1px solid #cbd5e1;border-radius:8px;color:#002d5a;font-size:12px;">' +
+            boxRes.innerHTML = '<div style="padding:14px;border-radius:8px;font-size:12px">' +
                 '&#1416; <strong>Consultando Motor #1 (https://www.doe.sp.gov.br)...</strong> Buscando publicações oficiais para <code>' + window.escapeHtml(termo) + '</code>...' +
                 '</div>';
         }
@@ -9535,8 +9548,7 @@ window.escapeHtml = window.escapeHtml || function(s) { if (s === null || s === u
         var latTotal = Math.max(12, Math.round(performance.now() - t0));
         if (badgeSt) {
             badgeSt.innerHTML = '&#128994; Motor #1 Ativo (' + latTotal + 'ms &bull; https://www.doe.sp.gov.br)';
-            badgeSt.style.background = '#dcfce7';
-            badgeSt.style.color = '#166534';
+            badgeSt.classList.add('badge', 'bg-green-lt', 'text-green');
         }
 
         // Atualizar também a linha do Motor 1 na tabela unificada (#tbody-motores-unificados-v9)
@@ -9553,36 +9565,36 @@ window.escapeHtml = window.escapeHtml || function(s) { if (s === null || s === u
         var urlBuscaDireta = "https://www.doe.sp.gov.br/busca?q=" + encodeURIComponent(termo);
         var urlBuscaAvancada = "https://www.doe.sp.gov.br/busca-avancada";
 
-        var htmlOut = '<div style="background:#ffffff;border:1px solid #bbf7d0;border-left:4px solid #01a75f;border-radius:8px;padding:14px;">' +
-            '<div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;margin-bottom:10px;border-bottom:1px solid #e2e8f0;padding-bottom:8px;">' +
+        var htmlOut = '<div style="border-radius:8px;padding:14px">' +
+            '<div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;margin-bottom:10px;padding-bottom:8px">' +
                 '<div>' +
-                    '<strong style="color:#002d5a;font-size:13px;">&#9989; Motor #1 (DOE-SP) Operacional &mdash; ' + listaFinal.length + ' registro(s) localizado(s) para <code>' + window.escapeHtml(termo) + '</code></strong>' +
-                    '<div style="font-size:11px;color:#047857;margin-top:2px;">Endpoint: <code>https://www.doe.sp.gov.br</code> &bull; Lat&ecirc;ncia: <strong>' + latTotal + 'ms</strong> &bull; Sonda Anti-CORS Ativa</div>' +
+                    '<strong style="font-size:13px">&#9989; Motor #1 (DOE-SP) Operacional &mdash; ' + listaFinal.length + ' registro(s) localizado(s) para <code>' + window.escapeHtml(termo) + '</code></strong>' +
+                    '<div style="font-size:11px;margin-top:2px">Endpoint: <code>https://www.doe.sp.gov.br</code> &bull; Lat&ecirc;ncia: <strong>' + latTotal + 'ms</strong> &bull; Sonda Anti-CORS Ativa</div>' +
                 '</div>' +
-                '<div style="display:flex;gap:6px;flex-wrap:wrap;">' +
-                    '<a href="' + urlBuscaDireta + '" target="_blank" rel="noopener noreferrer" class="btn btn-primary" style="background:#01a75f;border-color:#01a75f;font-size:11px;padding:5px 10px;text-decoration:none;color:#fff;font-weight:700;">&#127760; Abrir "' + window.escapeHtml(termo.slice(0, 22)) + '" no Portal DOE-SP &#8599;</a>' +
-                    '<a href="' + urlBuscaAvancada + '" target="_blank" rel="noopener noreferrer" class="btn btn-secondary" style="font-size:11px;padding:5px 10px;text-decoration:none;color:#002d5a;font-weight:700;">&#128270; Busca Avan&ccedil;ada DOE-SP &#8599;</a>' +
+                '<div style="display:flex;gap:6px;flex-wrap:wrap">' +
+                    '<a href="' + urlBuscaDireta + '" target="_blank" rel="noopener noreferrer" class="btn btn-primary" style="font-size:11px;padding:5px 10px;text-decoration:none;font-weight:700">&#127760; Abrir "' + window.escapeHtml(termo.slice(0, 22)) + '" no Portal DOE-SP &#8599;</a>' +
+                    '<a href="' + urlBuscaAvancada + '" target="_blank" rel="noopener noreferrer" class="btn btn-outline-secondary" style="font-size:11px;padding:5px 10px;text-decoration:none;font-weight:700">&#128270; Busca Avan&ccedil;ada DOE-SP &#8599;</a>' +
                 '</div>' +
             '</div>' +
-            '<div style="display:flex;flex-direction:column;gap:8px;max-height:320px;overflow-y:auto;">' +
+            '<div style="display:flex;flex-direction:column;gap:8px;max-height:320px;overflow-y:auto">' +
             listaFinal.map(function(item) {
                 var isSeiValido = /^\d{3}\./.test(item.sei || "");
                 var btnSei = isSeiValido
-                    ? '<button class="btn btn-secondary" style="padding:3px 8px;font-size:10.5px;" onclick="if(typeof abrirDetalhesProcesso===\'function\')abrirDetalhesProcesso(\'' + window.escapeHtml(item.sei) + '\')">&#128194; Dossi&ecirc; SEI</button>'
+                    ? '<button class="btn btn-outline-secondary" style="padding:3px 8px;font-size:10.5px" onclick="if(typeof abrirDetalhesProcesso===\'function\')abrirDetalhesProcesso(\'' + window.escapeHtml(item.sei) + '\')">&#128194; Dossi&ecirc; SEI</button>'
                     : '';
-                return '<div style="background:#f8fafc;border:1px solid #e2e8f0;border-radius:6px;padding:10px 12px;display:flex;justify-content:space-between;align-items:flex-start;gap:12px;flex-wrap:wrap;">' +
-                    '<div style="flex:1;min-width:240px;">' +
-                        '<div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin-bottom:3px;">' +
-                            '<span style="background:#dbeafe;color:#1e40af;font-size:10px;font-weight:800;padding:2px 6px;border-radius:4px;">&#128240; ' + window.escapeHtml(item.caderno) + '</span>' +
-                            '<span style="color:#64748b;font-size:10.5px;font-weight:700;">&#128197; ' + window.escapeHtml(item.data) + '</span>' +
-                            '<span style="color:#0f2d59;font-size:10.5px;font-family:monospace;font-weight:700;">SEI: ' + window.escapeHtml(item.sei) + '</span>' +
+                return '<div style="border-radius:6px;padding:10px 12px;display:flex;justify-content:space-between;align-items:flex-start;gap:12px;flex-wrap:wrap">' +
+                    '<div style="flex:1;min-width:240px">' +
+                        '<div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin-bottom:3px">' +
+                            '<span style="font-weight:800;padding:2px 6px;border-radius:4px">&#128240; ' + window.escapeHtml(item.caderno) + '</span>' +
+                            '<span style="font-size:10.5px;font-weight:700">&#128197; ' + window.escapeHtml(item.data) + '</span>' +
+                            '<span style="font-size:10.5px;font-weight:700">SEI: ' + window.escapeHtml(item.sei) + '</span>' +
                         '</div>' +
-                        '<div style="font-weight:700;color:#0f172a;font-size:12px;margin-bottom:3px;">' + window.escapeHtml(item.titulo) + '</div>' +
-                        '<div style="font-size:11px;color:#475569;line-height:1.4;">' + window.escapeHtml(item.resumo) + '</div>' +
+                        '<div style="font-weight:700;font-size:12px;margin-bottom:3px">' + window.escapeHtml(item.titulo) + '</div>' +
+                        '<div style="font-size:11px;line-height:1.4">' + window.escapeHtml(item.resumo) + '</div>' +
                     '</div>' +
-                    '<div style="display:flex;gap:6px;align-items:center;align-self:center;">' +
+                    '<div style="display:flex;gap:6px;align-items:center;align-self:center">' +
                         btnSei +
-                        '<a href="' + item.url + '" target="_blank" rel="noopener noreferrer" class="btn btn-primary" style="padding:4px 10px;font-size:10.5px;text-decoration:none;color:#fff;font-weight:700;white-space:nowrap;">Ver no DOE-SP &#8599;</a>' +
+                        '<a href="' + item.url + '" target="_blank" rel="noopener noreferrer" class="btn btn-primary" style="padding:4px 10px;font-size:10.5px;text-decoration:none;font-weight:700;white-space:nowrap">Ver no DOE-SP &#8599;</a>' +
                     '</div>' +
                 '</div>';
             }).join("") +
@@ -9617,38 +9629,38 @@ window.escapeHtml = window.escapeHtml || function(s) { if (s === null || s === u
         var card = document.createElement("div");
         card.id = "card-buscador-motor1-doesp";
         card.className = "table-card";
-        card.style = "margin-bottom:20px;border-top:4px solid #01a75f;box-shadow:0 4px 14px rgba(1,167,95,0.1);";
+        card.style="margin-bottom:20px";
         card.innerHTML =
-            '<div class="table-header-bar" style="background:var(--sagti-surface-alt);color:var(--sagti-text);padding:14px 18px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;">' +
+            '<div class="table-header-bar card-header" style="padding:14px 18px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px">' +
                 '<div>' +
-                    '<div style="font-size:14px;font-weight:800;color:var(--sagti-text);">&#128240; MOTOR DE BUSCA #1 ATIVO: DI&Aacute;RIO OFICIAL DO ESTADO DE S&Atilde;O PAULO (https://www.doe.sp.gov.br)</div>' +
-                    '<div style="font-size:11px;color:#d1fae5;margin-top:2px;">Conector HTTPS com Sonda Anti-CORS + Pesquisa Direta de Processos SEI, Portarias, Delibera&ccedil;&otilde;es e Extratos Contratuais</div>' +
+                    '<div style="font-size:14px;font-weight:800">&#128240; MOTOR DE BUSCA #1 ATIVO: DI&Aacute;RIO OFICIAL DO ESTADO DE S&Atilde;O PAULO (https://www.doe.sp.gov.br)</div>' +
+                    '<div style="font-size:11px;margin-top:2px">Conector HTTPS com Sonda Anti-CORS + Pesquisa Direta de Processos SEI, Portarias, Delibera&ccedil;&otilde;es e Extratos Contratuais</div>' +
                 '</div>' +
-                '<div style="display:flex;gap:8px;align-items:center;">' +
-                    '<span id="badge-status-motor1-card" style="background:#dcfce7;color:#166534;padding:4px 10px;border-radius:14px;font-size:11px;font-weight:800;">&#128994; Motor #1 Online (https://www.doe.sp.gov.br)</span>' +
-                    '<a href="https://www.doe.sp.gov.br" target="_blank" rel="noopener noreferrer" class="btn btn-secondary" style="background:rgba(255,255,255,0.18);border:1px solid rgba(255,255,255,0.4);color:var(--sagti-text);font-size:11px;font-weight:700;text-decoration:none;padding:5px 10px;">&#127760; Abrir doe.sp.gov.br &#8599;</a>' +
+                '<div style="display:flex;gap:8px;align-items:center">' +
+                    '<span id="badge-status-motor1-card" style="padding:4px 10px;border-radius:14px;font-size:11px;font-weight:800">&#128994; Motor #1 Online (https://www.doe.sp.gov.br)</span>' +
+                    '<a href="https://www.doe.sp.gov.br" target="_blank" rel="noopener noreferrer" class="btn btn-outline-secondary" style="font-size:11px;font-weight:700;text-decoration:none;padding:5px 10px">&#127760; Abrir doe.sp.gov.br &#8599;</a>' +
                 '</div>' +
             '</div>' +
-            '<div style="padding:16px 18px;background:#ffffff;">' +
-                '<div style="display:grid;grid-template-columns:1fr 230px auto auto;gap:10px;align-items:center;margin-bottom:12px;">' +
-                    '<input type="text" id="input-busca-motor1-doesp" value="SP-Águas" placeholder="Digite o nº do Processo SEI (ex: 137.00010608/2025-63), Portaria, Deliberação ou termo..." onkeydown="if(event.key===\'Enter\')window.executarBuscaMotor1DoeSp()" style="width:100%;padding:9px 12px;border-radius:6px;border:1.5px solid #0544cf;font-size:12.5px;color:#0f172a;font-weight:600;" />' +
-                    '<select id="select-caderno-motor1-doesp" onchange="window.executarBuscaMotor1DoeSp()" style="padding:9px 10px;border-radius:6px;border:1px solid #cbd5e1;font-size:12px;color:#002d5a;font-weight:600;background:#f8fafc;">' +
+            '<div style="padding:16px 18px">' +
+                '<div style="display:grid;grid-template-columns:1fr 230px auto auto;gap:10px;align-items:center;margin-bottom:12px">' +
+                    '<input type="text" id="input-busca-motor1-doesp" value="SP-Águas" placeholder="Digite o nº do Processo SEI (ex: 137.00010608/2025-63), Portaria, Deliberação ou termo..." onkeydown="if(event.key===\'Enter\')window.executarBuscaMotor1DoeSp()" style="width:100%;padding:9px 12px;border-radius:6px;font-size:12.5px;font-weight:600"  class="form-control"/>' +
+                    '<select id="select-caderno-motor1-doesp" onchange="window.executarBuscaMotor1DoeSp()" style="padding:9px 10px;border-radius:6px;font-size:12px;font-weight:600" class="form-select">' +
                         '<option value="">Todos os Cadernos DOE-SP</option>' +
                         '<option value="Seção I">Executivo — Seção I (Normas)</option>' +
                         '<option value="Seção III">Executivo — Seção III (Contratos/Editais)</option>' +
                     '</select>' +
-                    '<button type="button" class="btn btn-primary" onclick="window.executarBuscaMotor1DoeSp()" style="background:#0544cf;border-color:#0544cf;padding:9px 16px;font-size:12px;font-weight:800;white-space:nowrap;">&#128269; Buscar no DOE-SP</button>' +
-                    '<button type="button" class="btn btn-secondary" onclick="window.testarConectividadeMotor1Isolado(this)" style="padding:9px 12px;font-size:11.5px;font-weight:700;background:#f0fdf4;border:1px solid #86efac;color:#166534;white-space:nowrap;">&#9889; Testar Sonda HTTPS</button>' +
+                    '<button type="button" class="btn btn-primary" onclick="window.executarBuscaMotor1DoeSp()" style="padding:9px 16px;font-size:12px;font-weight:800;white-space:nowrap">&#128269; Buscar no DOE-SP</button>' +
+                    '<button type="button" class="btn btn-outline-secondary" onclick="window.testarConectividadeMotor1Isolado(this)" style="padding:9px 12px;font-size:11.5px;font-weight:700;white-space:nowrap">&#9889; Testar Sonda HTTPS</button>' +
                 '</div>' +
-                '<div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px;align-items:center;">' +
-                    '<span style="font-size:11px;font-weight:700;color:#64748b;">Consultas r&aacute;pidas DOE-SP:</span>' +
-                    '<button type="button" class="btn btn-secondary" style="padding:3px 9px;font-size:10.5px;border-radius:12px;" onclick="window.executarBuscaMotor1DoeSp(\'SP-Águas\')">&#127963;&#65039; Todos Atos SP-&Aacute;guas</button>' +
-                    '<button type="button" class="btn btn-secondary" style="padding:3px 9px;font-size:10.5px;border-radius:12px;" onclick="window.executarBuscaMotor1DoeSp(\'Deliberação 21/2026\')">&#9878;&#65039; Delibera&ccedil;&atilde;o n&ordm; 21/2026</button>' +
-                    '<button type="button" class="btn btn-secondary" style="padding:3px 9px;font-size:10.5px;border-radius:12px;" onclick="window.executarBuscaMotor1DoeSp(\'137.00010608/2025-63\')">&#127760; SEI Links SD-WAN</button>' +
-                    '<button type="button" class="btn btn-secondary" style="padding:3px 9px;font-size:10.5px;border-radius:12px;" onclick="window.executarBuscaMotor1DoeSp(\'137.00000119/2026-84\')">&#128230; SEI SAM Patrim&ocirc;nio</button>' +
-                    '<button type="button" class="btn btn-secondary" style="padding:3px 9px;font-size:10.5px;border-radius:12px;" onclick="window.executarBuscaMotor1DoeSp(\'PRODESP\')">&#128421;&#65039; Contratos PRODESP</button>' +
+                '<div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px;align-items:center">' +
+                    '<span style="font-size:11px;font-weight:700">Consultas r&aacute;pidas DOE-SP:</span>' +
+                    '<button type="button" class="btn btn-outline-secondary" style="padding:3px 9px;font-size:10.5px;border-radius:12px" onclick="window.executarBuscaMotor1DoeSp(\'SP-Águas\')">&#127963;&#65039; Todos Atos SP-&Aacute;guas</button>' +
+                    '<button type="button" class="btn btn-outline-secondary" style="padding:3px 9px;font-size:10.5px;border-radius:12px" onclick="window.executarBuscaMotor1DoeSp(\'Deliberação 21/2026\')">&#9878;&#65039; Delibera&ccedil;&atilde;o n&ordm; 21/2026</button>' +
+                    '<button type="button" class="btn btn-outline-secondary" style="padding:3px 9px;font-size:10.5px;border-radius:12px" onclick="window.executarBuscaMotor1DoeSp(\'137.00010608/2025-63\')">&#127760; SEI Links SD-WAN</button>' +
+                    '<button type="button" class="btn btn-outline-secondary" style="padding:3px 9px;font-size:10.5px;border-radius:12px" onclick="window.executarBuscaMotor1DoeSp(\'137.00000119/2026-84\')">&#128230; SEI SAM Patrim&ocirc;nio</button>' +
+                    '<button type="button" class="btn btn-outline-secondary" style="padding:3px 9px;font-size:10.5px;border-radius:12px" onclick="window.executarBuscaMotor1DoeSp(\'PRODESP\')">&#128421;&#65039; Contratos PRODESP</button>' +
                 '</div>' +
-                '<div id="resultado-busca-motor1-doesp" style="display:none;"></div>' +
+                '<div id="resultado-busca-motor1-doesp" style="display:none"></div>' +
             '</div>';
 
         var cardUnif = document.getElementById("card-motores-unificados-v9");
@@ -9683,7 +9695,7 @@ window.escapeHtml = window.escapeHtml || function(s) { if (s === null || s === u
                 var actionTd = row.lastElementChild;
                 if (actionTd && actionTd.innerHTML.indexOf("abrirPainelMotor1DoeSp") === -1) {
                     actionTd.innerHTML =
-                        '<button class="btn btn-primary" onclick="window.abrirPainelMotor1DoeSp(\'SP-Águas\')" style="padding:3px 8px;font-size:11px;margin-right:4px;background:#01a75f;border-color:#01a75f;">&#128269; Buscar DOE-SP</button>' +
+                        '<button class="btn btn-primary" onclick="window.abrirPainelMotor1DoeSp(\'SP-Águas\')" style="padding:3px 8px;font-size:11px;margin-right:4px">&#128269; Buscar DOE-SP</button>' +
                         actionTd.innerHTML;
                 }
             }
@@ -9723,21 +9735,22 @@ window.escapeHtml = window.escapeHtml || function(s) { if (s === null || s === u
             modal.id = "modal-busca-oficial-v9";
             document.body.appendChild(modal);
         }
-        modal.style.cssText = "position:fixed;inset:0;background:var(--sagti-surface-alt);z-index:99999;display:flex;align-items:flex-start;justify-content:center;padding:24px 16px;overflow-y:auto;box-sizing:border-box;";
+        modal.style.cssText = "position:fixed;inset:0;z-index:99999;display:flex;align-items:flex-start;justify-content:center;padding:24px 16px;overflow-y:auto;box-sizing:border-box;";
+        modal.classList.add('sagti-modal-backdrop');
         modal.onclick = function(e) {
             if (e.target === modal) {
                 window.fecharModalBuscaOficial();
             }
         };
         modal.style.display = "flex";
-        modal.innerHTML = '<div style="position:relative;background:#ffffff;border-radius:14px;max-width:860px;width:100%;margin:auto 0;padding:22px;box-shadow:0 24px 50px rgba(0,0,0,0.45);border-top:5px solid #01a75f;box-sizing:border-box;font-family:inherit;">' +
-            '<div style="display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid #e2e8f0;padding-bottom:12px;margin-bottom:14px;flex-wrap:wrap;gap:10px;">' +
-                '<h3 style="margin:0;color:#002d5a;font-size:16px;font-weight:800;">&#127760; Acionando Motor #1 (https://www.doe.sp.gov.br) &amp; PNCP em Tempo Real...</h3>' +
-                '<button type="button" onclick="window.fecharModalBuscaOficial()" style="background:#ef4444;color:#ffffff;border:none;border-radius:8px;padding:6px 14px;font-size:12px;font-weight:800;cursor:pointer;display:inline-flex;align-items:center;gap:6px;box-shadow:0 2px 4px rgba(239,68,68,0.3);">&#10006; Fechar</button>' +
+        modal.innerHTML = '<div style="position:relative;border-radius:14px;max-width:860px;width:100%;margin:auto 0;padding:22px;box-sizing:border-box">' +
+            '<div style="display:flex;justify-content:space-between;align-items:center;padding-bottom:12px;margin-bottom:14px;flex-wrap:wrap;gap:10px">' +
+                '<h3 style="margin:0;font-size:16px;font-weight:800">&#127760; Acionando Motor #1 (https://www.doe.sp.gov.br) &amp; PNCP em Tempo Real...</h3>' +
+                '<button type="button" onclick="window.fecharModalBuscaOficial()" style="border-radius:8px;padding:6px 14px;font-size:12px;font-weight:800;cursor:pointer;display:inline-flex;align-items:center;gap:6px" class="btn btn-ghost-secondary">&#10006; Fechar</button>' +
             '</div>' +
-            '<p style="font-size:12.5px;color:#475569;margin:0 0 10px 0;">Consultando publicações do Diário Oficial do Estado de SP (DOE-SP) e PNCP para <strong>' + window.escapeHtml(seiAlvo) + '</strong>...</p>' +
-            '<div style="background:#f8fafc;border:1px dashed #cbd5e1;border-radius:8px;padding:14px;text-align:center;color:#64748b;font-size:12px;">' +
-                '<span style="display:inline-block;">&#8987; Aguardando retorno da sonda direta HTTPS e acoplamento na linha do tempo...</span>' +
+            '<p style="font-size:12.5px;margin:0 0 10px 0">Consultando publicações do Diário Oficial do Estado de SP (DOE-SP) e PNCP para <strong>' + window.escapeHtml(seiAlvo) + '</strong>...</p>' +
+            '<div style="border-radius:8px;padding:14px;text-align:center;font-size:12px">' +
+                '<span style="display:inline-block">&#8987; Aguardando retorno da sonda direta HTTPS e acoplamento na linha do tempo...</span>' +
             '</div>' +
         '</div>';
 
@@ -9768,41 +9781,41 @@ window.escapeHtml = window.escapeHtml || function(s) { if (s === null || s === u
         var urlPncpApp = "https://pncp.gov.br/app/editais?q=" + encodeURIComponent(seiAlvo);
         var urlPortalSpAguas = "https://www.spaguas.sp.gov.br/site/?s=" + encodeURIComponent(seiAlvo);
 
-        modal.innerHTML = '<div style="position:relative;background:#ffffff;border-radius:14px;max-width:860px;width:100%;margin:auto 0;max-height:88vh;overflow-y:auto;padding:22px;box-shadow:0 24px 50px rgba(0,0,0,0.45);border-top:5px solid #01a75f;box-sizing:border-box;font-family:inherit;">' +
-            '<div style="display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid #e2e8f0;padding-bottom:12px;margin-bottom:14px;flex-wrap:wrap;gap:10px;">' +
+        modal.innerHTML = '<div style="position:relative;border-radius:14px;max-width:860px;width:100%;margin:auto 0;max-height:88vh;overflow-y:auto;padding:22px;box-sizing:border-box">' +
+            '<div style="display:flex;justify-content:space-between;align-items:center;padding-bottom:12px;margin-bottom:14px;flex-wrap:wrap;gap:10px">' +
                 '<div>' +
-                    '<h3 style="margin:0;color:#002d5a;font-size:16px;font-weight:800;">&#128240; Motor de Busca #1 (DOE-SP) &amp; Portais Oficiais &mdash; SEI ' + window.escapeHtml(seiAlvo) + '</h3>' +
-                    '<div style="font-size:11.5px;color:#047857;font-weight:700;margin-top:3px;">&#128994; MOTOR #1 ONLINE (https://www.doe.sp.gov.br &bull; ' + latMs + 'ms) &bull; Sonda Anti-CORS Homologada</div>' +
+                    '<h3 style="margin:0;font-size:16px;font-weight:800">&#128240; Motor de Busca #1 (DOE-SP) &amp; Portais Oficiais &mdash; SEI ' + window.escapeHtml(seiAlvo) + '</h3>' +
+                    '<div style="font-size:11.5px;font-weight:700;margin-top:3px">&#128994; MOTOR #1 ONLINE (https://www.doe.sp.gov.br &bull; ' + latMs + 'ms) &bull; Sonda Anti-CORS Homologada</div>' +
                 '</div>' +
-                '<button type="button" onclick="window.fecharModalBuscaOficial()" style="background:#dc2626;color:#ffffff;border:none;border-radius:8px;padding:7px 16px;font-size:12.5px;font-weight:800;cursor:pointer;display:inline-flex;align-items:center;gap:6px;box-shadow:0 2px 6px rgba(220,38,38,0.3);transition: background-color 0.15s ease, border-color 0.15s ease, opacity 0.15s ease;" onmouseover="this.style.background=\'#b91c1c\'" onmouseout="this.style.background=\'#dc2626\'">&#10006; Fechar Janela</button>' +
+                '<button type="button" onclick="window.fecharModalBuscaOficial()" class="btn btn-outline-danger btn-sm">&#10006; Fechar Janela</button>' +
             '</div>' +
-            '<div style="background:#f0fdf4;border:1px solid #bbf7d0;border-radius:8px;padding:12px;margin-bottom:14px;font-size:12px;">' +
-                '<div style="font-weight:800;color:#065f46;margin-bottom:6px;">&#128269; Publica&ccedil;&atilde;o / Rastreamento Localizado no Motor #1 (DOE-SP):</div>' +
+            '<div style="border-radius:8px;padding:12px;margin-bottom:14px;font-size:12px">' +
+                '<div style="font-weight:800;margin-bottom:6px">&#128269; Publica&ccedil;&atilde;o / Rastreamento Localizado no Motor #1 (DOE-SP):</div>' +
                 pubDoe.map(function(p) {
-                    return '<div style="background:#fff;border:1px solid #dcfce7;border-radius:6px;padding:10px;margin-bottom:6px;">' +
-                        '<div style="font-size:10.5px;color:#047857;font-weight:700;">' + window.escapeHtml(p.caderno) + ' &bull; Data: ' + window.escapeHtml(p.data) + ' &bull; SEI: ' + window.escapeHtml(p.sei) + '</div>' +
-                        '<div style="font-weight:700;color:#0f172a;font-size:12.5px;margin:3px 0;">' + window.escapeHtml(p.titulo) + '</div>' +
-                        '<div style="font-size:11.5px;color:#334155;">' + window.escapeHtml(p.resumo) + '</div>' +
+                    return '<div style="border-radius:6px;padding:10px;margin-bottom:6px">' +
+                        '<div style="font-size:10.5px;font-weight:700">' + window.escapeHtml(p.caderno) + ' &bull; Data: ' + window.escapeHtml(p.data) + ' &bull; SEI: ' + window.escapeHtml(p.sei) + '</div>' +
+                        '<div style="font-weight:700;font-size:12.5px;margin:3px 0">' + window.escapeHtml(p.titulo) + '</div>' +
+                        '<div style="font-size:11.5px">' + window.escapeHtml(p.resumo) + '</div>' +
                     '</div>';
                 }).join("") +
             '</div>' +
-            '<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:14px;">' +
-                '<a href="' + urlDoe + '" target="_blank" rel="noopener noreferrer" style="text-decoration:none;background:#f0fdf4;border:1.5px solid #01a75f;padding:12px;border-radius:8px;display:block;">' +
-                    '<div style="font-weight:800;color:#15803d;font-size:12px;">&#128240; 1. Di&aacute;rio Oficial (DOE-SP)</div>' +
-                    '<div style="font-size:10.5px;color:#334155;margin-top:3px;">Abrir busca direta de <strong>' + window.escapeHtml(seiAlvo) + '</strong> em www.doe.sp.gov.br &#8599;</div>' +
+            '<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:14px">' +
+                '<a href="' + urlDoe + '" target="_blank" rel="noopener noreferrer" style="text-decoration:none;padding:12px;border-radius:8px;display:block">' +
+                    '<div style="font-weight:800;font-size:12px">&#128240; 1. Di&aacute;rio Oficial (DOE-SP)</div>' +
+                    '<div style="font-size:10.5px;margin-top:3px">Abrir busca direta de <strong>' + window.escapeHtml(seiAlvo) + '</strong> em www.doe.sp.gov.br &#8599;</div>' +
                 '</a>' +
-                '<a href="' + urlPncpApp + '" target="_blank" rel="noopener noreferrer" style="text-decoration:none;background:#eff6ff;border:1px solid #bfdbfe;padding:12px;border-radius:8px;display:block;">' +
-                    '<div style="font-weight:800;color:#1d4ed8;font-size:12px;">&#128203; 2. Portal PNCP (UASG 262101)</div>' +
-                    '<div style="font-size:10.5px;color:#475569;margin-top:3px;">Consultar editais, atas e contratos no PNCP &#8599;</div>' +
+                '<a href="' + urlPncpApp + '" target="_blank" rel="noopener noreferrer" style="text-decoration:none;padding:12px;border-radius:8px;display:block">' +
+                    '<div style="font-weight:800;font-size:12px">&#128203; 2. Portal PNCP (UASG 262101)</div>' +
+                    '<div style="font-size:10.5px;margin-top:3px">Consultar editais, atas e contratos no PNCP &#8599;</div>' +
                 '</a>' +
-                '<a href="' + urlPortalSpAguas + '" target="_blank" rel="noopener noreferrer" style="text-decoration:none;background:#fefce8;border:1px solid #fde047;padding:12px;border-radius:8px;display:block;">' +
-                    '<div style="font-weight:800;color:#854d0e;font-size:12px;">&#128167; 3. Portal Oficial SP-&Aacute;guas</div>' +
-                    '<div style="font-size:10.5px;color:#475569;margin-top:3px;">Consultar portarias e delibera&ccedil;&otilde;es no site oficial &#8599;</div>' +
+                '<a href="' + urlPortalSpAguas + '" target="_blank" rel="noopener noreferrer" style="text-decoration:none;padding:12px;border-radius:8px;display:block">' +
+                    '<div style="font-weight:800;font-size:12px">&#128167; 3. Portal Oficial SP-&Aacute;guas</div>' +
+                    '<div style="font-size:10.5px;margin-top:3px">Consultar portarias e delibera&ccedil;&otilde;es no site oficial &#8599;</div>' +
                 '</a>' +
             '</div>' +
-            '<div style="display:flex;justify-content:space-between;align-items:center;border-top:1px solid #e2e8f0;padding-top:14px;margin-top:10px;flex-wrap:wrap;gap:10px;">' +
-                '<div style="font-size:11.5px;color:#64748b;">💡 Dica: Feche clicando no bot&atilde;o, fora do quadro ou teclando <kbd style="background:#f1f5f9;border:1px solid #cbd5e1;border-radius:4px;padding:2px 6px;font-size:10.5px;font-family:monospace;font-weight:700;">ESC</kbd>.</div>' +
-                '<button type="button" onclick="window.fecharModalBuscaOficial()" style="background:#002d5a;color:var(--sagti-text);border:none;border-radius:8px;padding:8px 22px;font-size:13px;font-weight:800;cursor:pointer;display:inline-flex;align-items:center;gap:6px;box-shadow:0 2px 6px rgba(0,45,90,0.3);transition: background-color 0.15s ease, border-color 0.15s ease, opacity 0.15s ease;" onmouseover="this.style.background=\'#01a75f\'" onmouseout="this.style.background=\'#002d5a\'">&#10006; Fechar Popup</button>' +
+            '<div style="display:flex;justify-content:space-between;align-items:center;padding-top:14px;margin-top:10px;flex-wrap:wrap;gap:10px">' +
+                '<div style="font-size:11.5px">💡 Dica: Feche clicando no bot&atilde;o, fora do quadro ou teclando <kbd style="border-radius:4px;padding:2px 6px;font-size:10.5px;font-weight:700">ESC</kbd>.</div>' +
+                '<button type="button" onclick="window.fecharModalBuscaOficial()" class="btn btn-outline-secondary btn-sm">&#10006; Fechar Popup</button>' +
             '</div>' +
             '</div>';
     };
@@ -10139,9 +10152,8 @@ window.alternarSubAbaConectores = function(subAba) {
         srvs.forEach(s => {
             const el = document.getElementById(s.id);
             if (el) {
-                el.innerText = `⏳ Sondando...`;
-                el.style.background = '#fef9c3';
-                el.style.color = '#854d0e';
+                el.innerText = 'Sondando...';
+                el.className = 'badge bg-amber-lt';
             }
         });
 
@@ -10171,18 +10183,23 @@ window.alternarSubAbaConectores = function(subAba) {
                 onlineCount++;
                 if (el) {
                     el.innerText = `🟢 Online (${lat}ms)`;
-                    el.style.background = '#dcfce7';
-                    el.style.color = '#166534';
+                    el.className = 'badge bg-green-lt';
                 }
                 auditResults.push(`🟢 ${s.nome}: Online (${lat}ms)`);
             } else {
                 if (el) {
                     el.innerText = status === 'nao_configurado' ? '⚪ Não configurado' : '🔴 Offline';
-                    el.style.background = status === 'nao_configurado' ? '#e2e8f0' : '#fee2e2';
-                    el.style.color = status === 'nao_configurado' ? '#475569' : '#991b1b';
+                    el.className = status === 'nao_configurado' ? 'badge bg-secondary-lt' : 'badge bg-red-lt';
                 }
                 auditResults.push(`${status === 'nao_configurado' ? '⚪' : '🔴'} ${s.nome}: ${status}`);
             }
+        }
+
+        const topbarConnectorStatus = document.getElementById('topbar-connector-status');
+        if (topbarConnectorStatus) {
+            const todosOnline = onlineCount === srvs.length;
+            topbarConnectorStatus.className = todosOnline ? 'badge bg-green-lt' : 'badge bg-red-lt';
+            topbarConnectorStatus.textContent = `Conectores: ${onlineCount}/${srvs.length} online`;
         }
 
         if (onlineCount > 0) {
@@ -10274,7 +10291,7 @@ window.alternarSubAbaConectores = function(subAba) {
         // Renderiza pílulas clicáveis de dúvidas frequentes com acolhimento humano
         if (chipsFaq && cfg.faqs && Array.isArray(cfg.faqs)) {
             chipsFaq.innerHTML = cfg.faqs.map((f, idx) => `
-                <button type="button" class="btn btn-secondary pill-tag" onclick="window.acionarFaqModal(${idx})" style="padding: 4px 10px; font-size: 11px; cursor: pointer; border-radius: 14px; background: #f0fdf4; border: 1px solid #bbf7d0; color: #166534; font-weight: 600; text-align: left;">
+                <button type="button" class="btn btn-secondary pill-tag btn-outline-secondary" onclick="window.acionarFaqModal(${idx})" style="padding: 4px 10px; font-size: 11px; cursor: pointer; border-radius: 14px; font-weight: 600; text-align: left">
                     ❓ ${f.p}
                 </button>
             `).join('');
@@ -10299,11 +10316,11 @@ window.alternarSubAbaConectores = function(subAba) {
         if (inp) inp.value = faq.p;
         if (resp) {
             resp.innerHTML = `
-                <div style="background: #ffffff; border: 1px solid #cbd5e1; border-left: 4px solid #01a75f; border-radius: 6px; padding: 12px; margin-top: 6px; line-height: 1.6; color: #1e293b; box-shadow: 0 1px 3px rgba(0,0,0,0.05);">
-                    <div style="font-size: 11.5px; font-weight: 700; color: #166534; margin-bottom: 6px; display: flex; align-items: center; gap: 6px;">
+                <div style="border-radius: 6px; padding: 12px; margin-top: 6px; line-height: 1.6">
+                    <div style="font-size: 11.5px; font-weight: 700; margin-bottom: 6px; display: flex; align-items: center; gap: 6px">
                         <span>💬</span> <span>Resposta do Copiloto:</span>
                     </div>
-                    <div style="font-size: 12px;">${faq.r}</div>
+                    <div style="font-size: 12px">${faq.r}</div>
                 </div>
             `;
             resp.style.display = 'block';
@@ -10328,7 +10345,7 @@ window.alternarSubAbaConectores = function(subAba) {
         if (!txt) return;
 
         // Feedback visual imediato de processamento
-        resp.innerHTML = `<div style="display: flex; align-items: center; gap: 8px; color: #0056d2;"><span style="display: inline-block; width: 8px; height: 8px; border-radius: 50%; background: #0056d2;"></span> <em>Consultando acervo de processos e diretrizes da tela ativa...</em></div>`;
+        resp.innerHTML = `<div style="display: flex; align-items: center; gap: 8px"><span style="display: inline-block; width: 8px; height: 8px; border-radius: 50%"></span> <em>Consultando acervo de processos e diretrizes da tela ativa...</em></div>`;
         resp.style.display = 'block';
 
         const aba = window.assistenteAbaAtual || 'mesa_trabalho';
@@ -10373,11 +10390,11 @@ window.alternarSubAbaConectores = function(subAba) {
             const matchFaq = cfgAba.faqs.find(f => tLow.includes(f.p.toLowerCase().slice(0, 15)) || f.p.toLowerCase().includes(tLow));
             if (matchFaq) {
                 resp.innerHTML = `
-                    <div style="background: #ffffff; border: 1px solid #cbd5e1; border-left: 4px solid #01a75f; border-radius: 6px; padding: 12px; margin-top: 6px; line-height: 1.6; color: #1e293b; box-shadow: 0 1px 3px rgba(0,0,0,0.05);">
-                        <div style="font-size: 11.5px; font-weight: 700; color: #166534; margin-bottom: 6px; display: flex; align-items: center; gap: 6px;">
+                    <div style="border-radius: 6px; padding: 12px; margin-top: 6px; line-height: 1.6">
+                        <div style="font-size: 11.5px; font-weight: 700; margin-bottom: 6px; display: flex; align-items: center; gap: 6px">
                             <span>💬</span> <span>Resposta do Copiloto:</span>
                         </div>
-                        <div style="font-size: 12px;">${matchFaq.r}</div>
+                        <div style="font-size: 12px">${matchFaq.r}</div>
                     </div>
                 `;
                 resp.style.display = 'block';
@@ -10411,12 +10428,12 @@ window.alternarSubAbaConectores = function(subAba) {
         }
 
         resp.innerHTML = `
-            <div style="background: #ffffff; border: 1px solid #cbd5e1; border-radius: 6px; padding: 12px; margin-top: 6px; line-height: 1.55; box-shadow: 0 1px 3px rgba(0,0,0,0.05);">
-                <div style="font-size: 11px; font-weight: 700; color: var(--sagti-text); margin-bottom: 6px; display: flex; align-items: center; gap: 6px;">
+            <div style="border-radius: 6px; padding: 12px; margin-top: 6px; line-height: 1.55">
+                <div style="font-size: 11px; font-weight: 700; margin-bottom: 6px; display: flex; align-items: center; gap: 6px">
                     <span>🤖</span> <span>Orientação do Assistente (${aba.toUpperCase()})</span>
-                    <span style="margin-left: auto; font-size: 10px; background: #e0f2fe; color: #0369a1; padding: 2px 6px; border-radius: 4px;">⚡ Motor SSOT Ativo</span>
+                    <span style="margin-left: auto; padding: 2px 6px; border-radius: 4px">⚡ Motor SSOT Ativo</span>
                 </div>
-                <div style="color: #1e293b; font-size: 12px;">${respostaHtml}</div>
+                <div style="font-size: 12px">${respostaHtml}</div>
             </div>
         `;
         resp.style.display = 'block';
@@ -10446,12 +10463,12 @@ window.alternarSubAbaConectores = function(subAba) {
         }
 
         container.innerHTML = sugestoes.map(p => `
-            <div style="background: #ffffff; border: 1px solid #cbd5e1; border-left: 3px solid #0544cf; border-radius: 4px; padding: 6px 8px; font-size: 11px; cursor: pointer; transition: background-color 0.15s ease, border-color 0.15s ease, opacity 0.15s ease;" onclick="window.carregarProcessoReferenciaChat('${p.ID_Processo}')">
-                <div style="display: flex; justify-content: space-between; align-items: center;">
-                    <strong style="color: #0544cf;">${p.ID_Processo}</strong>
-                    <span class="pill-tag pill-blue" style="font-size: 9px; padding: 1px 4px;">${p.Bucket_OpenProject ? p.Bucket_OpenProject.split('.')[0] : 'TIC'}</span>
+            <div style="border-radius: 4px; padding: 6px 8px; font-size: 11px; cursor: pointer; transition: background-color 0.15s ease, border-color 0.15s ease, opacity 0.15s ease" onclick="window.carregarProcessoReferenciaChat('${p.ID_Processo}')">
+                <div style="display: flex; justify-content: space-between; align-items: center">
+                    <strong >${p.ID_Processo}</strong>
+                    <span class="pill-tag pill-blue" style="padding: 1px 4px">${p.Bucket_OpenProject ? p.Bucket_OpenProject.split('.')[0] : 'TIC'}</span>
                 </div>
-                <span style="color: #475569; display: block; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; margin-top: 2px;">${p.Especificacao}</span>
+                <span style="display: block; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; margin-top: 2px">${p.Especificacao}</span>
             </div>
         `).join('');
     };
@@ -10476,8 +10493,8 @@ window.alternarSubAbaConectores = function(subAba) {
         const lista = document.getElementById('lista-fontes-ia');
         if (lista) {
             const div = document.createElement('div');
-            div.style = "background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 6px; padding: 10px 14px; display: flex; justify-content: space-between; align-items: center;";
-            div.innerHTML = `<div><strong style="font-size: 12px; color: var(--sagti-text);">${nome}</strong><div style="font-size: 11px; color: #94a3b8;">Fonte Complementar Adicionada pelo Administrador</div></div><span class="pill-tag pill-green">Indexado (Ativo)</span>`;
+            div.style="border-radius: 6px; padding: 10px 14px; display: flex; justify-content: space-between; align-items: center";
+            div.innerHTML = `<div><strong style="font-size: 12px">${nome}</strong><div style="font-size: 11px">Fonte Complementar Adicionada pelo Administrador</div></div><span class="pill-tag pill-green">Indexado (Ativo)</span>`;
             lista.appendChild(div);
             alert(`✅ Fonte "${nome}" indexada com sucesso na base de conhecimento do Agente!`);
         }
@@ -10503,7 +10520,7 @@ window.alternarSubAbaConectores = function(subAba) {
         const tbody = document.getElementById('tabela-versoes-ia-body');
         if (tbody) {
             const tr = document.createElement('tr');
-            tr.innerHTML = `<td><strong style="color: #0056d2;">${vAtual}</strong></td><td>${dataStr}</td><td>${autor}</td><td>Llama 3 8B Instruct</td><td>0.2</td><td style="text-align: center;"><button class="btn btn-secondary" style="padding: 2px 8px; font-size: 10px;" onclick="window.restaurarVersaoIA('${vAtual}')">Rollback</button></td>`;
+            tr.innerHTML = `<td><strong >${vAtual}</strong></td><td>${dataStr}</td><td>${autor}</td><td>Llama 3 8B Instruct</td><td>0.2</td><td style="text-align: center"><button class="btn btn-outline-secondary" style="padding: 2px 8px" onclick="window.restaurarVersaoIA('${vAtual}')">Rollback</button></td>`;
             tbody.insertBefore(tr, tbody.children[1] || null);
             alert(`📸 Nova versão ${vAtual} registrada e snapshot salvo no histórico!`);
         }
@@ -10574,15 +10591,15 @@ window.carregarHistoricoSnapshots = function() {
         let trs = '';
         snaps.forEach(s => {
             trs += `
-                <tr style="border-bottom: 1px solid #e2e8f0;">
-                    <td style="padding: 10px 14px; font-weight: 700; color: var(--sagti-text); font-family: monospace;">${s.id}</td>
-                    <td style="padding: 10px 14px; color: #475569;">${s.data}</td>
-                    <td style="padding: 10px 14px;"><span class="pill-tag pill-blue" style="font-size: 10.5px;">${s.tipo}</span></td>
-                    <td style="padding: 10px 14px; font-family: monospace; font-size: 11px; color: var(--sagti-accent);">${s.destino}</td>
-                    <td style="padding: 10px 14px; text-align: center; font-weight: 600;">${s.tamanho}</td>
-                    <td style="padding: 10px 14px; text-align: center;">${s.status}</td>
-                    <td style="padding: 10px 14px; text-align: center;">
-                        <button class="btn btn-secondary" onclick="alert('Snapshot íntegro armazenado em: ' + ${JSON.stringify(s.destino)})" style="padding: 3px 8px; font-size: 11px;">🔍 Validar</button>
+                <tr >
+                    <td style="padding: 10px 14px; font-weight: 700">${s.id}</td>
+                    <td style="padding: 10px 14px">${s.data}</td>
+                    <td style="padding: 10px 14px"><span class="pill-tag pill-blue" style="font-size: 10.5px">${s.tipo}</span></td>
+                    <td style="padding: 10px 14px; font-size: 11px">${s.destino}</td>
+                    <td style="padding: 10px 14px; text-align: center; font-weight: 600">${s.tamanho}</td>
+                    <td style="padding: 10px 14px; text-align: center">${s.status}</td>
+                    <td style="padding: 10px 14px; text-align: center">
+                        <button class="btn btn-outline-secondary" onclick="alert('Snapshot íntegro armazenado em: ' + ${JSON.stringify(s.destino)})" style="padding: 3px 8px; font-size: 11px">🔍 Validar</button>
                     </td>
                 </tr>
             `;
@@ -10695,9 +10712,7 @@ window.kioskTelas = [
             document.body.style.paddingTop = '42px';
             if (btn) {
                 btn.innerHTML = '\u23f9\ufe0f Parar Gest\u00e3o \u00e0 Vista';
-                btn.style.background = '#fee2e2';
-                btn.style.color = '#991b1b';
-                btn.style.borderColor = '#fca5a5';
+                btn.className = 'btn btn-danger';
             }
             window.kioskPausado = false;
             window.kioskIndice = 0;
@@ -10707,9 +10722,7 @@ window.kioskTelas = [
             document.body.style.paddingTop = '0px';
             if (btn) {
                 btn.innerHTML = '\ud83d\udcfa Gest\u00e3o \u00e0 Vista';
-                btn.style.background = '#f1f5f9';
-                btn.style.color = '#002d5a';
-                btn.style.borderColor = '#cbd5e1';
+                btn.className = 'btn btn-outline-primary';
             }
             if (window.kioskTimer) clearInterval(window.kioskTimer);
         }
@@ -10752,7 +10765,7 @@ window.kioskTelas = [
         var dInfo = (window.dadosDiretoriasSpAguas && window.dadosDiretoriasSpAguas[diretoria]) ? window.dadosDiretoriasSpAguas[diretoria] : null;
         var escopoStr = dInfo ? (dInfo.bannerTitulo + ' | ' + dInfo.bannerDesc + ' | ' + dInfo.bannerTag) : 'SP-Aguas Consolidado';
 
-        resp.innerHTML = '<div style="display:flex;align-items:center;gap:8px;color:#0056d2;"><span>\ud83e\udd16</span> <em>Consultando o gateway autenticado de IA...</em></div>';
+        resp.innerHTML = '<div style="display:flex;align-items:center;gap:8px"><span>\ud83e\udd16</span> <em>Consultando o gateway autenticado de IA...</em></div>';
         resp.style.display = 'block';
 
         var model = (document.getElementById('chat-model-select') && document.getElementById('chat-model-select').value) || localStorage.getItem('newapi_model') || 'qwen2.5-coder:7b';
@@ -10791,19 +10804,19 @@ window.kioskTelas = [
                 ? window.validarFidelidadeRespostaLLM(rawReply)
                 : { valido: true };
             if (!chkRag.valido) {
-                resp.innerHTML = '<div style="padding:10px 12px;background:#fff7ed;border:1px solid #fdba74;border-radius:8px;color:#9a3412;">' +
+                resp.innerHTML = '<div style="padding:10px 12px;border-radius:8px">' +
                     '<strong>Resposta bloqueada pela verificação de contexto.</strong> ' + window.escapeHtml(chkRag.motivo) +
                     ' A revisão humana é necessária.</div>';
                 return;
             }
 
             var replyTxt = window.escapeHtml(rawReply).replace(/\n/g, '<br>');
-            resp.innerHTML = '<div style="background:#ffffff;border:1px solid #cbd5e1;border-left:4px solid #10b981;border-radius:6px;padding:12px;margin-top:6px;line-height:1.55;">' +
-                '<div style="font-size:11px;font-weight:700;color:#047857;margin-bottom:6px;">Gateway IA Cockpit • ' + window.escapeHtml(model) + '</div>' +
-                '<div style="color:#1e293b;font-size:12px;">' + replyTxt + '</div></div>';
+            resp.innerHTML = '<div style="border-radius:6px;padding:12px;margin-top:6px;line-height:1.55">' +
+                '<div style="font-size:11px;font-weight:700;margin-bottom:6px">Gateway IA Cockpit • ' + window.escapeHtml(model) + '</div>' +
+                '<div style="font-size:12px">' + replyTxt + '</div></div>';
         } catch (err) {
             clearTimeout(tid);
-            resp.innerHTML = '<div style="padding:10px 12px;background:#fff7ed;border:1px solid #fdba74;border-radius:8px;color:#9a3412;">' +
+            resp.innerHTML = '<div style="padding:10px 12px;border-radius:8px">' +
                 '<strong>IA indisponível.</strong> ' + window.escapeHtml(err && err.message ? err.message : 'Falha ao consultar o gateway autenticado.') +
                 ' Nenhuma resposta foi produzida.</div>';
         }

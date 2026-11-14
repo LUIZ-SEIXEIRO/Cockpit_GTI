@@ -1,317 +1,375 @@
-/* Hallmark · SA-GTI / SP-Aguas · Componentes & Layout Base
-   Zero gradientes AI-slop, zero glassmorphism, tabular-nums e focus-visible */
+html,
+body {
+    min-height: 100%;
+    overflow-x: hidden;
+}
 
-html, body {
-    overflow-x: clip !important;
-    background: var(--sagti-bg) !important;
-    color: var(--sagti-text) !important;
-    font-family: var(--sagti-font-sans) !important;
+body {
+    background: var(--tblr-body-bg);
+    color: var(--tblr-body-color);
+    font-family: var(--tblr-font-sans-serif);
     -webkit-font-smoothing: antialiased;
 }
 
-.main-content, .app-shell, .tab-view {
-    background: var(--sagti-bg) !important;
-    color: var(--sagti-text) !important;
-}
-
-.tab-view h1, .tab-view h2, .tab-view h3 {
-    color: var(--sagti-text) !important;
-    letter-spacing: -0.015em;
-}
-
-/* Navegacao Superior Unica (Modelo 3 sem sidebar lateral) + KPIs Modelo 2 */
-#sidebar {
-    display: none !important;
-}
-body, .app-shell {
-    display: flex !important;
-    flex-direction: column !important;
-    width: 100% !important;
-    min-height: 100vh !important;
-    height: auto !important;
-    overflow-y: auto !important;
-}
-.main-content {
-    display: block !important;
-    width: 100% !important;
-    max-width: 100% !important;
-    margin-left: 0 !important;
-    flex: 1 0 auto !important;
-    min-height: calc(100vh - 56px) !important;
-    overflow: visible !important;
-}
 #sagti-topbar {
     position: sticky;
     top: 0;
-    z-index: 200;
-    background: #ffffff;
-    border-bottom: 1px solid var(--sagti-border);
+    z-index: 1030;
+    display: block;
     width: 100%;
+    padding: 0;
+    background: var(--tblr-bg-surface);
+    border-bottom: 1px solid var(--tblr-border-color);
 }
+
 #sagti-topbar-tricolor {
     height: 3px;
-    width: 100%;
-    background: linear-gradient(to right, #6bbbfa 0% 33.3%, #004b87 33.3% 66.6%, #01a75f 66.6% 100%);
+    background: linear-gradient(
+        to right,
+        #01a75f 0 33.333%,
+        #004b87 33.333% 66.667%,
+        #0284c7 66.667% 100%
+    );
 }
+
 #sagti-topbar-inner {
     display: flex;
+    min-height: 68px;
     align-items: center;
     justify-content: space-between;
-    padding: 0 24px;
-    height: 52px;
-    gap: 16px;
+    gap: 1rem;
+    padding: 0.5rem clamp(1rem, 3vw, 2rem);
 }
-.sagti-topbar-left {
+
+.sagti-topbar-left,
+.sagti-topbar-meta,
+.sagti-topbar-user,
+.sagti-brand,
+.sagti-connector-status {
     display: flex;
     align-items: center;
-    gap: 28px;
-    min-width: 0;
 }
+
+.sagti-topbar-left {
+    min-width: 0;
+    gap: clamp(0.75rem, 2vw, 1.75rem);
+}
+
 .sagti-brand {
-    display: flex;
+    flex: 0 0 auto;
+    align-items: flex-start;
     flex-direction: column;
-    line-height: 1.15;
+    line-height: 1.2;
     white-space: nowrap;
 }
+
 .sagti-brand strong {
-    font-size: 14px;
-    font-weight: 800;
-    color: var(--sagti-accent);
+    color: var(--tblr-primary);
+    font-size: 0.9rem;
+    font-weight: 700;
 }
+
 .sagti-brand span {
-    font-size: 10.5px;
-    color: var(--sagti-text-muted);
+    color: var(--tblr-secondary-color, #64748b);
+    font-size: 0.75rem;
 }
+
 .sagti-top-nav {
     display: flex;
-    align-items: center;
-    gap: 6px;
+    flex-wrap: nowrap;
+    gap: 0.25rem;
     overflow-x: auto;
 }
-.sagti-top-nav-btn {
-    background: transparent;
-    border: none;
-    border-bottom: 2px solid transparent;
-    padding: 15px 12px 13px 12px;
-    font-size: 13px;
+
+.sagti-top-nav .nav-link {
+    color: #475569;
+    font-size: 0.875rem;
     font-weight: 600;
-    color: var(--sagti-text-muted);
-    cursor: pointer;
     white-space: nowrap;
-    transition: color 0.15s ease, border-color 0.15s ease;
 }
-.sagti-top-nav-btn:hover {
-    color: var(--sagti-text);
+
+.sagti-top-nav .nav-link:hover,
+.sagti-top-nav .nav-link.active {
+    color: var(--tblr-primary);
 }
-.sagti-top-nav-btn.active {
-    color: var(--sagti-accent);
-    border-bottom-color: var(--sagti-accent);
-    font-weight: 700;
+
+.sagti-top-nav .nav-link.active {
+    background: #eaf2f8;
 }
+
+.sagti-topbar-meta {
+    flex: 0 0 auto;
+    gap: 1rem;
+}
+
+.sagti-connector-status,
 .sagti-topbar-user {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    font-size: 12px;
-    color: var(--sagti-text-muted);
+    gap: 0.5rem;
+}
+
+.sagti-topbar-user {
+    color: #334155;
+    font-size: 0.8125rem;
     white-space: nowrap;
 }
+
 .sagti-topbar-user strong {
-    color: var(--sagti-text);
-}
-.sagti-user-pill {
-    background: var(--sagti-surface-alt);
-    border: 1px solid var(--sagti-border);
-    color: var(--sagti-accent);
-    padding: 3px 9px;
-    border-radius: 999px;
-    font-size: 11px;
-    font-weight: 700;
+    color: #0f172a;
 }
 
-/* Barra Kiosk */
-#kiosk-bar {
-    background: var(--sagti-accent) !important;
-    color: #ffffff !important;
-    border-bottom: 2px solid var(--sagti-green) !important;
+#sidebar {
+    display: none;
 }
 
-/* Superficies solidas com borda nitida */
-.card, .kpi-card, .kpi-card.hero, .panel, .chart-card, .table-card, .modal-content, .kanban-col, .filter-bar {
-    background: var(--sagti-surface) !important;
-    background-image: none !important;
-    color: var(--sagti-text) !important;
-    border: 1px solid var(--sagti-border) !important;
-    border-radius: var(--sagti-radius) !important;
-    box-shadow: 0 1px 2px rgba(15, 23, 42, 0.04) !important;
-    backdrop-filter: none !important;
+#main {
+    display: block;
+    width: 100%;
+    min-width: 0;
+    min-height: calc(100vh - 71px);
+    margin: 0;
+    overflow: visible;
 }
 
-.table-card .chart-card {
-    box-shadow: none !important;
+.content-scroll {
+    width: 100%;
+    max-width: 1680px;
+    margin: 0 auto;
+    padding: 1.5rem clamp(1rem, 3vw, 2rem);
 }
 
-.kpi-card.hero {
-    border-left: 4px solid var(--sagti-accent) !important;
+.tab-view {
+    display: none;
 }
 
-.card:hover, .kpi-card:hover, .table-card:hover {
-    border-color: var(--sagti-border-strong) !important;
-    transform: none !important;
+.tab-view.active {
+    display: block;
 }
 
-/* KPIs compactos uniformes (Modelo 2) */
+.barra-subabas-superior {
+    display: flex;
+    gap: 0.25rem;
+    margin-bottom: 1rem;
+    overflow-x: auto;
+    white-space: nowrap;
+}
+
+.barra-subabas-superior .nav-link {
+    color: #475569;
+    font-weight: 600;
+}
+
+.barra-subabas-superior .nav-link.active {
+    color: var(--tblr-primary);
+}
+
+.card,
+.kpi-card,
+.panel,
+.chart-card,
+.table-card,
+.page-banner,
+.kanban-col {
+    color: var(--tblr-body-color);
+    background: var(--tblr-bg-surface);
+    border: 1px solid var(--tblr-border-color);
+    border-radius: var(--sagti-radius);
+    box-shadow: 0 1px 2px rgb(15 23 42 / 5%);
+}
+
 .kpi-card {
-    padding: 14px 16px !important;
-}
-.kpi-val {
-    font-size: 26px !important;
-    font-weight: 800 !important;
-    margin: 4px 0 2px 0 !important;
-}
-.kpi-title {
-    font-size: 11.5px !important;
-    font-weight: 600 !important;
+    padding: 1rem;
 }
 
-/* Numeros tabulares e hierarquia de KPIs */
-.kpi-val, .kpi-value, .kpi-number, table td, table th, .badge, .pill-tag {
-    font-variant-numeric: tabular-nums !important;
-}
-.kpi-val {
-    color: var(--sagti-text) !important;
+.kpi-val,
+.kpi-value,
+.kpi-number {
+    color: #0f172a;
+    font-size: 1.5rem;
+    font-weight: 700;
+    font-variant-numeric: tabular-nums;
     letter-spacing: -0.02em;
 }
-.kpi-title {
-    color: var(--sagti-text-muted) !important;
-    text-transform: none !important;
-    letter-spacing: normal !important;
+
+.kpi-title,
+.subheader {
+    color: #475569;
+    font-size: 0.8125rem;
+    font-weight: 600;
 }
 
-/* Cabecalhos de secao e modais */
-.chart-header, .table-header-bar, .modal-header {
-    background: var(--sagti-surface-alt) !important;
-    background-image: none !important;
-    color: var(--sagti-accent) !important;
-    border-bottom: 1px solid var(--sagti-border) !important;
-}
-.table-header-title, .modal-header h2, .modal-header h3 {
-    color: var(--sagti-text) !important;
+.chart-header,
+.table-header-bar {
+    padding: 0.75rem 1rem;
+    background: #f8fafc;
+    border-bottom: 1px solid var(--tblr-border-color);
 }
 
-/* Tabelas editoriais limpas (Hallmark Floor: sem uppercase com tracking) */
+.chart-header h2,
+.chart-header h3,
+.chart-header h4,
+.table-header-title {
+    margin: 0;
+    color: #0f172a;
+    font-size: 1rem;
+    font-weight: 600;
+}
+
+.table-responsive {
+    max-width: 100%;
+    overflow-x: auto;
+}
+
 table {
-    border-collapse: collapse !important;
-    background: var(--sagti-surface) !important;
-}
-table thead th {
-    background: var(--sagti-surface-alt) !important;
-    color: var(--sagti-text-muted) !important;
-    font-size: 12px !important;
-    font-weight: 600 !important;
-    letter-spacing: normal !important;
-    text-transform: none !important;
-    border-bottom: 1px solid var(--sagti-border-strong) !important;
-}
-table tbody td {
-    color: var(--sagti-text) !important;
-}
-table tbody tr {
-    border-bottom: 1px solid var(--sagti-border) !important;
-}
-table tbody tr:hover {
-    background: var(--sagti-surface-alt) !important;
+    color: var(--tblr-body-color);
+    font-variant-numeric: tabular-nums;
 }
 
-/* Botoes institucionais */
-.btn, button.btn-primary, button.btn-secondary {
-    background-image: none !important;
-    border-radius: var(--sagti-radius-sm) !important;
-    font-weight: 600 !important;
-    box-shadow: none !important;
-    transition: background-color 0.15s ease, border-color 0.15s ease, opacity 0.15s ease !important;
-}
-.btn-primary, button.btn-primary {
-    background-color: var(--sagti-accent) !important;
-    border: 1px solid var(--sagti-accent) !important;
-    color: #ffffff !important;
-}
-.subaba-superior-btn.active, .barra-subabas-superior .btn-primary.active, .barra-subabas-superior .active {
-    background-color: #e0f2fe !important;
-    border: 1px solid #7dd3fc !important;
-    color: #0369a1 !important;
-}
-.subaba-superior-btn.active .nav-badge, .barra-subabas-superior .active .nav-badge {
-    background-color: var(--sagti-accent) !important;
-    color: #ffffff !important;
-}
-.btn-primary:hover, button.btn-primary:hover {
-    background-color: var(--sagti-accent-hover) !important;
-}
-.btn-secondary, button.btn-secondary {
-    background-color: var(--sagti-surface) !important;
-    border: 1px solid var(--sagti-border-strong) !important;
-    color: var(--sagti-text) !important;
-}
-.btn-secondary:hover, button.btn-secondary:hover {
-    background-color: var(--sagti-surface-alt) !important;
+.badge.bg-green-lt {
+    color: var(--sagti-success-contrast);
 }
 
-/* Inputs e foco acessivel */
-input, select, textarea {
-    background-color: var(--sagti-surface) !important;
-    border: 1px solid var(--sagti-border-strong) !important;
-    border-radius: var(--sagti-radius-sm) !important;
-    color: var(--sagti-text) !important;
+.badge.bg-red-lt {
+    color: #991b1b;
 }
-button:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-visible, a:focus-visible {
-    outline: 2px solid var(--sagti-accent) !important;
-    outline-offset: 2px !important;
+
+.badge.bg-amber-lt {
+    color: #78350f;
+}
+
+.badge.bg-blue-lt {
+    color: #1e3a8a;
+}
+
+.page-banner {
+    padding: 1rem 1.25rem;
+}
+
+.kanban-card {
+    background: var(--tblr-bg-surface);
+    border: 1px solid var(--tblr-border-color);
+    border-radius: var(--sagti-radius-sm);
+}
+
+#kiosk-bar {
+    color: #0f172a;
+    background: #eaf2f8;
+    border-bottom: 2px solid var(--tblr-success);
+}
+
+.modal-content {
+    color: var(--tblr-body-color);
+    background: var(--tblr-bg-surface);
+}
+
+.hidden,
+[hidden] {
+    display: none;
+}
+
+button:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible,
+a:focus-visible {
+    outline: 2px solid var(--tblr-primary);
+    outline-offset: 2px;
+}
+
+@media (max-width: 991.98px) {
+    #sagti-topbar-inner {
+        align-items: flex-start;
+        flex-direction: column;
+        gap: 0.5rem;
+        padding-block: 0.75rem;
+    }
+
+    .sagti-topbar-left,
+    .sagti-topbar-meta {
+        width: 100%;
+        justify-content: space-between;
+    }
+
+    .sagti-topbar-left {
+        flex-wrap: wrap;
+    }
+}
+
+@media (max-width: 575.98px) {
+    .sagti-brand span,
+    .sagti-connector-status {
+        display: none;
+    }
+
+    .sagti-topbar-user {
+        flex-wrap: wrap;
+        justify-content: flex-end;
+    }
+
+    .sagti-topbar-user strong {
+        display: none;
+    }
+
+    .content-scroll {
+        padding: 1rem 0.75rem;
+    }
 }
 
 @media (prefers-reduced-motion: reduce) {
-    *, *::before, *::after {
+    *,
+    *::before,
+    *::after {
+        scroll-behavior: auto !important;
         animation-duration: 0.01ms !important;
         transition-duration: 0.01ms !important;
     }
 }
 
-/* Fase 2: Banners institucionais, Kanban e placeholders */
-.page-banner {
-    background: var(--sagti-surface) !important;
-    background-image: none !important;
-    color: var(--sagti-text) !important;
-    border: 1px solid var(--sagti-border) !important;
-    border-left: 4px solid var(--sagti-accent) !important;
-    border-radius: var(--sagti-radius) !important;
-}
-.page-banner h1, .page-banner h2, .page-banner h3, .page-banner p, .page-banner span {
-    color: var(--sagti-text) !important;
-}
-.kanban-card {
-    background: var(--sagti-surface) !important;
-    color: var(--sagti-text) !important;
-    border: 1px solid var(--sagti-border) !important;
-    border-radius: var(--sagti-radius-sm) !important;
-}
-.modal-body {
-    background: var(--sagti-surface) !important;
-    color: var(--sagti-text) !important;
-}
-::placeholder {
-    color: var(--sagti-text-muted) !important;
-    opacity: 0.85;
+.sagti-modal-backdrop {
+    background: rgb(15 23 42 / 45%);
 }
 
-/* Fase 2.2: Area de chat/contexto do Assistente IA */
-#chat-messages {
-    background: var(--sagti-surface-alt) !important;
-    color: var(--sagti-text) !important;
-    border-top: 1px solid var(--sagti-border) !important;
-    border-bottom: 1px solid var(--sagti-border) !important;
-}
-#view-esteira_ia [style*="overflow-y: auto"],
-#view-esteira_ia [style*="overflow-y:auto"] {
-    background: var(--sagti-surface-alt) !important;
+#dropzone-drive-pdf {
+    background: var(--tblr-bg-surface);
+    border: 1px dashed var(--tblr-border-color);
+    border-radius: var(--sagti-radius);
 }
 
+#dropzone-drive-pdf.sagti-dropzone-active {
+    background: #eaf2f8;
+    border-color: var(--tblr-primary);
+}
+
+.sagti-stats-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 0.5rem;
+    margin: 0.75rem 0;
+    padding: 0.5rem;
+    text-align: center;
+    background: var(--tblr-bg-surface-secondary);
+    border-radius: var(--sagti-radius);
+}
+
+.sagti-chart-primary {
+    background-color: #004b87;
+}
+
+.sagti-chart-info {
+    background-color: #0284c7;
+}
+
+.sagti-chart-success {
+    background-color: #01a75f;
+}
+
+.sagti-chart-warning {
+    background-color: #d97706;
+}
+
+.sagti-chart-danger {
+    background-color: #dc2626;
+}
+
+.sagti-chart-slate {
+    background-color: #64748b;
+}

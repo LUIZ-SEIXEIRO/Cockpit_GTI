@@ -1,110 +1,101 @@
 (function() {
     function cardKpiDash(titulo, valor, sub, corTexto, corBorda, bg) {
-        return '<div style="background:' + bg + ';border:1px solid ' + corBorda + ';border-radius:8px;padding:12px;">' +
-            '<div style="font-size:11px;color:#94a3b8;font-weight:600;text-transform:uppercase;">' + titulo + '</div>' +
-            '<div style="font-size:24px;font-weight:800;color:' + corTexto + ';margin-top:4px;">' + valor + '</div>' +
-            '<div style="font-size:10.5px;color:#64748b;margin-top:2px;">' + sub + '</div></div>';
+        return '<div class="card card-sm card-body">' +
+            '<div class="subheader">' + titulo + '</div>' +
+            '<div class="h1 mb-0 mt-1">' + valor + '</div>' +
+            '<div class="text-secondary small mt-1">' + sub + '</div></div>';
     }
 
     function cardMacroEixo(icone, titulo, qtd, pct, cor, desc, buckets) {
-        return '<div style="background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.08);' +
-            'border-top:3px solid ' + cor + ';border-radius:10px;padding:16px;">' +
-            '<div style="display:flex;justify-content:space-between;align-items:center;">' +
-            '<span style="font-size:12px;font-weight:800;color:' + cor + ';text-transform:uppercase;">' +
+        return '<div class="card card-body">' +
+            '<div style="display:flex;justify-content:space-between;align-items:center">' +
+            '<span style="font-size:12px;font-weight:800;text-transform:uppercase">' +
             icone + ' ' + titulo + '</span>' +
-            '<span style="font-size:11px;font-weight:700;background:rgba(255,255,255,0.08);color:var(--sagti-text);' +
-            'padding:2px 8px;border-radius:12px;">' + pct + ' do Acervo</span></div>' +
-            '<div style="font-size:26px;font-weight:800;color:var(--sagti-text);margin:8px 0 4px 0;">' + qtd + '</div>' +
-            '<p style="font-size:11.5px;color:#cbd5e1;margin:0 0 10px 0;line-height:1.45;">' + desc + '</p>' +
-            '<div style="font-size:10.5px;color:#94a3b8;border-top:1px solid rgba(255,255,255,0.06);padding-top:8px;">' +
+            '<span style="font-size:11px;font-weight:700;' +
+            'padding:2px 8px;border-radius:12px">' + pct + ' do Acervo</span></div>' +
+            '<div style="font-size:26px;font-weight:800;margin:8px 0 4px 0">' + qtd + '</div>' +
+            '<p style="font-size:11.5px;margin:0 0 10px 0;line-height:1.45">' + desc + '</p>' +
+            '<div style="font-size:10.5px;padding-top:8px">' +
             '<strong>Buckets Dominantes:</strong> ' + buckets + '</div></div>';
     }
 
     function linhaBucket(cod, nome, eixo, qtd, pct, corBarra, statusPrincipal) {
-        return '<tr style="border-bottom:1px solid rgba(255,255,255,0.06);">' +
-            '<td style="padding:10px 12px;font-family:monospace;font-weight:800;color:var(--sagti-accent);">' + cod + '</td>' +
-            '<td style="padding:10px 12px;font-weight:600;color:var(--sagti-text);">' + nome + '</td>' +
-            '<td style="padding:10px 12px;color:#cbd5e1;font-size:11.5px;">' + eixo + '</td>' +
-            '<td style="padding:10px 12px;text-align:center;font-weight:800;color:var(--sagti-text);">' + qtd + '</td>' +
-            '<td style="padding:10px 12px;width:180px;">' +
-            '<div style="display:flex;align-items:center;gap:8px;">' +
-            '<div style="flex:1;height:6px;background:rgba(255,255,255,0.08);border-radius:4px;overflow:hidden;">' +
-            '<div style="width:' + pct + '%;height:100%;background:' + corBarra + ';border-radius:4px;"></div></div>' +
-            '<span style="font-size:11px;font-family:monospace;color:#94a3b8;width:36px;">' + pct + '%</span>' +
+        return '<tr >' +
+            '<td style="padding:10px 12px;font-weight:800">' + cod + '</td>' +
+            '<td style="padding:10px 12px;font-weight:600">' + nome + '</td>' +
+            '<td style="padding:10px 12px;font-size:11.5px">' + eixo + '</td>' +
+            '<td style="padding:10px 12px;text-align:center;font-weight:800">' + qtd + '</td>' +
+            '<td style="padding:10px 12px;width:180px">' +
+            '<div style="display:flex;align-items:center;gap:8px">' +
+            '<div class="progress flex-fill">' +
+            '<div class="progress-bar bg-primary" style="width:' + pct + '%"></div></div>' +
+            '<span style="font-size:11px;width:36px">' + pct + '%</span>' +
             '</div></td>' +
-            '<td style="padding:10px 12px;text-align:center;"><span style="background:rgba(255,255,255,0.06);' +
-            'color:#cbd5e1;padding:3px 9px;border-radius:6px;font-size:11px;">' + statusPrincipal + '</span></td></tr>';
+            '<td style="padding:10px 12px;text-align:center"><span class="badge bg-blue-lt">' +
+            statusPrincipal + '</span></td></tr>';
     }
 
     function linhaSeiCritico(sei, assunto, bucket, farol, corFarol, aging, resp) {
-        return '<tr style="border-bottom:1px solid rgba(255,255,255,0.06);">' +
-            '<td style="padding:10px 12px;font-family:monospace;font-weight:800;color:var(--sagti-accent);white-space:nowrap;">' +
+        return '<tr >' +
+            '<td style="padding:10px 12px;font-weight:800;white-space:nowrap">' +
             sei + '</td>' +
-            '<td style="padding:10px 12px;font-weight:600;color:var(--sagti-text);">' + assunto + '</td>' +
-            '<td style="padding:10px 12px;color:#cbd5e1;font-size:11px;">' + bucket + '</td>' +
-            '<td style="padding:10px 12px;text-align:center;"><span style="background:rgba(255,255,255,0.06);' +
-            'border:1px solid ' + corFarol + ';color:' + corFarol + ';padding:2px 8px;border-radius:12px;' +
-            'font-size:10.5px;font-weight:700;white-space:nowrap;">' + farol + '</span></td>' +
-            '<td style="padding:10px 12px;text-align:center;font-family:monospace;font-size:11.5px;color:#fca5a5;">' +
+            '<td style="padding:10px 12px;font-weight:600">' + assunto + '</td>' +
+            '<td style="padding:10px 12px;font-size:11px">' + bucket + '</td>' +
+            '<td style="padding:10px 12px;text-align:center"><span class="badge bg-amber-lt">' +
+            farol + '</span></td>' +
+            '<td style="padding:10px 12px;text-align:center;font-size:11.5px">' +
             aging + '</td>' +
-            '<td style="padding:10px 12px;color:#cbd5e1;font-size:11.5px;">' + resp + '</td>' +
-            '<td style="padding:10px 12px;text-align:center;">' +
+            '<td style="padding:10px 12px;font-size:11.5px">' + resp + '</td>' +
+            '<td style="padding:10px 12px;text-align:center">' +
             '<button type="button" data-sei="' + sei + '" ' +
             'onclick="if(window.abrirDetalhesProcesso)window.abrirDetalhesProcesso(this.getAttribute(\'data-sei\'))" ' +
-            'style="background:rgba(56,189,248,0.15);border:1px solid rgba(56,189,248,0.4);color:var(--sagti-accent);' +
-            'padding:4px 10px;border-radius:6px;font-size:11px;font-weight:700;cursor:pointer;">' +
+            'class="btn btn-ghost-secondary btn-sm">' +
             'Dossiê SEI ↗</button></td></tr>';
     }
 
     function cardCustodiaTecnica(nome, cargo, total, est, rot, port, destaques, cor) {
-        return '<div style="background:rgba(255,255,255,0.025);border:1px solid rgba(255,255,255,0.08);' +
-            'border-left:4px solid ' + cor + ';border-radius:10px;padding:16px;">' +
-            '<div style="display:flex;justify-content:space-between;align-items:flex-start;">' +
-            '<div><div style="font-size:14px;font-weight:800;color:var(--sagti-text);">' + nome + '</div>' +
-            '<div style="font-size:11px;color:#94a3b8;margin-top:2px;">' + cargo + '</div></div>' +
-            '<span style="font-size:18px;font-weight:800;color:' + cor + ';background:rgba(255,255,255,0.05);' +
-            'padding:4px 10px;border-radius:8px;border:1px solid rgba(255,255,255,0.08);">' + total + ' proc.</span></div>' +
-            '<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:12px 0;text-align:center;' +
-            'background:var(--sagti-surface-alt);padding:8px;border-radius:8px;">' +
-            '<div><div style="font-size:10px;color:#94a3b8;">CONTRATAÇÃO</div>' +
-            '<div style="font-size:13px;font-weight:800;color:var(--sagti-accent);">' + est + '</div></div>' +
-            '<div><div style="font-size:10px;color:#94a3b8;">ROTINA OP.</div>' +
-            '<div style="font-size:13px;font-weight:800;color:#34d399;">' + rot + '</div></div>' +
-            '<div><div style="font-size:10px;color:#94a3b8;">PORTFÓLIO</div>' +
-            '<div style="font-size:13px;font-weight:800;color:#c084fc;">' + port + '</div></div></div>' +
-            '<div style="font-size:11px;color:#cbd5e1;line-height:1.45;"><strong>Frentes Chave:</strong> ' +
+        return '<div class="card card-body">' +
+            '<div style="display:flex;justify-content:space-between;align-items:flex-start">' +
+            '<div><div style="font-size:14px;font-weight:800">' + nome + '</div>' +
+            '<div style="font-size:11px;margin-top:2px">' + cargo + '</div></div>' +
+            '<span style="font-size:18px;font-weight:800;' +
+            'padding:4px 10px;border-radius:8px">' + total + ' proc.</span></div>' +
+            '<div class="sagti-stats-grid">' +
+            '<div><div >CONTRATAÇÃO</div>' +
+            '<div style="font-size:13px;font-weight:800">' + est + '</div></div>' +
+            '<div><div >ROTINA OP.</div>' +
+            '<div style="font-size:13px;font-weight:800">' + rot + '</div></div>' +
+            '<div><div >PORTFÓLIO</div>' +
+            '<div style="font-size:13px;font-weight:800">' + port + '</div></div></div>' +
+            '<div style="font-size:11px;line-height:1.45"><strong>Frentes Chave:</strong> ' +
             destaques + '</div></div>';
     }
 
     function montarRelatorioDashHtml() {
         var h = '';
-        h += '<div style="background:var(--sagti-surface-alt);' +
-             'border:1px solid rgba(56,189,248,0.25);border-left:5px solid #0284c7;border-radius:12px;' +
-             'padding:20px 24px;margin-bottom:20px;box-shadow:0 10px 25px -5px rgba(0,0,0,0.5);">';
-        h += '<div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:16px;"><div>';
-        h += '<div style="display:flex;align-items:center;gap:10px;margin-bottom:6px;">' +
-             '<span style="font-size:11px;font-weight:800;background:rgba(2,132,199,0.25);color:var(--sagti-accent);' +
-             'border:1px solid rgba(56,189,248,0.4);padding:3px 10px;border-radius:20px;">' +
+        h += '<div class="card card-body mb-3">';
+        h += '<div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:16px"><div>';
+        h += '<div style="display:flex;align-items:center;gap:10px;margin-bottom:6px">' +
+             '<span style="font-size:11px;font-weight:800;' +
+             'border:1px solid rgba(56,189,248,0.4);padding:3px 10px;border-radius:20px">' +
              'SP-ÁGUAS · DIRETORIA COLEGIADA</span>' +
-             '<span style="font-size:11px;font-weight:700;background:rgba(16,185,129,0.2);color:#4ade80;' +
-             'border:1px solid rgba(16,185,129,0.4);padding:3px 10px;border-radius:20px;">' +
+             '<span style="font-size:11px;font-weight:700;' +
+             'border:1px solid rgba(16,185,129,0.4);padding:3px 10px;border-radius:20px">' +
              'GESTÃO À VISTA 360° (SEI-SP &amp; SOE)</span>' +
-             '<span style="font-size:11px;color:#94a3b8;font-family:monospace;">SA-GTI · GOVERNANÇA DIGITAL</span></div>';
-        h += '<h2 style="margin:0;font-size:22px;font-weight:800;color:var(--sagti-text);">' +
+             '<span style="font-size:11px">SA-GTI · GOVERNANÇA DIGITAL</span></div>';
+        h += '<h2 style="margin:0;font-size:22px;font-weight:800">' +
              '📑 Relatório Mensal Executivo — Governança 360° de Processos SEI &amp; Contratos de TIC</h2>';
-        h += '<p style="margin:6px 0 0 0;font-size:13px;color:#cbd5e1;">Período de Apuração: ' +
-             '<strong style="color:var(--sagti-accent);">Competência Novembro/2026</strong> • ' +
+        h += '<p style="margin:6px 0 0 0;font-size:13px">Período de Apuração: ' +
+             '<strong >Competência Novembro/2026</strong> • ' +
              '<strong>179 Processos Administrativos Monitorados em 3 Macrofluxos</strong></p></div>';
-        h += '<div style="background:var(--sagti-surface-alt);border:1px solid rgba(255,255,255,0.1);' +
-             'border-radius:8px;padding:6px 12px;font-size:11.5px;color:#94a3b8;font-family:monospace;">' +
-             'Status: <strong style="color:#4ade80;">Base SEI Higienizada (UPSERT)</strong></div></div></div>';
+        h += '<div class="badge bg-green-lt">' +
+             'Status: <strong >Base SEI Higienizada (UPSERT)</strong></div></div></div>';
 
         // SECAO 1
-        h += '<div style="background:var(--sagti-surface-alt);border:1px solid rgba(255,255,255,0.08);' +
-             'border-radius:12px;padding:20px;margin-bottom:20px;">';
-        h += '<h3 style="margin:0 0 14px 0;font-size:15px;color:var(--sagti-text);font-weight:700;">' +
+        h += '<div class="card card-body mb-3">';
+        h += '<h3 style="margin:0 0 14px 0;font-size:15px;font-weight:700">' +
              '📊 1. Sumário Executivo &amp; Termômetro de Criticidade do Acervo SEI-SP (179 Processos)</h3>';
-        h += '<div style="display:grid;grid-template-columns:repeat(6,1fr);gap:12px;margin-bottom:16px;">' +
+        h += '<div style="display:grid;grid-template-columns:repeat(6,1fr);gap:12px;margin-bottom:16px">' +
              cardKpiDash('Acervo Total SEI', '179', '100% Rastreado SA-GTI',
                          '#38bdf8', 'rgba(56,189,248,0.3)', 'rgba(2,132,199,0.15)') +
              cardKpiDash('Intervenção (F1)', '0', 'Zero processos travados',
@@ -118,17 +109,16 @@
              cardKpiDash('Rotina Padrão', '92', '51.4% atestes e faturas',
                          '#94a3b8', 'rgba(148,163,184,0.3)', 'rgba(100,116,139,0.15)') +
              '</div>';
-        h += '<p style="font-size:12.5px;color:#cbd5e1;line-height:1.6;margin:0;">A consolidação mensal do acervo ' +
+        h += '<p style="font-size:12.5px;line-height:1.6;margin:0">A consolidação mensal do acervo ' +
              'administrativo da Gerência de Tecnologia da Informação (SA-GTI) evidencia <strong>zero processos em ' +
              'estado de paralisação crítica imediata (Farol 1)</strong>, resultado direto do ciclo de saneamento e ' +
              'conciliação documental entre o SEI-SP, o barramento SOE e os quadros do OpenProject.</p></div>';
 
         // SECAO 2
-        h += '<div style="background:var(--sagti-surface-alt);border:1px solid rgba(255,255,255,0.08);' +
-             'border-radius:12px;padding:20px;margin-bottom:20px;">';
-        h += '<h3 style="margin:0 0 14px 0;font-size:15px;color:var(--sagti-text);font-weight:700;">' +
+        h += '<div class="card card-body mb-3">';
+        h += '<h3 style="margin:0 0 14px 0;font-size:15px;font-weight:700">' +
              '🧩 2. Decomposição por Eixo de Gestão (Macrofluxo Operacional SA-GTI)</h3>';
-        h += '<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:14px;">' +
+        h += '<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:14px">' +
              cardMacroEixo('⚙️', 'Rotina Operacional & Sustentação', '93 Processos', '52.0%', '#38bdf8',
                            'Atestes mensais de serviços contínuos (PRODESP), faturas de telecom/links DMO e suporte.',
                            'A-001 (41), A-002 (32), A-010 (19) e A-004 (1)') +
@@ -141,19 +131,18 @@
              '</div></div>';
 
         // SECAO 3
-        h += '<div style="background:var(--sagti-surface-alt);border:1px solid rgba(255,255,255,0.08);' +
-             'border-radius:12px;padding:20px;margin-bottom:20px;">';
-        h += '<h3 style="margin:0 0 14px 0;font-size:15px;color:var(--sagti-text);font-weight:700;">' +
+        h += '<div class="card card-body mb-3">';
+        h += '<h3 style="margin:0 0 14px 0;font-size:15px;font-weight:700">' +
              '📂 3. Distribuição Taxonômica pelos Buckets Canônicos do OpenProject</h3>';
-        h += '<table style="width:100%;border-collapse:collapse;font-size:12px;"><thead>' +
-             '<tr style="border-bottom:1px solid rgba(255,255,255,0.1);color:#94a3b8;font-size:11px;' +
-             'text-transform:uppercase;">' +
-             '<th style="padding:10px 12px;text-align:left;">Código</th>' +
-             '<th style="padding:10px 12px;text-align:left;">Bucket Canônico SA-GTI</th>' +
-             '<th style="padding:10px 12px;text-align:left;">Macrofluxo Vinculado</th>' +
-             '<th style="padding:10px 12px;text-align:center;">Processos</th>' +
-             '<th style="padding:10px 12px;text-align:left;">Participação (%)</th>' +
-             '<th style="padding:10px 12px;text-align:center;">Estágio Predominante</th></tr></thead><tbody>' +
+        h += '<div class="table-responsive"><table style="width:100%;border-collapse:collapse;font-size:12px" class="table table-vcenter card-table table-hover"><thead>' +
+             '<tr style="font-size:11px;' +
+             'text-transform:uppercase">' +
+             '<th style="padding:10px 12px;text-align:left">Código</th>' +
+             '<th style="padding:10px 12px;text-align:left">Bucket Canônico SA-GTI</th>' +
+             '<th style="padding:10px 12px;text-align:left">Macrofluxo Vinculado</th>' +
+             '<th style="padding:10px 12px;text-align:center">Processos</th>' +
+             '<th style="padding:10px 12px;text-align:left">Participação (%)</th>' +
+             '<th style="padding:10px 12px;text-align:center">Estágio Predominante</th></tr></thead><tbody>' +
              linhaBucket('A-011', 'Elaboração de ETP, Termo de Referência e Riscos',
                          'Esteira de Contratação', '55', '30.7', '#6366f1', '🧩 Em Instrução Técnica') +
              linhaBucket('A-001', 'Atestes e Medições Mensais de Serviços PRODESP',
@@ -168,28 +157,26 @@
                          'Portfólio Estratégico', '15', '8.4', '#0369a1', '🧭 Normatização & Comitê') +
              linhaBucket('A-004', 'Gestão e Suporte de Licenciamento de Software',
                          'Rotina Operacional', '1', '0.6', '#f59e0b', '⚖️ Auditoria / Regularização') +
-             '</tbody></table></div>';
+             '</tbody></table></div></div>';
 
         // SECAO 4
-        h += '<div style="background:var(--sagti-surface-alt);border:1px solid rgba(255,255,255,0.08);' +
-             'border-left:4px solid #ef4444;border-radius:12px;padding:20px;margin-bottom:20px;">';
+        h += '<div class="card card-body mb-3">';
         h += '<div style="display:flex;justify-content:space-between;align-items:center;' +
-             'margin-bottom:14px;flex-wrap:wrap;gap:8px;">' +
-             '<h3 style="margin:0;font-size:15px;color:var(--sagti-text);font-weight:700;">' +
+             'margin-bottom:14px;flex-wrap:wrap;gap:8px">' +
+             '<h3 style="margin:0;font-size:15px;font-weight:700">' +
              '🎯 4. Radar de Risco Alto, Regra dos &ldquo;Poréns&rdquo; &amp; Saneamento Prioritário</h3>' +
-             '<span style="font-size:11px;background:rgba(239,68,68,0.18);color:#fca5a5;' +
-             'border:1px solid rgba(239,68,68,0.35);padding:3px 10px;border-radius:12px;font-weight:700;">' +
+             '<span class="badge bg-red-lt">' +
              '9 Processos Risco Alto • 26 Saneamento Prioritário</span></div>';
-        h += '<table style="width:100%;border-collapse:collapse;font-size:12px;"><thead>' +
-             '<tr style="border-bottom:1px solid rgba(255,255,255,0.1);color:#94a3b8;font-size:11px;' +
-             'text-transform:uppercase;">' +
-             '<th style="padding:10px 12px;text-align:left;">Processo SEI</th>' +
-             '<th style="padding:10px 12px;text-align:left;">Objeto / Especificação</th>' +
-             '<th style="padding:10px 12px;text-align:left;">Bucket</th>' +
-             '<th style="padding:10px 12px;text-align:center;">Farol / Risco</th>' +
-             '<th style="padding:10px 12px;text-align:center;">Aging</th>' +
-             '<th style="padding:10px 12px;text-align:left;">Responsável / Alocação</th>' +
-             '<th style="padding:10px 12px;text-align:center;">Inspeção</th></tr></thead><tbody>' +
+        h += '<div class="table-responsive"><table style="width:100%;border-collapse:collapse;font-size:12px" class="table table-vcenter card-table table-hover"><thead>' +
+             '<tr style="font-size:11px;' +
+             'text-transform:uppercase">' +
+             '<th style="padding:10px 12px;text-align:left">Processo SEI</th>' +
+             '<th style="padding:10px 12px;text-align:left">Objeto / Especificação</th>' +
+             '<th style="padding:10px 12px;text-align:left">Bucket</th>' +
+             '<th style="padding:10px 12px;text-align:center">Farol / Risco</th>' +
+             '<th style="padding:10px 12px;text-align:center">Aging</th>' +
+             '<th style="padding:10px 12px;text-align:left">Responsável / Alocação</th>' +
+             '<th style="padding:10px 12px;text-align:center">Inspeção</th></tr></thead><tbody>' +
              linhaSeiCritico('137.00012361/2026-00',
                              'Contratação de Serviços de Outsourcing de Impressão (Sinalizado Diretoria)',
                              'A-011. ETP e Riscos', '🚩 Diretoria / Alto', '#f87171', 'Crítico', 'Marcos Tadeu Yamamoto') +
@@ -214,14 +201,13 @@
              linhaSeiCritico('137.00014822/2025-99',
                              'Regularização de Período de Cobertura Contratual — Locação Notebooks DaaS',
                              'A-002. Faturas TI', '🔴 Indenizatório', '#f87171', 'Crítico', 'SA-GTI / DIF') +
-             '</tbody></table></div>';
+             '</tbody></table></div></div>';
 
         // SECAO 5
-        h += '<div style="background:var(--sagti-surface-alt);border:1px solid rgba(255,255,255,0.08);' +
-             'border-radius:12px;padding:20px;margin-bottom:20px;">';
-        h += '<h3 style="margin:0 0 14px 0;font-size:15px;color:var(--sagti-text);font-weight:700;">' +
+        h += '<div class="card card-body mb-3">';
+        h += '<h3 style="margin:0 0 14px 0;font-size:15px;font-weight:700">' +
              '👥 5. Distribuição Nominal da Força de Trabalho Técnica &amp; Parecer de Governança</h3>';
-        h += '<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:18px;">' +
+        h += '<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:18px">' +
              cardCustodiaTecnica('Marcos Tadeu Yamamoto', 'Especialista em Infraestrutura, Redes & Governança',
                                  '18', '4', '4', '10',
                                  'Contrato Intragov V (#19295/2024), Decreto 69.540/2025, Impressão e VRC.', '#38bdf8') +
@@ -232,20 +218,19 @@
                                  '3', '3', '0', '0',
                                  'Licenciamento Autodesk AutoCAD (#11105/2025), ArcGIS (#12421/2026) e TIC.', '#c084fc') +
              '</div>';
-        h += '<div style="background:rgba(2,132,199,0.1);border:1px solid rgba(56,189,248,0.25);' +
-             'border-radius:8px;padding:14px;margin-bottom:14px;">' +
-             '<div style="font-size:12px;font-weight:800;color:var(--sagti-accent);margin-bottom:4px;">' +
+        h += '<div class="card card-body mb-3">' +
+             '<div style="font-size:12px;font-weight:800;margin-bottom:4px">' +
              '⚖️ Diretriz de Governança e Regra Jurídica dos &ldquo;Poréns&rdquo; (Suspensões Externas):</div>' +
-             '<p style="font-size:12px;color:#cbd5e1;margin:0;line-height:1.55;">Os 143 processos de rotina padrão ' +
+             '<p style="font-size:12px;margin:0;line-height:1.55">Os 143 processos de rotina padrão ' +
              '(atestes PRODESP e faturas mensais de concessionárias) permanecem sob fluxo automatizado de ' +
              'conferência financeira e conciliação SIAFEM. Os processos com pendência de parecer jurídico externo ' +
              '(PGE/TCE-SP) ou transição contratual indenizatória encontram-se isolados na matriz de risco, ' +
              'garantindo transparência integral à Diretoria Colegiada.</p></div>';
         h += '<div style="display:flex;justify-content:space-between;align-items:flex-end;padding-top:14px;' +
-             'border-top:1px solid rgba(255,255,255,0.06);font-size:11px;color:#94a3b8;">' +
+             'border-top:1px solid rgba(255,255,255,0.06);font-size:11px">' +
              '<div><strong>Autarquia de Águas do Estado de São Paulo — SP-Águas</strong><br>' +
              'Superintendência de Administração • Gerência de Tecnologia da Informação (SA-GTI)</div>' +
-             '<div style="text-align:right;"><strong>Luiz Antonio Seixeiro</strong><br>' +
+             '<div style="text-align:right"><strong>Luiz Antonio Seixeiro</strong><br>' +
              'Gestor de Projetos Sênior / Governança SA-GTI</div></div></div>';
 
         return h;

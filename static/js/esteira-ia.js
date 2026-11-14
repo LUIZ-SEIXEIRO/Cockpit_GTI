@@ -56,14 +56,9 @@
         }
 
         if (chat) {
-            chat.innerHTML = '<div style="display:flex;gap:12px;max-width:88%;align-self:flex-start;">' +
-                '<div style="width:34px;height:34px;border-radius:50%;' +
-                'background:var(--sagti-accent);' +
-                'display:flex;align-items:center;justify-content:center;' +
-                'color:white;font-size:15px;flex-shrink:0;">🤖</div>' +
-                '<div style="background:var(--sagti-surface-alt);border:1px solid rgba(255,255,255,0.1);' +
-                'padding:14px 18px;border-radius:4px 14px 14px 14px;' +
-                'font-size:13px;color:#f1f5f9;line-height:1.65;box-shadow:0 4px 14px rgba(0,0,0,0.3);">' +
+            chat.innerHTML = '<div class="d-flex gap-3 align-items-start">' +
+                '<div class="avatar bg-primary-lt text-primary">🤖</div>' +
+                '<div class="card card-body">' +
                 '<strong>Olá, Luiz! Tudo bem? Sou sua IA pessoal aqui na SA-GTI.</strong><br><br>' +
                 'Você pode conversar comigo livremente para resolver qualquer assunto do seu dia a dia — ' +
                 'seja para redigir um e-mail, estruturar um despacho ou documento, organizar suas prioridades da semana, ' +
@@ -194,28 +189,26 @@
                 });
             }
             if (listaCust.length === 0) {
-                html = '<div style="text-align:center;padding:28px 10px;color:#94a3b8;font-size:11.5px;">' +
-                    '<span style="font-size:26px;display:block;margin-bottom:8px;">📌</span>' +
-                    '<strong style="color:#f1f5f9;">Nenhum processo sob sua custódia nominal direta.</strong><br>' +
-                    '<span style="font-size:10.5px;color:#94a3b8;">' +
+                html = '<div style="text-align:center;padding:28px 10px;font-size:11.5px">' +
+                    '<span style="font-size:26px;display:block;margin-bottom:8px">📌</span>' +
+                    '<strong >Nenhum processo sob sua custódia nominal direta.</strong><br>' +
+                    '<span style="font-size:10.5px">' +
                     'Selecione outra opção na lista suspensa acima para consultar demandas do SEI, OpenProject, GLPI ou Relatórios.</span></div>';
             } else {
                 listaCust.forEach(function(p) {
                     var isFix = fixados.indexOf(p.ID_Processo) !== -1;
-                    html += '<div style="background:var(--sagti-surface-alt);border:1px solid rgba(255,255,255,0.08);' +
-                        'border-left:3px solid #38bdf8;border-radius:8px;padding:9px 11px;display:flex;' +
-                        'flex-direction:column;gap:5px;box-shadow:0 2px 6px rgba(0,0,0,0.2);">' +
-                        '<div style="display:flex;justify-content:space-between;align-items:center;">' +
-                            '<div style="display:flex;align-items:center;gap:6px;">' +
-                                '<strong style="font-family:monospace;font-size:11.5px;color:var(--sagti-accent);">' + p.ID_Processo + '</strong>' +
-                                '<span style="font-size:9.5px;background:rgba(56,189,248,0.2);color:var(--sagti-accent);padding:1px 5px;border-radius:4px;font-weight:700;">' + (p.Status_OpenProject || '🚀 Em progresso') + '</span>' +
+                    html += '<div class="card card-sm" style="display:flex;flex-direction:column;gap:5px">' +
+                        '<div style="display:flex;justify-content:space-between;align-items:center">' +
+                            '<div style="display:flex;align-items:center;gap:6px">' +
+                                '<strong style="font-size:11.5px">' + p.ID_Processo + '</strong>' +
+                                '<span style="font-size:9.5px;padding:1px 5px;border-radius:4px;font-weight:700">' + (p.Status_OpenProject || '🚀 Em progresso') + '</span>' +
                             '</div>' +
-                            '<span style="cursor:pointer;font-size:14px;color:' + (isFix ? '#facc15' : '#64748b') + ';" onclick="window.toggleFixado(\'' + p.ID_Processo + '\')" title="Marcar/Desmarcar Acompanhamento">' + (isFix ? '⭐' : '☆') + '</span>' +
+                            '<span style="cursor:pointer;font-size:14px" onclick="window.toggleFixado(\'' + p.ID_Processo + '\')" title="Marcar/Desmarcar Acompanhamento">' + (isFix ? '⭐' : '☆') + '</span>' +
                         '</div>' +
-                        '<div style="font-size:11.5px;color:var(--sagti-text);font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;" title="' + (p.Especificacao || '') + '">' + (p.Especificacao || 'Processo sob custódia') + '</div>' +
-                        '<div style="display:flex;justify-content:space-between;align-items:center;margin-top:2px;">' +
-                            '<span style="font-size:10.5px;color:#94a3b8;">Aging: ' + (p.Faixa_Aging || 'Normal') + ' (' + (p.Dias_Ultima_Mov || 0) + 'd)</span>' +
-                            '<button type="button" class="btn btn-secondary" onclick="window.consultarProcessoComIa(\'' + p.ID_Processo + '\', \'' + window.escapeHtml(p.Especificacao || '') + '\')" style="padding:3px 8px;font-size:10.5px;background:rgba(56,189,248,0.18);border:1px solid rgba(56,189,248,0.4);color:var(--sagti-accent);border-radius:4px;font-weight:700;cursor:pointer;">Consultar IA 💬</button>' +
+                        '<div style="font-size:11.5px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis" title="' + (p.Especificacao || '') + '">' + (p.Especificacao || 'Processo sob custódia') + '</div>' +
+                        '<div style="display:flex;justify-content:space-between;align-items:center;margin-top:2px">' +
+                            '<span style="font-size:10.5px">Aging: ' + (p.Faixa_Aging || 'Normal') + ' (' + (p.Dias_Ultima_Mov || 0) + 'd)</span>' +
+                            '<button type="button" class="btn btn-outline-secondary" onclick="window.consultarProcessoComIa(\'' + p.ID_Processo + '\', \'' + window.escapeHtml(p.Especificacao || '') + '\')" style="padding:3px 8px;font-size:10.5px;border-radius:4px;font-weight:700;cursor:pointer">Consultar IA 💬</button>' +
                         '</div></div>';
                 });
             }
@@ -238,34 +231,31 @@
             }
 
             if (itensAcompanhados.length === 0) {
-                html = '<div style="text-align:center;padding:28px 10px;color:#94a3b8;font-size:11.5px;">' +
-                    '<span style="font-size:26px;display:block;margin-bottom:8px;">⭐</span>' +
-                    '<strong style="color:#f1f5f9;">Nenhum item marcado para acompanhamento.</strong><br>' +
-                    '<span style="font-size:10.5px;color:#94a3b8;">' +
+                html = '<div style="text-align:center;padding:28px 10px;font-size:11.5px">' +
+                    '<span style="font-size:26px;display:block;margin-bottom:8px">⭐</span>' +
+                    '<strong >Nenhum item marcado para acompanhamento.</strong><br>' +
+                    '<span style="font-size:10.5px">' +
                     'Marque a estrela (⭐ Acompanhar) em qualquer processo SEI, pacote OpenProject, chamado GLPI ou relatório daily para acompanhá-lo aqui!</span></div>';
             } else {
                 itensAcompanhados.forEach(function(it) {
-                    var bordaCor = it.tipo === 'OpenProject' ? '#f59e0b' : (it.tipo === 'GLPI' ? '#c084fc' : (it.tipo === 'Relatório' ? '#38bdf8' : '#0ea5e9'));
                     var btnIaAction = '';
                     if (it.tipo === 'SEI') {
-                        btnIaAction = '<button type="button" class="btn btn-secondary" onclick="window.consultarProcessoComIa(\'' + it.id + '\', \'' + window.escapeHtml(it.titulo || '') + '\')" style="padding:3px 8px;font-size:10.5px;background:rgba(56,189,248,0.18);border:1px solid rgba(56,189,248,0.4);color:var(--sagti-accent);border-radius:4px;font-weight:700;cursor:pointer;">Consultar IA 💬</button>';
+                        btnIaAction = '<button type="button" class="btn btn-outline-secondary" onclick="window.consultarProcessoComIa(\'' + it.id + '\', \'' + window.escapeHtml(it.titulo || '') + '\')" style="padding:3px 8px;font-size:10.5px;border-radius:4px;font-weight:700;cursor:pointer">Consultar IA 💬</button>';
                     } else if (it.tipo === 'OpenProject') {
-                        btnIaAction = '<button type="button" class="btn btn-secondary" onclick="window.consultarPacoteOpComIa(\'' + it.id.replace('#','') + '\', \'' + window.escapeHtml(it.titulo || '') + '\')" style="padding:3px 8px;font-size:10.5px;background:rgba(245,158,11,0.18);border:1px solid rgba(245,158,11,0.4);color:#fbbf24;border-radius:4px;font-weight:700;cursor:pointer;">Consultar IA 💬</button>';
+                        btnIaAction = '<button type="button" class="btn btn-outline-secondary" onclick="window.consultarPacoteOpComIa(\'' + it.id.replace('#','') + '\', \'' + window.escapeHtml(it.titulo || '') + '\')" style="padding:3px 8px;font-size:10.5px;border-radius:4px;font-weight:700;cursor:pointer">Consultar IA 💬</button>';
                     } else if (it.tipo === 'GLPI') {
-                        btnIaAction = '<button type="button" class="btn btn-secondary" onclick="window.consultarChamadoGlpiComIa(\'' + it.id + '\', \'' + window.escapeHtml(it.titulo || '') + '\')" style="padding:3px 8px;font-size:10.5px;background:rgba(139,92,246,0.18);border:1px solid rgba(139,92,246,0.4);color:#c084fc;border-radius:4px;font-weight:700;cursor:pointer;">Consultar IA 💬</button>';
+                        btnIaAction = '<button type="button" class="btn btn-outline-secondary" onclick="window.consultarChamadoGlpiComIa(\'' + it.id + '\', \'' + window.escapeHtml(it.titulo || '') + '\')" style="padding:3px 8px;font-size:10.5px;border-radius:4px;font-weight:700;cursor:pointer">Consultar IA 💬</button>';
                     } else {
-                        btnIaAction = '<button type="button" class="btn btn-secondary" onclick="window.consultarRelatorioRitualComIa(\'' + window.escapeHtml(it.titulo || '') + '\', \'' + (it.resp || '') + '\')" style="padding:3px 8px;font-size:10.5px;background:rgba(56,189,248,0.18);border:1px solid rgba(56,189,248,0.4);color:var(--sagti-accent);border-radius:4px;font-weight:700;cursor:pointer;">Consultar IA 💬</button>';
+                        btnIaAction = '<button type="button" class="btn btn-outline-secondary" onclick="window.consultarRelatorioRitualComIa(\'' + window.escapeHtml(it.titulo || '') + '\', \'' + (it.resp || '') + '\')" style="padding:3px 8px;font-size:10.5px;border-radius:4px;font-weight:700;cursor:pointer">Consultar IA 💬</button>';
                     }
 
-                    html += '<div style="background:var(--sagti-surface-alt);border:1px solid rgba(255,255,255,0.08);' +
-                        'border-left:3px solid ' + bordaCor + ';border-radius:8px;padding:9px 11px;display:flex;' +
-                        'flex-direction:column;gap:5px;box-shadow:0 2px 6px rgba(0,0,0,0.2);">' +
-                        '<div style="display:flex;justify-content:space-between;align-items:center;">' +
-                        '<strong style="font-family:monospace;font-size:11.5px;color:var(--sagti-accent);">' + it.id + ' <span style="font-size:10px;color:#94a3b8;font-weight:400;">(' + it.tipo + ')</span></strong>' +
-                        '<span style="cursor:pointer;font-size:13px;color:#facc15;" onclick="window.toggleFixado(\'' + it.chave + '\')" title="Remover de Acompanhamento">⭐</span></div>' +
-                        '<div style="font-size:11.5px;color:var(--sagti-text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;" title="' + (it.titulo || '') + '">' + (it.titulo || 'Demanda TIC') + '</div>' +
-                        '<div style="display:flex;justify-content:space-between;align-items:center;margin-top:2px;">' +
-                        '<span style="font-size:10.5px;color:#94a3b8;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:180px;">' + (it.resp || it.detalhe || 'SA-GTI') + '</span>' +
+                    html += '<div class="card card-sm" style="display:flex;flex-direction:column;gap:5px">' +
+                        '<div style="display:flex;justify-content:space-between;align-items:center">' +
+                        '<strong style="font-size:11.5px">' + it.id + ' <span style="font-weight:400">(' + it.tipo + ')</span></strong>' +
+                        '<span style="cursor:pointer;font-size:13px" onclick="window.toggleFixado(\'' + it.chave + '\')" title="Remover de Acompanhamento">⭐</span></div>' +
+                        '<div style="font-size:11.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis" title="' + (it.titulo || '') + '">' + (it.titulo || 'Demanda TIC') + '</div>' +
+                        '<div style="display:flex;justify-content:space-between;align-items:center;margin-top:2px">' +
+                        '<span style="font-size:10.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:180px">' + (it.resp || it.detalhe || 'SA-GTI') + '</span>' +
                         btnIaAction +
                         '</div></div>';
                 });
@@ -283,28 +273,26 @@
             pacotesFiltrados.slice(0, 100).forEach(function(p) {
                 var chave = 'OP#' + p.id;
                 var isFix = fixados.indexOf(chave) !== -1;
-                html += '<div style="background:var(--sagti-surface-alt);border:1px solid rgba(255,255,255,0.08);' +
-                    'border-left:3px solid #f59e0b;border-radius:8px;padding:9px 11px;display:flex;' +
-                    'flex-direction:column;gap:5px;box-shadow:0 2px 6px rgba(0,0,0,0.2);">' +
-                    '<div style="display:flex;justify-content:space-between;align-items:center;">' +
-                    '<div style="display:flex;align-items:center;gap:6px;">' +
-                        '<strong style="font-family:monospace;font-size:11.5px;color:#f59e0b;">#' + p.id + '</strong>' +
-                        '<span style="font-size:9.5px;background:#e0f2fe;color:#0369a1;padding:1px 5px;border-radius:4px;font-weight:700;">' + (p.tipo || 'Projeto') + '</span>' +
+                html += '<div class="card card-sm" style="display:flex;flex-direction:column;gap:5px">' +
+                    '<div style="display:flex;justify-content:space-between;align-items:center">' +
+                    '<div style="display:flex;align-items:center;gap:6px">' +
+                        '<strong style="font-size:11.5px">#' + p.id + '</strong>' +
+                        '<span style="font-size:9.5px;padding:1px 5px;border-radius:4px;font-weight:700">' + (p.tipo || 'Projeto') + '</span>' +
                     '</div>' +
-                    '<span style="cursor:pointer;font-size:14px;color:' + (isFix ? '#facc15' : '#64748b') + ';" onclick="window.toggleFixado(\'' + chave + '\')" title="Marcar para Acompanhamento">' + (isFix ? '⭐' : '☆') + '</span>' +
+                    '<span style="cursor:pointer;font-size:14px" onclick="window.toggleFixado(\'' + chave + '\')" title="Marcar para Acompanhamento">' + (isFix ? '⭐' : '☆') + '</span>' +
                     '</div>' +
-                    '<div style="font-size:11.5px;color:var(--sagti-text);font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;" title="' + (p.assunto || '') + '">' + (p.assunto || '') + '</div>' +
-                    '<div style="display:flex;justify-content:space-between;align-items:center;margin-top:2px;">' +
-                    '<span style="font-size:10.5px;color:#94a3b8;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:180px;">👤 ' + (p.atrib || p.encarr || 'SA-GTI') + '</span>' +
-                    '<button type="button" class="btn btn-secondary" onclick="window.consultarPacoteOpComIa(\'' +
+                    '<div style="font-size:11.5px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis" title="' + (p.assunto || '') + '">' + (p.assunto || '') + '</div>' +
+                    '<div style="display:flex;justify-content:space-between;align-items:center;margin-top:2px">' +
+                    '<span style="font-size:10.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:180px">👤 ' + (p.atrib || p.encarr || 'SA-GTI') + '</span>' +
+                    '<button type="button" class="btn btn-outline-secondary" onclick="window.consultarPacoteOpComIa(\'' +
                     p.id + '\', \'' + window.escapeHtml(p.assunto || '') + '\')" ' +
-                    'style="padding:3px 8px;font-size:10.5px;background:rgba(245,158,11,0.18);' +
-                    'border:1px solid rgba(245,158,11,0.4);color:#fbbf24;border-radius:4px;' +
-                    'font-weight:700;cursor:pointer;">Consultar IA 💬</button>' +
+                    'style="padding:3px 8px;font-size:10.5px;' +
+                    'border:1px solid rgba(245,158,11,0.4);border-radius:4px;' +
+                    'font-weight:700;cursor:pointer">Consultar IA 💬</button>' +
                     '</div></div>';
             });
             if (pacotesFiltrados.length > 100) {
-                html += '<div style="text-align:center;padding:8px;font-size:11px;color:#94a3b8;">' +
+                html += '<div style="text-align:center;padding:8px;font-size:11px">' +
                         'Exibindo primeiros 100 pacotes de ' + pacotesFiltrados.length + ' em aberto. Use o campo de busca para refinar.</div>';
             }
         }
@@ -321,24 +309,22 @@
                 var chave = 'GLPI#' + t.id;
                 var isFix = fixados.indexOf(chave) !== -1;
                 var codGlpi = '#' + t.id;
-                html += '<div style="background:var(--sagti-surface-alt);border:1px solid rgba(255,255,255,0.08);' +
-                    'border-left:3px solid #0284c7;border-radius:8px;padding:9px 11px;display:flex;' +
-                    'flex-direction:column;gap:5px;box-shadow:0 2px 6px rgba(0,0,0,0.2);">' +
-                    '<div style="display:flex;justify-content:space-between;align-items:center;">' +
-                    '<div style="display:flex;align-items:center;gap:6px;">' +
-                        '<strong style="font-family:monospace;font-size:11.5px;color:#c084fc;">' + codGlpi + '</strong>' +
-                        '<span style="font-size:9.5px;background:rgba(239,68,68,0.2);color:#fca5a5;padding:1px 5px;border-radius:4px;font-weight:700;">' + (t.status || 'Pendente') + '</span>' +
+                html += '<div class="card card-sm" style="display:flex;flex-direction:column;gap:5px">' +
+                    '<div style="display:flex;justify-content:space-between;align-items:center">' +
+                    '<div style="display:flex;align-items:center;gap:6px">' +
+                        '<strong style="font-size:11.5px">' + codGlpi + '</strong>' +
+                        '<span style="font-size:9.5px;padding:1px 5px;border-radius:4px;font-weight:700">' + (t.status || 'Pendente') + '</span>' +
                     '</div>' +
-                    '<span style="cursor:pointer;font-size:14px;color:' + (isFix ? '#facc15' : '#64748b') + ';" onclick="window.toggleFixado(\'' + chave + '\')" title="Marcar para Acompanhamento">' + (isFix ? '⭐' : '☆') + '</span>' +
+                    '<span style="cursor:pointer;font-size:14px" onclick="window.toggleFixado(\'' + chave + '\')" title="Marcar para Acompanhamento">' + (isFix ? '⭐' : '☆') + '</span>' +
                     '</div>' +
-                    '<div style="font-size:11.5px;color:var(--sagti-text);font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;" title="' + (t.titulo || '') + '">' + (t.titulo || '') + '</div>' +
-                    '<div style="display:flex;justify-content:space-between;align-items:center;margin-top:2px;">' +
-                    '<span style="font-size:10.5px;color:#94a3b8;">👤 ' + (t.tecnico || 'SA-GTI') + '</span>' +
-                    '<button type="button" class="btn btn-secondary" onclick="window.consultarChamadoGlpiComIa(\'' +
+                    '<div style="font-size:11.5px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis" title="' + (t.titulo || '') + '">' + (t.titulo || '') + '</div>' +
+                    '<div style="display:flex;justify-content:space-between;align-items:center;margin-top:2px">' +
+                    '<span style="font-size:10.5px">👤 ' + (t.tecnico || 'SA-GTI') + '</span>' +
+                    '<button type="button" class="btn btn-outline-secondary" onclick="window.consultarChamadoGlpiComIa(\'' +
                     codGlpi + '\', \'' + window.escapeHtml(t.titulo || '') + '\')" ' +
-                    'style="padding:3px 8px;font-size:10.5px;background:rgba(139,92,246,0.18);' +
-                    'border:1px solid rgba(139,92,246,0.4);color:#c084fc;border-radius:4px;' +
-                    'font-weight:700;cursor:pointer;">Consultar IA 💬</button>' +
+                    'style="padding:3px 8px;font-size:10.5px;' +
+                    'border:1px solid rgba(139,92,246,0.4);border-radius:4px;' +
+                    'font-weight:700;cursor:pointer">Consultar IA 💬</button>' +
                     '</div></div>';
             });
         }
@@ -354,21 +340,19 @@
             relFiltrados.forEach(function(r) {
                 var chave = 'REL#' + r.id;
                 var isFix = fixados.indexOf(chave) !== -1 || r.marcado;
-                html += '<div style="background:var(--sagti-surface-alt);border:1px solid rgba(255,255,255,0.08);' +
-                    'border-left:3px solid #38bdf8;border-radius:8px;padding:9px 11px;display:flex;' +
-                    'flex-direction:column;gap:5px;box-shadow:0 2px 6px rgba(0,0,0,0.2);">' +
-                    '<div style="display:flex;justify-content:space-between;align-items:center;">' +
-                    '<strong style="font-size:11px;color:var(--sagti-accent);font-weight:700;">' + r.tipoLabel + '</strong>' +
-                    '<span style="cursor:pointer;font-size:14px;color:' + (isFix ? '#facc15' : '#64748b') + ';" onclick="window.toggleFixado(\'' + chave + '\')" title="Marcar para Acompanhamento">' + (isFix ? '⭐' : '☆') + '</span>' +
+                html += '<div class="card card-sm" style="display:flex;flex-direction:column;gap:5px">' +
+                    '<div style="display:flex;justify-content:space-between;align-items:center">' +
+                    '<strong style="font-size:11px;font-weight:700">' + r.tipoLabel + '</strong>' +
+                    '<span style="cursor:pointer;font-size:14px" onclick="window.toggleFixado(\'' + chave + '\')" title="Marcar para Acompanhamento">' + (isFix ? '⭐' : '☆') + '</span>' +
                     '</div>' +
-                    '<div style="font-size:11.5px;color:var(--sagti-text);font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;" title="' + r.titulo + '">' + r.titulo + '</div>' +
-                    '<div style="display:flex;justify-content:space-between;align-items:center;margin-top:2px;">' +
-                    '<span style="font-size:10.5px;color:#34d399;font-weight:700;">' + r.status + ' • ' + r.data + '</span>' +
-                    '<button type="button" class="btn btn-secondary" onclick="window.consultarRelatorioRitualComIa(\'' +
+                    '<div style="font-size:11.5px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis" title="' + r.titulo + '">' + r.titulo + '</div>' +
+                    '<div style="display:flex;justify-content:space-between;align-items:center;margin-top:2px">' +
+                    '<span style="font-size:10.5px;font-weight:700">' + r.status + ' • ' + r.data + '</span>' +
+                    '<button type="button" class="btn btn-outline-secondary" onclick="window.consultarRelatorioRitualComIa(\'' +
                     window.escapeHtml(r.titulo) + '\', \'' + r.tipoLabel + '\')" ' +
-                    'style="padding:3px 8px;font-size:10.5px;background:rgba(56,189,248,0.18);' +
-                    'border:1px solid rgba(56,189,248,0.4);color:var(--sagti-accent);border-radius:4px;' +
-                    'font-weight:700;cursor:pointer;">Consultar IA 💬</button>' +
+                    'style="padding:3px 8px;font-size:10.5px;' +
+                    'border:1px solid rgba(56,189,248,0.4);border-radius:4px;' +
+                    'font-weight:700;cursor:pointer">Consultar IA 💬</button>' +
                     '</div></div>';
             });
         }
@@ -383,24 +367,22 @@
             }
             acervoFiltrado.slice(0, 100).forEach(function(p) {
                 var isFix = fixados.indexOf(p.ID_Processo) !== -1;
-                html += '<div style="background:var(--sagti-surface-alt);border:1px solid rgba(255,255,255,0.08);' +
-                    'border-left:3px solid #0284c7;border-radius:8px;padding:9px 11px;display:flex;' +
-                    'flex-direction:column;gap:5px;box-shadow:0 2px 6px rgba(0,0,0,0.2);">' +
-                    '<div style="display:flex;justify-content:space-between;align-items:center;">' +
-                        '<div style="display:flex;align-items:center;gap:6px;">' +
-                            '<strong style="font-family:monospace;font-size:11.5px;color:var(--sagti-accent);">' + p.ID_Processo + '</strong>' +
-                            '<span style="font-size:9.5px;background:rgba(2,132,199,0.2);color:var(--sagti-accent);padding:1px 5px;border-radius:4px;font-weight:700;">' + (p.Responsavel_Tecnico || 'SA-GTI') + '</span>' +
+                html += '<div class="card card-sm" style="display:flex;flex-direction:column;gap:5px">' +
+                    '<div style="display:flex;justify-content:space-between;align-items:center">' +
+                        '<div style="display:flex;align-items:center;gap:6px">' +
+                            '<strong style="font-size:11.5px">' + p.ID_Processo + '</strong>' +
+                            '<span style="font-size:9.5px;padding:1px 5px;border-radius:4px;font-weight:700">' + (p.Responsavel_Tecnico || 'SA-GTI') + '</span>' +
                         '</div>' +
-                        '<span style="cursor:pointer;font-size:14px;color:' + (isFix ? '#facc15' : '#64748b') + ';" onclick="window.toggleFixado(\'' + p.ID_Processo + '\')" title="Marcar para Acompanhamento">' + (isFix ? '⭐' : '☆') + '</span>' +
+                        '<span style="cursor:pointer;font-size:14px" onclick="window.toggleFixado(\'' + p.ID_Processo + '\')" title="Marcar para Acompanhamento">' + (isFix ? '⭐' : '☆') + '</span>' +
                     '</div>' +
-                    '<div style="font-size:11.5px;color:var(--sagti-text);font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;" title="' + (p.Especificacao || '') + '">' + (p.Especificacao || 'Processo SEI') + '</div>' +
-                    '<div style="display:flex;justify-content:space-between;align-items:center;margin-top:2px;">' +
-                        '<span style="font-size:10.5px;color:#94a3b8;">Aging: ' + (p.Faixa_Aging || 'Normal') + ' (' + (p.Dias_Ultima_Mov || 0) + 'd)</span>' +
-                        '<button type="button" class="btn btn-secondary" onclick="window.consultarProcessoComIa(\'' + p.ID_Processo + '\', \'' + window.escapeHtml(p.Especificacao || '') + '\')" style="padding:3px 8px;font-size:10.5px;background:rgba(2,132,199,0.18);border:1px solid rgba(2,132,199,0.4);color:var(--sagti-accent);border-radius:4px;font-weight:700;cursor:pointer;">Consultar IA 💬</button>' +
+                    '<div style="font-size:11.5px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis" title="' + (p.Especificacao || '') + '">' + (p.Especificacao || 'Processo SEI') + '</div>' +
+                    '<div style="display:flex;justify-content:space-between;align-items:center;margin-top:2px">' +
+                        '<span style="font-size:10.5px">Aging: ' + (p.Faixa_Aging || 'Normal') + ' (' + (p.Dias_Ultima_Mov || 0) + 'd)</span>' +
+                        '<button type="button" class="btn btn-outline-secondary" onclick="window.consultarProcessoComIa(\'' + p.ID_Processo + '\', \'' + window.escapeHtml(p.Especificacao || '') + '\')" style="padding:3px 8px;font-size:10.5px;border-radius:4px;font-weight:700;cursor:pointer">Consultar IA 💬</button>' +
                     '</div></div>';
             });
             if (acervoFiltrado.length > 100) {
-                html += '<div style="text-align:center;padding:8px;font-size:11px;color:#94a3b8;">Exibindo primeiros 100 processos de ' + acervoFiltrado.length + '. Use a busca acima para filtrar.</div>';
+                html += '<div style="text-align:center;padding:8px;font-size:11px">Exibindo primeiros 100 processos de ' + acervoFiltrado.length + '. Use a busca acima para filtrar.</div>';
             }
         }
 
@@ -424,26 +406,19 @@
             gridChat.insertBefore(divLateral, gridChat.firstChild);
         }
 
-        divLateral.style.cssText = 'height:100%;display:flex;flex-direction:column;padding:0;' +
-            'overflow:hidden;background:var(--sagti-surface-alt);' +
-            'border:1px solid rgba(255,255,255,0.1);border-radius:12px;box-shadow:0 8px 24px rgba(0,0,0,0.3);';
+        divLateral.classList.add('card', 'd-flex', 'flex-column', 'h-100', 'overflow-hidden');
 
-        divLateral.innerHTML = '<div style="padding:12px 14px;background:var(--sagti-surface-alt);' +
-            'border-bottom:1px solid rgba(255,255,255,0.08);' +
-            'display:flex;justify-content:space-between;align-items:center;">' +
-            '<div><strong style="font-size:12.5px;color:var(--sagti-text);display:flex;align-items:center;gap:6px;">' +
+        divLateral.innerHTML = '<div class="card-header d-flex justify-content-between align-items-center">' +
+            '<div><strong class="card-title d-flex align-items-center gap-2">' +
             '<span>📁</span> Contexto &amp; Demandas Rápidas</strong>' +
-            '<div style="font-size:10.5px;color:#94a3b8;">Clique para consultar com a IA</div></div></div>' +
-            '<div style="padding:10px 12px;background:rgba(2,6,23,0.65);border-bottom:1px solid rgba(255,255,255,0.08);' +
-            'display:flex;flex-direction:column;gap:6px;">' +
-            '<label for="select-contexto-chat" style="font-size:10.5px;color:#94a3b8;font-weight:700;' +
-            'text-transform:uppercase;letter-spacing:0.5px;display:flex;align-items:center;gap:5px;">' +
+            '<div class="small text-secondary">Clique para consultar com a IA</div></div></div>' +
+            '<div class="card-body d-flex flex-column gap-2">' +
+            '<label for="select-contexto-chat" style="font-size:10.5px;font-weight:700;' +
+            'text-transform:uppercase;letter-spacing:0.5px;display:flex;align-items:center;gap:5px">' +
             '<span>🎯</span> Base de Contexto Operacional:' +
             '</label>' +
             '<select id="select-contexto-chat" onchange="window.alternarAbaContextoChat(this.value)" ' +
-            'style="width:100%;box-sizing:border-box;padding:8px 12px;border-radius:8px;' +
-            'border:1px solid rgba(56,189,248,0.35);background:var(--sagti-surface-alt);color:var(--sagti-text);' +
-            'font-size:12px;font-weight:700;outline:none;cursor:pointer;box-shadow:0 2px 8px rgba(0,0,0,0.3);">' +
+            'class="form-select">' +
             '<option value="custodia" selected>📌 Minha Custódia (2 processos)</option>' +
             '<option value="fixados">⭐ Fixados / Acompanhamento</option>' +
             '<option value="op">📦 Pacotes OpenProject (500)</option>' +
@@ -452,48 +427,37 @@
             '<option value="acervo">📚 Acervo Probatório SEI (179 autos)</option>' +
             '</select>' +
             '</div>' +
-            '<div style="padding:8px 10px;border-bottom:1px solid rgba(255,255,255,0.08);' +
-            'background:var(--sagti-surface-alt);">' +
+            '<div class="p-2">' +
             '<input type="text" id="busca-contexto-chat" placeholder="🔍 Filtrar nesta base..." ' +
             'oninput="window.renderizarListaContextoChat()" ' +
-            'style="width:100%;box-sizing:border-box;padding:6px 10px;border-radius:6px;' +
-            'border:1px solid rgba(255,255,255,0.15);background:rgba(255,255,255,0.06);' +
-            'color:var(--sagti-text);font-size:11.5px;outline:none;">' +
+            'class="form-control">' +
             '</div>' +
             '<div id="lista-contexto-chat-container" ' +
-            'style="flex:1;overflow-y:auto;padding:10px;display:flex;flex-direction:column;gap:6px;' +
-            'background:rgba(11,19,43,0.5);"></div>';
+            'class="d-flex flex-column flex-fill overflow-auto gap-2"></div>';
 
-        // Estiliza o Card de Chat na direita para Dark Theme V11 impecável
+        // Apply Tabler structure to the chat panel and its controls.
         var chatCard = document.querySelector('#grid-layout-chat-ia .chart-card:last-child');
         if (chatCard) {
-            chatCard.style.cssText = 'height:100%;display:flex;flex-direction:column;padding:0;overflow:hidden;' +
-                'background:var(--sagti-surface-alt);border:1px solid rgba(255,255,255,0.1);' +
-                'border-radius:12px;box-shadow:0 8px 24px rgba(0,0,0,0.3);';
+            chatCard.classList.add('card', 'd-flex', 'flex-column', 'h-100');
 
             var headerChat = chatCard.querySelector('div:first-child');
             if (headerChat) {
-                headerChat.style.cssText = 'padding:12px 18px;background:var(--sagti-surface-alt);' +
-                    'border-bottom:1px solid rgba(255,255,255,0.08);display:flex;' +
-                    'justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;';
+                headerChat.classList.add('card-header', 'd-flex', 'justify-content-between', 'align-items-center', 'flex-wrap', 'gap-2');
 
                 var txtBox = headerChat.querySelector('div:first-child');
                 if (txtBox) {
                     var strTit = txtBox.querySelector('strong');
-                    if (strTit) strTit.style.cssText = 'font-size:14px;color:var(--sagti-text);display:block;';
+                    if (strTit) strTit.classList.add('card-title');
                     var strSub = txtBox.querySelector('div');
-                    if (strSub) strSub.style.cssText = 'font-size:11.5px;color:#94a3b8;margin-top:2px;';
+                    if (strSub) strSub.classList.add('text-secondary');
                 }
 
                 var containerBotoes = headerChat.querySelector('div[style*="display: flex; gap: 8px;"]');
                 if (containerBotoes && !document.getElementById('btn-reiniciar-chat-v11')) {
                     var btnReiniciar = document.createElement('button');
                     btnReiniciar.id = 'btn-reiniciar-chat-v11';
-                    btnReiniciar.className = 'btn btn-secondary';
+                    btnReiniciar.className = 'btn btn-outline-danger btn-sm';
                     btnReiniciar.onclick = window.reiniciarConversaChat;
-                    btnReiniciar.style.cssText = 'padding:5px 12px;font-size:11.5px;background:rgba(239,68,68,0.16);' +
-                        'border:1px solid rgba(239,68,68,0.35);color:#fca5a5;font-weight:700;cursor:pointer;' +
-                        'display:inline-flex;align-items:center;gap:5px;border-radius:6px;';
                     btnReiniciar.innerHTML = '<span>🔄</span> Reiniciar Conversa';
                     containerBotoes.insertBefore(btnReiniciar, containerBotoes.firstChild);
                 }
@@ -501,35 +465,25 @@
 
             var msgContainer = document.getElementById('chat-messages');
             if (msgContainer) {
-                msgContainer.style.cssText = 'flex:1;overflow-y:auto;padding:18px;display:flex;flex-direction:column;' +
-                    'gap:14px;background:rgba(11,19,43,0.5);';
+                msgContainer.classList.add('card-body', 'd-flex', 'flex-column', 'flex-fill', 'overflow-auto', 'gap-3');
             }
 
             var barraSugestoes = document.querySelector('#view-esteira_ia div[style*="overflow-x: auto; padding: 8px 14px;"]');
             if (barraSugestoes) {
-                barraSugestoes.style.cssText = 'overflow-x:auto;padding:8px 14px;background:var(--sagti-surface-alt);' +
-                    'border-top:1px solid rgba(255,255,255,0.08);display:flex;gap:8px;align-items:center;' +
-                    'font-size:11.5px;color:#94a3b8;white-space:nowrap;';
+                barraSugestoes.classList.add('card-footer', 'd-flex', 'align-items-center', 'gap-2', 'overflow-auto');
             }
 
-            var footerChat = document.querySelector('#view-esteira_ia div[style*="border-top: 1px solid #e2e8f0; padding: 12px 18px;"]');
+            var inputChat = document.getElementById('chat-input');
+            var footerChat = inputChat && inputChat.parentElement;
             if (footerChat) {
-                footerChat.style.cssText = 'border-top:1px solid rgba(255,255,255,0.08);padding:12px 18px;' +
-                    'background:var(--sagti-surface-alt);';
-
-                var inputChat = document.getElementById('chat-input');
+                footerChat.classList.add('card-footer', 'd-flex', 'align-items-center', 'gap-2');
                 if (inputChat) {
-                    inputChat.style.cssText = 'flex:1;border:1px solid rgba(255,255,255,0.14);' +
-                        'background:rgba(255,255,255,0.06);color:var(--sagti-text);border-radius:8px;' +
-                        'padding:10px 14px;font-size:12.5px;outline:none;';
+                    inputChat.classList.add('flex-fill');
                 }
 
                 var btnEnviar = footerChat.querySelector('button.btn-primary');
                 if (btnEnviar) {
-                    btnEnviar.style.cssText = 'padding:10px 18px;font-size:12.5px;font-weight:700;' +
-                        'background:var(--sagti-accent);' +
-                        'border:1px solid rgba(56,189,248,0.5);border-radius:8px;cursor:pointer;' +
-                        'box-shadow:0 4px 14px rgba(14,165,233,0.35);color:var(--sagti-text);';
+                    btnEnviar.classList.add('btn-primary');
                 }
             }
         }

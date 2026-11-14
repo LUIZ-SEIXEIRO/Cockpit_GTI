@@ -112,18 +112,19 @@
 
         var div = document.createElement('div');
         div.id = 'modal-relatorio-ritual-mesa';
-        div.style.cssText = 'position:fixed;inset:0;background:var(--sagti-surface-alt);z-index:99999;display:flex;align-items:center;justify-content:center;padding:20px;';
-        div.innerHTML = '<div style="background:var(--sagti-surface-alt);border:1px solid rgba(56,189,248,0.35);border-top:4px solid #0ea5e9;border-radius:16px;max-width:680px;width:100%;padding:24px;color:var(--sagti-text);box-shadow:0 24px 60px rgba(0,0,0,0.85);">' +
-            '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;">' +
-                '<span style="background:rgba(56,189,248,0.15);color:var(--sagti-accent);padding:4px 10px;border-radius:8px;font-size:11.5px;font-weight:800;">' + rel.tipoLabel + ' • ' + rel.data + '</span>' +
-                '<button type="button" onclick="document.getElementById(\'modal-relatorio-ritual-mesa\').remove()" style="background:transparent;border:none;color:#94a3b8;font-size:18px;cursor:pointer;">✖</button>' +
+        div.className = 'sagti-modal-backdrop';
+        div.style.cssText = 'position:fixed;inset:0;z-index:99999;display:flex;align-items:center;justify-content:center;padding:20px;';
+        div.innerHTML = '<div style="border-radius:16px;max-width:680px;width:100%;padding:24px">' +
+            '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px">' +
+                '<span style="padding:4px 10px;border-radius:8px;font-size:11.5px;font-weight:800">' + rel.tipoLabel + ' • ' + rel.data + '</span>' +
+                '<button type="button" onclick="document.getElementById(\'modal-relatorio-ritual-mesa\').remove()" style="font-size:18px;cursor:pointer" class="btn btn-ghost-secondary">✖</button>' +
             '</div>' +
-            '<h3 style="margin:0 0 10px 0;font-size:16px;color:var(--sagti-text);">' + rel.titulo + '</h3>' +
-            '<div style="font-size:12px;color:#94a3b8;margin-bottom:14px;">' + rel.destaque + '</div>' +
-            '<pre style="background:rgba(2,6,23,0.75);border:1px solid rgba(255,255,255,0.1);border-radius:10px;padding:16px;color:var(--sagti-text);font-family:monospace;font-size:12px;white-space:pre-wrap;line-height:1.55;max-height:340px;overflow-y:auto;">' + (rel.conteudo || rel.destaque) + '</pre>' +
-            '<div style="display:flex;justify-content:flex-end;gap:10px;margin-top:16px;">' +
-                '<button type="button" class="btn btn-secondary" onclick="window.toggleAcompanhamentoRelatorio(\'' + rel.id + '\');document.getElementById(\'modal-relatorio-ritual-mesa\').remove();" style="padding:7px 14px;font-size:12px;">' + (isMarcado ? '☆ Remover Acompanhamento' : '⭐ Marcar para Acompanhamento') + '</button>' +
-                '<button type="button" class="btn btn-primary" onclick="document.getElementById(\'modal-relatorio-ritual-mesa\').remove()" style="padding:7px 16px;font-size:12px;">Fechar</button>' +
+            '<h3 style="margin:0 0 10px 0;font-size:16px">' + rel.titulo + '</h3>' +
+            '<div style="font-size:12px;margin-bottom:14px">' + rel.destaque + '</div>' +
+            '<pre style="border-radius:10px;padding:16px;font-size:12px;white-space:pre-wrap;line-height:1.55;max-height:340px;overflow-y:auto">' + (rel.conteudo || rel.destaque) + '</pre>' +
+            '<div style="display:flex;justify-content:flex-end;gap:10px;margin-top:16px">' +
+                '<button type="button" class="btn btn-outline-secondary" onclick="window.toggleAcompanhamentoRelatorio(\'' + rel.id + '\');document.getElementById(\'modal-relatorio-ritual-mesa\').remove();" style="padding:7px 14px;font-size:12px">' + (isMarcado ? '☆ Remover Acompanhamento' : '⭐ Marcar para Acompanhamento') + '</button>' +
+                '<button type="button" class="btn btn-primary" onclick="document.getElementById(\'modal-relatorio-ritual-mesa\').remove()" style="padding:7px 16px;font-size:12px">Fechar</button>' +
             '</div>' +
         '</div>';
         document.body.appendChild(div);
@@ -206,8 +207,8 @@
                     resp: rObj.data || 'Hoje',
                     status: rObj.status || 'Ativo',
                     detalhe: rObj.destaque || 'Daily / Sprint',
-                    acao: '<button type="button" class="btn btn-secondary" onclick="window.visualizarRelatorioMesaModal(\'' + rObj.id + '\')" style="padding:3px 8px;font-size:10.5px;margin-right:4px;">👁️ Ver</button>' +
-                          '<button type="button" class="btn btn-secondary" onclick="window.toggleFixado(\'' + ch + '\')" style="padding:3px 8px;font-size:10.5px;color:#facc15;">⭐ Acompanhando</button>'
+                    acao: '<button type="button" class="btn btn-outline-secondary" onclick="window.visualizarRelatorioMesaModal(\'' + rObj.id + '\')" style="padding:3px 8px;font-size:10.5px;margin-right:4px">👁️ Ver</button>' +
+                          '<button type="button" class="btn btn-outline-secondary" onclick="window.toggleFixado(\'' + ch + '\')" style="padding:3px 8px;font-size:10.5px">⭐ Acompanhando</button>'
                 };
             }
             return {
@@ -218,7 +219,7 @@
                 resp: 'SA-GTI',
                 status: 'Ativo',
                 detalhe: 'Ritual Operacional',
-                acao: '<button type="button" class="btn btn-secondary" onclick="window.toggleFixado(\'' + ch + '\')" style="padding:3px 8px;font-size:10.5px;color:#fca5a5;">✖ Remover</button>'
+                acao: '<button type="button" class="btn btn-outline-secondary" onclick="window.toggleFixado(\'' + ch + '\')" style="padding:3px 8px;font-size:10.5px">✖ Remover</button>'
             };
         }
 
@@ -236,8 +237,8 @@
                     resp: gObj.tecnico || 'SA-GTI',
                     status: gObj.status || 'Ativo',
                     detalhe: gObj.cat || gObj.local || 'Suporte & Infra',
-                    acao: '<a href="' + linkGlpi + '" target="_blank" class="btn btn-secondary" style="padding:3px 8px;font-size:10.5px;text-decoration:none;margin-right:4px;">GLPI ↗</a>' +
-                          '<button type="button" class="btn btn-secondary" onclick="window.toggleFixado(\'' + ch + '\')" style="padding:3px 8px;font-size:10.5px;color:#facc15;">⭐ Acompanhando</button>'
+                    acao: '<a href="' + linkGlpi + '" target="_blank" class="btn btn-outline-secondary" style="padding:3px 8px;font-size:10.5px;text-decoration:none;margin-right:4px">GLPI ↗</a>' +
+                          '<button type="button" class="btn btn-outline-secondary" onclick="window.toggleFixado(\'' + ch + '\')" style="padding:3px 8px;font-size:10.5px">⭐ Acompanhando</button>'
                 };
             }
             return {
@@ -248,8 +249,8 @@
                 resp: 'SA-GTI',
                 status: 'Ativo',
                 detalhe: 'Suporte & Atendimento',
-                acao: '<a href="' + linkGlpi + '" target="_blank" class="btn btn-secondary" style="padding:3px 8px;font-size:10.5px;text-decoration:none;margin-right:4px;">GLPI ↗</a>' +
-                      '<button type="button" class="btn btn-secondary" onclick="window.toggleFixado(\'' + ch + '\')" style="padding:3px 8px;font-size:10.5px;color:#fca5a5;">✖ Remover</button>'
+                acao: '<a href="' + linkGlpi + '" target="_blank" class="btn btn-outline-secondary" style="padding:3px 8px;font-size:10.5px;text-decoration:none;margin-right:4px">GLPI ↗</a>' +
+                      '<button type="button" class="btn btn-outline-secondary" onclick="window.toggleFixado(\'' + ch + '\')" style="padding:3px 8px;font-size:10.5px">✖ Remover</button>'
             };
         }
 
@@ -267,8 +268,8 @@
                     resp: opObj.atrib || opObj.encarr || 'SA-GTI',
                     status: opObj.status || '🚀 Em progresso',
                     detalhe: opObj.tipo || opObj.projeto || 'Projeto',
-                    acao: '<a href="' + urlOp + '" target="_blank" class="btn btn-secondary" style="padding:3px 8px;font-size:10.5px;text-decoration:none;margin-right:4px;">Abrir OP ↗</a>' +
-                          '<button type="button" class="btn btn-secondary" onclick="window.toggleFixado(\'' + ch + '\')" style="padding:3px 8px;font-size:10.5px;color:#facc15;">⭐ Acompanhando</button>'
+                    acao: '<a href="' + urlOp + '" target="_blank" class="btn btn-outline-secondary" style="padding:3px 8px;font-size:10.5px;text-decoration:none;margin-right:4px">Abrir OP ↗</a>' +
+                          '<button type="button" class="btn btn-outline-secondary" onclick="window.toggleFixado(\'' + ch + '\')" style="padding:3px 8px;font-size:10.5px">⭐ Acompanhando</button>'
                 };
             }
             return {
@@ -279,8 +280,8 @@
                 resp: 'SA-GTI',
                 status: 'Em andamento',
                 detalhe: 'Gestão de Projetos',
-                acao: '<a href="' + urlOp + '" target="_blank" class="btn btn-secondary" style="padding:3px 8px;font-size:10.5px;text-decoration:none;margin-right:4px;">Abrir OP ↗</a>' +
-                      '<button type="button" class="btn btn-secondary" onclick="window.toggleFixado(\'' + ch + '\')" style="padding:3px 8px;font-size:10.5px;color:#fca5a5;">✖ Remover</button>'
+                acao: '<a href="' + urlOp + '" target="_blank" class="btn btn-outline-secondary" style="padding:3px 8px;font-size:10.5px;text-decoration:none;margin-right:4px">Abrir OP ↗</a>' +
+                      '<button type="button" class="btn btn-outline-secondary" onclick="window.toggleFixado(\'' + ch + '\')" style="padding:3px 8px;font-size:10.5px">✖ Remover</button>'
             };
         }
 
@@ -307,8 +308,8 @@
                     resp: gObjNum.tecnico || 'SA-GTI',
                     status: gObjNum.status || 'Ativo',
                     detalhe: gObjNum.cat || 'Suporte',
-                    acao: '<a href="' + lG + '" target="_blank" class="btn btn-secondary" style="padding:3px 8px;font-size:10.5px;text-decoration:none;margin-right:4px;">GLPI ↗</a>' +
-                          '<button type="button" class="btn btn-secondary" onclick="window.toggleFixado(\'' + ch + '\')" style="padding:3px 8px;font-size:10.5px;color:#facc15;">⭐ Acompanhando</button>'
+                    acao: '<a href="' + lG + '" target="_blank" class="btn btn-outline-secondary" style="padding:3px 8px;font-size:10.5px;text-decoration:none;margin-right:4px">GLPI ↗</a>' +
+                          '<button type="button" class="btn btn-outline-secondary" onclick="window.toggleFixado(\'' + ch + '\')" style="padding:3px 8px;font-size:10.5px">⭐ Acompanhando</button>'
                 };
             }
             var opObjNum = (pacotesOp || []).find(function(op) { return String(op.id) === ch; });
@@ -322,8 +323,8 @@
                     resp: opObjNum.atrib || opObjNum.encarr || 'SA-GTI',
                     status: opObjNum.status || 'Ativo',
                     detalhe: opObjNum.tipo || 'Projeto',
-                    acao: '<a href="' + lOp + '" target="_blank" class="btn btn-secondary" style="padding:3px 8px;font-size:10.5px;text-decoration:none;margin-right:4px;">Abrir OP ↗</a>' +
-                          '<button type="button" class="btn btn-secondary" onclick="window.toggleFixado(\'' + ch + '\')" style="padding:3px 8px;font-size:10.5px;color:#facc15;">⭐ Acompanhando</button>'
+                    acao: '<a href="' + lOp + '" target="_blank" class="btn btn-outline-secondary" style="padding:3px 8px;font-size:10.5px;text-decoration:none;margin-right:4px">Abrir OP ↗</a>' +
+                          '<button type="button" class="btn btn-outline-secondary" onclick="window.toggleFixado(\'' + ch + '\')" style="padding:3px 8px;font-size:10.5px">⭐ Acompanhando</button>'
                 };
             }
         }
@@ -337,8 +338,8 @@
                 resp: pObj.Responsavel_Tecnico || 'SA-GTI',
                 status: pObj.Status_OpenProject || pObj.Status_Kanban || 'Ativo',
                 detalhe: pObj.Faixa_Aging || 'Normal',
-                acao: '<button class="btn btn-secondary" onclick="window.abrirDetalhesProcesso(\'' + pObj.ID_Processo + '\')" style="padding:3px 8px;font-size:10.5px;margin-right:4px;">👁️ Ver</button>' +
-                      '<button type="button" class="btn btn-secondary" onclick="window.toggleFixado(\'' + ch + '\')" style="padding:3px 8px;font-size:10.5px;color:#facc15;">⭐ Acompanhando</button>'
+                acao: '<button class="btn btn-outline-secondary" onclick="window.abrirDetalhesProcesso(\'' + pObj.ID_Processo + '\')" style="padding:3px 8px;font-size:10.5px;margin-right:4px">👁️ Ver</button>' +
+                      '<button type="button" class="btn btn-outline-secondary" onclick="window.toggleFixado(\'' + ch + '\')" style="padding:3px 8px;font-size:10.5px">⭐ Acompanhando</button>'
             };
         }
 
@@ -351,7 +352,7 @@
             resp: 'SA-GTI',
             status: 'Ativo',
             detalhe: 'Watchlist Pessoal',
-            acao: '<button type="button" class="btn btn-secondary" onclick="window.toggleFixado(\'' + ch + '\')" style="padding:3px 8px;font-size:10.5px;color:#fca5a5;">✖ Remover</button>'
+            acao: '<button type="button" class="btn btn-outline-secondary" onclick="window.toggleFixado(\'' + ch + '\')" style="padding:3px 8px;font-size:10.5px">✖ Remover</button>'
         };
     };
 
@@ -914,27 +915,27 @@
         }
 
         if (estaAtivo) {
-            containerStatus.innerHTML = '<div style="display:flex;align-items:center;gap:12px;">' +
-                '<span style="display:inline-block;width:12px;height:12px;border-radius:50%;background:#10b981;box-shadow:0 0 12px #10b981;"></span>' +
+            containerStatus.innerHTML = '<div style="display:flex;align-items:center;gap:12px">' +
+                '<span style="display:inline-block;width:12px;height:12px;border-radius:50%"></span>' +
                 '<div>' +
-                    '<div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">' +
-                        '<strong style="color:#34d399;font-size:12.5px;">Sincronização Automática: ATIVA (Configuração do Cockpit)</strong>' +
-                        '<span style="background:rgba(56,189,248,0.2);color:var(--sagti-accent);border:1px solid rgba(56,189,248,0.5);padding:1px 8px;border-radius:8px;font-size:10.5px;font-weight:700;">⚙️ Motor 3: ' + window.escapeHtml(mot3.freq || infoFreq.desc) + '</span>' +
+                    '<div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">' +
+                        '<strong style="font-size:12.5px">Sincronização Automática: ATIVA (Configuração do Cockpit)</strong>' +
+                        '<span style="padding:1px 8px;border-radius:8px;font-size:10.5px;font-weight:700">⚙️ Motor 3: ' + window.escapeHtml(mot3.freq || infoFreq.desc) + '</span>' +
                     '</div>' +
-                    '<div style="color:#cbd5e1;font-size:11px;margin-top:2px;">' +
+                    '<div style="font-size:11px;margin-top:2px">' +
                         '<strong>Última Execução:</strong> ' + ultimaSyncStr + ' • <strong>Próxima Execução:</strong> ~' + diffMin + ' min (' + proximaStr + ') • <strong>Operação:</strong> Automação programada + Sincronização manual 1 a 1' +
                     '</div>' +
                 '</div>' +
             '</div>';
         } else {
-            containerStatus.innerHTML = '<div style="display:flex;align-items:center;gap:12px;">' +
-                '<span style="display:inline-block;width:12px;height:12px;border-radius:50%;background:#f59e0b;box-shadow:0 0 12px #f59e0b;"></span>' +
+            containerStatus.innerHTML = '<div style="display:flex;align-items:center;gap:12px">' +
+                '<span style="display:inline-block;width:12px;height:12px;border-radius:50%"></span>' +
                 '<div>' +
-                    '<div style="display:flex;align-items:center;gap:8px;">' +
-                        '<strong style="color:#fbbf24;font-size:12.5px;">Sincronização Automática: PAUSADA NO MOTOR 3</strong>' +
-                        '<span style="background:rgba(245,158,11,0.2);color:#fbbf24;border:1px solid #f59e0b;padding:1px 8px;border-radius:8px;font-size:10px;font-weight:700;">Status: Inativo</span>' +
+                    '<div style="display:flex;align-items:center;gap:8px">' +
+                        '<strong style="font-size:12.5px">Sincronização Automática: PAUSADA NO MOTOR 3</strong>' +
+                        '<span style="padding:1px 8px;border-radius:8px;font-weight:700">Status: Inativo</span>' +
                     '</div>' +
-                    '<div style="color:#94a3b8;font-size:11px;margin-top:2px;">O agendamento automático está inativo na configuração do Cockpit. Utilize o botão "Ajustar no Motor 3" para reativar.</div>' +
+                    '<div style="font-size:11px;margin-top:2px">O agendamento automático está inativo na configuração do Cockpit. Utilize o botão "Ajustar no Motor 3" para reativar.</div>' +
                 '</div>' +
             '</div>';
         }
@@ -971,64 +972,65 @@
             });
         };
         var linhasTabela = historico.length ? historico.map(function(item) {
-            return '<tr style="border-bottom:1px solid rgba(255,255,255,0.06);">' +
-                '<td style="padding:10px 12px;font-family:monospace;color:var(--sagti-accent);font-weight:700;">' + escaparHistoricoHtml(item.timestamp || '—') + '</td>' +
-                '<td style="padding:10px 12px;color:var(--sagti-text);">' + escaparHistoricoHtml(item.modo || 'Agendado') + '</td>' +
-                '<td style="padding:10px 12px;text-align:center;color:#334155;font-weight:700;">' + (Number.isFinite(Number(item.cards_processados)) ? Number(item.cards_processados) : 0) + ' cards</td>' +
-                '<td style="padding:10px 12px;text-align:center;"><span style="padding:2px 8px;border:1px solid #cbd5e1;font-size:10px;font-weight:700;">' + escaparHistoricoHtml(item.status || 'Status não informado') + '</span></td>' +
-                '<td style="padding:10px 12px;font-family:monospace;color:#475569;font-size:10.5px;">' + escaparHistoricoHtml(item.modelo_ia2 || '—') + '</td>' +
-                '<td style="padding:10px 12px;font-family:monospace;color:#475569;font-size:10px;">' + escaparHistoricoHtml(item.comprovante_hash || '—') + '</td>' +
+            return '<tr >' +
+                '<td style="padding:10px 12px;font-weight:700">' + escaparHistoricoHtml(item.timestamp || '—') + '</td>' +
+                '<td style="padding:10px 12px">' + escaparHistoricoHtml(item.modo || 'Agendado') + '</td>' +
+                '<td style="padding:10px 12px;text-align:center;font-weight:700">' + (Number.isFinite(Number(item.cards_processados)) ? Number(item.cards_processados) : 0) + ' cards</td>' +
+                '<td style="padding:10px 12px;text-align:center"><span style="padding:2px 8px;font-weight:700">' + escaparHistoricoHtml(item.status || 'Status não informado') + '</span></td>' +
+                '<td style="padding:10px 12px;font-size:10.5px">' + escaparHistoricoHtml(item.modelo_ia2 || '—') + '</td>' +
+                '<td style="padding:10px 12px">' + escaparHistoricoHtml(item.comprovante_hash || '—') + '</td>' +
             '</tr>';
-        }).join('') : '<tr><td colspan="6" style="padding:18px;text-align:center;color:#64748b;">' +
+        }).join('') : '<tr><td colspan="6" style="padding:18px;text-align:center">' +
             escaparHistoricoHtml(erroHistorico || 'Nenhuma execução registrada.') + '</td></tr>';
 
         var divModal = document.createElement('div');
         divModal.id = 'modal-logs-sincronizacao-op';
-        divModal.style.cssText = 'position:fixed;inset:0;background:var(--sagti-surface-alt);z-index:999999;display:flex;align-items:center;justify-content:center;padding:16px;';
-        divModal.innerHTML = '<div style="background:var(--sagti-surface-alt);border:1px solid rgba(16,185,129,0.45);border-top:4px solid #10b981;border-radius:16px;max-width:920px;width:100%;max-height:90vh;overflow-y:auto;padding:24px;color:#f8fafc;box-shadow:0 24px 60px rgba(0,0,0,0.95);">' +
-            '<div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:14px;">' +
+        divModal.className = 'sagti-modal-backdrop';
+        divModal.style.cssText = 'position:fixed;inset:0;z-index:999999;display:flex;align-items:center;justify-content:center;padding:16px;';
+        divModal.innerHTML = '<div style="border-radius:16px;max-width:920px;width:100%;max-height:90vh;overflow-y:auto;padding:24px">' +
+            '<div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:14px">' +
                 '<div>' +
-                    '<span style="background:rgba(16,185,129,0.25);color:#34d399;padding:3px 10px;border-radius:6px;font-size:11px;font-weight:800;">COMPROVAÇÃO DE AUDITORIA & REGISTRO AGENDADO</span>' +
-                    '<h3 style="margin:6px 0 2px 0;font-size:18px;color:var(--sagti-text);">📜 Histórico de Sincronizações do Motor 3 (OpenProject 14)</h3>' +
-                    '<div style="font-size:12px;color:#94a3b8;">' + (erroHistorico ? 'Não foi possível consultar a evidência registrada.' : historico.length ? 'Registros retornados pelo backend.' : 'Nenhuma execução registrada pelo backend.') + '</div>' +
+                    '<span style="padding:3px 10px;border-radius:6px;font-size:11px;font-weight:800">COMPROVAÇÃO DE AUDITORIA & REGISTRO AGENDADO</span>' +
+                    '<h3 style="margin:6px 0 2px 0;font-size:18px">📜 Histórico de Sincronizações do Motor 3 (OpenProject 14)</h3>' +
+                    '<div style="font-size:12px">' + (erroHistorico ? 'Não foi possível consultar a evidência registrada.' : historico.length ? 'Registros retornados pelo backend.' : 'Nenhuma execução registrada pelo backend.') + '</div>' +
                 '</div>' +
-                '<button type="button" onclick="document.getElementById(\'modal-logs-sincronizacao-op\').remove()" style="background:none;border:none;color:#94a3b8;font-size:22px;cursor:pointer;">✖</button>' +
+                '<button type="button" onclick="document.getElementById(\'modal-logs-sincronizacao-op\').remove()" style="font-size:22px;cursor:pointer" class="btn btn-ghost-secondary">✖</button>' +
             '</div>' +
 
-            '<div style="display:grid;grid-template-columns:repeat(3, 1fr);gap:12px;margin-bottom:16px;">' +
-                '<div style="background:rgba(2,6,23,0.7);padding:12px;border-radius:8px;border:1px solid rgba(255,255,255,0.08);">' +
-                    '<span style="font-size:11px;color:#94a3b8;">Frequência Programada (Motor 3):</span><br>' +
-                    '<strong style="color:var(--sagti-accent);font-size:13px;">' + window.escapeHtml(mot3.freq || 'Não configurada') + '</strong>' +
+            '<div style="display:grid;grid-template-columns:repeat(3, 1fr);gap:12px;margin-bottom:16px">' +
+                '<div style="padding:12px;border-radius:8px">' +
+                    '<span style="font-size:11px">Frequência Programada (Motor 3):</span><br>' +
+                    '<strong style="font-size:13px">' + window.escapeHtml(mot3.freq || 'Não configurada') + '</strong>' +
                 '</div>' +
-                '<div style="background:rgba(2,6,23,0.7);padding:12px;border-radius:8px;border:1px solid rgba(255,255,255,0.08);">' +
-                    '<span style="font-size:11px;color:#94a3b8;">Total de Execuções Auditadas:</span><br>' +
-                    '<strong style="color:#34d399;font-size:13px;">' + historico.length + ' execuções registradas</strong>' +
+                '<div style="padding:12px;border-radius:8px">' +
+                    '<span style="font-size:11px">Total de Execuções Auditadas:</span><br>' +
+                    '<strong style="font-size:13px">' + historico.length + ' execuções registradas</strong>' +
                 '</div>' +
-                '<div style="background:rgba(2,6,23,0.7);padding:12px;border-radius:8px;border:1px solid rgba(255,255,255,0.08);">' +
-                    '<span style="font-size:11px;color:#94a3b8;">Status do Agendamento:</span><br>' +
-                    '<strong style="color:#34d399;font-size:13px;">🟢 100% Conforme Parametrização</strong>' +
+                '<div style="padding:12px;border-radius:8px">' +
+                    '<span style="font-size:11px">Status do Agendamento:</span><br>' +
+                    '<strong style="font-size:13px">🟢 100% Conforme Parametrização</strong>' +
                 '</div>' +
             '</div>' +
 
-            '<div style="max-height:360px;overflow-y:auto;border:1px solid rgba(255,255,255,0.1);border-radius:8px;margin-bottom:16px;">' +
-                '<table style="width:100%;border-collapse:collapse;font-size:11.5px;">' +
-                    '<thead style="background:var(--sagti-surface-alt);position:sticky;top:0;color:var(--sagti-accent);border-bottom:1px solid rgba(255,255,255,0.1);">' +
+            '<div style="max-height:360px;overflow-y:auto;border-radius:8px;margin-bottom:16px">' +
+                '<div class="table-responsive"><table style="width:100%;border-collapse:collapse;font-size:11.5px" class="table table-vcenter card-table table-hover">' +
+                    '<thead style="position:sticky;top:0">' +
                         '<tr>' +
-                            '<th style="padding:10px 12px;text-align:left;">Data / Hora</th>' +
-                            '<th style="padding:10px 12px;text-align:left;">Modo de Operação</th>' +
-                            '<th style="padding:10px 12px;text-align:center;">Volume</th>' +
-                            '<th style="padding:10px 12px;text-align:center;">Status HTTP</th>' +
-                            '<th style="padding:10px 12px;text-align:left;">Motor IA</th>' +
-                            '<th style="padding:10px 12px;text-align:left;">Comprovante</th>' +
+                            '<th style="padding:10px 12px;text-align:left">Data / Hora</th>' +
+                            '<th style="padding:10px 12px;text-align:left">Modo de Operação</th>' +
+                            '<th style="padding:10px 12px;text-align:center">Volume</th>' +
+                            '<th style="padding:10px 12px;text-align:center">Status HTTP</th>' +
+                            '<th style="padding:10px 12px;text-align:left">Motor IA</th>' +
+                            '<th style="padding:10px 12px;text-align:left">Comprovante</th>' +
                         '</tr>' +
                     '</thead>' +
                     '<tbody>' + linhasTabela + '</tbody>' +
-                '</table>' +
+                '</table></div>' +
             '</div>' +
 
-            '<div style="display:flex;justify-content:space-between;align-items:center;border-top:1px solid rgba(255,255,255,0.1);padding-top:12px;">' +
-                '<span style="font-size:11px;color:#94a3b8;">Arquivo de auditoria no servidor: <code>C:\Cockpit_GTI\laudo_sincronizacao_automatica.txt</code></span>' +
-                '<button type="button" class="btn btn-secondary" onclick="document.getElementById(\'modal-logs-sincronizacao-op\').remove()" style="padding:6px 16px;font-size:12px;">Fechar</button>' +
+            '<div style="display:flex;justify-content:space-between;align-items:center;padding-top:12px">' +
+                '<span style="font-size:11px">Arquivo de auditoria no servidor: <code>C:\Cockpit_GTI\laudo_sincronizacao_automatica.txt</code></span>' +
+                '<button type="button" class="btn btn-outline-secondary" onclick="document.getElementById(\'modal-logs-sincronizacao-op\').remove()" style="padding:6px 16px;font-size:12px">Fechar</button>' +
             '</div>' +
         '</div>';
         document.body.appendChild(divModal);
@@ -1048,44 +1050,45 @@
         var cardIdFinal = cardOp ? cardOp.id : (idProcesso.split('.')[1] ? idProcesso.split('.')[1].split('/')[0] : '1497');
 
         var textoCardAtual = cardOp
-            ? ('<div style="background:var(--sagti-surface-alt);padding:12px;border-radius:8px;font-size:11.5px;color:#cbd5e1;line-height:1.5;">' +
-                '<strong>#ID no OpenProject:</strong> <span style="color:var(--sagti-accent);font-size:13px;font-weight:800;">#' + cardOp.id + '</span> ' +
-                '<a href="https://projetos.spaguas.sp.gov.br/work_packages/' + cardOp.id + '" target="_blank" rel="noopener noreferrer" style="color:#34d399;text-decoration:none;font-weight:700;margin-left:8px;" title="Abrir card no navegador">↗ Abrir no OpenProject</a><br>' +
+            ? ('<div style="padding:12px;border-radius:8px;font-size:11.5px;line-height:1.5">' +
+                '<strong>#ID no OpenProject:</strong> <span style="font-size:13px;font-weight:800">#' + cardOp.id + '</span> ' +
+                '<a href="https://projetos.spaguas.sp.gov.br/work_packages/' + cardOp.id + '" target="_blank" rel="noopener noreferrer" style="text-decoration:none;font-weight:700;margin-left:8px" title="Abrir card no navegador">↗ Abrir no OpenProject</a><br>' +
                 '<strong>Assunto Atual:</strong> ' + window.escapeHtml(cardOp.assunto || '') + '<br>' +
                 '<strong>Status Atual:</strong> ' + (cardOp.status || '🚀 Em progresso') + '<br>' +
                 '<strong>Responsável Atual:</strong> ' + (cardOp.atrib || cardOp.encarr || 'SA-GTI') + '<br>' +
                 '<strong>Projeto Atual:</strong> ' + (cardOp.projeto || 'SA-GTI') + '<br>' +
-                '<div style="margin-top:8px;color:#34d399;font-weight:700;">🟢 Card existente vinculado para gravação (Card #' + cardOp.id + ')</div>' +
+                '<div style="margin-top:8px;font-weight:700">🟢 Card existente vinculado para gravação (Card #' + cardOp.id + ')</div>' +
                '</div>')
-            : ('<div style="background:var(--sagti-surface-alt);padding:12px;border-radius:8px;font-size:11.5px;color:#fbbf24;line-height:1.5;">' +
+            : ('<div style="padding:12px;border-radius:8px;font-size:11.5px;line-height:1.5">' +
                 '<strong>⚠️ Nenhum Card Ativo Encontrado no OpenProject</strong><br>' +
-                '<span style="font-size:11px;color:#94a3b8;">Este processo SEI ainda não possui card vinculado.</span><br>' +
-                '<div style="margin-top:8px;color:#0284c7;font-weight:700;">➕ Será executado o provisionamento de nova Tarefa no Cockpit</div>' +
+                '<span style="font-size:11px">Este processo SEI ainda não possui card vinculado.</span><br>' +
+                '<div style="margin-top:8px;font-weight:700">➕ Será executado o provisionamento de nova Tarefa no Cockpit</div>' +
                '</div>');
 
         var divModal = document.createElement('div');
         divModal.id = 'modal-diff-orquestrador-op';
-        divModal.style.cssText = 'position:fixed;inset:0;background:var(--sagti-surface-alt);z-index:999999;display:flex;align-items:center;justify-content:center;padding:16px;';
-        divModal.innerHTML = '<div style="background:var(--sagti-surface-alt);border:1px solid rgba(2,132,199,0.5);border-top:4px solid #0ea5e9;border-radius:16px;max-width:980px;width:100%;max-height:92vh;overflow-y:auto;padding:24px;color:var(--sagti-text);box-shadow:0 24px 60px rgba(0,0,0,0.95);">' +
-            '<div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:14px;">' +
+        divModal.className = 'sagti-modal-backdrop';
+        divModal.style.cssText = 'position:fixed;inset:0;z-index:999999;display:flex;align-items:center;justify-content:center;padding:16px;';
+        divModal.innerHTML = '<div style="border-radius:16px;max-width:980px;width:100%;max-height:92vh;overflow-y:auto;padding:24px">' +
+            '<div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:14px">' +
                 '<div>' +
-                    '<span style="background:rgba(14,165,233,0.25);color:var(--sagti-accent);padding:3px 10px;border-radius:6px;font-size:11px;font-weight:800;">VALIDAÇÃO PRÉVIA DE CARGA (SAFE DIFF VIEW)</span>' +
-                    '<h3 style="margin:6px 0 2px 0;font-size:17px;color:var(--sagti-text);">Processo SEI ' + idProcesso + '</h3>' +
-                    '<div style="font-size:12px;color:#94a3b8;">Confira o Dossiê Abrangente e o Comentário de Atividade. Gravação via Proxy Backend sem pedir token.</div>' +
+                    '<span style="padding:3px 10px;border-radius:6px;font-size:11px;font-weight:800">VALIDAÇÃO PRÉVIA DE CARGA (SAFE DIFF VIEW)</span>' +
+                    '<h3 style="margin:6px 0 2px 0;font-size:17px">Processo SEI ' + idProcesso + '</h3>' +
+                    '<div style="font-size:12px">Confira o Dossiê Abrangente e o Comentário de Atividade. Gravação via Proxy Backend sem pedir token.</div>' +
                 '</div>' +
-                '<button type="button" onclick="document.getElementById(\'modal-diff-orquestrador-op\').remove()" style="background:none;border:none;color:#94a3b8;font-size:22px;cursor:pointer;">✖</button>' +
+                '<button type="button" onclick="document.getElementById(\'modal-diff-orquestrador-op\').remove()" style="font-size:22px;cursor:pointer" class="btn btn-ghost-secondary">✖</button>' +
             '</div>' +
 
-            '<div style="display:grid;grid-template-columns:1fr 1.2fr;gap:14px;margin-bottom:16px;">' +
+            '<div style="display:grid;grid-template-columns:1fr 1.2fr;gap:14px;margin-bottom:16px">' +
                 '<div>' +
-                    '<h4 style="font-size:12px;color:#94a3b8;margin:0 0 6px 0;text-transform:uppercase;">1. Estado Atual no OpenProject</h4>' +
+                    '<h4 style="font-size:12px;margin:0 0 6px 0;text-transform:uppercase">1. Estado Atual no OpenProject</h4>' +
                     textoCardAtual +
                 '</div>' +
                 '<div>' +
-                    '<h4 style="font-size:12px;color:var(--sagti-accent);margin:0 0 6px 0;text-transform:uppercase;">2. Proposta de Carga Enriquecida pelo Cockpit</h4>' +
-                    '<div style="background:rgba(2,6,23,0.85);padding:12px;border-radius:8px;border:1px solid rgba(56,189,248,0.25);font-size:11.5px;color:var(--sagti-text);line-height:1.5;">' +
-                        '<strong>Novo Assunto:</strong> <span style="color:var(--sagti-accent);">' + window.escapeHtml(payload.assunto) + '</span><br>' +
-                        '<strong>Tipo da Demanda:</strong> <span style="background:#e0f2fe;color:#0369a1;padding:1px 5px;border-radius:4px;font-weight:700;">Tarefa</span><br>' +
+                    '<h4 style="font-size:12px;margin:0 0 6px 0;text-transform:uppercase">2. Proposta de Carga Enriquecida pelo Cockpit</h4>' +
+                    '<div style="padding:12px;border-radius:8px;font-size:11.5px;line-height:1.5">' +
+                        '<strong>Novo Assunto:</strong> <span >' + window.escapeHtml(payload.assunto) + '</span><br>' +
+                        '<strong>Tipo da Demanda:</strong> <span style="padding:1px 5px;border-radius:4px;font-weight:700">Tarefa</span><br>' +
                         '<strong>Responsável Nominal:</strong> ' + payload.responsavel + '<br>' +
                         '<strong>Prioridade Vinculada:</strong> ' + payload.prioridade + '<br>' +
                         '<strong>Bucket Canônico:</strong> ' + payload.bucket + '<br>' +
@@ -1095,47 +1098,47 @@
             '</div>' +
 
             '<!-- BARRA DE HOMOLOGAÇÃO & REVISÃO IA 2 -->' +
-            '<div style="background:var(--sagti-surface-alt);border:1px solid rgba(168,85,247,0.38);border-radius:10px;padding:12px 16px;margin-bottom:16px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;">' +
-                '<div style="display:flex;align-items:center;gap:10px;">' +
-                    '<span style="font-size:22px;">🤖</span>' +
+            '<div style="border-radius:10px;padding:12px 16px;margin-bottom:16px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px">' +
+                '<div style="display:flex;align-items:center;gap:10px">' +
+                    '<span style="font-size:22px">🤖</span>' +
                     '<div>' +
-                        '<div style="display:flex;align-items:center;gap:8px;">' +
-                            '<strong style="color:#d8b4fe;font-size:12.5px;">IA 2 — Orquestração & Fact-Checker</strong>' +
-                            '<span id="badge-diff-ia2-status" style="background:rgba(16,185,129,0.25);color:#34d399;border:1px solid #10b981;padding:2px 8px;border-radius:10px;font-size:10px;font-weight:700;">✓ Homologado por IA 2</span>' +
+                        '<div style="display:flex;align-items:center;gap:8px">' +
+                            '<strong style="font-size:12.5px">IA 2 — Orquestração & Fact-Checker</strong>' +
+                            '<span id="badge-diff-ia2-status" style="padding:2px 8px;border-radius:10px;font-weight:700">✓ Homologado por IA 2</span>' +
                         '</div>' +
-                        '<div style="color:#cbd5e1;font-size:11px;margin-top:2px;">Revisão analítica prévia obrigatória: Dossiê e Comentário formulados conforme PDTIC 2027-2030 e Lei 14.133/2021.</div>' +
+                        '<div style="font-size:11px;margin-top:2px">Revisão analítica prévia obrigatória: Dossiê e Comentário formulados conforme PDTIC 2027-2030 e Lei 14.133/2021.</div>' +
                     '</div>' +
                 '</div>' +
-                '<button type="button" class="btn btn-secondary" id="btn-revisar-ia2-diff" onclick="window.solicitarNovaRevisaoIa2NoDiff(\'' + idProcesso + '\')" style="background:rgba(139,92,246,0.25);border:1px solid #a855f7;color:#e9d5ff;padding:5px 12px;font-size:11.5px;font-weight:700;border-radius:6px;cursor:pointer;display:inline-flex;align-items:center;gap:5px;">' +
+                '<button type="button" class="btn btn-outline-secondary" id="btn-revisar-ia2-diff" onclick="window.solicitarNovaRevisaoIa2NoDiff(\'' + idProcesso + '\')" style="padding:5px 12px;font-size:11.5px;font-weight:700;border-radius:6px;cursor:pointer;display:inline-flex;align-items:center;gap:5px">' +
                     '<span>🔄</span> Solicitar Nova Revisão à IA 2' +
                 '</button>' +
             '</div>' +
 
             '<!-- SEÇÃO 3: DESCRIÇÃO ABRANGENTE -->' +
-            '<div style="margin-bottom:16px;">' +
-                '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;">' +
-                    '<h4 style="font-size:12px;color:#cbd5e1;margin:0;">3. Descrição Abrangente com Detalhes e Links de Arquivos (Corpo do Card):</h4>' +
-                    '<button type="button" class="btn btn-secondary" onclick="window.copiarDossieMarkdownParaClipboard(\'' + idProcesso + '\')" style="padding:3px 10px;font-size:11px;background:rgba(56,189,248,0.15);border:1px solid #38bdf8;color:var(--sagti-accent);font-weight:700;border-radius:6px;cursor:pointer;">📋 Copiar Dossiê Completo</button>' +
+            '<div style="margin-bottom:16px">' +
+                '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">' +
+                    '<h4 style="font-size:12px;margin:0">3. Descrição Abrangente com Detalhes e Links de Arquivos (Corpo do Card):</h4>' +
+                    '<button type="button" class="btn btn-outline-secondary" onclick="window.copiarDossieMarkdownParaClipboard(\'' + idProcesso + '\')" style="padding:3px 10px;font-size:11px;font-weight:700;border-radius:6px;cursor:pointer">📋 Copiar Dossiê Completo</button>' +
                 '</div>' +
-                '<pre id="diff-dossie-pre-view" style="background:rgba(2,6,23,0.9);border:1px solid rgba(255,255,255,0.1);border-radius:8px;padding:14px;color:var(--sagti-text);font-family:monospace;font-size:11px;white-space:pre-wrap;max-height:220px;overflow-y:auto;line-height:1.5;">' + window.escapeHtml(payload.descricao) + '</pre>' +
+                '<pre id="diff-dossie-pre-view" style="border-radius:8px;padding:14px;font-size:11px;white-space:pre-wrap;max-height:220px;overflow-y:auto;line-height:1.5">' + window.escapeHtml(payload.descricao) + '</pre>' +
             '</div>' +
 
             '<!-- SEÇÃO 4: COMENTÁRIO DE ATIVIDADE (O QUE MUDOU) -->' +
-            '<div style="margin-bottom:16px;">' +
-                '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;">' +
-                    '<h4 style="font-size:12px;color:#34d399;margin:0;">4. Comentário para a Timeline de Atividade ("O que mudou"):</h4>' +
-                    '<button type="button" class="btn btn-secondary" onclick="window.copiarComentarioAtividadeParaClipboard(\'' + idProcesso + '\')" style="padding:3px 10px;font-size:11px;background:rgba(52,211,153,0.15);border:1px solid #34d399;color:#34d399;font-weight:700;border-radius:6px;cursor:pointer;">💬 Copiar Comentário</button>' +
+            '<div style="margin-bottom:16px">' +
+                '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">' +
+                    '<h4 style="font-size:12px;margin:0">4. Comentário para a Timeline de Atividade ("O que mudou"):</h4>' +
+                    '<button type="button" class="btn btn-outline-secondary" onclick="window.copiarComentarioAtividadeParaClipboard(\'' + idProcesso + '\')" style="padding:3px 10px;font-size:11px;font-weight:700;border-radius:6px;cursor:pointer">💬 Copiar Comentário</button>' +
                 '</div>' +
-                '<pre id="diff-comentario-pre-view" style="background:rgba(2,6,23,0.9);border:1px solid rgba(52,211,153,0.3);border-radius:8px;padding:12px;color:#34d399;font-family:monospace;font-size:11px;white-space:pre-wrap;max-height:120px;overflow-y:auto;line-height:1.45;">' + window.escapeHtml(payload.comentario) + '</pre>' +
+                '<pre id="diff-comentario-pre-view" style="border-radius:8px;padding:12px;font-size:11px;white-space:pre-wrap;max-height:120px;overflow-y:auto;line-height:1.45">' + window.escapeHtml(payload.comentario) + '</pre>' +
             '</div>' +
 
-            '<div style="display:flex;justify-content:space-between;align-items:center;border-top:1px solid rgba(255,255,255,0.1);padding-top:14px;flex-wrap:wrap;gap:10px;">' +
-                '<div style="font-size:11px;color:#94a3b8;">⚡ Revisão prévia e gravação autenticada pelo backend.</div>' +
-                '<div style="display:flex;gap:8px;">' +
-                    '<button type="button" class="btn btn-secondary" onclick="document.getElementById(\'modal-diff-orquestrador-op\').remove()" style="padding:7px 14px;font-size:12px;">Cancelar</button>' +
-                    '<button type="button" class="btn btn-secondary" onclick="window.copiarDossieMarkdownParaClipboard(\'' + idProcesso + '\')" style="padding:7px 14px;font-size:12px;color:var(--sagti-accent);font-weight:700;">📋 Copiar Dossiê</button>' +
-                    '<button type="button" class="btn btn-secondary" onclick="window.copiarComentarioAtividadeParaClipboard(\'' + idProcesso + '\')" style="padding:7px 14px;font-size:12px;color:#34d399;font-weight:700;">💬 Copiar Comentário</button>' +
-                    '<button type="button" class="btn btn-primary" id="btn-confirmar-gravacao-op" onclick="window.confirmarGravacaoOrquestradorOp(\'' + idProcesso + '\')" style="padding:7px 20px;font-size:12px;background:var(--sagti-surface-alt);border-color:var(--sagti-accent);font-weight:700;box-shadow:0 4px 14px rgba(2,132,199,0.4);">' +
+            '<div style="display:flex;justify-content:space-between;align-items:center;padding-top:14px;flex-wrap:wrap;gap:10px">' +
+                '<div style="font-size:11px">⚡ Revisão prévia e gravação autenticada pelo backend.</div>' +
+                '<div style="display:flex;gap:8px">' +
+                    '<button type="button" class="btn btn-outline-secondary" onclick="document.getElementById(\'modal-diff-orquestrador-op\').remove()" style="padding:7px 14px;font-size:12px">Cancelar</button>' +
+                    '<button type="button" class="btn btn-outline-secondary" onclick="window.copiarDossieMarkdownParaClipboard(\'' + idProcesso + '\')" style="padding:7px 14px;font-size:12px;font-weight:700">📋 Copiar Dossiê</button>' +
+                    '<button type="button" class="btn btn-outline-secondary" onclick="window.copiarComentarioAtividadeParaClipboard(\'' + idProcesso + '\')" style="padding:7px 14px;font-size:12px;font-weight:700">💬 Copiar Comentário</button>' +
+                    '<button type="button" class="btn btn-primary" id="btn-confirmar-gravacao-op" onclick="window.confirmarGravacaoOrquestradorOp(\'' + idProcesso + '\')" style="padding:7px 20px;font-size:12px;font-weight:700">' +
                         (cardOp ? '🚀 Confirmar Gravação (Card #' + cardOp.id + ')' : '➕ Confirmar Criação da Tarefa') +
                     '</button>' +
                 '</div>' +
@@ -1465,22 +1468,23 @@
 
         var div = document.createElement('div');
         div.id = 'modal-editar-relatorio-ritual';
-        div.style.cssText = 'position:fixed;inset:0;background:var(--sagti-surface-alt);z-index:99999;display:flex;align-items:center;justify-content:center;padding:20px;animation:fadeIn 0.2s ease-in-out;';
+        div.className = 'sagti-modal-backdrop';
+        div.style.cssText = 'position:fixed;inset:0;z-index:99999;display:flex;align-items:center;justify-content:center;padding:20px;animation:fadeIn 0.2s ease-in-out;';
 
-        div.innerHTML = '<div style="background:var(--sagti-surface-alt);border:1px solid rgba(56,189,248,0.4);border-top:4px solid #38bdf8;border-radius:14px;max-width:680px;width:100%;padding:22px 24px;color:var(--sagti-text);box-shadow:0 24px 60px rgba(0,0,0,0.9);max-height:90vh;overflow-y:auto;">' +
-            '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;">' +
-                '<div style="display:flex;align-items:center;gap:8px;">' +
-                    '<span style="font-size:18px;">' + (isEdicao ? '✏️' : '➕') + '</span>' +
-                    '<strong style="font-size:15px;color:var(--sagti-text);">' + (isEdicao ? 'Editar Registro de Ritual / Ata (Super-Admin)' : 'Novo Registro de Ritual / Ata (Super-Admin)') + '</strong>' +
+        div.innerHTML = '<div style="border-radius:14px;max-width:680px;width:100%;padding:22px 24px;max-height:90vh;overflow-y:auto">' +
+            '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px">' +
+                '<div style="display:flex;align-items:center;gap:8px">' +
+                    '<span style="font-size:18px">' + (isEdicao ? '✏️' : '➕') + '</span>' +
+                    '<strong style="font-size:15px">' + (isEdicao ? 'Editar Registro de Ritual / Ata (Super-Admin)' : 'Novo Registro de Ritual / Ata (Super-Admin)') + '</strong>' +
                 '</div>' +
-                '<button type="button" onclick="document.getElementById(\'modal-editar-relatorio-ritual\').remove()" style="background:transparent;border:none;color:#94a3b8;font-size:18px;cursor:pointer;">✖</button>' +
+                '<button type="button" onclick="document.getElementById(\'modal-editar-relatorio-ritual\').remove()" style="font-size:18px;cursor:pointer" class="btn btn-ghost-secondary">✖</button>' +
             '</div>' +
 
             '<form id="form-editar-ritual" onsubmit="window.salvarRelatorioRitual(event, \'' + (rel ? rel.id : '') + '\')">' +
-                '<div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px;">' +
+                '<div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px">' +
                     '<div>' +
-                        '<label style="display:block;font-size:11px;font-weight:700;color:#94a3b8;margin-bottom:4px;text-transform:uppercase;">Tipo do Ritual:</label>' +
-                        '<select id="edit-rel-tipo" style="width:100%;padding:8px 10px;background:var(--sagti-surface-alt);border:1px solid rgba(255,255,255,0.15);border-radius:6px;color:var(--sagti-text);font-size:12px;outline:none;">' +
+                        '<label style="display:block;font-size:11px;font-weight:700;margin-bottom:4px;text-transform:uppercase">Tipo do Ritual:</label>' +
+                        '<select id="edit-rel-tipo" style="width:100%;padding:8px 10px;border-radius:6px;font-size:12px;outline:none" class="form-select">' +
                             '<option value="daily" ' + (tipoVal === 'daily' ? 'selected' : '') + '>⏱️ Ata Daily Scrum</option>' +
                             '<option value="sprint" ' + (tipoVal === 'sprint' ? 'selected' : '') + '>🏃 Snapshot da Sprint</option>' +
                             '<option value="sprint_report" ' + (tipoVal === 'sprint_report' ? 'selected' : '') + '>🏃 Sprint Report</option>' +
@@ -1489,24 +1493,24 @@
                         '</select>' +
                     '</div>' +
                     '<div>' +
-                        '<label style="display:block;font-size:11px;font-weight:700;color:#94a3b8;margin-bottom:4px;text-transform:uppercase;">Data do Ritual (DD/MM/AAAA):</label>' +
-                        '<input type="text" id="edit-rel-data" value="' + window.escapeHtml(dataVal) + '" required style="width:100%;padding:8px 10px;background:var(--sagti-surface-alt);border:1px solid rgba(255,255,255,0.15);border-radius:6px;color:var(--sagti-text);font-size:12px;outline:none;">' +
+                        '<label style="display:block;font-size:11px;font-weight:700;margin-bottom:4px;text-transform:uppercase">Data do Ritual (DD/MM/AAAA):</label>' +
+                        '<input type="text" id="edit-rel-data" value="' + window.escapeHtml(dataVal) + '" required style="width:100%;padding:8px 10px;border-radius:6px;font-size:12px;outline:none" class="form-control">' +
                     '</div>' +
                 '</div>' +
 
-                '<div style="margin-bottom:12px;">' +
-                    '<label style="display:block;font-size:11px;font-weight:700;color:#94a3b8;margin-bottom:4px;text-transform:uppercase;">Título & Escopo Operacional:</label>' +
-                    '<input type="text" id="edit-rel-titulo" value="' + window.escapeHtml(tituloVal) + '" required placeholder="Ex: Ata da Daily Scrum (15 min) — SA-GTI Coordenação" style="width:100%;padding:8px 10px;background:var(--sagti-surface-alt);border:1px solid rgba(255,255,255,0.15);border-radius:6px;color:var(--sagti-text);font-size:12px;outline:none;">' +
+                '<div style="margin-bottom:12px">' +
+                    '<label style="display:block;font-size:11px;font-weight:700;margin-bottom:4px;text-transform:uppercase">Título & Escopo Operacional:</label>' +
+                    '<input type="text" id="edit-rel-titulo" value="' + window.escapeHtml(tituloVal) + '" required placeholder="Ex: Ata da Daily Scrum (15 min) — SA-GTI Coordenação" style="width:100%;padding:8px 10px;border-radius:6px;font-size:12px;outline:none" class="form-control">' +
                 '</div>' +
 
-                '<div style="margin-bottom:12px;">' +
-                    '<label style="display:block;font-size:11px;font-weight:700;color:#94a3b8;margin-bottom:4px;text-transform:uppercase;">Destaques & Principais Deliberações (Resumo na Tabela):</label>' +
-                    '<textarea id="edit-rel-destaque" rows="2" required placeholder="Pauta resumida, entregas e bloqueios tratados..." style="width:100%;padding:8px 10px;background:var(--sagti-surface-alt);border:1px solid rgba(255,255,255,0.15);border-radius:6px;color:var(--sagti-text);font-size:12px;outline:none;resize:vertical;">' + window.escapeHtml(destaqueVal) + '</textarea>' +
+                '<div style="margin-bottom:12px">' +
+                    '<label style="display:block;font-size:11px;font-weight:700;margin-bottom:4px;text-transform:uppercase">Destaques & Principais Deliberações (Resumo na Tabela):</label>' +
+                    '<textarea id="edit-rel-destaque" rows="2" required placeholder="Pauta resumida, entregas e bloqueios tratados..." style="width:100%;padding:8px 10px;border-radius:6px;font-size:12px;outline:none;resize:vertical" class="form-control">' + window.escapeHtml(destaqueVal) + '</textarea>' +
                 '</div>' +
 
-                '<div style="margin-bottom:12px;">' +
-                    '<label style="display:block;font-size:11px;font-weight:700;color:#94a3b8;margin-bottom:4px;text-transform:uppercase;">Status do Ritual:</label>' +
-                    '<select id="edit-rel-status" style="width:100%;padding:8px 10px;background:var(--sagti-surface-alt);border:1px solid rgba(255,255,255,0.15);border-radius:6px;color:var(--sagti-text);font-size:12px;outline:none;">' +
+                '<div style="margin-bottom:12px">' +
+                    '<label style="display:block;font-size:11px;font-weight:700;margin-bottom:4px;text-transform:uppercase">Status do Ritual:</label>' +
+                    '<select id="edit-rel-status" style="width:100%;padding:8px 10px;border-radius:6px;font-size:12px;outline:none" class="form-select">' +
                         '<option value="Realizada" ' + (statusVal === 'Realizada' ? 'selected' : '') + '>🟢 Realizada</option>' +
                         '<option value="Em Execução" ' + (statusVal === 'Em Execução' ? 'selected' : '') + '>🔵 Em Execução</option>' +
                         '<option value="Ativo na Mesa" ' + (statusVal === 'Ativo na Mesa' ? 'selected' : '') + '>🟢 Ativo na Mesa</option>' +
@@ -1516,16 +1520,16 @@
                     '</select>' +
                 '</div>' +
 
-                '<div style="margin-bottom:16px;">' +
-                    '<label style="display:block;font-size:11px;font-weight:700;color:#94a3b8;margin-bottom:4px;text-transform:uppercase;">Conteúdo Integral / Dossiê (Visualizado no Modal):</label>' +
-                    '<textarea id="edit-rel-conteudo" rows="6" placeholder="Texto completo da ata, tópicos debatidos, encaminhamentos e decisões..." style="width:100%;padding:10px 12px;background:var(--sagti-surface-alt);border:1px solid rgba(255,255,255,0.15);border-radius:6px;color:var(--sagti-text);font-size:12px;font-family:monospace;outline:none;resize:vertical;line-height:1.5;">' + window.escapeHtml(conteudoVal) + '</textarea>' +
+                '<div style="margin-bottom:16px">' +
+                    '<label style="display:block;font-size:11px;font-weight:700;margin-bottom:4px;text-transform:uppercase">Conteúdo Integral / Dossiê (Visualizado no Modal):</label>' +
+                    '<textarea id="edit-rel-conteudo" rows="6" placeholder="Texto completo da ata, tópicos debatidos, encaminhamentos e decisões..." style="width:100%;padding:10px 12px;border-radius:6px;font-size:12px;outline:none;resize:vertical;line-height:1.5" class="form-control">' + window.escapeHtml(conteudoVal) + '</textarea>' +
                 '</div>' +
 
-                '<div style="display:flex;justify-content:flex-end;gap:10px;align-items:center;border-top:1px solid rgba(255,255,255,0.1);padding-top:14px;">' +
-                    '<button type="button" class="btn btn-secondary" onclick="document.getElementById(\'modal-editar-relatorio-ritual\').remove()" style="padding:7px 16px;font-size:12px;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.15);color:#cbd5e1;border-radius:6px;cursor:pointer;">' +
+                '<div style="display:flex;justify-content:flex-end;gap:10px;align-items:center;padding-top:14px">' +
+                    '<button type="button" class="btn btn-outline-secondary" onclick="document.getElementById(\'modal-editar-relatorio-ritual\').remove()" style="padding:7px 16px;font-size:12px;border-radius:6px;cursor:pointer">' +
                         'Cancelar' +
                     '</button>' +
-                    '<button type="submit" class="btn btn-primary" style="padding:7px 18px;font-size:12px;font-weight:700;background:var(--sagti-accent);border:1px solid #38bdf8;color:#fff;border-radius:6px;cursor:pointer;box-shadow:0 2px 8px rgba(2,132,199,0.35);">' +
+                    '<button type="submit" class="btn btn-primary" style="padding:7px 18px;font-size:12px;font-weight:700;border-radius:6px;cursor:pointer">' +
                         '💾 Salvar Alterações' +
                     '</button>' +
                 '</div>' +
@@ -1645,7 +1649,7 @@
             var l = lines[i];
             if (l.trim().indexOf('```') === 0) {
                 if (inCode) { html.push('</code></pre>'); inCode = false; }
-                else { html.push('<pre style="background:rgba(2,6,23,0.85);border:1px solid rgba(255,255,255,0.1);padding:14px;border-radius:8px;overflow-x:auto;font-family:monospace;font-size:12px;color:var(--sagti-accent);margin:14px 0;"><code>'); inCode = true; }
+                else { html.push('<pre style="padding:14px;border-radius:8px;overflow-x:auto;font-size:12px;margin:14px 0"><code>'); inCode = true; }
                 continue;
             }
             if (inCode) { html.push(l.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')); continue; }
@@ -1653,28 +1657,28 @@
                 if (l.indexOf('---') > -1) continue;
                 var parts = l.split('|').slice(1, -1);
                 if (!inTable) {
-                    html.push('<div style="overflow-x:auto;margin:16px 0;"><table style="width:100%;border-collapse:collapse;font-size:12px;line-height:1.5;"><thead><tr>' + parts.map(function(c) { return '<th style="background:rgba(56,189,248,0.12);color:var(--sagti-accent);padding:8px 12px;border:1px solid rgba(255,255,255,0.1);text-align:left;font-weight:700;">' + c.trim() + '</th>'; }).join('') + '</tr></thead><tbody>');
+                    html.push('<div style="overflow-x:auto;margin:16px 0"><div class="table-responsive"><table style="width:100%;border-collapse:collapse;font-size:12px;line-height:1.5" class="table table-vcenter card-table table-hover"><thead><tr>' + parts.map(function(c) { return '<th style="padding:8px 12px;text-align:left;font-weight:700">' + c.trim() + '</th>'; }).join('') + '</tr></thead><tbody>');
                     inTable = true;
                 } else {
-                    html.push('<tr>' + parts.map(function(c) { return '<td style="padding:7px 12px;border:1px solid rgba(255,255,255,0.07);color:#cbd5e1;">' + c.trim() + '</td>'; }).join('') + '</tr>');
+                    html.push('<tr>' + parts.map(function(c) { return '<td style="padding:7px 12px">' + c.trim() + '</td>'; }).join('') + '</tr>');
                 }
                 continue;
-            } else if (inTable) { html.push('</tbody></table></div>'); inTable = false; }
+            } else if (inTable) { html.push('</tbody></table></div></div>'); inTable = false; }
 
-            var fmt = l.replace(/\*\*(.*?)\*\*/g, '<strong style="color:var(--sagti-text);">$1</strong>')
-                       .replace(/`([^`]+)`/g, '<code style="background:rgba(255,255,255,0.1);color:var(--sagti-accent);padding:2px 5px;border-radius:4px;font-size:11.5px;font-family:monospace;">$1</code>')
-                       .replace(/\[([^\]]+)\]\(([^\)]+)\)/g, '<a href="$2" target="_blank" style="color:var(--sagti-accent);text-decoration:underline;">$1</a>');
+            var fmt = l.replace(/\*\*(.*?)\*\*/g, '<strong >$1</strong>')
+                       .replace(/`([^`]+)`/g, '<code style="padding:2px 5px;border-radius:4px;font-size:11.5px">$1</code>')
+                       .replace(/\[([^\]]+)\]\(([^\)]+)\)/g, '<a href="$2" target="_blank" style="text-decoration:underline">$1</a>');
 
-            if (fmt.indexOf('# ') === 0) html.push('<h2 style="color:var(--sagti-accent);font-size:18px;margin:22px 0 10px 0;border-bottom:1px solid rgba(56,189,248,0.3);padding-bottom:6px;font-weight:800;">' + fmt.substring(2) + '</h2>');
-            else if (fmt.indexOf('## ') === 0) html.push('<h3 style="color:var(--sagti-text);font-size:15px;margin:18px 0 8px 0;border-bottom:1px solid rgba(255,255,255,0.08);padding-bottom:5px;font-weight:700;">' + fmt.substring(3) + '</h3>');
-            else if (fmt.indexOf('### ') === 0) html.push('<h4 style="color:#7dd3fc;font-size:13.5px;margin:14px 0 6px 0;font-weight:700;">' + fmt.substring(4) + '</h4>');
-            else if (fmt.indexOf('#### ') === 0) html.push('<h5 style="color:#93c5fd;font-size:12.5px;margin:12px 0 4px 0;font-weight:700;">' + fmt.substring(5) + '</h5>');
-            else if (fmt.indexOf('> ') === 0) html.push('<blockquote style="border-left:4px solid #38bdf8;background:rgba(56,189,248,0.08);padding:10px 14px;border-radius:0 8px 8px 0;margin:12px 0;font-size:12.5px;color:var(--sagti-text);line-height:1.6;">' + fmt.substring(2) + '</blockquote>');
-            else if (fmt.indexOf('* ') === 0 || fmt.indexOf('- ') === 0) html.push('<li style="margin-left:20px;font-size:12px;color:#cbd5e1;line-height:1.6;">' + fmt.substring(2) + '</li>');
-            else if (fmt.trim() === '---') html.push('<hr style="border:none;border-top:1px solid rgba(255,255,255,0.1);margin:18px 0;">');
-            else if (fmt.trim()) html.push('<p style="font-size:12.5px;color:#cbd5e1;line-height:1.65;margin:8px 0;">' + fmt + '</p>');
+            if (fmt.indexOf('# ') === 0) html.push('<h2 style="font-size:18px;margin:22px 0 10px 0;padding-bottom:6px;font-weight:800">' + fmt.substring(2) + '</h2>');
+            else if (fmt.indexOf('## ') === 0) html.push('<h3 style="font-size:15px;margin:18px 0 8px 0;padding-bottom:5px;font-weight:700">' + fmt.substring(3) + '</h3>');
+            else if (fmt.indexOf('### ') === 0) html.push('<h4 style="font-size:13.5px;margin:14px 0 6px 0;font-weight:700">' + fmt.substring(4) + '</h4>');
+            else if (fmt.indexOf('#### ') === 0) html.push('<h5 style="font-size:12.5px;margin:12px 0 4px 0;font-weight:700">' + fmt.substring(5) + '</h5>');
+            else if (fmt.indexOf('> ') === 0) html.push('<blockquote style="padding:10px 14px;border-radius:0 8px 8px 0;margin:12px 0;font-size:12.5px;line-height:1.6">' + fmt.substring(2) + '</blockquote>');
+            else if (fmt.indexOf('* ') === 0 || fmt.indexOf('- ') === 0) html.push('<li style="margin-left:20px;font-size:12px;line-height:1.6">' + fmt.substring(2) + '</li>');
+            else if (fmt.trim() === '---') html.push('<hr style="margin:18px 0">');
+            else if (fmt.trim()) html.push('<p style="font-size:12.5px;line-height:1.65;margin:8px 0">' + fmt + '</p>');
         }
-        if (inTable) html.push('</tbody></table></div>');
+        if (inTable) html.push('</tbody></table></div></div>');
         if (inCode) html.push('</code></pre>');
         return html.join('\n');
     };
@@ -1684,21 +1688,21 @@
         var el = document.getElementById('subview-doc-' + subAba);
         if (!el || el.dataset.docCarregado === 'true') return;
         var box = el.querySelector('div') || el;
-        box.innerHTML = '<div style="padding:20px;text-align:center;color:var(--sagti-accent);font-size:13px;">⏳ Carregando documentação oficial atualizada (docs/' + subAba.toUpperCase() + ')...</div>';
+        box.innerHTML = '<div style="padding:20px;text-align:center;font-size:13px">⏳ Carregando documentação oficial atualizada (docs/' + subAba.toUpperCase() + ')...</div>';
         fetch('/api/v1/docs/' + subAba)
             .then(function(res) { return res.json(); })
             .then(function(data) {
                 if (data && data.sucesso && data.conteudo_md) {
-                    var headerHtml = '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;padding-bottom:12px;border-bottom:1px solid rgba(255,255,255,0.1);flex-wrap:wrap;gap:10px;">' +
-                        '<div style="font-size:12px;color:var(--sagti-accent);font-weight:700;">📄 Arquivo Oficial: <code>docs/' + data.arquivo + '</code> (Sincronizado)</div>' +
-                        '<a href="[https://github.com/LUIZ-SEIXEIRO/Cockpit_GTI/blob/main/docs/](https://github.com/LUIZ-SEIXEIRO/Cockpit_GTI/blob/main/docs/)' + data.arquivo + '" target="_blank" style="padding:4px 10px;border-radius:6px;background:rgba(56,189,248,0.15);border:1px solid #38bdf8;color:var(--sagti-accent);font-size:11px;font-weight:700;text-decoration:none;">🐙 Ver no GitHub ↗</a>' +
+                    var headerHtml = '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;padding-bottom:12px;flex-wrap:wrap;gap:10px">' +
+                        '<div style="font-size:12px;font-weight:700">📄 Arquivo Oficial: <code>docs/' + data.arquivo + '</code> (Sincronizado)</div>' +
+                        '<a href="[https://github.com/LUIZ-SEIXEIRO/Cockpit_GTI/blob/main/docs/](https://github.com/LUIZ-SEIXEIRO/Cockpit_GTI/blob/main/docs/)' + data.arquivo + '" target="_blank" style="padding:4px 10px;border-radius:6px;font-size:11px;font-weight:700;text-decoration:none">🐙 Ver no GitHub ↗</a>' +
                         '</div>';
                     box.innerHTML = headerHtml + window.renderizarMarkdown(data.conteudo_md);
                     el.dataset.docCarregado = 'true';
                 }
             })
             .catch(function(err) {
-                box.innerHTML = '<div style="padding:20px;color:#f87171;">⚠️ Erro ao carregar documentação: ' + err.message + '</div>';
+                box.innerHTML = '<div style="padding:20px">⚠️ Erro ao carregar documentação: ' + err.message + '</div>';
             });
     };
     window.alternarSubAbaDoc = function(subAba) {
@@ -1719,16 +1723,8 @@
             if (item.btn) {
                 if (ativo) {
                     item.btn.className = 'btn btn-primary active subaba-doc-btn';
-                    item.btn.style.background = 'var(--sagti-accent)';
-                    item.btn.style.color = '#ffffff';
-                    item.btn.style.fontWeight = '700';
-                    item.btn.style.border = '1px solid rgba(56,189,248,0.5)';
                 } else {
-                    item.btn.className = 'btn btn-secondary subaba-doc-btn';
-                    item.btn.style.background = 'rgba(255,255,255,0.06)';
-                    item.btn.style.color = '#cbd5e1';
-                    item.btn.style.fontWeight = '600';
-                    item.btn.style.border = '1px solid rgba(255,255,255,0.15)';
+                    item.btn.className = 'btn btn-outline-secondary subaba-doc-btn';
                 }
             }
         });
@@ -1765,10 +1761,10 @@
         if (pag) pag.innerText = 'Exibindo ' + filtrados.length + ' de ' + rels.length + ' relatórios de rituais ágeis cadastrados';
 
         if (filtrados.length === 0) {
-            tbody.innerHTML = '<tr><td colspan="7" style="padding: 40px 16px; text-align: center; color: #94a3b8;">' +
-                '<div style="font-size: 32px; margin-bottom: 8px;">📑</div>' +
-                '<strong style="color: #cbd5e1; font-size: 14px;">Nenhum relatório encontrado para esta busca.</strong><br>' +
-                '<span style="font-size: 12px; color: #64748b; margin-top: 4px; display: inline-block;">Você pode gerar um novo snapshot do quadro Kanban clicando no botão acima.</span>' +
+            tbody.innerHTML = '<tr><td colspan="7" style="padding: 40px 16px; text-align: center">' +
+                '<div style="font-size: 32px; margin-bottom: 8px">📑</div>' +
+                '<strong style="font-size: 14px">Nenhum relatório encontrado para esta busca.</strong><br>' +
+                '<span style="font-size: 12px; margin-top: 4px; display: inline-block">Você pode gerar um novo snapshot do quadro Kanban clicando no botão acima.</span>' +
             '</td></tr>';
             return;
         }
@@ -1779,20 +1775,20 @@
             var isMarcado = fixados.indexOf(chave) !== -1 || r.marcado;
             var sCor = isMarcado ? '#facc15' : '#64748b';
             var sIco = isMarcado ? '⭐' : '☆';
-            return '<tr style="background:' + bg + ';border-bottom:1px solid rgba(255,255,255,0.06);transition:background 0.15s ease;">' +
-                '<td style="text-align:center;padding:12px 8px;cursor:pointer;font-size:16px;" onclick="window.toggleFixado(\'' + chave + '\')" title="Marcar/Desmarcar para acompanhamento">' +
-                    '<span style="color:' + sCor + ';">' + sIco + '</span>' +
+            return '<tr style="transition:background 0.15s ease">' +
+                '<td style="text-align:center;padding:12px 8px;cursor:pointer;font-size:16px" onclick="window.toggleFixado(\'' + chave + '\')" title="Marcar/Desmarcar para acompanhamento">' +
+                    '<span >' + sIco + '</span>' +
                 '</td>' +
-                '<td style="padding:12px 14px;font-weight:700;color:var(--sagti-accent);font-size:12px;white-space:nowrap;">' + (r.tipoLabel || 'Ritual') + '</td>' +
-                '<td style="padding:12px 14px;color:#cbd5e1;font-family:monospace;font-size:11.5px;white-space:nowrap;">' + (r.data || 'Hoje') + '</td>' +
-                '<td style="padding:12px 14px;font-weight:700;color:var(--sagti-text);font-size:12.5px;">' + (r.titulo || 'Relatório de Ritual') + '</td>' +
-                '<td style="padding:12px 14px;color:#94a3b8;font-size:11.5px;">' + (r.destaque || '—') + '</td>' +
-                '<td style="padding:12px 14px;text-align:center;"><span style="background:rgba(16,185,129,0.2);color:#34d399;font-size:10.5px;padding:3px 8px;border-radius:10px;font-weight:700;">' + (r.status || 'Realizada') + '</span></td>' +
-                '<td style="padding:12px 14px;text-align:center;white-space:nowrap;">' +
-                    '<button type="button" class="btn btn-primary" onclick="window.visualizarRelatorioMesaModal(\'' + r.id + '\')" style="padding:4px 9px;font-size:11px;background:#0ea5e9;border-color:#0ea5e9;color:var(--sagti-text);margin-right:4px;font-weight:700;">👁️ Ver Dossiê</button>' +
-                    '<button type="button" class="btn btn-warning" onclick="window.abrirModalEditarCriarRelatorio(\'' + r.id + '\')" style="padding:4px 9px;font-size:11px;background:rgba(245,158,11,0.2);border:1px solid rgba(245,158,11,0.5);color:#fbbf24;margin-right:4px;font-weight:700;border-radius:6px;cursor:pointer;" title="Editar este ritual/relatório (Super-Admin)">✏️ Editar</button>' +
-                    '<button type="button" class="btn btn-danger" onclick="window.excluirRelatorioRitual(\'' + r.id + '\')" style="padding:4px 9px;font-size:11px;background:rgba(239,68,68,0.2);border:1px solid rgba(239,68,68,0.5);color:#f87171;margin-right:4px;font-weight:700;border-radius:6px;cursor:pointer;" title="Excluir este ritual/relatório (Super-Admin)">🗑️ Excluir</button>' +
-                    '<button type="button" class="btn btn-secondary" onclick="window.toggleFixado(\'' + chave + '\')" style="padding:4px 8px;font-size:11px;">' + (isMarcado ? '⭐ Acompanhando' : '☆ Acompanhar') + '</button>' +
+                '<td style="padding:12px 14px;font-weight:700;font-size:12px;white-space:nowrap">' + (r.tipoLabel || 'Ritual') + '</td>' +
+                '<td style="padding:12px 14px;font-size:11.5px;white-space:nowrap">' + (r.data || 'Hoje') + '</td>' +
+                '<td style="padding:12px 14px;font-weight:700;font-size:12.5px">' + (r.titulo || 'Relatório de Ritual') + '</td>' +
+                '<td style="padding:12px 14px;font-size:11.5px">' + (r.destaque || '—') + '</td>' +
+                '<td style="padding:12px 14px;text-align:center"><span style="font-size:10.5px;padding:3px 8px;border-radius:10px;font-weight:700">' + (r.status || 'Realizada') + '</span></td>' +
+                '<td style="padding:12px 14px;text-align:center;white-space:nowrap">' +
+                    '<button type="button" class="btn btn-primary" onclick="window.visualizarRelatorioMesaModal(\'' + r.id + '\')" style="padding:4px 9px;font-size:11px;margin-right:4px;font-weight:700">👁️ Ver Dossiê</button>' +
+                    '<button type="button" class="btn btn-warning" onclick="window.abrirModalEditarCriarRelatorio(\'' + r.id + '\')" style="padding:4px 9px;font-size:11px;margin-right:4px;font-weight:700;border-radius:6px;cursor:pointer" title="Editar este ritual/relatório (Super-Admin)">✏️ Editar</button>' +
+                    '<button type="button" class="btn btn-danger" onclick="window.excluirRelatorioRitual(\'' + r.id + '\')" style="padding:4px 9px;font-size:11px;margin-right:4px;font-weight:700;border-radius:6px;cursor:pointer" title="Excluir este ritual/relatório (Super-Admin)">🗑️ Excluir</button>' +
+                    '<button type="button" class="btn btn-outline-secondary" onclick="window.toggleFixado(\'' + chave + '\')" style="padding:4px 8px;font-size:11px">' + (isMarcado ? '⭐ Acompanhando' : '☆ Acompanhar') + '</button>' +
                 '</td>' +
             '</tr>';
         }).join('');
@@ -1857,11 +1853,11 @@
         if (pag) pag.innerText = 'Exibindo ' + filtrados.length + ' de ' + modelos.length + ' matrizes nominais ativas';
 
         if (filtrados.length === 0) {
-            tbody.innerHTML = '<tr><td colspan="7" style="padding: 40px 16px; text-align: center; color: #94a3b8;">' +
-                '<div style="font-size: 32px; margin-bottom: 8px;">📊</div>' +
-                '<strong style="color: #cbd5e1; font-size: 14px;">Nenhuma matriz RACI encontrada para esta busca.</strong><br>' +
-                '<span style="font-size: 12px; color: #64748b; margin-top: 4px; display: inline-block;">Clique no botão abaixo para construir uma nova matriz nominalmente.</span><br>' +
-                '<button type="button" class="btn btn-primary" onclick="window.abrirModalCriarRaci()" style="margin-top: 14px; padding: 7px 16px; font-size: 12px; background: #0284c7; border-color: #0284c7;">➕ Construir Nova Matriz Nominal</button>' +
+            tbody.innerHTML = '<tr><td colspan="7" style="padding: 40px 16px; text-align: center">' +
+                '<div style="font-size: 32px; margin-bottom: 8px">📊</div>' +
+                '<strong style="font-size: 14px">Nenhuma matriz RACI encontrada para esta busca.</strong><br>' +
+                '<span style="font-size: 12px; margin-top: 4px; display: inline-block">Clique no botão abaixo para construir uma nova matriz nominalmente.</span><br>' +
+                '<button type="button" class="btn btn-primary" onclick="window.abrirModalCriarRaci()" style="margin-top: 14px; padding: 7px 16px; font-size: 12px">➕ Construir Nova Matriz Nominal</button>' +
             '</td></tr>';
             return;
         }
@@ -1885,45 +1881,45 @@
             }
             var aprovadorCurto = aprovadorNome.split('(')[0].trim();
 
-            var badgeStatus = '<span class="pill-tag pill-blue" style="font-size: 10px;">🟢 Concluído</span>';
+            var badgeStatus = '<span class="pill-tag pill-blue" >🟢 Concluído</span>';
             if (pct < 100 && aprovadas > 0) {
-                badgeStatus = '<span class="pill-tag pill-yellow" style="font-size: 10px;">🟡 Em Aprovação (' + pct + '%)</span>';
+                badgeStatus = '<span class="pill-tag pill-yellow" >🟡 Em Aprovação (' + pct + '%)</span>';
             } else if (aprovadas === 0) {
-                badgeStatus = '<span class="pill-tag pill-orange" style="font-size: 10px;">⚪ Pendente Inicial</span>';
+                badgeStatus = '<span class="pill-tag pill-orange" >⚪ Pendente Inicial</span>';
             }
 
-            var vinculoHtml = '<span style="color: #64748b; font-size: 11px;">Sem vínculo</span>';
+            var vinculoHtml = '<span style="font-size: 11px">Sem vínculo</span>';
             if (m.vinculo) {
                 var tipoIco = m.tipoVinculo === 'OpenProject' ? '📦 ' : (m.tipoVinculo === 'GLPI' ? '🎫 ' : '📁 ');
-                vinculoHtml = '<strong style="color: var(--sagti-accent); font-family: monospace; font-size: 11.5px;">' + tipoIco + m.vinculo + '</strong>' +
-                    '<div style="font-size: 10px; color: #94a3b8;">' + (m.tipoVinculo || 'SEI') + '</div>';
+                vinculoHtml = '<strong style="font-size: 11.5px">' + tipoIco + m.vinculo + '</strong>' +
+                    '<div >' + (m.tipoVinculo || 'SEI') + '</div>';
             }
 
-            return '<tr style="border-bottom: 1px solid rgba(255,255,255,0.06); transition: background 0.15s ease;">' +
-                '<td style="text-align: center; padding: 12px 8px; font-size: 16px;">📊</td>' +
-                '<td style="padding: 12px 14px;">' +
-                    '<strong style="color: var(--sagti-text); font-size: 12.5px; display: block; margin-bottom: 3px;">' + m.titulo + '</strong>' +
-                    '<div style="font-size: 11px; color: #94a3b8; max-width: 320px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;" title="' + (m.descricao || '') + '">' + (m.descricao || '') + '</div>' +
-                    '<div style="font-size: 10.5px; color: #a78bfa; margin-top: 4px;">👥 <strong>' + listaUsuarios.length + ' usuários nominais</strong></div>' +
+            return '<tr style="transition: background 0.15s ease">' +
+                '<td style="text-align: center; padding: 12px 8px; font-size: 16px">📊</td>' +
+                '<td style="padding: 12px 14px">' +
+                    '<strong style="font-size: 12.5px; display: block; margin-bottom: 3px">' + m.titulo + '</strong>' +
+                    '<div style="font-size: 11px; max-width: 320px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis" title="' + (m.descricao || '') + '">' + (m.descricao || '') + '</div>' +
+                    '<div style="font-size: 10.5px; margin-top: 4px">👥 <strong>' + listaUsuarios.length + ' usuários nominais</strong></div>' +
                 '</td>' +
-                '<td style="padding: 12px 14px;">' + vinculoHtml + '</td>' +
-                '<td style="padding: 12px 14px; text-align: center;">' +
-                    '<div style="font-size: 11.5px; font-weight: 700; color: var(--sagti-accent); margin-bottom: 4px;">' + aprovadas + '/' + totalEtapas + ' (' + pct + '%)</div>' +
-                    '<div style="background: rgba(255,255,255,0.1); border-radius: 4px; height: 6px; overflow: hidden; width: 100px; margin: 0 auto;">' +
-                        '<div style="background: var(--sagti-accent); height: 100%; width: ' + pct + '%;"></div>' +
+                '<td style="padding: 12px 14px">' + vinculoHtml + '</td>' +
+                '<td style="padding: 12px 14px; text-align: center">' +
+                    '<div style="font-size: 11.5px; font-weight: 700; margin-bottom: 4px">' + aprovadas + '/' + totalEtapas + ' (' + pct + '%)</div>' +
+                    '<div style="border-radius: 4px; height: 6px; overflow: hidden; width: 100px; margin: 0 auto">' +
+                        '<div style="height: 100%; width: ' + pct + '%"></div>' +
                     '</div>' +
                 '</td>' +
-                '<td style="padding: 12px 14px;">' +
-                    '<div style="font-size: 12px; color: #f1f5f9; font-weight: 600;">' + (etapaAtual ? etapaAtual.nome : '—') + '</div>' +
-                    '<div style="font-size: 11px; color: #facc15; font-weight: 700; margin-top: 2px;">👑 ' + aprovadorCurto + '</div>' +
+                '<td style="padding: 12px 14px">' +
+                    '<div style="font-size: 12px; font-weight: 600">' + (etapaAtual ? etapaAtual.nome : '—') + '</div>' +
+                    '<div style="font-size: 11px; font-weight: 700; margin-top: 2px">👑 ' + aprovadorCurto + '</div>' +
                 '</td>' +
-                '<td style="padding: 12px 14px; text-align: center;">' + badgeStatus + '</td>' +
-                '<td style="padding: 12px 14px; text-align: center; white-space: nowrap;">' +
-                    '<button type="button" class="btn btn-primary" onclick="window.abrirModalExecutarRaci(\'' + m.id + '\')" style="padding: 4px 10px; font-size: 11px; background: rgba(139,92,246,0.25); border: 1px solid rgba(139,92,246,0.5); color: #c4b5fd; margin-right: 5px; font-weight: 700;">⚡ Operar Fluxo</button>' +
-                    '<button type="button" class="btn btn-secondary" onclick="window.abrirModalVincularRaci(\'' + m.id + '\')" style="padding: 4px 8px; font-size: 11px; margin-right: 4px;" title="Vincular a Processo SEI, OpenProject ou GLPI">🔗</button>' +
-                    '<button type="button" class="btn btn-secondary" onclick="window.abrirModalCriarRaci(\'' + m.id + '\')" style="padding: 4px 8px; font-size: 11px; margin-right: 4px;" title="Editar Estrutura da Matriz">✏️</button>' +
-                    '<button type="button" class="btn btn-secondary" onclick="window.duplicarModeloRaci(\'' + m.id + '\')" style="padding: 4px 8px; font-size: 11px; margin-right: 4px;" title="Duplicar Matriz">📋</button>' +
-                    '<button type="button" class="btn btn-secondary" onclick="window.excluirModeloRaci(\'' + m.id + '\')" style="padding: 4px 8px; font-size: 11px; color: #fca5a5;" title="Excluir Matriz">🗑️</button>' +
+                '<td style="padding: 12px 14px; text-align: center">' + badgeStatus + '</td>' +
+                '<td style="padding: 12px 14px; text-align: center; white-space: nowrap">' +
+                    '<button type="button" class="btn btn-primary" onclick="window.abrirModalExecutarRaci(\'' + m.id + '\')" style="padding: 4px 10px; font-size: 11px; margin-right: 5px; font-weight: 700">⚡ Operar Fluxo</button>' +
+                    '<button type="button" class="btn btn-outline-secondary" onclick="window.abrirModalVincularRaci(\'' + m.id + '\')" style="padding: 4px 8px; font-size: 11px; margin-right: 4px" title="Vincular a Processo SEI, OpenProject ou GLPI">🔗</button>' +
+                    '<button type="button" class="btn btn-outline-secondary" onclick="window.abrirModalCriarRaci(\'' + m.id + '\')" style="padding: 4px 8px; font-size: 11px; margin-right: 4px" title="Editar Estrutura da Matriz">✏️</button>' +
+                    '<button type="button" class="btn btn-outline-secondary" onclick="window.duplicarModeloRaci(\'' + m.id + '\')" style="padding: 4px 8px; font-size: 11px; margin-right: 4px" title="Duplicar Matriz">📋</button>' +
+                    '<button type="button" class="btn btn-outline-secondary" onclick="window.excluirModeloRaci(\'' + m.id + '\')" style="padding: 4px 8px; font-size: 11px" title="Excluir Matriz">🗑️</button>' +
                 '</td>' +
             '</tr>';
         }).join('');
@@ -2034,33 +2030,34 @@
 
         var divModal = document.createElement('div');
         divModal.id = 'modal-raci-criar-estruturado';
-        divModal.style.cssText = 'position:fixed;inset:0;background:var(--sagti-surface-alt);z-index:99999;display:flex;align-items:center;justify-content:center;padding:16px;';
-        divModal.innerHTML = '<div style="background:var(--sagti-surface-alt);border:1px solid rgba(139,92,246,0.45);border-top:4px solid #0284c7;border-radius:16px;max-width:1100px;width:100%;max-height:94vh;overflow-y:auto;padding:26px;color:#f8fafc;box-shadow:0 24px 60px rgba(0,0,0,0.95);">' +
-            '<div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:16px;">' +
+        divModal.className = 'sagti-modal-backdrop';
+        divModal.style.cssText = 'position:fixed;inset:0;z-index:99999;display:flex;align-items:center;justify-content:center;padding:16px;';
+        divModal.innerHTML = '<div style="border-radius:16px;max-width:1100px;width:100%;max-height:94vh;overflow-y:auto;padding:26px">' +
+            '<div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:16px">' +
                 '<div>' +
-                    '<span style="background:rgba(139,92,246,0.25);color:#c084fc;padding:3px 10px;border-radius:6px;font-size:11px;font-weight:800;letter-spacing:0.5px;">CONSTRUTOR ESTRUTURADO DE MATRIZ RACI</span>' +
-                    '<h3 style="margin:6px 0 2px 0;font-size:18px;color:var(--sagti-text);">' + (window.raciBuilderState.id ? '✏️ Editar Matriz RACI Nominal' : '➕ Criar Nova Matriz RACI Nominal') + '</h3>' +
-                    '<div style="font-size:12px;color:#94a3b8;">Defina nominalmente a atribuição exata de cada usuário: Executor (R), Aprovador Oficial (A 👑), Consultado (C) ou Informado (I).</div>' +
+                    '<span style="padding:3px 10px;border-radius:6px;font-size:11px;font-weight:800;letter-spacing:0.5px">CONSTRUTOR ESTRUTURADO DE MATRIZ RACI</span>' +
+                    '<h3 style="margin:6px 0 2px 0;font-size:18px">' + (window.raciBuilderState.id ? '✏️ Editar Matriz RACI Nominal' : '➕ Criar Nova Matriz RACI Nominal') + '</h3>' +
+                    '<div style="font-size:12px">Defina nominalmente a atribuição exata de cada usuário: Executor (R), Aprovador Oficial (A 👑), Consultado (C) ou Informado (I).</div>' +
                 '</div>' +
-                '<button type="button" onclick="document.getElementById(\'modal-raci-criar-estruturado\').remove()" style="background:none;border:none;color:#94a3b8;font-size:22px;cursor:pointer;">✖</button>' +
+                '<button type="button" onclick="document.getElementById(\'modal-raci-criar-estruturado\').remove()" style="font-size:22px;cursor:pointer" class="btn btn-ghost-secondary">✖</button>' +
             '</div>' +
 
             '<!-- SEÇÃO 1: DADOS GERAIS DA MATRIZ -->' +
-            '<div style="display:grid;grid-template-columns:2fr 1.2fr;gap:14px;background:rgba(2,6,23,0.65);padding:14px;border-radius:10px;border:1px solid rgba(255,255,255,0.08);margin-bottom:16px;">' +
-                '<div style="display:flex;flex-direction:column;gap:10px;">' +
+            '<div style="display:grid;grid-template-columns:2fr 1.2fr;gap:14px;padding:14px;border-radius:10px;margin-bottom:16px">' +
+                '<div style="display:flex;flex-direction:column;gap:10px">' +
                     '<div>' +
-                        '<label style="display:block;font-size:11px;color:#c084fc;font-weight:700;margin-bottom:4px;">Título da Matriz / Fluxo de Aprovação:</label>' +
-                        '<input type="text" id="builder-raci-titulo" value="' + window.escapeHtml(window.raciBuilderState.titulo || '') + '" placeholder="Ex: Instrução de Contratação de Nuvem (Lei 14.133)" style="width:100%;box-sizing:border-box;padding:8px 12px;background:var(--sagti-surface-alt);border:1px solid rgba(255,255,255,0.15);color:var(--sagti-text);border-radius:8px;font-size:12px;outline:none;">' +
+                        '<label style="display:block;font-size:11px;font-weight:700;margin-bottom:4px">Título da Matriz / Fluxo de Aprovação:</label>' +
+                        '<input type="text" id="builder-raci-titulo" value="' + window.escapeHtml(window.raciBuilderState.titulo || '') + '" placeholder="Ex: Instrução de Contratação de Nuvem (Lei 14.133)" style="width:100%;box-sizing:border-box;padding:8px 12px;border-radius:8px;font-size:12px;outline:none" class="form-control">' +
                     '</div>' +
                     '<div>' +
-                        '<label style="display:block;font-size:11px;color:#c084fc;font-weight:700;margin-bottom:4px;">Descrição &amp; Finalidade Institucional:</label>' +
-                        '<input type="text" id="builder-raci-desc" value="' + window.escapeHtml(window.raciBuilderState.descricao || '') + '" placeholder="Ex: Segregação formal de responsabilidades entre demandante, governança e fiscalização." style="width:100%;box-sizing:border-box;padding:8px 12px;background:var(--sagti-surface-alt);border:1px solid rgba(255,255,255,0.15);color:var(--sagti-text);border-radius:8px;font-size:12px;outline:none;">' +
+                        '<label style="display:block;font-size:11px;font-weight:700;margin-bottom:4px">Descrição &amp; Finalidade Institucional:</label>' +
+                        '<input type="text" id="builder-raci-desc" value="' + window.escapeHtml(window.raciBuilderState.descricao || '') + '" placeholder="Ex: Segregação formal de responsabilidades entre demandante, governança e fiscalização." style="width:100%;box-sizing:border-box;padding:8px 12px;border-radius:8px;font-size:12px;outline:none" class="form-control">' +
                     '</div>' +
                 '</div>' +
                 '<div>' +
-                    '<label style="display:block;font-size:11px;color:var(--sagti-accent);font-weight:700;margin-bottom:4px;">Vincular a uma Demanda (Opcional):</label>' +
-                    '<input type="text" id="builder-raci-vinculo" value="' + window.escapeHtml(window.raciBuilderState.vinculo || '') + '" placeholder="Ex: 137.00029841/2026-14 ou OP#1232" style="width:100%;box-sizing:border-box;padding:8px 12px;background:var(--sagti-surface-alt);border:1px solid rgba(255,255,255,0.15);color:var(--sagti-text);border-radius:8px;font-size:12px;outline:none;margin-bottom:8px;">' +
-                    '<select id="builder-raci-tipovinculo" style="width:100%;box-sizing:border-box;padding:7px 10px;background:var(--sagti-surface-alt);border:1px solid rgba(255,255,255,0.15);color:var(--sagti-text);border-radius:8px;font-size:11.5px;outline:none;">' +
+                    '<label style="display:block;font-size:11px;font-weight:700;margin-bottom:4px">Vincular a uma Demanda (Opcional):</label>' +
+                    '<input type="text" id="builder-raci-vinculo" value="' + window.escapeHtml(window.raciBuilderState.vinculo || '') + '" placeholder="Ex: 137.00029841/2026-14 ou OP#1232" style="width:100%;box-sizing:border-box;padding:8px 12px;border-radius:8px;font-size:12px;outline:none;margin-bottom:8px" class="form-control">' +
+                    '<select id="builder-raci-tipovinculo" style="width:100%;box-sizing:border-box;padding:7px 10px;border-radius:8px;font-size:11.5px;outline:none" class="form-select">' +
                         '<option value="SEI" ' + (window.raciBuilderState.tipoVinculo === 'SEI' ? 'selected' : '') + '>Processo SEI</option>' +
                         '<option value="OpenProject" ' + (window.raciBuilderState.tipoVinculo === 'OpenProject' ? 'selected' : '') + '>Pacote OpenProject</option>' +
                         '<option value="GLPI" ' + (window.raciBuilderState.tipoVinculo === 'GLPI' ? 'selected' : '') + '>Chamado GLPI</option>' +
@@ -2069,58 +2066,58 @@
             '</div>' +
 
             '<!-- SEÇÃO 2: USUÁRIOS REAIS PARTICIPANTES -->' +
-            '<div style="background:rgba(2,6,23,0.65);padding:14px;border-radius:10px;border:1px solid rgba(255,255,255,0.08);margin-bottom:16px;">' +
-                '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">' +
-                    '<label style="font-size:11.5px;color:var(--sagti-accent);font-weight:700;text-transform:uppercase;">👥 Usuários Reais Participantes da Matriz:</label>' +
-                    '<span style="font-size:10.5px;color:#94a3b8;">Marque os usuários para gerar as colunas nominais</span>' +
+            '<div style="padding:14px;border-radius:10px;margin-bottom:16px">' +
+                '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">' +
+                    '<label style="font-size:11.5px;font-weight:700;text-transform:uppercase">👥 Usuários Reais Participantes da Matriz:</label>' +
+                    '<span style="font-size:10.5px">Marque os usuários para gerar as colunas nominais</span>' +
                 '</div>' +
-                '<div style="display:grid;grid-template-columns:repeat(3, 1fr);gap:8px;margin-bottom:10px;">' +
+                '<div style="display:grid;grid-template-columns:repeat(3, 1fr);gap:8px;margin-bottom:10px">' +
                     usuariosCadastrados.map(function(u) {
                         var uStr = u.nome + ' (' + u.unidade + ')';
                         var isChecked = window.raciBuilderState.usuarios.some(function(sel) { return sel.includes(u.nome); });
-                        return '<label style="display:flex;align-items:center;gap:7px;background:rgba(255,255,255,0.04);padding:6px 10px;border-radius:6px;border:1px solid rgba(255,255,255,0.1);cursor:pointer;font-size:11px;color:var(--sagti-text);">' +
-                            '<input type="checkbox" onchange="window.raciBuilderToggleUsuario(\'' + window.escapeHtml(uStr) + '\', this.checked)" ' + (isChecked ? 'checked' : '') + ' style="accent-color:#0284c7;">' +
-                            '<span>👤 ' + u.nome + ' <small style="color:#94a3b8;">(' + u.unidade.split(' ')[0] + ')</small></span>' +
+                        return '<label style="display:flex;align-items:center;gap:7px;padding:6px 10px;border-radius:6px;cursor:pointer;font-size:11px">' +
+                            '<input type="checkbox" onchange="window.raciBuilderToggleUsuario(\'' + window.escapeHtml(uStr) + '\', this.checked)" ' + (isChecked ? 'checked' : '') + ' class="form-check-input">' +
+                            '<span>👤 ' + u.nome + ' <small >(' + u.unidade.split(' ')[0] + ')</small></span>' +
                         '</label>';
                     }).join('') +
                 '</div>' +
-                '<div style="display:flex;gap:8px;align-items:center;">' +
-                    '<input type="text" id="builder-raci-extra-user" placeholder="Adicionar outro usuário / colaborador (ex: Procurador Consultoria Jurídica, Preposto Fábrica)..." style="flex:1;padding:6px 10px;background:var(--sagti-surface-alt);border:1px solid rgba(255,255,255,0.15);color:var(--sagti-text);border-radius:6px;font-size:11.5px;outline:none;">' +
-                    '<button type="button" class="btn btn-secondary" onclick="window.raciBuilderAddUsuarioExtra()" style="padding:6px 12px;font-size:11px;white-space:nowrap;">➕ Incluir Usuário</button>' +
+                '<div style="display:flex;gap:8px;align-items:center">' +
+                    '<input type="text" id="builder-raci-extra-user" placeholder="Adicionar outro usuário / colaborador (ex: Procurador Consultoria Jurídica, Preposto Fábrica)..." style="flex:1;padding:6px 10px;border-radius:6px;font-size:11.5px;outline:none" class="form-control">' +
+                    '<button type="button" class="btn btn-outline-secondary" onclick="window.raciBuilderAddUsuarioExtra()" style="padding:6px 12px;font-size:11px;white-space:nowrap">➕ Incluir Usuário</button>' +
                 '</div>' +
             '</div>' +
 
             '<!-- SEÇÃO 3: GRADE INTERATIVA RACI (ETAPAS X USUÁRIOS) -->' +
-            '<div style="background:rgba(2,6,23,0.65);padding:14px;border-radius:10px;border:1px solid rgba(255,255,255,0.08);margin-bottom:16px;">' +
-                '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;flex-wrap:wrap;gap:8px;">' +
+            '<div style="padding:14px;border-radius:10px;margin-bottom:16px">' +
+                '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;flex-wrap:wrap;gap:8px">' +
                     '<div>' +
-                        '<strong style="font-size:12px;color:#facc15;text-transform:uppercase;">📋 Matriz Interativa de Atribuições Nominais</strong>' +
-                        '<div style="font-size:11px;color:#94a3b8;">Defina o papel de cada pessoa em cada etapa do fluxo</div>' +
+                        '<strong style="font-size:12px;text-transform:uppercase">📋 Matriz Interativa de Atribuições Nominais</strong>' +
+                        '<div style="font-size:11px">Defina o papel de cada pessoa em cada etapa do fluxo</div>' +
                     '</div>' +
-                    '<div style="display:flex;gap:6px;flex-wrap:wrap;">' +
-                        '<button type="button" class="btn btn-primary" onclick="window.raciBuilderAddEtapa()" style="padding:4px 10px;font-size:11px;background:#0ea5e9;border-color:#0ea5e9;font-weight:700;">➕ Adicionar Etapa</button>' +
-                        '<button type="button" class="btn btn-secondary" onclick="window.raciBuilderCarregarTemplate(\'lei14133\')" style="padding:4px 8px;font-size:10.5px;">⚡ Template Lei 14.133</button>' +
-                        '<button type="button" class="btn btn-secondary" onclick="window.raciBuilderCarregarTemplate(\'tcu269\')" style="padding:4px 8px;font-size:10.5px;">⚡ Template TCU 269</button>' +
-                        '<button type="button" class="btn btn-secondary" onclick="window.raciBuilderCarregarTemplate(\'devsecops\')" style="padding:4px 8px;font-size:10.5px;">⚡ Template DevSecOps</button>' +
+                    '<div style="display:flex;gap:6px;flex-wrap:wrap">' +
+                        '<button type="button" class="btn btn-primary" onclick="window.raciBuilderAddEtapa()" style="padding:4px 10px;font-size:11px;font-weight:700">➕ Adicionar Etapa</button>' +
+                        '<button type="button" class="btn btn-outline-secondary" onclick="window.raciBuilderCarregarTemplate(\'lei14133\')" style="padding:4px 8px;font-size:10.5px">⚡ Template Lei 14.133</button>' +
+                        '<button type="button" class="btn btn-outline-secondary" onclick="window.raciBuilderCarregarTemplate(\'tcu269\')" style="padding:4px 8px;font-size:10.5px">⚡ Template TCU 269</button>' +
+                        '<button type="button" class="btn btn-outline-secondary" onclick="window.raciBuilderCarregarTemplate(\'devsecops\')" style="padding:4px 8px;font-size:10.5px">⚡ Template DevSecOps</button>' +
                     '</div>' +
                 '</div>' +
-                '<div id="builder-raci-tabela-container" style="overflow-x:auto;"></div>' +
+                '<div id="builder-raci-tabela-container" style="overflow-x:auto"></div>' +
             '</div>' +
 
             '<!-- BARRA FIXA DE LEGENDA NOMINAL -->' +
-            '<div style="padding:10px 14px;background:rgba(255,255,255,0.04);border-radius:8px;font-size:11.5px;border:1px solid rgba(255,255,255,0.08);margin-bottom:18px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;">' +
+            '<div style="padding:10px 14px;border-radius:8px;font-size:11.5px;margin-bottom:18px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px">' +
                 '<div>' +
-                    '<strong style="color:var(--sagti-text);">Legenda Nominal:</strong> ' +
-                    '<span style="background:rgba(14,165,233,0.2);color:var(--sagti-accent);padding:2px 7px;border-radius:4px;font-weight:800;">R</span> = Usuário Executor &nbsp;|&nbsp; ' +
-                    '<span style="background:rgba(234,179,8,0.25);color:#facc15;padding:2px 7px;border-radius:4px;font-weight:800;border:1px solid rgba(234,179,8,0.5);">A 👑</span> = Usuário Aprovador Oficial (Accountable) &nbsp;|&nbsp; ' +
-                    '<span style="background:rgba(168,85,247,0.2);color:#c084fc;padding:2px 7px;border-radius:4px;font-weight:700;">C</span> = Consultado &nbsp;|&nbsp; ' +
-                    '<span style="background:rgba(148,163,184,0.15);color:#cbd5e1;padding:2px 7px;border-radius:4px;">I</span> = Informado' +
+                    '<strong >Legenda Nominal:</strong> ' +
+                    '<span style="padding:2px 7px;border-radius:4px;font-weight:800">R</span> = Usuário Executor &nbsp;|&nbsp; ' +
+                    '<span style="padding:2px 7px;border-radius:4px;font-weight:800">A 👑</span> = Usuário Aprovador Oficial (Accountable) &nbsp;|&nbsp; ' +
+                    '<span style="padding:2px 7px;border-radius:4px;font-weight:700">C</span> = Consultado &nbsp;|&nbsp; ' +
+                    '<span style="padding:2px 7px;border-radius:4px">I</span> = Informado' +
                 '</div>' +
             '</div>' +
 
-            '<div style="display:flex;justify-content:flex-end;gap:10px;">' +
-                '<button type="button" class="btn btn-secondary" onclick="document.getElementById(\'modal-raci-criar-estruturado\').remove()" style="padding:8px 16px;font-size:12px;">Cancelar</button>' +
-                '<button type="button" class="btn btn-primary" onclick="window.salvarBuilderRaciFinal()" style="padding:8px 22px;font-size:12px;background:#0284c7;border-color:#0284c7;font-weight:700;box-shadow:0 4px 14px rgba(139,92,246,0.4);">Salvar Matriz no Perfil</button>' +
+            '<div style="display:flex;justify-content:flex-end;gap:10px">' +
+                '<button type="button" class="btn btn-outline-secondary" onclick="document.getElementById(\'modal-raci-criar-estruturado\').remove()" style="padding:8px 16px;font-size:12px">Cancelar</button>' +
+                '<button type="button" class="btn btn-primary" onclick="window.salvarBuilderRaciFinal()" style="padding:8px 22px;font-size:12px;font-weight:700">Salvar Matriz no Perfil</button>' +
             '</div>' +
         '</div>';
         document.body.appendChild(divModal);
@@ -2136,41 +2133,41 @@
         var etapas = window.raciBuilderState.etapas || [];
 
         if (usuarios.length === 0) {
-            container.innerHTML = '<div style="padding:20px;text-align:center;color:#fca5a5;">Por favor, selecione ao menos 1 usuário participante acima.</div>';
+            container.innerHTML = '<div style="padding:20px;text-align:center">Por favor, selecione ao menos 1 usuário participante acima.</div>';
             return;
         }
 
-        var html = '<table style="width:100%;border-collapse:collapse;font-size:11.5px;">' +
-            '<thead><tr style="background:rgba(255,255,255,0.06);color:#cbd5e1;border-bottom:1px solid rgba(255,255,255,0.1);">' +
-            '<th style="padding:8px 10px;text-align:left;min-width:240px;">Nome da Etapa do Fluxo</th>';
+        var html = '<div class="table-responsive"><table style="width:100%;border-collapse:collapse;font-size:11.5px" class="table table-vcenter card-table table-hover">' +
+            '<thead><tr >' +
+            '<th style="padding:8px 10px;text-align:left;min-width:240px">Nome da Etapa do Fluxo</th>';
 
         usuarios.forEach(function(u) {
             var uCurto = u.split('(')[0].trim();
             var uUnid = u.indexOf('(') !== -1 ? u.substring(u.indexOf('(')) : '';
-            html += '<th style="padding:8px 6px;text-align:center;min-width:110px;color:var(--sagti-accent);">' +
-                '<div style="font-weight:700;">👤 ' + uCurto + '</div>' +
-                '<div style="font-size:9.5px;color:#94a3b8;font-weight:400;">' + uUnid + '</div>' +
+            html += '<th style="padding:8px 6px;text-align:center;min-width:110px">' +
+                '<div style="font-weight:700">👤 ' + uCurto + '</div>' +
+                '<div style="font-size:9.5px;font-weight:400">' + uUnid + '</div>' +
             '</th>';
         });
 
-        html += '<th style="width:40px;text-align:center;padding:8px;">Excluir</th></tr></thead><tbody>';
+        html += '<th style="width:40px;text-align:center;padding:8px">Excluir</th></tr></thead><tbody>';
 
         etapas.forEach(function(et, eIdx) {
-            html += '<tr style="border-bottom:1px solid rgba(255,255,255,0.06);background:' + (eIdx % 2 === 0 ? 'rgba(15,23,42,0.4)' : 'rgba(30,41,59,0.25)') + ';">' +
-                '<td style="padding:6px 10px;">' +
-                    '<input type="text" onchange="window.raciBuilderUpdateEtapaNome(' + eIdx + ', this.value)" value="' + window.escapeHtml(et.nome) + '" placeholder="Nome da etapa..." style="width:100%;box-sizing:border-box;padding:6px 10px;background:var(--sagti-surface-alt);border:1px solid rgba(255,255,255,0.15);color:var(--sagti-text);border-radius:6px;font-size:11.5px;outline:none;">' +
+            html += '<tr >' +
+                '<td style="padding:6px 10px">' +
+                    '<input type="text" onchange="window.raciBuilderUpdateEtapaNome(' + eIdx + ', this.value)" value="' + window.escapeHtml(et.nome) + '" placeholder="Nome da etapa..." style="width:100%;box-sizing:border-box;padding:6px 10px;border-radius:6px;font-size:11.5px;outline:none" class="form-control">' +
                 '</td>';
 
             usuarios.forEach(function(u) {
                 var papelAtual = (et.papeisPorUsuario && et.papeisPorUsuario[u]) ? et.papeisPorUsuario[u] : '';
-                var bgStyle = 'background:var(--sagti-surface-alt);color:#94a3b8;border:1px solid rgba(255,255,255,0.15);';
-                if (papelAtual === 'R') bgStyle = 'background:rgba(14,165,233,0.3);color:var(--sagti-accent);border:1px solid #0284c7;font-weight:800;';
-                else if (papelAtual === 'A') bgStyle = 'background:rgba(234,179,8,0.35);color:#facc15;border:1px solid #eab308;font-weight:800;';
-                else if (papelAtual === 'C') bgStyle = 'background:rgba(168,85,247,0.3);color:#c084fc;border:1px solid #9333ea;font-weight:700;';
-                else if (papelAtual === 'I') bgStyle = 'background:rgba(148,163,184,0.25);color:#cbd5e1;border:1px solid #64748b;';
+                var papelClass = 'bg-secondary-lt text-secondary';
+                if (papelAtual === 'R') papelClass = 'bg-blue-lt text-blue';
+                else if (papelAtual === 'A') papelClass = 'bg-amber-lt text-amber';
+                else if (papelAtual === 'C') papelClass = 'bg-cyan-lt text-cyan';
+                else if (papelAtual === 'I') papelClass = 'bg-secondary-lt text-secondary';
 
-                html += '<td style="padding:6px;text-align:center;">' +
-                    '<select onchange="window.raciBuilderUpdatePapel(' + eIdx + ', \'' + window.escapeHtml(u) + '\', this.value)" style="width:100%;padding:5px 4px;border-radius:6px;font-size:11px;outline:none;cursor:pointer;' + bgStyle + '">' +
+                html += '<td style="padding:6px;text-align:center">' +
+                    '<select onchange="window.raciBuilderUpdatePapel(' + eIdx + ', \'' + window.escapeHtml(u) + '\', this.value)" style="width:100%;padding:5px 4px" class="form-select ' + papelClass + '">' +
                         '<option value="" ' + (papelAtual === '' ? 'selected' : '') + '>— (Nenhum)</option>' +
                         '<option value="R" ' + (papelAtual === 'R' ? 'selected' : '') + '>R (Executor)</option>' +
                         '<option value="A" ' + (papelAtual === 'A' ? 'selected' : '') + '>A 👑 (Aprovador)</option>' +
@@ -2180,12 +2177,12 @@
                 '</td>';
             });
 
-            html += '<td style="padding:6px;text-align:center;">' +
-                '<button type="button" onclick="window.raciBuilderRemoverEtapa(' + eIdx + ')" style="background:none;border:none;color:#fca5a5;cursor:pointer;font-size:14px;" title="Remover Etapa">🗑️</button>' +
+            html += '<td style="padding:6px;text-align:center">' +
+                '<button type="button" onclick="window.raciBuilderRemoverEtapa(' + eIdx + ')" style="cursor:pointer;font-size:14px" title="Remover Etapa" class="btn btn-ghost-secondary">🗑️</button>' +
             '</td></tr>';
         });
 
-        html += '</tbody></table>';
+        html += '</tbody></table></div>';
         container.innerHTML = html;
     };
 
@@ -2392,7 +2389,7 @@ window.renderizarTabelaMesa = function() {
         // 1. ABA: RELATÓRIOS DAILY & SPRINTS
         if (window.modoMesaAtivo === 'relatorios') {
             if (thead) {
-                thead.innerHTML = '<tr style="border-bottom: 1px solid rgba(255,255,255,0.1); background: rgba(255,255,255,0.03); color: var(--sagti-accent); font-size: 10.5px; text-transform: uppercase;"><th style="width: 36px; text-align: center; padding: 10px 8px;">⭐</th><th style="padding: 10px 12px;">Tipo / Ritual</th><th style="padding: 10px 12px;">Data</th><th style="padding: 10px 12px;">Título &amp; Escopo</th><th style="padding: 10px 12px;">Destaques</th><th style="padding: 10px 12px; text-align: center;">Status</th><th style="text-align: center; padding: 10px 12px;">Ações</th></tr>';
+                thead.innerHTML = '<tr style="font-size: 10.5px; text-transform: uppercase"><th style="width: 36px; text-align: center; padding: 10px 8px">⭐</th><th style="padding: 10px 12px">Tipo / Ritual</th><th style="padding: 10px 12px">Data</th><th style="padding: 10px 12px">Título &amp; Escopo</th><th style="padding: 10px 12px">Destaques</th><th style="padding: 10px 12px; text-align: center">Status</th><th style="text-align: center; padding: 10px 12px">Ações</th></tr>';
             }
             var relsFiltrados = rels.filter(function(r) {
                 if (!busca) return true;
@@ -2405,7 +2402,7 @@ window.renderizarTabelaMesa = function() {
                 var isMarcado = fixados.indexOf(chave) !== -1 || r.marcado;
                 var sCor = isMarcado ? '#facc15' : '#64748b';
                 var sIco = isMarcado ? '⭐' : '☆';
-                return '<tr style="background:' + bg + ';border-bottom:1px solid rgba(255,255,255,0.06);"><td style="text-align:center;padding:10px 8px;cursor:pointer;font-size:14px;" onclick="window.toggleFixado(\'' + chave + '\')" title="Marcar/Desmarcar para acompanhamento"><span style="color:' + sCor + ';">' + sIco + '</span></td><td style="padding:10px 12px;font-weight:700;color:var(--sagti-accent);font-size:11.5px;">' + r.tipoLabel + '</td><td style="padding:10px 12px;color:#cbd5e1;font-family:monospace;font-size:11px;">' + r.data + '</td><td style="padding:10px 12px;font-weight:700;color:var(--sagti-text);">' + r.titulo + '</td><td style="padding:10px 12px;color:#94a3b8;font-size:11px;">' + r.destaque + '</td><td style="padding:10px 12px;text-align:center;"><span style="background:rgba(16,185,129,0.2);color:#34d399;font-size:10px;padding:2px 7px;border-radius:10px;font-weight:700;">' + r.status + '</span></td><td style="padding:10px 12px;text-align:center;white-space:nowrap;"><button type="button" class="btn btn-secondary" onclick="window.visualizarRelatorioMesaModal(\'' + r.id + '\')" style="padding:3px 8px;font-size:10.5px;color:var(--sagti-accent);margin-right:4px;">👁️ Ver</button><button type="button" class="btn btn-secondary" onclick="window.toggleFixado(\'' + chave + '\')" style="padding:3px 8px;font-size:10.5px;">' + (isMarcado ? '⭐ Acompanhando' : '☆ Acompanhar') + '</button></td></tr>';
+                return '<tr ><td style="text-align:center;padding:10px 8px;cursor:pointer;font-size:14px" onclick="window.toggleFixado(\'' + chave + '\')" title="Marcar/Desmarcar para acompanhamento"><span >' + sIco + '</span></td><td style="padding:10px 12px;font-weight:700;font-size:11.5px">' + r.tipoLabel + '</td><td style="padding:10px 12px;font-size:11px">' + r.data + '</td><td style="padding:10px 12px;font-weight:700">' + r.titulo + '</td><td style="padding:10px 12px;font-size:11px">' + r.destaque + '</td><td style="padding:10px 12px;text-align:center"><span style="padding:2px 7px;border-radius:10px;font-weight:700">' + r.status + '</span></td><td style="padding:10px 12px;text-align:center;white-space:nowrap"><button type="button" class="btn btn-outline-secondary" onclick="window.visualizarRelatorioMesaModal(\'' + r.id + '\')" style="padding:3px 8px;font-size:10.5px;margin-right:4px">👁️ Ver</button><button type="button" class="btn btn-outline-secondary" onclick="window.toggleFixado(\'' + chave + '\')" style="padding:3px 8px;font-size:10.5px">' + (isMarcado ? '⭐ Acompanhando' : '☆ Acompanhar') + '</button></td></tr>';
             }).join('');
             return;
         }
@@ -2413,7 +2410,7 @@ window.renderizarTabelaMesa = function() {
         // 2. ABA: CHAMADOS GLPI (TODOS OS 24 CHAMADOS COM SELEÇÃO PARA ACOMPANHAMENTO)
         if (window.modoMesaAtivo === 'glpi') {
             if (thead) {
-                thead.innerHTML = '<tr style="border-bottom: 1px solid rgba(255,255,255,0.1); background: rgba(255,255,255,0.03); color: #c084fc; font-size: 10.5px; text-transform: uppercase;"><th style="width: 36px; text-align: center; padding: 10px 8px;">⭐</th><th style="padding: 10px 12px;">#ID GLPI</th><th style="padding: 10px 12px;">Título do Chamado / Incidente</th><th style="padding: 10px 12px;">Técnico / Fila</th><th style="padding: 10px 12px;">Status</th><th style="padding: 10px 12px;">SLA / Urgência</th><th style="text-align: center; padding: 10px 12px;">Ações</th></tr>';
+                thead.innerHTML = '<tr style="font-size: 10.5px; text-transform: uppercase"><th style="width: 36px; text-align: center; padding: 10px 8px">⭐</th><th style="padding: 10px 12px">#ID GLPI</th><th style="padding: 10px 12px">Título do Chamado / Incidente</th><th style="padding: 10px 12px">Técnico / Fila</th><th style="padding: 10px 12px">Status</th><th style="padding: 10px 12px">SLA / Urgência</th><th style="text-align: center; padding: 10px 12px">Ações</th></tr>';
             }
             var listaGlpi = baseGlpi.filter(function(t) {
                 if (!busca) return true;
@@ -2428,13 +2425,13 @@ window.renderizarTabelaMesa = function() {
                 var codGlpi = '#' + t.id;
                 var linkOficial = 'https://atendimento.spaguas.sp.gov.br/front/ticket.form.php?id=' + t.id;
                 var stBadge = (t.status || '').toLowerCase().indexOf('atendimento') !== -1 
-                    ? '<span class="pill-tag pill-blue" style="font-size:10.5px;">🟢 ' + t.status + '</span>'
-                    : '<span class="pill-tag pill-orange" style="font-size:10.5px;">🟠 ' + (t.status || 'Pendente') + '</span>';
+                    ? '<span class="pill-tag pill-blue" style="font-size:10.5px">🟢 ' + t.status + '</span>'
+                    : '<span class="pill-tag pill-orange" style="font-size:10.5px">🟠 ' + (t.status || 'Pendente') + '</span>';
                 var subCategoria = t.cat ? ('🏷️ ' + t.cat) : (t.bucket ? ('🏷️ ' + t.bucket) : '🏷️ Suporte & Infra');
                 var solicitanteStr = t.requerente ? (' • Req: ' + t.requerente) : '';
                 var slaStr = t.urgencia || (t.prioridade ? ('Prioridade: ' + t.prioridade) : 'Normal');
 
-                return '<tr style="border-bottom: 1px solid rgba(255,255,255,0.06);"><td style="text-align:center;padding:10px 8px;cursor:pointer;font-size:14px;" onclick="window.toggleFixado(\'' + chave + '\')" title="Marcar/Desmarcar para acompanhamento"><span style="color:' + sCor + ';">' + sIco + '</span></td><td style="padding:10px 12px;font-family:monospace;font-weight:800;"><a href="' + linkOficial + '" target="_blank" style="color:#c084fc;text-decoration:none;" title="Abrir no GLPI Oficial">' + codGlpi + '</a></td><td style="padding:10px 12px;color:var(--sagti-text);font-weight:600;">' + (t.titulo || '—') + '<div style="font-size:10.5px;color:#94a3b8;font-weight:400;">' + subCategoria + solicitanteStr + '</div></td><td style="padding:10px 12px;color:#cbd5e1;">👤 ' + (t.tecnico || 'SA-GTI') + '<div style="font-size:10px;color:#64748b;">' + (t.local || t.fila || 'Sede - São Paulo') + '</div></td><td style="padding:10px 12px;">' + stBadge + '</td><td style="padding:10px 12px;color:#cbd5e1;font-size:11px;">' + slaStr + '</td><td style="padding:10px 12px;text-align:center;white-space:nowrap;"><button type="button" class="btn btn-secondary" onclick="window.toggleFixado(\'' + chave + '\')" style="padding:3px 8px;font-size:10.5px;margin-right:4px;">' + (isMarcado ? '⭐ Acompanhando' : '☆ Acompanhar') + '</button><a href="' + linkOficial + '" target="_blank" class="btn btn-secondary" style="padding:3px 8px;font-size:10.5px;text-decoration:none;">GLPI ↗</a></td></tr>';
+                return '<tr ><td style="text-align:center;padding:10px 8px;cursor:pointer;font-size:14px" onclick="window.toggleFixado(\'' + chave + '\')" title="Marcar/Desmarcar para acompanhamento"><span >' + sIco + '</span></td><td style="padding:10px 12px;font-weight:800"><a href="' + linkOficial + '" target="_blank" style="text-decoration:none" title="Abrir no GLPI Oficial">' + codGlpi + '</a></td><td style="padding:10px 12px;font-weight:600">' + (t.titulo || '—') + '<div style="font-size:10.5px;font-weight:400">' + subCategoria + solicitanteStr + '</div></td><td style="padding:10px 12px">👤 ' + (t.tecnico || 'SA-GTI') + '<div >' + (t.local || t.fila || 'Sede - São Paulo') + '</div></td><td style="padding:10px 12px">' + stBadge + '</td><td style="padding:10px 12px;font-size:11px">' + slaStr + '</td><td style="padding:10px 12px;text-align:center;white-space:nowrap"><button type="button" class="btn btn-outline-secondary" onclick="window.toggleFixado(\'' + chave + '\')" style="padding:3px 8px;font-size:10.5px;margin-right:4px">' + (isMarcado ? '⭐ Acompanhando' : '☆ Acompanhar') + '</button><a href="' + linkOficial + '" target="_blank" class="btn btn-outline-secondary" style="padding:3px 8px;font-size:10.5px;text-decoration:none">GLPI ↗</a></td></tr>';
             }).join('');
             return;
         }
@@ -2442,7 +2439,7 @@ window.renderizarTabelaMesa = function() {
         // 3. ABA: PACOTES OPENPROJECT (TODOS OS PACOTES EM ABERTO, INDEPENDENTE DE USUÁRIO)
         if (window.modoMesaAtivo === 'openproject') {
             if (thead) {
-                thead.innerHTML = '<tr style="border-bottom: 1px solid rgba(255,255,255,0.1); background: rgba(255,255,255,0.03); color: #f59e0b; font-size: 10.5px; text-transform: uppercase;"><th style="width: 36px; text-align: center; padding: 10px 8px;">⭐</th><th style="padding: 10px 12px;">#ID Pacote</th><th style="padding: 10px 12px;">Assunto / Entregável</th><th style="padding: 10px 12px;">Responsável / Projeto</th><th style="padding: 10px 12px;">Status</th><th style="padding: 10px 12px;">Tipo / Custo</th><th style="text-align: center; padding: 10px 12px;">Ações</th></tr>';
+                thead.innerHTML = '<tr style="font-size: 10.5px; text-transform: uppercase"><th style="width: 36px; text-align: center; padding: 10px 8px">⭐</th><th style="padding: 10px 12px">#ID Pacote</th><th style="padding: 10px 12px">Assunto / Entregável</th><th style="padding: 10px 12px">Responsável / Projeto</th><th style="padding: 10px 12px">Status</th><th style="padding: 10px 12px">Tipo / Custo</th><th style="text-align: center; padding: 10px 12px">Ações</th></tr>';
             }
             var pacotesAbertos = pacotesOp.filter(function(op) {
                 var st = (op.status || '').toLowerCase();
@@ -2461,7 +2458,7 @@ window.renderizarTabelaMesa = function() {
                 var sIco = isMarcado ? '⭐' : '☆';
                 var urlOp = 'https://projetos.spaguas.sp.gov.br/work_packages/' + op.id;
                 var custoStr = op.custo && parseFloat(op.custo) > 0 ? (' • R$ ' + parseFloat(op.custo).toLocaleString('pt-BR', {minimumFractionDigits: 0})) : '';
-                return '<tr style="border-bottom: 1px solid rgba(255,255,255,0.06);"><td style="text-align:center;padding:10px 8px;cursor:pointer;font-size:14px;" onclick="window.toggleFixado(\'' + chave + '\')" title="Marcar/Desmarcar para acompanhamento"><span style="color:' + sCor + ';">' + sIco + '</span></td><td style="padding:10px 12px;font-family:monospace;font-weight:800;color:#f59e0b;"><a href="' + urlOp + '" target="_blank" style="color:#f59e0b;text-decoration:none;">#' + op.id + '</a></td><td style="padding:10px 12px;color:var(--sagti-text);font-weight:600;">' + (op.assunto || '—') + '<div style="font-size:10.5px;color:#94a3b8;font-weight:400;">📁 ' + (op.projeto || 'SA-GTI') + '</div></td><td style="padding:10px 12px;color:#cbd5e1;">👤 ' + (op.atrib || op.encarr || 'SA-GTI') + '</td><td style="padding:10px 12px;"><span class="pill-tag pill-blue">' + (op.status || '🚀 Em progresso') + '</span></td><td style="padding:10px 12px;color:#cbd5e1;font-size:11px;">' + (op.tipo || 'Projeto') + custoStr + '</td><td style="padding:10px 12px;text-align:center;white-space:nowrap;"><button type="button" class="btn btn-secondary" onclick="window.toggleFixado(\'' + chave + '\')" style="padding:3px 8px;font-size:10.5px;margin-right:4px;">' + (isMarcado ? '⭐ Acompanhando' : '☆ Acompanhar') + '</button><a href="' + urlOp + '" target="_blank" class="btn btn-secondary" style="padding:3px 8px;font-size:10.5px;text-decoration:none;">Abrir OP ↗</a></td></tr>';
+                return '<tr ><td style="text-align:center;padding:10px 8px;cursor:pointer;font-size:14px" onclick="window.toggleFixado(\'' + chave + '\')" title="Marcar/Desmarcar para acompanhamento"><span >' + sIco + '</span></td><td style="padding:10px 12px;font-weight:800"><a href="' + urlOp + '" target="_blank" style="text-decoration:none">#' + op.id + '</a></td><td style="padding:10px 12px;font-weight:600">' + (op.assunto || '—') + '<div style="font-size:10.5px;font-weight:400">📁 ' + (op.projeto || 'SA-GTI') + '</div></td><td style="padding:10px 12px">👤 ' + (op.atrib || op.encarr || 'SA-GTI') + '</td><td style="padding:10px 12px"><span class="pill-tag pill-blue">' + (op.status || '🚀 Em progresso') + '</span></td><td style="padding:10px 12px;font-size:11px">' + (op.tipo || 'Projeto') + custoStr + '</td><td style="padding:10px 12px;text-align:center;white-space:nowrap"><button type="button" class="btn btn-outline-secondary" onclick="window.toggleFixado(\'' + chave + '\')" style="padding:3px 8px;font-size:10.5px;margin-right:4px">' + (isMarcado ? '⭐ Acompanhando' : '☆ Acompanhar') + '</button><a href="' + urlOp + '" target="_blank" class="btn btn-outline-secondary" style="padding:3px 8px;font-size:10.5px;text-decoration:none">Abrir OP ↗</a></td></tr>';
             }).join('');
             return;
         }
@@ -2469,7 +2466,7 @@ window.renderizarTabelaMesa = function() {
         // 4. ABA: FIXADOS / ACOMPANHAMENTO UNIFICADO (TODOS OS ITENS MARCADOS: SEI + OP + GLPI + RELATÓRIOS)
         if (window.modoMesaAtivo === 'fixados') {
             if (thead) {
-                thead.innerHTML = '<tr style="border-bottom: 1px solid rgba(255,255,255,0.1); background: rgba(255,255,255,0.03); color: #facc15; font-size: 10.5px; text-transform: uppercase;"><th style="width: 36px; text-align: center; padding: 10px 8px;">⭐</th><th style="padding: 10px 12px;">Origem / ID</th><th style="padding: 10px 12px;">Título / Especificação</th><th style="padding: 10px 12px;">Responsável / Técnico</th><th style="padding: 10px 12px;">Status</th><th style="padding: 10px 12px;">Aging / Detalhe</th><th style="text-align: center; padding: 10px 12px;">Ações</th></tr>';
+                thead.innerHTML = '<tr style="font-size: 10.5px; text-transform: uppercase"><th style="width: 36px; text-align: center; padding: 10px 8px">⭐</th><th style="padding: 10px 12px">Origem / ID</th><th style="padding: 10px 12px">Título / Especificação</th><th style="padding: 10px 12px">Responsável / Técnico</th><th style="padding: 10px 12px">Status</th><th style="padding: 10px 12px">Aging / Detalhe</th><th style="text-align: center; padding: 10px 12px">Ações</th></tr>';
             }
             var itensAcompanhados = [];
             fixados.forEach(function(chave) {
@@ -2491,20 +2488,20 @@ window.renderizarTabelaMesa = function() {
 
             if (pag) pag.innerText = 'Exibindo ' + itensAcompanhados.length + ' demandas sob seu acompanhamento ativo (Watchlist 360°)';
             if (itensAcompanhados.length === 0) {
-                tbody.innerHTML = '<tr><td colspan="7" style="padding: 30px; text-align: center; color: #94a3b8;"><div style="font-size: 24px; margin-bottom: 8px;">⭐</div><strong style="color: #cbd5e1; font-size: 13px;">Nenhuma demanda selecionada para acompanhamento no momento.</strong><br><span style="font-size: 11.5px; color: #64748b;">Clique no botão "☆ Acompanhar" em qualquer aba (Processos SEI, Pacotes OpenProject, Chamados GLPI ou Relatórios) para consolidá-las aqui!</span></td></tr>';
+                tbody.innerHTML = '<tr><td colspan="7" style="padding: 30px; text-align: center"><div style="font-size: 24px; margin-bottom: 8px">⭐</div><strong style="font-size: 13px">Nenhuma demanda selecionada para acompanhamento no momento.</strong><br><span style="font-size: 11.5px">Clique no botão "☆ Acompanhar" em qualquer aba (Processos SEI, Pacotes OpenProject, Chamados GLPI ou Relatórios) para consolidá-las aqui!</span></td></tr>';
                 return;
             }
 
             tbody.innerHTML = itensAcompanhados.map(function(it) {
                 var tagCor = it.tipo === 'OpenProject' ? '#f59e0b' : (it.tipo === 'GLPI' ? '#c084fc' : (it.tipo === 'Relatório' ? '#38bdf8' : '#38bdf8'));
-                return '<tr style="border-bottom: 1px solid rgba(255,255,255,0.06);"><td style="text-align:center;padding:10px 8px;cursor:pointer;font-size:14px;" onclick="window.toggleFixado(\'' + it.chave + '\')" title="Remover de Acompanhamento"><span style="color:#facc15;">⭐</span></td><td style="padding:10px 12px;font-family:monospace;font-weight:700;color:' + tagCor + ';">' + it.id + ' <span style="font-size:10px;color:#94a3b8;font-weight:400;">(' + it.tipo + ')</span></td><td style="padding:10px 12px;color:var(--sagti-text);">' + (it.titulo || '—') + '</td><td style="padding:10px 12px;color:#cbd5e1;">' + (it.resp || 'SA-GTI') + '</td><td style="padding:10px 12px;"><span class="pill-tag pill-blue">' + (it.status || 'Ativo') + '</span></td><td style="padding:10px 12px;color:#cbd5e1;">' + (it.detalhe || '—') + '</td><td style="padding:10px 12px;text-align:center;white-space:nowrap;">' + it.acao + '</td></tr>';
+                return '<tr ><td style="text-align:center;padding:10px 8px;cursor:pointer;font-size:14px" onclick="window.toggleFixado(\'' + it.chave + '\')" title="Remover de Acompanhamento"><span >⭐</span></td><td style="padding:10px 12px;font-weight:700">' + it.id + ' <span style="font-weight:400">(' + it.tipo + ')</span></td><td style="padding:10px 12px">' + (it.titulo || '—') + '</td><td style="padding:10px 12px">' + (it.resp || 'SA-GTI') + '</td><td style="padding:10px 12px"><span class="pill-tag pill-blue">' + (it.status || 'Ativo') + '</span></td><td style="padding:10px 12px">' + (it.detalhe || '—') + '</td><td style="padding:10px 12px;text-align:center;white-space:nowrap">' + it.acao + '</td></tr>';
             }).join('');
             return;
         }
 
         // 5. ABA DEFAULT: MINHA CUSTÓDIA / ACERVO
         if (thead) {
-            thead.innerHTML = '<tr style="border-bottom: 1px solid rgba(255,255,255,0.1); background: rgba(255,255,255,0.03); color: #94a3b8; font-size: 10.5px; text-transform: uppercase;"><th style="width: 36px; text-align: center; padding: 10px 8px;">⭐</th><th style="padding: 10px 12px;">Processo SEI</th><th style="padding: 10px 12px;">Especificação / Objeto</th><th style="padding: 10px 12px;">Responsável</th><th style="padding: 10px 12px;">Status</th><th style="padding: 10px 12px;">Aging Líquido</th><th style="text-align: center; padding: 10px 12px;">Ações</th></tr>';
+            thead.innerHTML = '<tr style="font-size: 10.5px; text-transform: uppercase"><th style="width: 36px; text-align: center; padding: 10px 8px">⭐</th><th style="padding: 10px 12px">Processo SEI</th><th style="padding: 10px 12px">Especificação / Objeto</th><th style="padding: 10px 12px">Responsável</th><th style="padding: 10px 12px">Status</th><th style="padding: 10px 12px">Aging Líquido</th><th style="text-align: center; padding: 10px 12px">Ações</th></tr>';
         }
 
         var lista = (typeof window.obterCustodiaNominalLuiz === 'function') ? window.obterCustodiaNominalLuiz() : [];
@@ -2517,7 +2514,7 @@ window.renderizarTabelaMesa = function() {
 
         if (pag) pag.innerText = 'Exibindo ' + lista.length + ' de ' + lista.length + ' itens';
         if (lista.length === 0) {
-            tbody.innerHTML = '<tr><td colspan="7" style="padding: 30px; text-align: center; color: #94a3b8;"><div style="font-size: 24px; margin-bottom: 8px;">📂</div><strong style="color: #cbd5e1; font-size: 13px;">Nenhum processo sob sua custódia nominal direta no momento.</strong><br><span style="font-size: 11.5px; color: #64748b;">Demandas atribuídas aos analistas do setor podem ser acompanhadas nos filtros acima ou fixadas com estrela (⭐).</span></td></tr>';
+            tbody.innerHTML = '<tr><td colspan="7" style="padding: 30px; text-align: center"><div style="font-size: 24px; margin-bottom: 8px">📂</div><strong style="font-size: 13px">Nenhum processo sob sua custódia nominal direta no momento.</strong><br><span style="font-size: 11.5px">Demandas atribuídas aos analistas do setor podem ser acompanhadas nos filtros acima ou fixadas com estrela (⭐).</span></td></tr>';
             return;
         }
 
@@ -2525,7 +2522,7 @@ window.renderizarTabelaMesa = function() {
             var isFix = fixados.includes(p.ID_Processo);
             var starCor = isFix ? '#facc15' : '#64748b';
             var starIco = isFix ? '⭐' : '☆';
-            return '<tr style="border-bottom: 1px solid rgba(255,255,255,0.06);"><td style="text-align:center;padding:10px 8px;cursor:pointer;font-size:14px;" onclick="window.toggleFixado(\'' + p.ID_Processo + '\')" title="Marcar/Desmarcar para acompanhamento"><span style="color:' + starCor + ';">' + starIco + '</span></td><td style="padding:10px 12px;font-family:monospace;font-weight:700;color:var(--sagti-accent);">' + p.ID_Processo + '</td><td style="padding:10px 12px;color:var(--sagti-text);">' + (p.Especificacao || '—') + '</td><td style="padding:10px 12px;color:#cbd5e1;">' + (p.Responsavel_Tecnico || 'SA-GTI') + '</td><td style="padding:10px 12px;"><span class="pill-tag pill-blue">' + (p.Status_Kanban || 'Ativo') + '</span></td><td style="padding:10px 12px;color:#cbd5e1;">' + (p.Aging_Liquido || p.Faixa_Aging || 'Normal') + '</td><td style="padding:10px 12px;text-align:center;white-space:nowrap;"><button type="button" class="btn btn-secondary" onclick="window.toggleFixado(\'' + p.ID_Processo + '\')" style="padding:3px 8px;font-size:10.5px;margin-right:4px;">' + (isFix ? '⭐ Acompanhando' : '☆ Acompanhar') + '</button><button class="btn btn-secondary" onclick="window.abrirDetalhesProcesso(\'' + p.ID_Processo + '\')" style="padding:3px 8px;font-size:10.5px;">👁️ Ver</button></td></tr>';
+            return '<tr ><td style="text-align:center;padding:10px 8px;cursor:pointer;font-size:14px" onclick="window.toggleFixado(\'' + p.ID_Processo + '\')" title="Marcar/Desmarcar para acompanhamento"><span >' + starIco + '</span></td><td style="padding:10px 12px;font-weight:700">' + p.ID_Processo + '</td><td style="padding:10px 12px">' + (p.Especificacao || '—') + '</td><td style="padding:10px 12px">' + (p.Responsavel_Tecnico || 'SA-GTI') + '</td><td style="padding:10px 12px"><span class="pill-tag pill-blue">' + (p.Status_Kanban || 'Ativo') + '</span></td><td style="padding:10px 12px">' + (p.Aging_Liquido || p.Faixa_Aging || 'Normal') + '</td><td style="padding:10px 12px;text-align:center;white-space:nowrap"><button type="button" class="btn btn-outline-secondary" onclick="window.toggleFixado(\'' + p.ID_Processo + '\')" style="padding:3px 8px;font-size:10.5px;margin-right:4px">' + (isFix ? '⭐ Acompanhando' : '☆ Acompanhar') + '</button><button class="btn btn-outline-secondary" onclick="window.abrirDetalhesProcesso(\'' + p.ID_Processo + '\')" style="padding:3px 8px;font-size:10.5px">👁️ Ver</button></td></tr>';
         }).join('');
     };
 
@@ -2557,21 +2554,21 @@ window.renderizarTabelaMesa = function() {
         var postitHtml = '';
         if (postit) {
             var corClasse = postit.cor === 'rosa' ? 'postit-rosa' : (postit.cor === 'azul' ? 'postit-azul' : 'postit-verde');
-            postitHtml = '<div class="postit-tag ' + corClasse + '" style="margin-top:6px;font-size:10.5px;padding:4px 6px;border-radius:4px;">' +
-                '<div style="display:flex;justify-content:space-between;align-items:center;">' +
+            postitHtml = '<div class="postit-tag ' + corClasse + '" style="margin-top:6px;font-size:10.5px;padding:4px 6px;border-radius:4px">' +
+                '<div style="display:flex;justify-content:space-between;align-items:center">' +
                     '<strong>📌 Post-it:</strong>' +
-                    '<button onclick="removerPostitCard(\'' + p.ID_Processo + '\')" style="border:none;background:none;cursor:pointer;font-size:10px;">✖</button>' +
+                    '<button onclick="removerPostitCard(\'' + p.ID_Processo + '\')" style="cursor:pointer" class="btn btn-ghost-secondary">✖</button>' +
                 '</div>' +
                 '<div>' + (postit.texto || '') + '</div>' +
             '</div>';
         }
 
         return '<div class="kanban-card-modelo ' + bordaClass + '" draggable="true" ondragstart="arrastarItem(event, \'' + p.ID_Processo + '\')">' +
-            '<div style="display:flex;justify-content:space-between;align-items:flex-start;gap:6px;margin-bottom:4px;">' +
+            '<div style="display:flex;justify-content:space-between;align-items:flex-start;gap:6px;margin-bottom:4px">' +
                 '<strong class="k-title-sei" onclick="abrirDetalhesProcesso(\'' + p.ID_Processo + '\')">' + p.ID_Processo + '</strong>' +
-                '<div style="display:flex;align-items:center;gap:4px;">' +
+                '<div style="display:flex;align-items:center;gap:4px">' +
                     '<button type="button" class="k-btn-postit" onclick="adicionarPostitCardPrompt(\'' + p.ID_Processo + '\')" title="Adicionar Post-it">📌 Post-it</button>' +
-                    '<span style="cursor:pointer;font-size:13px;color:' + (isFixado ? '#facc15' : '#cbd5e1') + ';" onclick="window.toggleFixado(\'' + p.ID_Processo + '\')" title="Acompanhar">' + (isFixado ? '⭐' : '☆') + '</span>' +
+                    '<span style="cursor:pointer;font-size:13px" onclick="window.toggleFixado(\'' + p.ID_Processo + '\')" title="Acompanhar">' + (isFixado ? '⭐' : '☆') + '</span>' +
                 '</div>' +
             '</div>' +
             '<p class="k-desc-sei" title="' + (p.Especificacao || p.Tipo_Processo || '') + '">' + (p.Especificacao || p.Tipo_Processo || '') + '</p>' +
@@ -2596,10 +2593,10 @@ window.renderizarTabelaMesa = function() {
         var postitHtml = '';
         if (postit) {
             var corClasse = postit.cor === 'rosa' ? 'postit-rosa' : (postit.cor === 'azul' ? 'postit-azul' : 'postit-verde');
-            postitHtml = '<div class="postit-tag ' + corClasse + '" style="margin-top:6px;font-size:10.5px;padding:4px 6px;border-radius:4px;">' +
-                '<div style="display:flex;justify-content:space-between;align-items:center;">' +
+            postitHtml = '<div class="postit-tag ' + corClasse + '" style="margin-top:6px;font-size:10.5px;padding:4px 6px;border-radius:4px">' +
+                '<div style="display:flex;justify-content:space-between;align-items:center">' +
                     '<strong>📌 Post-it:</strong>' +
-                    '<button onclick="removerPostitCard(\'' + chave + '\')" style="border:none;background:none;cursor:pointer;font-size:10px;">✖</button>' +
+                    '<button onclick="removerPostitCard(\'' + chave + '\')" style="cursor:pointer" class="btn btn-ghost-secondary">✖</button>' +
                 '</div>' +
                 '<div>' + (postit.texto || '') + '</div>' +
             '</div>';
@@ -2615,14 +2612,14 @@ window.renderizarTabelaMesa = function() {
         }
 
         return '<div class="kanban-card-modelo ' + bordaClass + '" draggable="true" ondragstart="arrastarItem(event, \'' + chave + '\')">' +
-            '<div style="display:flex;justify-content:space-between;align-items:center;gap:6px;margin-bottom:6px;">' +
-                '<div style="display:flex;align-items:center;gap:6px;">' +
+            '<div style="display:flex;justify-content:space-between;align-items:center;gap:6px;margin-bottom:6px">' +
+                '<div style="display:flex;align-items:center;gap:6px">' +
                     '<span class="k-tag-op-id">#' + op.id + '</span>' +
                     '<span class="k-tag-op-tipo">' + (op.tipo || 'Projeto') + '</span>' +
                 '</div>' +
-                '<div style="display:flex;align-items:center;gap:4px;">' +
+                '<div style="display:flex;align-items:center;gap:4px">' +
                     '<button type="button" class="k-btn-postit" onclick="adicionarPostitCardPrompt(\'' + chave + '\')" title="Adicionar Post-it">📌 Post-it</button>' +
-                    '<span style="cursor:pointer;font-size:13px;color:' + (isFixado ? '#facc15' : '#cbd5e1') + ';" onclick="window.toggleFixado(\'' + chave + '\')" title="Acompanhar">' + (isFixado ? '⭐' : '☆') + '</span>' +
+                    '<span style="cursor:pointer;font-size:13px" onclick="window.toggleFixado(\'' + chave + '\')" title="Acompanhar">' + (isFixado ? '⭐' : '☆') + '</span>' +
                 '</div>' +
             '</div>' +
             '<div class="k-title-item" title="' + (op.assunto || '') + '">' + (op.assunto || 'Pacote sem assunto') + '</div>' +
@@ -2649,10 +2646,10 @@ window.renderizarTabelaMesa = function() {
         var postitHtml = '';
         if (postit) {
             var corClasse = postit.cor === 'rosa' ? 'postit-rosa' : (postit.cor === 'azul' ? 'postit-azul' : 'postit-verde');
-            postitHtml = '<div class="postit-tag ' + corClasse + '" style="margin-top:6px;font-size:10.5px;padding:4px 6px;border-radius:4px;">' +
-                '<div style="display:flex;justify-content:space-between;align-items:center;">' +
+            postitHtml = '<div class="postit-tag ' + corClasse + '" style="margin-top:6px;font-size:10.5px;padding:4px 6px;border-radius:4px">' +
+                '<div style="display:flex;justify-content:space-between;align-items:center">' +
                     '<strong>📌 Post-it:</strong>' +
-                    '<button onclick="removerPostitCard(\'' + chave + '\')" style="border:none;background:none;cursor:pointer;font-size:10px;">✖</button>' +
+                    '<button onclick="removerPostitCard(\'' + chave + '\')" style="cursor:pointer" class="btn btn-ghost-secondary">✖</button>' +
                 '</div>' +
                 '<div>' + (postit.texto || '') + '</div>' +
             '</div>';
@@ -2663,14 +2660,14 @@ window.renderizarTabelaMesa = function() {
         var tipoLabel = t.tipo || (t.prioridade ? ('Prioridade ' + t.prioridade) : 'Incidente GLPI');
 
         return '<div class="kanban-card-modelo ' + bordaClass + '" draggable="true" ondragstart=\"arrastarItem(event, \'' + chave + '\')\">' +
-            '<div style="display:flex;justify-content:space-between;align-items:center;gap:6px;margin-bottom:6px;">' +
-                '<div style="display:flex;align-items:center;gap:6px;">' +
+            '<div style="display:flex;justify-content:space-between;align-items:center;gap:6px;margin-bottom:6px">' +
+                '<div style="display:flex;align-items:center;gap:6px">' +
                     '<span class="k-tag-glpi-id">#' + displayId + '</span>' +
                     '<span class="k-tag-glpi-tipo">' + tipoLabel + '</span>' +
                 '</div>' +
-                '<div style="display:flex;align-items:center;gap:4px;">' +
+                '<div style="display:flex;align-items:center;gap:4px">' +
                     '<button type="button" class="k-btn-postit" onclick="adicionarPostitCardPrompt(\'' + chave + '\')" title="Adicionar Post-it">📌 Post-it</button>' +
-                    '<span style="cursor:pointer;font-size:13px;color:' + (isFixado ? '#facc15' : '#cbd5e1') + ';" onclick="window.toggleFixado(\'' + chave + '\')" title="Acompanhar">' + (isFixado ? '⭐' : '☆') + '</span>' +
+                    '<span style="cursor:pointer;font-size:13px" onclick="window.toggleFixado(\'' + chave + '\')" title="Acompanhar">' + (isFixado ? '⭐' : '☆') + '</span>' +
                 '</div>' +
             '</div>' +
             '<div class="k-title-item" title="' + (t.titulo || '') + '">' + (t.titulo || 'Chamado sem título') + '</div>' +
@@ -2859,14 +2856,8 @@ window.renderizarTabelaMesa = function() {
             if (btn) {
                 if (a === window.abaPautaDailyAtiva) {
                     btn.className = 'btn btn-primary pill-pauta-bkt active';
-                    btn.style.setProperty('background', 'var(--sagti-accent)', 'important');
-                    btn.style.setProperty('color', '#ffffff', 'important');
-                    btn.style.setProperty('font-weight', '700', 'important');
                 } else {
-                    btn.className = 'btn btn-secondary pill-pauta-bkt';
-                    btn.style.setProperty('background', 'rgba(255,255,255,0.06)', 'important');
-                    btn.style.setProperty('color', '#cbd5e1', 'important');
-                    btn.style.setProperty('font-weight', '600', 'important');
+                    btn.className = 'btn btn-outline-secondary pill-pauta-bkt';
                 }
             }
         });
@@ -2904,12 +2895,12 @@ window.renderizarTabelaMesa = function() {
             }).slice(0, 15);
 
             html = candidatos.map(function(p) {
-                return '<div style="background:var(--sagti-surface-alt);border:1px solid rgba(255,255,255,0.08);border-left:3px solid #0ea5e9;border-radius:6px;padding:7px 9px;font-size:11px;display:flex;justify-content:space-between;align-items:center;gap:6px;">' +
-                    '<div style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap;flex:1;">' +
-                        '<strong style="color:var(--sagti-accent);font-family:monospace;">' + p.ID_Processo + '</strong><br>' +
-                        '<span style="color:#cbd5e1;font-size:10.5px;">' + (p.Especificacao || p.Tipo_Processo || '') + '</span>' +
+                return '<div style="border-radius:6px;padding:7px 9px;font-size:11px;display:flex;justify-content:space-between;align-items:center;gap:6px">' +
+                    '<div style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap;flex:1">' +
+                        '<strong >' + p.ID_Processo + '</strong><br>' +
+                        '<span style="font-size:10.5px">' + (p.Especificacao || p.Tipo_Processo || '') + '</span>' +
                     '</div>' +
-                    '<button type="button" class="btn btn-primary" style="padding:2px 7px;font-size:10px;white-space:nowrap;" onclick="window.puxarParaPauta(\'' + p.ID_Processo + '\')">+ Pautar</button>' +
+                    '<button type="button" class="btn btn-primary" style="padding:2px 7px;white-space:nowrap" onclick="window.puxarParaPauta(\'' + p.ID_Processo + '\')">+ Pautar</button>' +
                 '</div>';
             }).join('');
         } else if (modo === 'op') {
@@ -2922,12 +2913,12 @@ window.renderizarTabelaMesa = function() {
 
             html = candidatosOp.map(function(op) {
                 var chave = 'OP#' + op.id;
-                return '<div style="background:var(--sagti-surface-alt);border:1px solid rgba(255,255,255,0.08);border-left:3px solid #f59e0b;border-radius:6px;padding:7px 9px;font-size:11px;display:flex;justify-content:space-between;align-items:center;gap:6px;">' +
-                    '<div style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap;flex:1;">' +
-                        '<strong style="color:#fbbf24;font-family:monospace;">#' + op.id + '</strong> <span style="font-size:9.5px;color:#94a3b8;">(' + (op.tipo || 'Projeto') + ')</span><br>' +
-                        '<span style="color:#cbd5e1;font-size:10.5px;">' + (op.assunto || '') + '</span>' +
+                return '<div style="border-radius:6px;padding:7px 9px;font-size:11px;display:flex;justify-content:space-between;align-items:center;gap:6px">' +
+                    '<div style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap;flex:1">' +
+                        '<strong >#' + op.id + '</strong> <span style="font-size:9.5px">(' + (op.tipo || 'Projeto') + ')</span><br>' +
+                        '<span style="font-size:10.5px">' + (op.assunto || '') + '</span>' +
                     '</div>' +
-                    '<button type="button" class="btn btn-primary" style="padding:2px 7px;font-size:10px;white-space:nowrap;background:#d97706;border-color:#b45309;" onclick="window.puxarParaPauta(\'' + chave + '\')">+ Pautar</button>' +
+                    '<button type="button" class="btn btn-primary" style="padding:2px 7px;white-space:nowrap" onclick="window.puxarParaPauta(\'' + chave + '\')">+ Pautar</button>' +
                 '</div>';
             }).join('');
         } else if (modo === 'glpi') {
@@ -2940,18 +2931,18 @@ window.renderizarTabelaMesa = function() {
 
             html = candidatosGlpi.map(function(t) {
                 var chave = 'GLPI#' + t.id;
-                return '<div style="background:var(--sagti-surface-alt);border:1px solid rgba(255,255,255,0.08);border-left:3px solid #0284c7;border-radius:6px;padding:7px 9px;font-size:11px;display:flex;justify-content:space-between;align-items:center;gap:6px;">' +
-                    '<div style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap;flex:1;">' +
-                        '<strong style="color:#c084fc;font-family:monospace;">#' + t.id + '</strong> <span style="font-size:9.5px;color:#94a3b8;">(' + (t.cat || 'Suporte') + ')</span><br>' +
-                        '<span style="color:#cbd5e1;font-size:10.5px;">' + (t.titulo || '') + '</span>' +
+                return '<div style="border-radius:6px;padding:7px 9px;font-size:11px;display:flex;justify-content:space-between;align-items:center;gap:6px">' +
+                    '<div style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap;flex:1">' +
+                        '<strong >#' + t.id + '</strong> <span style="font-size:9.5px">(' + (t.cat || 'Suporte') + ')</span><br>' +
+                        '<span style="font-size:10.5px">' + (t.titulo || '') + '</span>' +
                     '</div>' +
-                    '<button type="button" class="btn btn-primary" style="padding:2px 7px;font-size:10px;white-space:nowrap;background:#0284c7;border-color:#6d28d9;" onclick="window.puxarParaPauta(\'' + chave + '\')">+ Pautar</button>' +
+                    '<button type="button" class="btn btn-primary" style="padding:2px 7px;white-space:nowrap" onclick="window.puxarParaPauta(\'' + chave + '\')">+ Pautar</button>' +
                 '</div>';
             }).join('');
         }
 
         if (!html) {
-            html = '<div style="text-align:center;color:#94a3b8;padding:16px;font-size:11px;">Nenhum item restante para pautar neste filtro.</div>';
+            html = '<div style="text-align:center;padding:16px;font-size:11px">Nenhum item restante para pautar neste filtro.</div>';
         }
         container.innerHTML = html;
     };
@@ -2992,10 +2983,10 @@ window.renderizarTabelaMesa = function() {
         if (badgeCount) badgeCount.innerText = window.pautaDailyCards.length + ' demandas pautadas';
 
         if (window.pautaDailyCards.length === 0) {
-            container.innerHTML = '<div style="text-align:center;color:#94a3b8;padding:34px;font-size:12.5px;">' +
-                '<span style="font-size:28px;display:block;margin-bottom:8px;">📋</span>' +
-                '<strong style="color:var(--sagti-text);">Nenhuma demanda na pauta da Daily de hoje ainda.</strong><br>' +
-                '<span style="font-size:11px;color:#64748b;">Utilize o seletor à esquerda para puxar processos do SEI, pacotes do OpenProject ou chamados do GLPI.</span>' +
+            container.innerHTML = '<div style="text-align:center;padding:34px;font-size:12.5px">' +
+                '<span style="font-size:28px;display:block;margin-bottom:8px">📋</span>' +
+                '<strong >Nenhuma demanda na pauta da Daily de hoje ainda.</strong><br>' +
+                '<span style="font-size:11px">Utilize o seletor à esquerda para puxar processos do SEI, pacotes do OpenProject ou chamados do GLPI.</span>' +
                 '</div>';
             return;
         }
@@ -3012,9 +3003,9 @@ window.renderizarTabelaMesa = function() {
             var postitHtml = '';
             if (postit) {
                 var corClasse = postit.cor === 'rosa' ? 'postit-rosa' : (postit.cor === 'azul' ? 'postit-azul' : 'postit-verde');
-                postitHtml = '<div class="postit-tag ' + corClasse + '" style="margin-top:6px;">' +
+                postitHtml = '<div class="postit-tag ' + corClasse + '" style="margin-top:6px">' +
                     '<strong>📌 Post-it da Reunião (' + String(postit.cor).toUpperCase() + '):</strong> ' + postit.texto +
-                    '<button onclick="removerPostitCard(\'' + chave + '\')" style="border:none;background:none;cursor:pointer;font-size:10px;float:right;">✖</button>' +
+                    '<button onclick="removerPostitCard(\'' + chave + '\')" style="cursor:pointer;float:right" class="btn btn-ghost-secondary">✖</button>' +
                 '</div>';
             }
 
@@ -3027,23 +3018,23 @@ window.renderizarTabelaMesa = function() {
                 var opId = String(chave).replace(/^OP#/, '');
                 var op = pacotesOP.find(function(p) { return String(p.id) === String(opId); }) || { id: opId, assunto: 'Pacote OpenProject #' + opId, tipo: 'Projeto', status: 'Em progresso', atrib: 'SA-GTI' };
                 var urlOp = 'https://projetos.spaguas.sp.gov.br/work_packages/' + op.id;
-                return '<div class="kpi-card" style="border-left: 4px solid #f59e0b; padding: 12px 16px; background: var(--sagti-surface-alt);">' +
-                    '<div style="display: flex; justify-content: space-between; align-items: center;">' +
-                        '<div style="display:flex;align-items:center;gap:8px;">' +
-                            '<span style="cursor:pointer;font-size:14px;color:' + starCor + ';" onclick="window.toggleFixado(\'' + chave + '\')" title="Acompanhar">' + starIco + '</span>' +
-                            '<strong style="font-size: 13px; color: #fbbf24; font-family: monospace;">#' + op.id + '</strong>' +
-                            '<span class="pill-tag pill-orange" style="font-size:10px;">🏗️ OpenProject • ' + (op.tipo || 'Projeto') + '</span>' +
+                return '<div class="kpi-card card card-sm" style="padding: 12px 16px">' +
+                    '<div style="display: flex; justify-content: space-between; align-items: center">' +
+                        '<div style="display:flex;align-items:center;gap:8px">' +
+                            '<span style="cursor:pointer;font-size:14px" onclick="window.toggleFixado(\'' + chave + '\')" title="Acompanhar">' + starIco + '</span>' +
+                            '<strong style="font-size: 13px">#' + op.id + '</strong>' +
+                            '<span class="pill-tag pill-orange" >🏗️ OpenProject • ' + (op.tipo || 'Projeto') + '</span>' +
                         '</div>' +
-                        '<div style="display: flex; gap: 6px;">' +
-                            '<button type="button" class="btn btn-secondary" style="padding: 2px 8px; font-size: 11px;" onclick="adicionarPostitCardPrompt(\'' + chave + '\')">📌 Post-it</button>' +
-                            '<a href="' + urlOp + '" target="_blank" class="btn btn-secondary" style="padding: 2px 8px; font-size: 11px; text-decoration: none;">Abrir OP ↗</a>' +
-                            '<button type="button" class="btn btn-secondary" style="padding: 2px 8px; font-size: 11px; color:#ef4444;" onclick="window.removerDaPauta(\'' + chave + '\')">✖ Tirar da Pauta</button>' +
+                        '<div style="display: flex; gap: 6px">' +
+                            '<button type="button" class="btn btn-outline-secondary" style="padding: 2px 8px; font-size: 11px" onclick="adicionarPostitCardPrompt(\'' + chave + '\')">📌 Post-it</button>' +
+                            '<a href="' + urlOp + '" target="_blank" class="btn btn-outline-secondary" style="padding: 2px 8px; font-size: 11px; text-decoration: none">Abrir OP ↗</a>' +
+                            '<button type="button" class="btn btn-outline-secondary" style="padding: 2px 8px; font-size: 11px" onclick="window.removerDaPauta(\'' + chave + '\')">✖ Tirar da Pauta</button>' +
                         '</div>' +
                     '</div>' +
-                    '<p style="font-size: 12px; color: var(--sagti-text); margin: 6px 0; font-weight:600;">' + (op.assunto || '') + '</p>' +
-                    '<div style="display: flex; justify-content: space-between; font-size: 11px; color: #94a3b8;">' +
+                    '<p style="font-size: 12px; margin: 6px 0; font-weight:600">' + (op.assunto || '') + '</p>' +
+                    '<div style="display: flex; justify-content: space-between; font-size: 11px">' +
                         '<span>👤 <strong>Responsável:</strong> ' + (op.atrib || op.encarr || 'SA-GTI') + ' • 📁 ' + (op.projeto || 'SA-GTI') + '</span>' +
-                        '<span>Status: <strong style="color:var(--sagti-accent);">' + (op.status || 'Em progresso') + '</strong></span>' +
+                        '<span>Status: <strong >' + (op.status || 'Em progresso') + '</strong></span>' +
                     '</div>' +
                     postitHtml +
                 '</div>';
@@ -3054,23 +3045,23 @@ window.renderizarTabelaMesa = function() {
                 var gId = String(chave).replace(/^GLPI#/, '').split('_')[0];
                 var t = baseGLPI.find(function(item) { return String(item.id) === String(gId); }) || { id: gId, titulo: 'Chamado GLPI #' + gId, status: 'Pendente', tecnico: 'SA-GTI' };
                 var linkGlpi = 'https://atendimento.spaguas.sp.gov.br/front/ticket.form.php?id=' + t.id;
-                return '<div class="kpi-card" style="border-left: 4px solid #0284c7; padding: 12px 16px; background: var(--sagti-surface-alt);">' +
-                    '<div style="display: flex; justify-content: space-between; align-items: center;">' +
-                        '<div style="display:flex;align-items:center;gap:8px;">' +
-                            '<span style="cursor:pointer;font-size:14px;color:' + starCor + ';" onclick="window.toggleFixado(\'' + chave + '\')" title="Acompanhar">' + starIco + '</span>' +
-                            '<strong style="font-size: 13px; color: #c084fc; font-family: monospace;">#' + t.id + '</strong>' +
-                            '<span class="pill-tag pill-purple" style="font-size:10px; background:rgba(139,92,246,0.2); color:#c084fc;">🎫 GLPI • ' + (t.cat || 'Suporte') + '</span>' +
+                return '<div class="kpi-card card card-sm" style="padding: 12px 16px">' +
+                    '<div style="display: flex; justify-content: space-between; align-items: center">' +
+                        '<div style="display:flex;align-items:center;gap:8px">' +
+                            '<span style="cursor:pointer;font-size:14px" onclick="window.toggleFixado(\'' + chave + '\')" title="Acompanhar">' + starIco + '</span>' +
+                            '<strong style="font-size: 13px">#' + t.id + '</strong>' +
+                            '<span class="pill-tag pill-purple" >🎫 GLPI • ' + (t.cat || 'Suporte') + '</span>' +
                         '</div>' +
-                        '<div style="display: flex; gap: 6px;">' +
-                            '<button type="button" class="btn btn-secondary" style="padding: 2px 8px; font-size: 11px;" onclick="adicionarPostitCardPrompt(\'' + chave + '\')">📌 Post-it</button>' +
-                            '<a href="' + linkGlpi + '" target="_blank" class="btn btn-secondary" style="padding: 2px 8px; font-size: 11px; text-decoration: none;">Abrir GLPI ↗</a>' +
-                            '<button type="button" class="btn btn-secondary" style="padding: 2px 8px; font-size: 11px; color:#ef4444;" onclick="window.removerDaPauta(\'' + chave + '\')">✖ Tirar da Pauta</button>' +
+                        '<div style="display: flex; gap: 6px">' +
+                            '<button type="button" class="btn btn-outline-secondary" style="padding: 2px 8px; font-size: 11px" onclick="adicionarPostitCardPrompt(\'' + chave + '\')">📌 Post-it</button>' +
+                            '<a href="' + linkGlpi + '" target="_blank" class="btn btn-outline-secondary" style="padding: 2px 8px; font-size: 11px; text-decoration: none">Abrir GLPI ↗</a>' +
+                            '<button type="button" class="btn btn-outline-secondary" style="padding: 2px 8px; font-size: 11px" onclick="window.removerDaPauta(\'' + chave + '\')">✖ Tirar da Pauta</button>' +
                         '</div>' +
                     '</div>' +
-                    '<p style="font-size: 12px; color: var(--sagti-text); margin: 6px 0; font-weight:600;">' + (t.titulo || '') + '</p>' +
-                    '<div style="display: flex; justify-content: space-between; font-size: 11px; color: #94a3b8;">' +
+                    '<p style="font-size: 12px; margin: 6px 0; font-weight:600">' + (t.titulo || '') + '</p>' +
+                    '<div style="display: flex; justify-content: space-between; font-size: 11px">' +
                         '<span>👤 <strong>Técnico:</strong> ' + (t.tecnico || 'SA-GTI') + ' • ' + (t.local || 'Sede') + '</span>' +
-                        '<span>Status: <strong style="color:#fbbf24;">' + (t.status || 'Pendente') + '</strong></span>' +
+                        '<span>Status: <strong >' + (t.status || 'Pendente') + '</strong></span>' +
                     '</div>' +
                     postitHtml +
                 '</div>';
@@ -3079,21 +3070,21 @@ window.renderizarTabelaMesa = function() {
             // CASO 3: PROCESSO SEI
             var p = baseSEI.find(function(item) { return item.ID_Processo === chave; });
             if (!p) return '';
-            return '<div class="kpi-card" style="border-left: 4px solid #0544cf; padding: 12px 16px; background: var(--sagti-surface-alt);">' +
-                '<div style="display: flex; justify-content: space-between; align-items: center;">' +
-                    '<div style="display:flex;align-items:center;gap:8px;">' +
-                        '<span style="cursor:pointer;font-size:14px;color:' + starCor + ';" onclick="window.toggleFixado(\'' + p.ID_Processo + '\')" title="Acompanhar">' + starIco + '</span>' +
-                        '<strong style="font-size: 13px; color: var(--sagti-accent); cursor: pointer;" onclick="abrirDetalhesProcesso(\'' + p.ID_Processo + '\')">' + p.ID_Processo + '</strong>' +
-                        '<span class="pill-tag pill-blue" style="font-size:10px;">📁 SEI • ' + (p.Bucket_OpenProject || 'Bucket') + '</span>' +
+            return '<div class="kpi-card card card-sm" style="padding: 12px 16px">' +
+                '<div style="display: flex; justify-content: space-between; align-items: center">' +
+                    '<div style="display:flex;align-items:center;gap:8px">' +
+                        '<span style="cursor:pointer;font-size:14px" onclick="window.toggleFixado(\'' + p.ID_Processo + '\')" title="Acompanhar">' + starIco + '</span>' +
+                        '<strong style="font-size: 13px; cursor: pointer" onclick="abrirDetalhesProcesso(\'' + p.ID_Processo + '\')">' + p.ID_Processo + '</strong>' +
+                        '<span class="pill-tag pill-blue" >📁 SEI • ' + (p.Bucket_OpenProject || 'Bucket') + '</span>' +
                     '</div>' +
-                    '<div style="display: flex; gap: 6px;">' +
-                        '<button type="button" class="btn btn-secondary" style="padding: 2px 8px; font-size: 11px;" onclick="adicionarPostitCardPrompt(\'' + p.ID_Processo + '\')">📌 Post-it</button>' +
-                        '<button type="button" class="btn btn-secondary" style="padding: 2px 8px; font-size: 11px;" onclick="abrirDetalhesProcesso(\'' + p.ID_Processo + '\')">Dossiê</button>' +
-                        '<button type="button" class="btn btn-secondary" style="padding: 2px 8px; font-size: 11px; color:#ef4444;" onclick="window.removerDaPauta(\'' + p.ID_Processo + '\')">✖ Tirar da Pauta</button>' +
+                    '<div style="display: flex; gap: 6px">' +
+                        '<button type="button" class="btn btn-outline-secondary" style="padding: 2px 8px; font-size: 11px" onclick="adicionarPostitCardPrompt(\'' + p.ID_Processo + '\')">📌 Post-it</button>' +
+                        '<button type="button" class="btn btn-outline-secondary" style="padding: 2px 8px; font-size: 11px" onclick="abrirDetalhesProcesso(\'' + p.ID_Processo + '\')">Dossiê</button>' +
+                        '<button type="button" class="btn btn-outline-secondary" style="padding: 2px 8px; font-size: 11px" onclick="window.removerDaPauta(\'' + p.ID_Processo + '\')">✖ Tirar da Pauta</button>' +
                     '</div>' +
                 '</div>' +
-                '<p style="font-size: 12px; color: var(--sagti-text); margin: 6px 0; font-weight:600;">' + (p.Especificacao || p.Tipo_Processo || '') + '</p>' +
-                '<div style="display: flex; justify-content: space-between; font-size: 11px; color: #94a3b8;">' +
+                '<p style="font-size: 12px; margin: 6px 0; font-weight:600">' + (p.Especificacao || p.Tipo_Processo || '') + '</p>' +
+                '<div style="display: flex; justify-content: space-between; font-size: 11px">' +
                     '<span>👤 <strong>Responsável:</strong> ' + (p.Responsavel_Tecnico || 'Não atribuído') + '</span>' +
                     '<span>⏱️ Aging: <strong>' + (p.Faixa_Aging || 'Normal') + '</strong> (' + (p.Dias_Ultima_Mov || 0) + ' dias)</span>' +
                 '</div>' +
@@ -3218,10 +3209,10 @@ window.renderizarTabelaMesa = function() {
         });
 
         if (filtrados.length === 0) {
-            container.innerHTML = '<div style="grid-column: 1 / -1; background: var(--sagti-surface-alt); border: 1px dashed rgba(255,255,255,0.15); border-radius: 10px; padding: 32px; text-align: center; color: #94a3b8;">' +
-                '<div style="font-size: 28px; margin-bottom: 6px;">📂</div>' +
-                '<strong style="color: var(--sagti-text); font-size: 13.5px;">Nenhum documento PDF localizado com os filtros atuais.</strong>' +
-                '<div style="font-size: 12px; margin-top: 4px;">A ingestão de arquivos não está disponível nesta versão.</div>' +
+            container.innerHTML = '<div style="grid-column: 1 / -1; border-radius: 10px; padding: 32px; text-align: center">' +
+                '<div style="font-size: 28px; margin-bottom: 6px">📂</div>' +
+                '<strong style="font-size: 13.5px">Nenhum documento PDF localizado com os filtros atuais.</strong>' +
+                '<div style="font-size: 12px; margin-top: 4px">A ingestão de arquivos não está disponível nesta versão.</div>' +
             '</div>';
             return;
         }
@@ -3233,28 +3224,28 @@ window.renderizarTabelaMesa = function() {
             else if (doc.categoria === 'Contratação') corBadge = '#10b981';
             else if (doc.categoria === 'Upload') corBadge = '#0369a1';
 
-            return '<div style="background: var(--sagti-surface-alt); border: 1px solid rgba(255,255,255,0.1); border-radius: 10px; padding: 16px; display: flex; flex-direction: column; justify-content: space-between; border-left: 4px solid #0369a1; box-shadow: 0 4px 14px rgba(0,0,0,0.25); transition: transform 0.15s ease;">' +
+            return '<div style="border-radius: 10px; padding: 16px; display: flex; flex-direction: column; justify-content: space-between; transition: transform 0.15s ease">' +
                 '<div>' +
-                    '<div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 8px;">' +
-                        '<span style="background: rgba(236,72,153,0.15); color: #f472b6; border: 1px solid rgba(236,72,153,0.3); padding: 2px 8px; border-radius: 6px; font-size: 10px; font-weight: 800;">📄 PDF</span>' +
-                        '<span style="background: rgba(255,255,255,0.06); color: ' + corBadge + '; border: 1px solid rgba(255,255,255,0.12); padding: 2px 7px; border-radius: 4px; font-size: 10px; font-weight: 700;">' + (doc.categoria || 'Geral') + '</span>' +
+                    '<div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 8px">' +
+                        '<span style="padding: 2px 8px; border-radius: 6px; font-weight: 800">📄 PDF</span>' +
+                        '<span style="padding: 2px 7px; border-radius: 4px; font-weight: 700">' + (doc.categoria || 'Geral') + '</span>' +
                     '</div>' +
-                    '<h4 style="margin: 0 0 6px 0; font-size: 13px; font-weight: 800; color: var(--sagti-text); line-height: 1.35; word-break: break-all;">' + window.escapeHtml(doc.nome) + '</h4>' +
-                    '<div style="font-size: 11px; color: #94a3b8; margin-bottom: 8px; display: flex; gap: 8px; flex-wrap: wrap;">' +
+                    '<h4 style="margin: 0 0 6px 0; font-size: 13px; font-weight: 800; line-height: 1.35; word-break: break-all">' + window.escapeHtml(doc.nome) + '</h4>' +
+                    '<div style="font-size: 11px; margin-bottom: 8px; display: flex; gap: 8px; flex-wrap: wrap">' +
                         '<span>💾 ' + doc.tamanhoFormatado + '</span>' +
                         '<span>&bull;</span>' +
                         '<span>📅 ' + doc.dataUpload + '</span>' +
                         (doc.paginas ? ('<span>&bull;</span><span>📖 ' + doc.paginas + ' pág.</span>') : '') +
                     '</div>' +
-                    '<p style="margin: 0 0 12px 0; font-size: 11.5px; color: #cbd5e1; line-height: 1.45; max-height: 60px; overflow: hidden; text-overflow: ellipsis;">' + window.escapeHtml(doc.resumo || 'Documento em PDF cadastrado no Drive de Contexto para consulta direta das IAs.') + '</p>' +
-                    '<div style="font-size: 10.5px; color: #34d399; font-weight: 700; margin-bottom: 12px; display: flex; align-items: center; gap: 4px;">' +
+                    '<p style="margin: 0 0 12px 0; font-size: 11.5px; line-height: 1.45; max-height: 60px; overflow: hidden; text-overflow: ellipsis">' + window.escapeHtml(doc.resumo || 'Documento em PDF cadastrado no Drive de Contexto para consulta direta das IAs.') + '</p>' +
+                    '<div style="font-size: 10.5px; font-weight: 700; margin-bottom: 12px; display: flex; align-items: center; gap: 4px">' +
                         '<span>🟢</span> Ingerido no Contexto IA 1 (Copiloto) &amp; IA 2' +
                     '</div>' +
                 '</div>' +
-                '<div style="display: flex; gap: 6px; border-top: 1px solid rgba(255,255,255,0.08); padding-top: 10px;">' +
-                    '<button type="button" class="btn btn-secondary btn-sm" onclick="window.visualizarDocumentoDrivePdf(\'' + doc.id + '\')" style="flex: 1; padding: 5px 8px; font-size: 11px; font-weight: 700;" title="Visualizar Dossiê do PDF">👁️ Ver</button>' +
-                    '<button type="button" class="btn btn-primary btn-sm" onclick="window.baixarDocumentoDrivePdf(\'' + doc.id + '\')" style="flex: 1; padding: 5px 8px; font-size: 11px; font-weight: 700; background: #0284c7; border-color: #0284c7;" title="Baixar arquivo">⬇️ Baixar</button>' +
-                    '<button type="button" class="btn btn-secondary btn-sm" onclick="window.excluirDocumentoDrivePdf(\'' + doc.id + '\')" style="padding: 5px 10px; font-size: 11px; font-weight: 700; color: #f87171; border-color: rgba(239,68,68,0.3);" title="Excluir documento do Drive e do contexto das IAs">🗑️</button>' +
+                '<div style="display: flex; gap: 6px; padding-top: 10px">' +
+                    '<button type="button" class="btn btn-secondary btn-sm btn-outline-secondary" onclick="window.visualizarDocumentoDrivePdf(\'' + doc.id + '\')" style="flex: 1; padding: 5px 8px; font-size: 11px; font-weight: 700" title="Visualizar Dossiê do PDF">👁️ Ver</button>' +
+                    '<button type="button" class="btn btn-primary btn-sm" onclick="window.baixarDocumentoDrivePdf(\'' + doc.id + '\')" style="flex: 1; padding: 5px 8px; font-size: 11px; font-weight: 700" title="Baixar arquivo">⬇️ Baixar</button>' +
+                    '<button type="button" class="btn btn-secondary btn-sm btn-outline-secondary" onclick="window.excluirDocumentoDrivePdf(\'' + doc.id + '\')" style="padding: 5px 10px; font-size: 11px; font-weight: 700" title="Excluir documento do Drive e do contexto das IAs">🗑️</button>' +
                 '</div>' +
             '</div>';
         }).join('');
@@ -3294,20 +3285,14 @@ window.renderizarTabelaMesa = function() {
         e.preventDefault();
         e.stopPropagation();
         var dz = document.getElementById('dropzone-drive-pdf');
-        if (dz) {
-            dz.style.background = 'rgba(236,72,153,0.12)';
-            dz.style.borderColor = '#f472b6';
-        }
+        if (dz) dz.classList.add('sagti-dropzone-active');
     };
 
     window.tratarDragLeaveDrivePdf = function(e) {
         e.preventDefault();
         e.stopPropagation();
         var dz = document.getElementById('dropzone-drive-pdf');
-        if (dz) {
-            dz.style.background = 'rgba(236,72,153,0.04)';
-            dz.style.borderColor = '#0369a1';
-        }
+        if (dz) dz.classList.remove('sagti-dropzone-active');
     };
 
     window.tratarDropDrivePdf = function(e) {
@@ -3347,7 +3332,8 @@ window.renderizarTabelaMesa = function() {
         if (!modal) {
             modal = document.createElement('div');
             modal.id = 'modal-visualizador-drive-pdf';
-            modal.style.cssText = 'position:fixed;inset:0;background:var(--sagti-surface-alt);z-index:99999;display:flex;align-items:flex-start;justify-content:center;padding:24px 16px;overflow-y:auto;box-sizing:border-box;';
+            modal.classList.add('sagti-modal-backdrop');
+            modal.style.cssText = 'position:fixed;inset:0;z-index:99999;display:flex;align-items:flex-start;justify-content:center;padding:24px 16px;overflow-y:auto;box-sizing:border-box;';
             modal.onclick = function(e) {
                 if (e.target === modal) modal.style.display = 'none';
             };
@@ -3355,39 +3341,39 @@ window.renderizarTabelaMesa = function() {
         }
         modal.style.display = 'flex';
 
-        modal.innerHTML = '<div style="position:relative;background:#ffffff;border-radius:14px;max-width:820px;width:100%;margin:auto 0;padding:24px;box-shadow:0 24px 60px rgba(0,0,0,0.5);border-top:5px solid #0369a1;box-sizing:border-box;font-family:inherit;">' +
-            '<div style="display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid #e2e8f0;padding-bottom:12px;margin-bottom:16px;">' +
+        modal.innerHTML = '<div style="position:relative;border-radius:14px;max-width:820px;width:100%;margin:auto 0;padding:24px;box-sizing:border-box">' +
+            '<div style="display:flex;justify-content:space-between;align-items:center;padding-bottom:12px;margin-bottom:16px">' +
                 '<div>' +
-                    '<div style="font-size:11px;color:#be185d;font-weight:800;text-transform:uppercase;">Drive de Contexto IA &bull; Visualizador de Dossiê PDF</div>' +
-                    '<h3 style="margin:2px 0 0 0;color:#1e1b4b;font-size:16px;font-weight:800;display:flex;align-items:center;gap:8px;">' +
+                    '<div style="font-size:11px;font-weight:800;text-transform:uppercase">Drive de Contexto IA &bull; Visualizador de Dossiê PDF</div>' +
+                    '<h3 style="margin:2px 0 0 0;font-size:16px;font-weight:800;display:flex;align-items:center;gap:8px">' +
                         '<span>📄</span> ' + window.escapeHtml(doc.nome) +
                     '</h3>' +
                 '</div>' +
-                '<button type="button" onclick="document.getElementById(\'modal-visualizador-drive-pdf\').style.display=\'none\'" style="background:#ef4444;color:#ffffff;border:none;border-radius:8px;padding:6px 14px;font-size:12px;font-weight:800;cursor:pointer;">&#10006; Fechar</button>' +
+                '<button type="button" onclick="document.getElementById(\'modal-visualizador-drive-pdf\').style.display=\'none\'" style="border-radius:8px;padding:6px 14px;font-size:12px;font-weight:800;cursor:pointer" class="btn btn-ghost-secondary">&#10006; Fechar</button>' +
             '</div>' +
-            '<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:16px;">' +
-                '<div style="background:#fdf2f8;border:1px solid #fbcfe8;border-radius:8px;padding:10px;">' +
-                    '<div style="font-size:11px;color:#9d174d;font-weight:700;">TAMANHO DO ARQUIVO</div>' +
-                    '<div style="font-size:16px;font-weight:800;color:#be185d;">' + doc.tamanhoFormatado + '</div>' +
+            '<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:16px">' +
+                '<div style="border-radius:8px;padding:10px">' +
+                    '<div style="font-size:11px;font-weight:700">TAMANHO DO ARQUIVO</div>' +
+                    '<div style="font-size:16px;font-weight:800">' + doc.tamanhoFormatado + '</div>' +
                 '</div>' +
-                '<div style="background:#faf5ff;border:1px solid #e9d5ff;border-radius:8px;padding:10px;">' +
-                    '<div style="font-size:11px;color:#6b21a8;font-weight:700;">DATA DE INGESTÃO</div>' +
-                    '<div style="font-size:16px;font-weight:800;color:#0284c7;">' + doc.dataUpload + '</div>' +
+                '<div style="border-radius:8px;padding:10px">' +
+                    '<div style="font-size:11px;font-weight:700">DATA DE INGESTÃO</div>' +
+                    '<div style="font-size:16px;font-weight:800">' + doc.dataUpload + '</div>' +
                 '</div>' +
-                '<div style="background:#fff7ed;border:1px solid #fed7aa;border-radius:8px;padding:10px;">' +
-                        '<div style="font-size:11px;color:#9a3412;font-weight:700;">STATUS DE INGESTÃO</div>' +
-                        '<div style="font-size:14px;font-weight:800;color:#9a3412;">Metadados locais; não indexado</div>' +
+                '<div style="border-radius:8px;padding:10px">' +
+                        '<div style="font-size:11px;font-weight:700">STATUS DE INGESTÃO</div>' +
+                        '<div style="font-size:14px;font-weight:800">Metadados locais; não indexado</div>' +
                 '</div>' +
             '</div>' +
-            '<div style="background:#f8fafc;border:1px solid #e2e8f0;border-radius:8px;padding:14px;margin-bottom:16px;">' +
-                '<strong style="font-size:12px;color:#0f172a;">Metadados informados (não verificados nem indexados):</strong>' +
-                '<p style="font-size:12px;color:#334155;margin:8px 0 0 0;line-height:1.5;">' + window.escapeHtml(doc.resumo) + '</p>' +
+            '<div style="border-radius:8px;padding:14px;margin-bottom:16px">' +
+                '<strong style="font-size:12px">Metadados informados (não verificados nem indexados):</strong>' +
+                '<p style="font-size:12px;margin:8px 0 0 0;line-height:1.5">' + window.escapeHtml(doc.resumo) + '</p>' +
             '</div>' +
-            '<div style="display:flex;justify-content:space-between;align-items:center;border-top:1px solid #e2e8f0;padding-top:14px;">' +
-                '<button type="button" class="btn btn-secondary" onclick="window.excluirDocumentoDrivePdf(\'' + doc.id + '\');document.getElementById(\'modal-visualizador-drive-pdf\').style.display=\'none\';" style="color:#ef4444;border-color:rgba(239,68,68,0.3);font-size:12px;font-weight:700;">🗑️ Excluir do Drive</button>' +
-                '<div style="display:flex;gap:8px;">' +
-                    '<button type="button" class="btn btn-primary" onclick="window.baixarDocumentoDrivePdf(\'' + doc.id + '\')" style="background:#0284c7;border-color:#0284c7;font-size:12px;font-weight:700;">⬇️ Baixar PDF</button>' +
-                    '<button type="button" class="btn btn-secondary" onclick="document.getElementById(\'modal-visualizador-drive-pdf\').style.display=\'none\'" style="background:#002d5a;color:var(--sagti-text);font-size:12px;font-weight:700;">✕ Fechar</button>' +
+            '<div style="display:flex;justify-content:space-between;align-items:center;padding-top:14px">' +
+                '<button type="button" class="btn btn-outline-secondary" onclick="window.excluirDocumentoDrivePdf(\'' + doc.id + '\');document.getElementById(\'modal-visualizador-drive-pdf\').style.display=\'none\';" style="font-size:12px;font-weight:700">🗑️ Excluir do Drive</button>' +
+                '<div style="display:flex;gap:8px">' +
+                    '<button type="button" class="btn btn-primary" onclick="window.baixarDocumentoDrivePdf(\'' + doc.id + '\')" style="font-size:12px;font-weight:700">⬇️ Baixar PDF</button>' +
+                    '<button type="button" class="btn btn-outline-secondary" onclick="document.getElementById(\'modal-visualizador-drive-pdf\').style.display=\'none\'" style="font-size:12px;font-weight:700">✕ Fechar</button>' +
                 '</div>' +
             '</div>' +
         '</div>';
@@ -3460,7 +3446,8 @@ window.executarRevisaoHomologacaoAcervoCompleto = function() {
     if (!modal) {
         modal = document.createElement('div');
         modal.id = 'modal-revisao-acervo-completo';
-        modal.style.cssText = 'position:fixed;inset:0;background:var(--sagti-surface-alt);z-index:99999;display:flex;align-items:flex-start;justify-content:center;padding:24px 16px;overflow-y:auto;box-sizing:border-box;';
+        modal.classList.add('sagti-modal-backdrop');
+        modal.style.cssText = 'position:fixed;inset:0;z-index:99999;display:flex;align-items:flex-start;justify-content:center;padding:24px 16px;overflow-y:auto;box-sizing:border-box;';
         modal.onclick = function(e) {
             if (e.target === modal) window.fecharModalRevisaoAcervo();
         };
@@ -3472,77 +3459,77 @@ window.executarRevisaoHomologacaoAcervoCompleto = function() {
     var modeloIa1 = (pool && pool.ias && pool.ias.principal && pool.ias.principal.agent) ? pool.ias.principal.agent : 'qwen2.5:7b';
     var totalProcs = (typeof PROCESSOS !== 'undefined' && Array.isArray(PROCESSOS)) ? PROCESSOS.length : 179;
 
-    modal.innerHTML = '<div style="position:relative;background:#ffffff;border-radius:14px;max-width:880px;width:100%;margin:auto 0;padding:24px;box-shadow:0 24px 60px rgba(0,0,0,0.5);border-top:5px solid #0284c7;box-sizing:border-box;font-family:inherit;">' +
-        '<div style="display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid #e2e8f0;padding-bottom:12px;margin-bottom:16px;flex-wrap:wrap;gap:10px;">' +
+    modal.innerHTML = '<div style="position:relative;border-radius:14px;max-width:880px;width:100%;margin:auto 0;padding:24px;box-sizing:border-box">' +
+        '<div style="display:flex;justify-content:space-between;align-items:center;padding-bottom:12px;margin-bottom:16px;flex-wrap:wrap;gap:10px">' +
             '<div>' +
-                '<div style="font-size:11px;color:#0284c7;font-weight:800;text-transform:uppercase;letter-spacing:0.5px;">Orquestrador Cockpit GTI &bull; Sincronização em Lote</div>' +
-                '<h3 style="margin:2px 0 0 0;color:#002d5a;font-size:17px;font-weight:800;display:flex;align-items:center;gap:8px;">' +
+                '<div style="font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:0.5px">Orquestrador Cockpit GTI &bull; Sincronização em Lote</div>' +
+                '<h3 style="margin:2px 0 0 0;font-size:17px;font-weight:800;display:flex;align-items:center;gap:8px">' +
                     '<span>⚡</span> REVISAR E HOMOLOGAR O ACERVO COMPLETO (' + totalProcs + ' PROCESSOS SEI)' +
                 '</h3>' +
             '</div>' +
-            '<button type="button" onclick="window.fecharModalRevisaoAcervo()" style="background:#dc2626;color:#ffffff;border:none;border-radius:8px;padding:7px 16px;font-size:12px;font-weight:800;cursor:pointer;">&#10006; Fechar Janela</button>' +
+            '<button type="button" onclick="window.fecharModalRevisaoAcervo()" style="border-radius:8px;padding:7px 16px;font-size:12px;font-weight:800;cursor:pointer" class="btn btn-ghost-secondary">&#10006; Fechar Janela</button>' +
         '</div>' +
 
-        '<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:16px;">' +
-            '<div style="background:#f0f9ff;border:1px solid #bae6fd;border-radius:8px;padding:12px;">' +
-                '<div style="font-size:11px;color:#0369a1;font-weight:700;">ACERVO A HOMOLOGAR</div>' +
-                '<div style="font-size:20px;font-weight:800;color:#0284c7;margin-top:3px;">' + totalProcs + ' Processos SEI</div>' +
-                '<div style="font-size:10px;color:#0369a1;">+ 500 Pacotes OpenProject</div>' +
+        '<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:16px">' +
+            '<div style="border-radius:8px;padding:12px">' +
+                '<div style="font-size:11px;font-weight:700">ACERVO A HOMOLOGAR</div>' +
+                '<div style="font-size:20px;font-weight:800;margin-top:3px">' + totalProcs + ' Processos SEI</div>' +
+                '<div >+ 500 Pacotes OpenProject</div>' +
             '</div>' +
-            '<div style="background:#faf5ff;border:1px solid #e9d5ff;border-radius:8px;padding:12px;">' +
-                '<div style="font-size:11px;color:#6b21a8;font-weight:700;">MOTOR DE INTELIGÊNCIA</div>' +
-                '<div style="font-size:20px;font-weight:800;color:#0284c7;margin-top:3px;">IA 1 — Principal</div>' +
-                '<div style="font-size:10px;color:#6b21a8;">Modelo Ativo: <strong>' + window.escapeHtml(modeloIa1) + '</strong></div>' +
+            '<div style="border-radius:8px;padding:12px">' +
+                '<div style="font-size:11px;font-weight:700">MOTOR DE INTELIGÊNCIA</div>' +
+                '<div style="font-size:20px;font-weight:800;margin-top:3px">IA 1 — Principal</div>' +
+                '<div >Modelo Ativo: <strong>' + window.escapeHtml(modeloIa1) + '</strong></div>' +
             '</div>' +
-            '<div style="background:#f0fdf4;border:1px solid #bbf7d0;border-radius:8px;padding:12px;">' +
-                '<div style="font-size:11px;color:#166534;font-weight:700;">REGRA DE COMPLIANCE</div>' +
-                '<div style="font-size:20px;font-weight:800;color:#15803d;margin-top:3px;">Lei 14.133 / PDTIC</div>' +
-                '<div style="font-size:10px;color:#166534;">Dossiê 7 Seções + Linha do Tempo</div>' +
+            '<div style="border-radius:8px;padding:12px">' +
+                '<div style="font-size:11px;font-weight:700">REGRA DE COMPLIANCE</div>' +
+                '<div style="font-size:20px;font-weight:800;margin-top:3px">Lei 14.133 / PDTIC</div>' +
+                '<div >Dossiê 7 Seções + Linha do Tempo</div>' +
             '</div>' +
         '</div>' +
 
-        '<div style="background:#f8fafc;border:1px solid #e2e8f0;border-radius:10px;padding:16px;margin-bottom:16px;">' +
-            '<div style="font-size:13px;font-weight:800;color:#0f172a;margin-bottom:6px;">Como funciona a Homologação Completa:</div>' +
-            '<ul style="margin:0;padding-left:20px;font-size:12px;color:#334155;line-height:1.6;">' +
+        '<div style="border-radius:10px;padding:16px;margin-bottom:16px">' +
+            '<div style="font-size:13px;font-weight:800;margin-bottom:6px">Como funciona a Homologação Completa:</div>' +
+            '<ul style="margin:0;padding-left:20px;font-size:12px;line-height:1.6">' +
                 '<li><strong>Revisão Analítica Profunda:</strong> A IA 1 (Principal) analisa cada processo individualmente, emitindo parecer com enquadramento legal, aging líquido e recomendações.</li>' +
                 '<li><strong>Gravação do Dossiê nos Cards:</strong> Atualiza a descrição de cada Work Package no OpenProject com links probatórios clicáveis (SEI, GLPI e DOE-SP).</li>' +
                 '<li><strong>Registro de Atividade:</strong> Publica comentário formal assinado pela IA na timeline do OpenProject mantendo a rastreabilidade total.</li>' +
             '</ul>' +
         '</div>' +
 
-        '<div style="background:var(--sagti-surface-alt);border:1.5px solid #38bdf8;border-radius:10px;padding:16px;margin-bottom:16px;">' +
-            '<div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;margin-bottom:10px;">' +
+        '<div style="border-radius:10px;padding:16px;margin-bottom:16px">' +
+            '<div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;margin-bottom:10px">' +
                 '<div>' +
-                    '<strong style="font-size:13px;color:#002d5a;">Opção 1: Disparo Automático via Cockpit (Segundo Plano)</strong>' +
-                    '<div style="font-size:11.5px;color:#475569;margin-top:2px;">Inicia o script no servidor Flask (:5000) e transmite os dados com acompanhamento de log abaixo.</div>' +
+                    '<strong style="font-size:13px">Opção 1: Disparo Automático via Cockpit (Segundo Plano)</strong>' +
+                    '<div style="font-size:11.5px;margin-top:2px">Inicia o script no servidor Flask (:5000) e transmite os dados com acompanhamento de log abaixo.</div>' +
                 '</div>' +
-                '<button type="button" id="btn-iniciar-homologacao-backend" onclick="window.dispararHomologacaoBackendReal(this)" style="background:var(--sagti-accent);color:#fff;border:none;border-radius:8px;padding:9px 18px;font-size:12.5px;font-weight:800;cursor:pointer;display:inline-flex;align-items:center;gap:6px;box-shadow:0 3px 8px rgba(2,132,199,0.35);">' +
+                '<button type="button" id="btn-iniciar-homologacao-backend" onclick="window.dispararHomologacaoBackendReal(this)" style="border-radius:8px;padding:9px 18px;font-size:12.5px;font-weight:800;cursor:pointer;display:inline-flex;align-items:center;gap:6px" class="btn btn-ghost-secondary">' +
                     '🚀 Iniciar Homologação Agora' +
                 '</button>' +
             '</div>' +
-            '<div id="box-log-terminal-container" style="display:none;margin-top:12px;">' +
-                '<div style="font-size:11px;font-weight:700;color:#0284c7;margin-bottom:4px;display:flex;justify-content:space-between;">' +
+            '<div id="box-log-terminal-container" style="display:none;margin-top:12px">' +
+                '<div style="font-size:11px;font-weight:700;margin-bottom:4px;display:flex;justify-content:space-between">' +
                     '<span>📡 Streaming do Laudo de Sincronização em Tempo Real:</span>' +
-                    '<span id="status-spinner-sync" style="color:#047857;">🟢 Executando...</span>' +
+                    '<span id="status-spinner-sync" >🟢 Executando...</span>' +
                 '</div>' +
-                '<pre id="terminal-log-acervo" style="background:var(--sagti-surface-alt);color:var(--sagti-accent);border:1px solid rgba(255,255,255,0.1);border-radius:8px;padding:12px;font-family:monospace;font-size:11px;max-height:180px;overflow-y:auto;white-space:pre-wrap;margin:0;line-height:1.45;">Conectando ao log do servidor...</pre>' +
+                '<pre id="terminal-log-acervo" style="border-radius:8px;padding:12px;font-size:11px;max-height:180px;overflow-y:auto;white-space:pre-wrap;margin:0;line-height:1.45">Conectando ao log do servidor...</pre>' +
             '</div>' +
         '</div>' +
 
-        '<div style="background:#f1f5f9;border:1px solid #cbd5e1;border-radius:10px;padding:14px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;margin-bottom:12px;">' +
+        '<div style="border-radius:10px;padding:14px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;margin-bottom:12px">' +
             '<div>' +
-                '<strong style="font-size:12px;color:#1e293b;">Opção 2: Execução Direta no Terminal (PowerShell)</strong>' +
-                '<div style="font-size:11px;color:#64748b;margin-top:2px;">Execute manualmente no console do Windows para acompanhar cada token em tempo real:</div>' +
-                '<code style="background:var(--sagti-surface-alt);color:var(--sagti-accent);padding:3px 8px;border-radius:4px;font-size:11.5px;display:inline-block;margin-top:4px;">python sincronizar_openproject_backend.py --todos</code>' +
+                '<strong style="font-size:12px">Opção 2: Execução Direta no Terminal (PowerShell)</strong>' +
+                '<div style="font-size:11px;margin-top:2px">Execute manualmente no console do Windows para acompanhar cada token em tempo real:</div>' +
+                '<code style="padding:3px 8px;border-radius:4px;font-size:11.5px;display:inline-block;margin-top:4px">python sincronizar_openproject_backend.py --todos</code>' +
             '</div>' +
-            '<button type="button" onclick="window.copiarComandoTerminalOp()" style="background:#ffffff;color:#0f172a;border:1px solid #cbd5e1;border-radius:6px;padding:7px 14px;font-size:11.5px;font-weight:700;cursor:pointer;">' +
+            '<button type="button" onclick="window.copiarComandoTerminalOp()" style="border-radius:6px;padding:7px 14px;font-size:11.5px;font-weight:700;cursor:pointer" class="btn btn-ghost-secondary">' +
                 '📋 Copiar Comando' +
             '</button>' +
         '</div>' +
 
-        '<div style="display:flex;justify-content:space-between;align-items:center;border-top:1px solid #e2e8f0;padding-top:14px;">' +
-            '<div style="font-size:11.5px;color:#64748b;">💡 Dica: Você pode fechar esta janela a qualquer momento sem interromper a execução no servidor.</div>' +
-            '<button type="button" onclick="window.fecharModalRevisaoAcervo()" style="background:#002d5a;color:var(--sagti-text);border:none;border-radius:8px;padding:8px 20px;font-size:13px;font-weight:800;cursor:pointer;">' +
+        '<div style="display:flex;justify-content:space-between;align-items:center;padding-top:14px">' +
+            '<div style="font-size:11.5px">💡 Dica: Você pode fechar esta janela a qualquer momento sem interromper a execução no servidor.</div>' +
+            '<button type="button" onclick="window.fecharModalRevisaoAcervo()" style="border-radius:8px;padding:8px 20px;font-size:13px;font-weight:800;cursor:pointer" class="btn btn-ghost-secondary">' +
                 '✕ Fechar' +
             '</button>' +
         '</div>' +
@@ -3642,20 +3629,20 @@ window.dispararHomologacaoBackendReal = async function(btn) {
             else if (it.tipo === 'Monitor') corBadge = '#0284c7';
             else if (it.tipo === 'Impressora') corBadge = '#f59e0b';
 
-            return '<tr style="border-bottom: 1px solid rgba(255,255,255,0.06);">' +
-                '<td style="padding: 10px 14px; font-weight: 700; color: var(--sagti-text); font-family: monospace;">' +
-                    '<span style="background: rgba(255,255,255,0.06); padding: 2px 6px; border-radius: 4px; border: 1px solid rgba(255,255,255,0.1); margin-right: 6px;">' + it.id + '</span>' +
+            return '<tr >' +
+                '<td style="padding: 10px 14px; font-weight: 700">' +
+                    '<span style="padding: 2px 6px; border-radius: 4px; margin-right: 6px">' + it.id + '</span>' +
                     window.escapeHtml(it.hostname) +
                 '</td>' +
-                '<td style="padding: 10px 14px;">' +
-                    '<span style="background: rgba(255,255,255,0.06); color: ' + corBadge + '; border: 1px solid rgba(255,255,255,0.12); padding: 2px 8px; border-radius: 6px; font-size: 11px; font-weight: 700;">' + it.tipo + '</span>' +
+                '<td style="padding: 10px 14px">' +
+                    '<span style="padding: 2px 8px; border-radius: 6px; font-size: 11px; font-weight: 700">' + it.tipo + '</span>' +
                 '</td>' +
-                '<td style="padding: 10px 14px; color: var(--sagti-text);">' + window.escapeHtml(it.modelo) + '</td>' +
-                '<td style="padding: 10px 14px; color: #94a3b8; font-size: 11.5px;">' + window.escapeHtml(it.config) + '</td>' +
-                '<td style="padding: 10px 14px; color: #cbd5e1;">' + window.escapeHtml(it.local) + '</td>' +
-                '<td style="padding: 10px 14px; color: var(--sagti-text); font-weight: 600;">' + window.escapeHtml(it.resp) + '</td>' +
-                '<td style="padding: 10px 14px;">' +
-                    '<span style="background: rgba(16,185,129,0.15); color: #34d399; border: 1px solid rgba(16,185,129,0.3); padding: 2px 7px; border-radius: 4px; font-size: 10.5px; font-weight: 700;">🟢 ' + it.status + '</span>' +
+                '<td style="padding: 10px 14px">' + window.escapeHtml(it.modelo) + '</td>' +
+                '<td style="padding: 10px 14px; font-size: 11.5px">' + window.escapeHtml(it.config) + '</td>' +
+                '<td style="padding: 10px 14px">' + window.escapeHtml(it.local) + '</td>' +
+                '<td style="padding: 10px 14px; font-weight: 600">' + window.escapeHtml(it.resp) + '</td>' +
+                '<td style="padding: 10px 14px">' +
+                    '<span style="padding: 2px 7px; border-radius: 4px; font-size: 10.5px; font-weight: 700">🟢 ' + it.status + '</span>' +
                 '</td>' +
             '</tr>';
         }).join('');
@@ -3672,25 +3659,25 @@ window.dispararHomologacaoBackendReal = async function(btn) {
             elG1.innerHTML = '';
             if (typeof ApexCharts !== 'undefined') {
                 var opt1 = {
-                    chart: { type: 'bar', height: 210, toolbar: { show: false }, background: 'transparent' },
+                    chart: { type: 'bar', height: 210, toolbar: { show: false }, background: 'transparent', foreColor: '#334155', fontFamily: 'Inter, sans-serif' },
                     series: [{ name: 'Unidades', data: [316, 88, 23, 4, 3] }],
-                    xaxis: { categories: ['Desktop', 'Notebook', 'Hyper-V', 'All in One', 'Servidores'], labels: { style: { colors: '#94a3b8', fontSize: '11px' } } },
-                    yaxis: { labels: { style: { colors: '#94a3b8', fontSize: '11px' } } },
-                    colors: ['#0284c7'],
+                    xaxis: { categories: ['Desktop', 'Notebook', 'Hyper-V', 'All in One', 'Servidores'], labels: { style: { colors: '#334155', fontSize: '12px' } } },
+                    yaxis: { labels: { style: { colors: '#334155', fontSize: '12px' } } },
+                    colors: ['#004b87'],
                     plotOptions: { bar: { horizontal: false, columnWidth: '45%', borderRadius: 4 } },
                     dataLabels: { enabled: true, style: { colors: ['#fff'], fontSize: '11px', fontWeight: 'bold' } },
-                    grid: { borderColor: 'rgba(255,255,255,0.08)' },
-                    theme: { mode: 'dark' }
+                    grid: { borderColor: '#e2e8f0' },
+                    theme: { mode: 'light' }
                 };
                 new ApexCharts(elG1, opt1).render();
             } else {
-                elG1.innerHTML = '<div style="display:flex;flex-direction:column;gap:6px;padding-top:10px;">' +
-                    '<div style="font-size:11px;color:#cbd5e1;">Desktop: <strong>316</strong></div>' +
-                    '<div style="background:rgba(2,132,199,0.2);height:14px;border-radius:4px;overflow:hidden;"><div style="background:#0284c7;width:71%;height:100%;"></div></div>' +
-                    '<div style="font-size:11px;color:#cbd5e1;margin-top:4px;">Notebook: <strong>88</strong></div>' +
-                    '<div style="background:rgba(14,165,233,0.2);height:14px;border-radius:4px;overflow:hidden;"><div style="background:#0ea5e9;width:20%;height:100%;"></div></div>' +
-                    '<div style="font-size:11px;color:#cbd5e1;margin-top:4px;">Hyper-V: <strong>23</strong></div>' +
-                    '<div style="background:rgba(16,185,129,0.2);height:14px;border-radius:4px;overflow:hidden;"><div style="background:#10b981;width:5%;height:100%;"></div></div>' +
+                elG1.innerHTML = '<div style="display:flex;flex-direction:column;gap:6px;padding-top:10px">' +
+                    '<div style="font-size:11px">Desktop: <strong>316</strong></div>' +
+                    '<div style="height:14px;border-radius:4px;overflow:hidden"><div style="width:71%;height:100%"></div></div>' +
+                    '<div style="font-size:11px;margin-top:4px">Notebook: <strong>88</strong></div>' +
+                    '<div style="height:14px;border-radius:4px;overflow:hidden"><div style="width:20%;height:100%"></div></div>' +
+                    '<div style="font-size:11px;margin-top:4px">Hyper-V: <strong>23</strong></div>' +
+                    '<div style="height:14px;border-radius:4px;overflow:hidden"><div style="width:5%;height:100%"></div></div>' +
                 '</div>';
             }
         }
@@ -3701,15 +3688,15 @@ window.dispararHomologacaoBackendReal = async function(btn) {
             elG2.innerHTML = '';
             if (typeof ApexCharts !== 'undefined') {
                 var opt2 = {
-                    chart: { type: 'bar', height: 210, toolbar: { show: false }, background: 'transparent' },
+                    chart: { type: 'bar', height: 210, toolbar: { show: false }, background: 'transparent', foreColor: '#334155', fontFamily: 'Inter, sans-serif' },
                     series: [{ name: 'Processadores', data: [96, 46, 38, 33, 26, 22, 15] }],
-                    xaxis: { categories: ['Core i5', 'Core i7', 'Core i3', 'Xeon', 'Ryzen', 'Celeron', 'Outros'], labels: { style: { colors: '#94a3b8', fontSize: '10.5px' } } },
-                    yaxis: { labels: { style: { colors: '#94a3b8', fontSize: '11px' } } },
-                    colors: ['#0ea5e9'],
+                    xaxis: { categories: ['Core i5', 'Core i7', 'Core i3', 'Xeon', 'Ryzen', 'Celeron', 'Outros'], labels: { style: { colors: '#334155', fontSize: '12px' } } },
+                    yaxis: { labels: { style: { colors: '#334155', fontSize: '12px' } } },
+                    colors: ['#0284c7'],
                     plotOptions: { bar: { horizontal: false, columnWidth: '45%', borderRadius: 4 } },
-                    dataLabels: { enabled: true, style: { colors: ['#fff'], fontSize: '10px' } },
-                    grid: { borderColor: 'rgba(255,255,255,0.08)' },
-                    theme: { mode: 'dark' }
+                    dataLabels: { enabled: true, style: { colors: ['#020617'], fontSize: '10px' } },
+                    grid: { borderColor: '#e2e8f0' },
+                    theme: { mode: 'light' }
                 };
                 new ApexCharts(elG2, opt2).render();
             }
@@ -3721,15 +3708,15 @@ window.dispararHomologacaoBackendReal = async function(btn) {
             elG3.innerHTML = '';
             if (typeof ApexCharts !== 'undefined') {
                 var opt3 = {
-                    chart: { type: 'bar', height: 210, toolbar: { show: false }, background: 'transparent' },
+                    chart: { type: 'bar', height: 210, toolbar: { show: false }, background: 'transparent', foreColor: '#334155', fontFamily: 'Inter, sans-serif' },
                     series: [{ name: 'Pentes de Memória', data: [74, 60, 49, 33, 33, 32, 30] }],
-                    xaxis: { categories: ['DDR3-1600', 'DDR4-2400', 'DDR4-3200', 'Hyper-V', 'DDR3L', 'SODIMM', 'ECC Server'], labels: { style: { colors: '#94a3b8', fontSize: '10px' } } },
-                    yaxis: { labels: { style: { colors: '#94a3b8', fontSize: '11px' } } },
-                    colors: ['#10b981'],
+                    xaxis: { categories: ['DDR3-1600', 'DDR4-2400', 'DDR4-3200', 'Hyper-V', 'DDR3L', 'SODIMM', 'ECC Server'], labels: { style: { colors: '#334155', fontSize: '12px' } } },
+                    yaxis: { labels: { style: { colors: '#334155', fontSize: '12px' } } },
+                    colors: ['#01a75f'],
                     plotOptions: { bar: { horizontal: false, columnWidth: '45%', borderRadius: 4 } },
-                    dataLabels: { enabled: true, style: { colors: ['#fff'], fontSize: '10px' } },
-                    grid: { borderColor: 'rgba(255,255,255,0.08)' },
-                    theme: { mode: 'dark' }
+                    dataLabels: { enabled: true, style: { colors: ['#052e1b'], fontSize: '10px' } },
+                    grid: { borderColor: '#e2e8f0' },
+                    theme: { mode: 'light' }
                 };
                 new ApexCharts(elG3, opt3).render();
             }
